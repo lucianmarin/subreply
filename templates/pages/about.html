@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}{{ brand }} / About{% endblock %}
+
+{% block main %}
+    <div class="title">
+        <a href="/about">About</a> this
+    </div>
+    <div class="about">
+        <p>Subreply was created from the desire of a having a sane social network that puts the user back in control of the experience.</p>
+        <p>Features</p>
+        <ol>
+            <li>easy to reply to anyone</li>
+            <li>save content posted by anyone</li>
+            <li>🧠💪 one or two emojis instead of avatars</li>
+            <li>mentions, links and hashtags support</li>
+            <li>follow local, active or popular people</li>
+            <li>light and dark themes</li>
+        </ol>
+        <p>Limitations</p>
+        <ol>
+            <li>480 characters per status</li>
+            <li>ASCII only, displays everywhere</li>
+            <li>unique content, no duplicates</li>
+            <li>only one mention, link or hashtag per status</li>
+            <li>maximum of 5 consecutive statuses</li>
+            <li>no support for multilines or paragraphs</li>
+            <li>no counters for followers, likes, shares, etc.</li>
+        </ol>
+        <p>Privacy</p>
+        <ol>
+            <li>easy to anonymize your personal details</li>
+            <li>no redistribution of data, private or public</li>
+            <li>strong password hashing</li>
+        </ol>
+        <p>Terms</p>
+        <ol>
+            <li>be nice or else</li>
+        </ol>
+    </div>
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}{{ brand }} / {{ view | capitalize }}{% endblock %}
+
+{% block main %}
+    {% if view == 'feed' %}
+        {% include "common/reply.html" %}
+    {% endif %}
+
+    {% if view in ['search', 'timeline'] %}
+        {% include "common/query.html" %}
+    {% endif %}
+
+    <div class="list">
+        {% if view not in ['feed', 'search', 'timeline'] %}
+            <div class="entry">
+                <div class="small">{{ description }}.</div>
+            </div>
+        {% endif %}
+        {% for entry in entries %}
+            {% include "common/entry.html" %}
+        {% else %}
+            <div class="entry">
+                <div class="content">Uh, nothing here yet.</div>
+            </div>
+        {% endfor %}
+        {% if entries | count < counter and not q %}
+            <div class="button" onclick="loadMore(this, 1)">Load more</div>
+        {% endif %}
+    </div>
+{% endblock %}

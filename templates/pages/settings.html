@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+
+{% block title %}{{ brand }} / Settings{% endblock %}
+
+{% block main %}
+    <div class="title">
+        <a href="/settings">Settings</a>
+        <a href="/password" class="off">Password</a>
+        <a href="/erase" class="off">Erase</a>
+        <a href="/logout" class="off">Logout</a>
+    </div>
+    <div class="register">
+        <form enctype="multipart/form-data" method="post" autocomplete="off">
+            <div class="line">
+                <div class="left">
+                    <label for="id_username">Username<i>*</i></label>
+                    <input type="text" name="username" id="id_username"
+                        value="{% if form %}{{ form.getvalue('username', '') }}{% else %}{{ user.username }}{% endif %}">
+                </div>
+                <div class="right">
+                    <label for="id_email">Email address<i>*</i></label>
+                    <input type="email" name="email" id="id_email"
+                        value="{% if form %}{{ form.getvalue('email', '') }}{% else %}{{ user.email }}{% endif %}">
+                </div>
+                {% if 'username' in errors %}
+                    <div class="error">{{ errors['username'] }}</div>
+                {% endif %}
+                {% if 'email' in errors %}
+                    <div class="error">{{ errors['email'] }}</div>
+                {% endif %}
+            </div>
+            <div class="line">
+                <div class="left">
+                    <label for="id_first_name">First name<i>*</i></label>
+                    <input type="text" name="first_name" id="id_first_name"
+                        value="{% if form %}{{ form.getvalue('first_name', '') }}{% else %}{{ user.first_name }}{% endif %}">
+                </div>
+                <div class="right">
+                    <label for="id_last_name">Last name</label>
+                    <input type="text" name="last_name" id="id_last_name"
+                        value="{% if form %}{{ form.getvalue('last_name', '') }}{% else %}{{ user.last_name }}{% endif %}">
+                </div>
+                {% if 'first_name' in errors %}
+                    <div class="error">{{ errors['first_name'] }}</div>
+                {% endif %}
+                {% if 'last_name' in errors %}
+                    <div class="error">{{ errors['last_name'] }}</div>
+                {% endif %}
+            </div>
+            <div class="line">
+                <label for="id_bio">Bio <i>your description, contact details or current status</i></label>
+                <input type="text" name="bio" id="id_bio"
+                    value="{% if form %}{{ form.getvalue('bio', '') }}{% else %}{{ user.bio }}{% endif %}">
+                {% if 'bio' in errors %}
+                    <div class="error">{{ errors['bio'] }}</div>
+                {% endif %}
+            </div>
+            <div class="line">
+                <label for="id_website">Website <i>your blog, resume or other social profile</i></label>
+                <input type="text" name="website" id="id_website"
+                    value="{% if form %}{{ form.getvalue('website', '') }}{% else %}{{ user.website }}{% endif %}">
+                {% if 'website' in errors %}
+                    <div class="error">{{ errors['website'] }}</div>
+                {% endif %}
+            </div>
+            <div class="line">
+                <div class="left">
+                    <div class="left">
+                        <label for="id_emoji">Emoji status</label>
+                        <input type="text" name="emoji" id="id_emoji"
+                            value="{% if form %}{{ form.getvalue('emoji', '') }}{% else %}{{ user.emoji }}{% endif %}">
+                    </div>
+                    <div class="right">
+                        <label for="id_year">Birthday year</label>
+                        <input type="text" name="birthyear" id="id_birthyear"
+                            value="{% if form %}{{ form.getvalue('birthyear', '') }}{% else %}{{ user.birthyear }}{% endif %}">
+                    </div>
+                </div>
+                <div class="right">
+                    <label for="id_country">Current country</label>
+                    <select id="id_country" name="country">
+                        {% if form %}
+                            {% set selected = form.getvalue('country', 'WW') %}
+                        {% else %}
+                            {% set selected = user.country %}
+                        {% endif %}
+                        {% for code, name in countries.items() %}
+                            <option value="{{ code }}" {% if selected == code %}selected{% endif %}>{{ name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                {% if 'emoji' in errors %}
+                    <div class="error">{{ errors['emoji'] }}</div>
+                {% endif %}
+                {% if 'birthyear' in errors %}
+                    <div class="error">{{ errors['birthyear'] }}</div>
+                {% endif %}
+                {% if 'country' in errors %}
+                    <div class="error">{{ errors['country'] }}</div>
+                {% endif %}
+            </div>
+            <div class="line">
+                <input type="submit" value="Update">
+            </div>
+        </form>
+    </div>
+{% endblock %}

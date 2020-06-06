@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block title %}{{ brand }} / @{{ member.username }}{% endblock %}
+
+{% block main %}
+    <div class="profile">
+        <div class="author">
+            <i>{{ member.emoji }}</i>
+            <a class="short" href="/{{ member }}">
+                {{ member.full_name }}
+            </a>
+            <a class="handle" href="/{{ member }}">
+                @{{ member }}
+            </a>
+            <b>&bull;</b>
+            {% if member.id == user.id %}
+                <a class="ago" href="/settings">edit</a>
+            {% else %}
+                {% if is_following %}
+                    <a class="ago" href="/{{ member.username }}/unfollow">unfollow</a>
+                {% else %}
+                    <a class="ago" href="/{{ member.username }}/follow">follow</a>
+                {% endif %}
+            {% endif %}
+        </div>
+        {% if member.bio %}
+            <div class="bio">
+                {{ member.bio | parser | safe }}
+            </div>
+        {% endif %}
+        {% if member.website or member.birthyear or member.country != 'WW' %}
+            <div class="extra">
+                {% if member.website %}
+                    {{ member.website | parser | safe }}
+                {% endif %}
+                {% if member.birthyear %}
+                    ~ {{ member.birthyear | age }} years old
+                {% endif %}
+                {% if member.country != 'WW' %}
+                    from {{ member.country | parser | safe }}
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+
+    {% include "common/reply.html" %}
+
+    <div class="list">
+        {% for entry in pinned %}
+            {% include "common/entry.html" %}
+        {% endfor %}
+        <div class="entry">
+            <div class="filters">
+                <a href="/{{ member.username }}" class="{% if tab == 'threads' %}selected{% endif %}">
+                    {{ threads }} thread{% if threads != 1 %}s{% endif %}
+                </a>
+                <a href="/{{ member.username }}/replies" class="{% if tab == 'replies' %}selected{% endif %}">
+                    {{ replies }} repl{% if replies == 1 %}y{% else %}ies{% endif %}
+                </a>
+            </div>
+        </div>
+        {% for entry in entries %}
+            {% include "common/entry.html" %}
+        {% else %}
+            <div class="entry">
+                <div class="content">Uh, nothing here yet.</div>
+            </div>
+        {% endfor %}
+        {% if entries | count < counter %}
+            <div class="button" onclick="loadMore(this, 1)">Load more</div>
+        {% endif %}
+    </div>
+{% endblock %}

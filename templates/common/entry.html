@@ -1,0 +1,38 @@
+<div class="entry">
+    <div class="author">
+        {% if entry.created_by.emoji %}
+            <i>{{ entry.created_by.emoji }}</i>
+        {% endif %}
+        <a class="short" href="/{{ entry.created_by }}">
+            {{ entry.created_by.short_name }}
+        </a>
+        <a class="handle" href="/{{ entry.created_by }}">
+            @{{ entry.created_by }}
+        </a>
+        <b class="{{ entry.created_by.status }}">&bull;</b>
+        <a class="ago" href="/re/{{ entry.id }}">
+            {{ entry.created_at | shortdate }} ago
+        </a>
+    </div>
+    <div class="content">
+        {{ entry.content | parser | safe }}
+    </div>
+    <div class="small">
+        <a href="/re/{{ entry.id }}">{{ entry.replied }}</a>
+        {% if entry.created_by_id == user.id %}
+            <b onclick="postDelete(event)" data-id="{{ entry.id }}">
+                delete
+            </b>
+        {% else %}
+            {% if entry.id in user.ex_saves %}
+                <b onclick="postUnsave(event)" data-id="{{ entry.id }}">
+                    unsave
+                </b>
+            {% else %}
+                <b onclick="postSave(event)" data-id="{{ entry.id }}">
+                    save
+                </b>
+            {% endif %}
+        {% endif %}
+    </div>
+</div>

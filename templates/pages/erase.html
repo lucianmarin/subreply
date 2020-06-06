@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}{{ brand }} / Erase{% endblock %}
+
+{% block main %}
+    <div class="title">
+        <a href="/settings" class="off">Settings</a>
+        <a href="/password" class="off">Password</a>
+        <a href="/erase">Erase</a>
+        <a href="/logout" class="off">Logout</a>
+    </div>
+    <div class="register">
+        <form enctype="multipart/form-data" method="post" autocomplete="off">
+            <div class="line">
+                <label for="id_password">Password</label>
+                <input type="password" name="password" id="id_password"
+                    value="{{ form.getvalue('password', '') }}">
+                {% for error in errors.get('password', []) %}
+                    <div class="error">{{ error }}</div>
+                {% endfor %}
+            </div>
+            <div class="line">
+                <label for="id_confirmation">Confirmation</label>
+                <div class="cell">
+                    <input type="checkbox" name="confirmation" id="id_confirmation" value="{{ form.getvalue('confirmation', '1') }}" {% if form.getvalue('confirmation') %}checked{% endif %}>
+                </div>
+                <div class="cell">
+                    <p>I confirm that I want my account to be completely erased from DubFi and not be recovered at all.</p>
+                </div>
+                {% for error in errors.get('confirmation', []) %}
+                    <div class="error">{{ error }}</div>
+                {% endfor %}
+            </div>
+            <div class="line">
+                <label for="id_warning">Warning</label>
+                <div class="cell">
+                    <input type="checkbox" name="warning" id="id_warning" value="{{ form.getvalue('warning', '2') }}" {% if form.getvalue('warning') %}checked{% endif %}>
+                </div>
+                <div class="cell">
+                    <p>I understand that {{ user.comments.count() }} of my statuses will be permanentely erased from DubFi and cannot be recovered at all.</p>
+                </div>
+                {% for error in errors.get('warning', []) %}
+                    <div class="error">{{ error }}</div>
+                {% endfor %}
+            </div>
+            <div class="line">
+                <input type="submit" value="Erase">
+            </div>
+        </form>
+    </div>
+{% endblock %}

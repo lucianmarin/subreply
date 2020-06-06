@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}{{ brand }} / Login{% endblock %}
+
+{% block main %}
+    <div class="title">
+        <a href="/login">Login</a>
+    </div>
+    <div class="login">
+        <form enctype="multipart/form-data" method="post">
+            <div class="line">
+                <label for="id_username">Username or email</label>
+                <input type="text" name="username" id="id_username"
+                    value="{{ form.getvalue('username', '') }}">
+                {% for error in errors.get('username', []) %}
+                    <div class="error">{{ error }}</div>
+                {% endfor %}
+            </div>
+            <div class="line">
+                <label for="id_password">Password</label>
+                <input type="password" name="password" id="id_password"
+                    value="{{ form.getvalue('password', '') }}">
+                {% for error in errors.get('password', []) %}
+                    <div class="error">{{ error }}</div>
+                {% endfor %}
+            </div>
+            <div class="line">
+                <input type="submit" value="Login">
+            </div>
+        </form>
+    </div>
+{% endblock %}

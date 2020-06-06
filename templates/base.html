@@ -1,0 +1,22 @@
+<!doctype html>
+<html>
+
+<head>
+    <title>{% block title %}{{ brand }}{% endblock %}</title>
+    {% include "meta.html" %}
+    {% block meta %}{% endblock %}
+</head>
+
+<body>
+    <div class="container">
+        <div class="leftside"></div>
+        <div class="sidebar">
+            {% include "sidebar.html" %}
+        </div>
+        <div class="main">
+            {% block main %}{% endblock %}
+        </div>
+        <div class="rightside"></div>
+    </div>
+</body>
+</html>

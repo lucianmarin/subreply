@@ -1,0 +1,13 @@
+cryptography
+django
+django-extensions
+dnspython
+emoji
+falcon
+gunicorn
+jinja2
+meinheld
+psycopg2-binary
+requests
+unidecode
+grapheme

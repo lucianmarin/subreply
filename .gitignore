@@ -1,0 +1,8 @@
+.DS_Store
+__pycache__
+*.so
+*.c
+build/
+media/
+local.py
+dub.pid

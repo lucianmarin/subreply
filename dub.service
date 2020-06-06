@@ -1,0 +1,21 @@
+[Unit]
+Description=Dub service
+After=network.target
+
+[Service]
+User=lucian
+Group=lucian
+PIDFile=/home/lucian/falcondub/dub.pid
+RuntimeDirectory=gunicorn
+WorkingDirectory=/home/lucian/falcondub
+ExecStart=/usr/local/bin/gunicorn router:app -c gunicorn.conf.py
+ExecReload=/bin/kill -s HUP $MAINPID
+ExecStop=/bin/kill -s TERM $MAINPID
+PrivateTmp=true
+
+[Install]
+WantedBy=default.target
+
+# sudo cp dub.service /etc/systemd/system/dub.service
+# sudo systemctl daemon-reload
+# sudo systemctl restart dub.service

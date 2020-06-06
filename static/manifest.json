@@ -1,0 +1,17 @@
+{
+    "lang": "en",
+    "name": "Subreply",
+    "short_name": "Subreply",
+    "description": "Tiny, but mighty social network.",
+    "icons": [
+        {
+            "src": "/static/logo-white.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        }
+    ],
+    "start_url": "/feed",
+    "display": "standalone",
+    "orientation": "portrait",
+    "status": "ok"
+}

@@ -1,0 +1,9 @@
+<div class="pages">
+    {% if entries.has_previous %}
+        <a href="?p={{ entries.page - 1 }}">back</a>
+    {% endif %}
+    <a class="{% if entries.has_previous %}previous{% endif %} {% if entries.has_next %}next{% endif %}">{{ entries.page }}</a>
+    {% if entries.has_next %}
+        <a href="?p={{ entries.page + 1 }}">next</a>
+    {% endif %}
+</div>
