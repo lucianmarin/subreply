@@ -1,0 +1,7 @@
+{% include "common/entry.html" %}
+
+<div class="sublist">
+    {% for entry in entry.kids.all() %}
+        {% include "common/entry.html" %}
+    {% endfor %}
+</div>

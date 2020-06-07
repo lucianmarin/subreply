@@ -16,8 +16,11 @@ class DeleteEndpoint:
         if not entry:
             resp.media = {'status': 'not found'}
             return
-        if entry.mentioned and not entry.seen_at:
+        if entry.mentioned and not entry.mention_seen_at:
             entry.mentioned.up_mentions()
+        if entry.parent and not entry.reply_seen_at:
+            entry.parent.created_by.up_replies()
+        entry.subtract_replies()
         entry.delete()
         resp.media = {'status': 'deleted'}
 
@@ -39,6 +42,7 @@ class SaveEndpoint:
             to_comment=entry
         )
         req.user.up_saves()
+        entry.up_saves()
         resp.media = {'status': 'unsave'}
 
 
@@ -55,43 +59,5 @@ class UnsaveEndpoint:
             return
         Save.objects.filter(created_by=req.user, to_comment=entry).delete()
         req.user.up_saves()
+        entry.up_saves()
         resp.media = {'status': 'save'}
-
-
-class PinEndpoint:
-    @before(auth_user)
-    def on_post(self, req, resp, id):
-        resp.content_type = MEDIA_JSON
-        if not req.user:
-            resp.media = {'status': 'not auth'}
-            return
-        entry = Comment.objects.filter(id=id).first()
-        if not entry:
-            resp.media = {'status': 'not found'}
-            return
-        if entry.pinned_by_id:
-            resp.media = {'status': 'already pinned'}
-            return
-        Comment.objects.filter(pinned_by=req.user).update(pinned_by=None)
-        entry.pinned_by = req.user
-        entry.seen_at = .0
-        entry.save(update_fields=['pinned_by', 'seen_at'])
-        entry.created_by.up_pins()
-        resp.media = {'status': 'unpin'}
-
-
-class UnpinEndpoint:
-    @before(auth_user)
-    def on_post(self, req, resp, id):
-        resp.content_type = MEDIA_JSON
-        if not req.user:
-            resp.media = {'status': 'not auth'}
-            return
-        entry = Comment.objects.filter(id=id, pinned_by=req.user).first()
-        if not entry:
-            resp.media = {'status': 'not found'}
-            return
-        entry.created_by.up_pins()
-        entry.pinned_by = None
-        entry.save(update_fields=['pinned_by'])
-        resp.media = {'status': 'pin'}

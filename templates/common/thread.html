@@ -1,0 +1,8 @@
+<div class="reply">
+    <form enctype="multipart/form-data" method="post" autocomplete="off">
+        <textarea placeholder="What's new?" name="content" rows="1" cols="60" maxlength="480" oninput="expand(this)" onkeydown="send(event)">{{ form.getvalue('content', status) }}</textarea>
+        {% for name, error in errors.items() %}
+            <div class="error">{{ error | safe }}</div>
+        {% endfor %}
+    </form>
+</div>

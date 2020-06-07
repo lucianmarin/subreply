@@ -37,13 +37,13 @@
                     ~ {{ member.birthyear | age }} years old
                 {% endif %}
                 {% if member.country != 'WW' %}
-                    from {{ member.country | parser | safe }}
+                    from {{ member.country | country }}
                 {% endif %}
             </div>
         {% endif %}
     </div>
 
-    {% include "common/reply.html" %}
+    {# include "common/reply.html" #}
 
     <div class="list">
         {% for entry in pinned %}
@@ -60,7 +60,11 @@
             </div>
         </div>
         {% for entry in entries %}
-            {% include "common/entry.html" %}
+            {% if tab == 'threads' %}
+                {% include "common/threads.html" %}
+            {% else %}
+                {% include "common/replies.html" %}
+            {% endif %}
         {% else %}
             <div class="entry">
                 <div class="content">Uh, nothing here yet.</div>

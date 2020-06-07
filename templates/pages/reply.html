@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}{{ brand }} / {{ view | capitalize }}{% endblock %}
+
+{% block main %}
+    <div class="list top">
+        {% for entry in ancestors %}
+            {% include "common/entry.html" %}
+        {% endfor %}
+        {% include "common/entry.html" %}
+    </div>
+
+    {% include "common/reply.html" %}
+
+    <div class="list">
+        {% for entry in entries %}
+            {% include "common/threads.html" %}
+        {% endfor %}
+    </div>
+{% endblock %}

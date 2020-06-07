@@ -33,8 +33,8 @@ class User(models.Model):
     emoji = models.CharField(max_length=15, default='')
     country = models.CharField(max_length=2, default='WW')
     birthyear = models.CharField(max_length=4, default='')
-    bio = models.CharField(max_length=120, unique=True)
-    website = models.CharField(max_length=120, unique=True)
+    bio = models.CharField(max_length=120, default='')
+    website = models.CharField(max_length=120, default='')
 
     donations = models.IntegerField(default=0)
 
@@ -59,22 +59,22 @@ class User(models.Model):
         away = now - 7 * 24 * 3600
         gone = now - 28 * 24 * 3600
         if self.seen_at > away:
-            return "available"
+            return "here"
         elif gone <= self.seen_at <= away:
             return "away"
         else:
-            return "unavailable"
+            return "gone"
 
     def up_followers(self):
         self.notif_followers = self.followers.filter(seen_at=.0).count()
         self.save(update_fields=['notif_followers'])
 
     def up_mentions(self):
-        self.notif_mentions = self.mentions.filter(seen_at=.0).count()
+        self.notif_mentions = self.mentions.filter(mention_seen_at=.0).count()
         self.save(update_fields=['notif_mentions'])
 
     def up_replies(self):
-        self.ex_replies = self.comments.filter(seen_at=.0).count()
+        self.notif_replies = Comment.objects.filter(parent__created_by=self, reply_seen_at=.0).count()
         self.save(update_fields=['notif_replies'])
 
     def up_saves(self):
@@ -95,6 +95,7 @@ class User(models.Model):
 
 
 class Comment(models.Model):
+    ancestors = fields.ArrayField(models.PositiveIntegerField(), default=list)
     parent = models.ForeignKey('self', on_delete=models.CASCADE, null=True,
                                related_name='kids')
     created_at = models.FloatField(default=.0)
@@ -110,6 +111,10 @@ class Comment(models.Model):
     mention_seen_at = models.FloatField(default=.0)
     reply_seen_at = models.FloatField(default=.0)
     replies = models.IntegerField(default=0, db_index=True)
+    saves = models.IntegerField(default=0, db_index=True)
+
+    class Meta:
+        unique_together = ['parent', 'created_by']
 
     @property
     def replied(self):
@@ -126,14 +131,20 @@ class Comment(models.Model):
         return [self.parent_id] + self.parent.get_ancestors()
 
     def add_replies(self):
-        ancestors = self.get_ancestors()
-        comments = Comment.objects.filter(id__in=ancestors)
-        comments.update(replied=F('replied') + 1)
+        ancestors = Comment.objects.filter(id__in=self.ancestors)
+        ancestors.update(replies=F('replies') + 1)
 
     def subtract_replies(self):
-        ancestors = self.get_ancestors()
-        comments = Comment.objects.filter(id__in=ancestors)
-        comments.update(replied=F('replied') - 1)
+        ancestors = Comment.objects.filter(id__in=self.ancestors)
+        ancestors.update(replies=F('replies') - 1)
+
+    def up_ancestors(self):
+        self.ancestors = self.get_ancestors()
+        self.save(update_fields=['ancestors'])
+
+    def up_saves(self):
+        self.saves = self.saved.count()
+        self.save(update_fields=['saves'])
 
 
 class Save(models.Model):

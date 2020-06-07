@@ -32,7 +32,7 @@ input[type=submit] { background-color: var(--dimgray); border: 0 none; border-ra
 
 svg { fill: none; stroke: var(--gray); stroke-linecap: round; stroke-linejoin: round; stroke-width: 2; }
 
-.container { display: grid; grid-template-columns: calc(50% - 300px) 150px 450px calc(50% - 300px); }
+.container { display: grid; grid-template-columns: calc(50% - 310px) 155px 465px calc(50% - 310px); }
 
 .container > div { min-height: 100vh; }
 
@@ -66,7 +66,7 @@ svg { fill: none; stroke: var(--gray); stroke-linecap: round; stroke-linejoin: r
 
 .links img { float: right; }
 
-.links svg { float: right; margin-left: 10px; padding: 2px; }
+.links svg { float: right; margin-left: 15px; padding: 2px; }
 
 .title { font-size: 15px; line-height: 20px; margin: 10px 0; }
 
@@ -76,13 +76,19 @@ svg { fill: none; stroke: var(--gray); stroke-linecap: round; stroke-linejoin: r
 
 .reply { margin: 10px 0; }
 
+.reply div { background-color: var(--whitesmoke); border-radius: var(--radius); color: var(--gray); padding: 5px 10px; }
+
 .list { margin-bottom: 10px; }
 
-.entry { border-bottom: var(--gainsboro) 1px solid; padding: 5px 0; }
+.list.top { margin-top: 10px; }
 
-.entry:first-child { padding-top: 0; }
+.list > .entry:first-child { border-top: 0 none; padding-top: 0; }
 
-.entry:last-child { border-bottom: 0 none; padding-bottom: 0; }
+.list > .entry:last-child { padding-bottom: 0; }
+
+.sublist { margin-left: 30px; }
+
+.entry { border-top: var(--whitesmoke) 1px solid; padding: 5px 0; }
 
 .entry .author .short, .entry .author .handle, .entry .author b { font-weight: bold; }
 

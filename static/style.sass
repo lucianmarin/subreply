@@ -108,7 +108,7 @@ svg
 
 .container
     display: grid
-    grid-template-columns: calc(50% - 300px) 150px 450px calc(50% - 300px)
+    grid-template-columns: calc(50% - 310px) 155px 465px calc(50% - 310px)
     &> div
         min-height: 100vh
 
@@ -173,7 +173,7 @@ svg
         float: right
     svg
         float: right
-        margin-left: 10px
+        margin-left: 15px
         padding: 2px
 
 .title
@@ -189,18 +189,29 @@ svg
 
 .reply
     margin: 10px 0
+    div
+        background-color: var(--whitesmoke)
+        border-radius: var(--radius)
+        color: var(--gray)
+        padding: 5px 10px
 
 .list
     margin-bottom: 10px
+    &.top
+        margin-top: 10px
+    &> .entry
+        &:first-child
+            border-top: 0 none
+            padding-top: 0
+        &:last-child
+            padding-bottom: 0
+
+.sublist
+    margin-left: 30px
 
 .entry
-    border-bottom: var(--gainsboro) 1px solid
+    border-top: var(--whitesmoke) 1px solid
     padding: 5px 0
-    &:first-child
-        padding-top: 0
-    &:last-child
-        border-bottom: 0 none
-        padding-bottom: 0
     .author
         .short, .handle, b
             font-weight: bold

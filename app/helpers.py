@@ -1,7 +1,20 @@
+import secrets
 from base64 import b64encode
+from datetime import datetime, timezone
 from hashlib import pbkdf2_hmac
 from random import choice
+
 from PIL import Image, ImageOps
+
+
+def utc_timestamp():
+    return datetime.now(timezone.utc).timestamp()
+
+
+def generate_passphrase(n=4):
+    with open('/usr/share/dict/words') as f:
+        words = [word.strip() for word in f]
+        return ' '.join(secrets.choice(words) for i in range(n))
 
 
 def parse_metadata(text):

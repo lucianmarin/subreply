@@ -1,12 +1,10 @@
 from datetime import datetime
 
+from app.const import COUNTRIES
 
-def plural(count, term, suffix):
-    if not count:
-        return "{0}{1}".format(term, suffix)
-    if count == 1:
-        return "{0} {1}".format(count, term.lower())
-    return "{0} {1}{2}".format(count, term.lower(), suffix)
+
+def country(code):
+    return COUNTRIES[code]
 
 
 def age(year):

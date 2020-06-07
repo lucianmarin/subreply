@@ -1,6 +1,6 @@
 <div class="logo">
     {% if user %}
-        <a class="{% if view == 'profile' %}selected{% endif %}" href="/{{ user }}">
+        <a class="{% if view == 'profile' and user == member %}selected{% endif %}" href="/{{ user }}">
             {{ user.username[:3] }}
         </a>
     {% else %}
@@ -93,7 +93,6 @@
             </svg>
         </a>
     {% endif %}
-
 
     <a href="/trends" class="{% if view == 'trending' %}on{% endif %}">
         <i>Trending</i>

@@ -1,6 +1,6 @@
 from jinja2 import Environment, FileSystemBytecodeCache, FileSystemLoader
 
-from app.filters import age, parser, shortdate, superscript
+from app.filters import age, country, parser, shortdate, superscript
 from project.settings import DEBUG
 
 env = Environment()
@@ -9,6 +9,7 @@ env.loader = FileSystemLoader('templates')
 env.auto_reload = DEBUG
 
 env.filters['age'] = age
+env.filters['country'] = country
 env.filters['parser'] = parser
 env.filters['shortdate'] = shortdate
 env.filters['superscript'] = superscript

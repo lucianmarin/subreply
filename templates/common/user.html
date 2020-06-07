@@ -1,0 +1,33 @@
+<div class="entry">
+    <div class="author">
+        <i>{{ member.emoji }}</i>
+        <a class="short" href="/{{ member }}">
+            {{ member.full_name }}
+        </a>
+        <a class="handle" href="/{{ member }}">
+            @{{ member }}
+        </a>
+        <b>&bull;</b>
+        <a class="ago" href="/{{ member }}">
+            {{ entry.created_at | shortdate }} ago
+        </a>
+    </div>
+    {% if member.bio %}
+        <div class="bio">
+            {{ member.bio | parser | safe }}
+        </div>
+    {% endif %}
+    {% if member.website or member.birthyear or member.country != 'WW' %}
+        <div class="extra">
+            {% if member.website %}
+                {{ member.website | parser | safe }}
+            {% endif %}
+            {% if member.birthyear %}
+                ~ {{ member.birthyear | age }} years old
+            {% endif %}
+            {% if member.country != 'WW' %}
+                from {{ member.country | country }}
+            {% endif %}
+        </div>
+    {% endif %}
+</div>

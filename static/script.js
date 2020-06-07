@@ -57,7 +57,7 @@ function postDelete(event) {
     var id = element.dataset.id;
     ajax('/api/delete/' + id, function (data) {
         if (data.status == 'deleted') {
-            element.innerText = capitalize(data.status);
+            element.innerText = data.status;
             element.onclick = function (ev) {
                 ev.preventDefault();
             }
@@ -71,7 +71,7 @@ function postSave(event) {
     var id = element.dataset.id;
     ajax('/api/save/' + id, function (data) {
         if (data.status == 'unsave') {
-            element.innerText = capitalize(data.status);
+            element.innerText = data.status;
             element.onclick = function (ev) {
                 ev.preventDefault();
                 postUnsave(ev);
@@ -86,40 +86,10 @@ function postUnsave(event) {
     var id = element.dataset.id;
     ajax('/api/unsave/' + id, function (data) {
         if (data.status == 'save') {
-            element.innerText = capitalize(data.status);
+            element.innerText = data.status;
             element.onclick = function (ev) {
                 ev.preventDefault();
                 postSave(ev);
-            }
-        }
-    })
-}
-
-function postPin(event) {
-    event.preventDefault();
-    var element = event.currentTarget;
-    var id = element.dataset.id;
-    ajax('/api/pin/' + id, function (data) {
-        if (data.status == 'unpin') {
-            element.innerText = capitalize(data.status);
-            element.onclick = function (ev) {
-                ev.preventDefault();
-                postUnpin(ev);
-            }
-        }
-    })
-}
-
-function postUnpin(event) {
-    event.preventDefault();
-    var element = event.currentTarget;
-    var id = element.dataset.id;
-    ajax('/api/unpin/' + id, function (data) {
-        if (data.status == 'pin') {
-            element.innerText = capitalize(data.status);
-            element.onclick = function (ev) {
-                ev.preventDefault();
-                postPin(ev);
             }
         }
     })

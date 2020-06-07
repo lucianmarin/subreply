@@ -1,6 +1,7 @@
 import emoji
 import grapheme
 import requests
+from django.db.models import Q
 from dns.resolver import query as dns_query
 
 from app.const import COUNTRIES, MAX_YEAR, MIN_YEAR
@@ -128,7 +129,7 @@ def valid_email(value, user_id=0):
             return "Email is used by someone else"
 
 
-def valid_bio(value, username):
+def valid_bio(value, username, user_id=0):
     if value:
         mentions, links, hashtags = parse_metadata(value)
         if len(value) > 120:
@@ -153,6 +154,10 @@ def valid_bio(value, username):
                 users = User.objects.filter(username=mention).exists()
                 if not users:
                     return "@{0} isn't an user".format(mention)
+        else:
+            users = User.objects.filter(bio=value).exclude(id=user_id).exists()
+            if users:
+                return "Bio is used by someone else"
 
 
 def valid_website(value, user_id=0):
@@ -171,8 +176,10 @@ def valid_website(value, user_id=0):
                 print(e)
             if 'text/html' not in headers.get('Content-Type', '').lower():
                 return "Website isn't a valid HTML page"
-            elif User.objects.filter(website=value).exclude(id=user_id).exists():
-                return "Website is used by someone else"
+            else:
+                users = User.objects.filter(website=value).exclude(id=user_id).exists()
+                if users:
+                    return "Website is used by someone else"
 
 
 def valid_password(value1, value2):
@@ -203,7 +210,7 @@ def valid_country(value):
         return "Country code is invalid"
 
 
-def valid_emoji(value):
+def valid_emoji(value, user_id=0):
     if value:
         if grapheme.length(value) != emoji.emoji_count(value):
             return "Emoji only for status"
@@ -211,6 +218,10 @@ def valid_emoji(value):
             return "Emoji are too many"
         elif emoji.emoji_count(value) == 2 and value[0] == value[1]:
             return "Emoji should be different"
+        else:
+            users = User.objects.filter(Q(emoji=value) | Q(emoji=value[::-1])).exists()
+            if users:
+                return "Emoji already taken"
 
 
 def erasing(user, password, confirmation, warning):
@@ -236,10 +247,10 @@ def profiling(f, user_id):
     errors['last_name'] = valid_last_name(f['last_name'])
     errors['email'] = valid_email(f['email'], user_id=user_id)
     errors['website'] = valid_website(f['website'], user_id=user_id)
-    errors['bio'] = valid_bio(f['bio'], f['username'])
+    errors['bio'] = valid_bio(f['bio'], f['username'], user_id=user_id)
     errors['birthyear'] = valid_birthyear(f['birthyear'])
     errors['country'] = valid_country(f['country'])
-    errors['emoji'] = valid_emoji(f['emoji'])
+    errors['emoji'] = valid_emoji(f['emoji'], user_id=user_id)
     errors = {k: v for k, v in errors.items() if v}
     return errors
 
