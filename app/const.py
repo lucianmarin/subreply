@@ -4,7 +4,7 @@ MIN_YEAR = 1918
 MAX_YEAR = 2018
 
 COUNTRIES = OrderedDict((
-    ("WW", "Worldwide"),
+    ("", "Worldwide"),
     ("AF", "Afghanistan"),
     ("AL", "Albania"),
     ("DZ", "Algeria"),

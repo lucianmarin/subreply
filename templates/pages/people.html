@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block main %}
+    <div class="list">
+        <div class="entry">
+            <div class="filters">
+                {% for k in ['active', 'popular', 'joined'] %}
+                    <a href="/people/{{ k }}" class="{% if kind == k %}selected{% endif %}">
+                        {{ k | capitalize }}
+                    </a>
+                {% endfor %}
+                <a href="/people/local" class="{% if kind == 'local' %}selected{% endif %}">
+                    {{ user.country | country }}
+                </a>
+            </div>
+        </div>
+
+        {% for entry in entries %}
+            {% set member = entry %}
+            {% include "common/user.html" %}
+        {% else %}
+            {% include "common/nothing.html" %}
+        {% endfor %}
+    </div>
+{% endblock %}

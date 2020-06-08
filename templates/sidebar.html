@@ -46,7 +46,7 @@
                 <path d="M10 6 L3 14 10 22 M3 14 L18 14 C26 14 30 18 30 26" />
             </svg>
         </a>
-        <a href="/active" class="{% if view == 'people' %}on{% endif %}">
+        <a href="/people/active" class="{% if view == 'people' %}on{% endif %}">
             <i>People</i>
             <svg id="i-location" viewBox="0 0 32 32" width="16" height="16">
                 <circle cx="16" cy="11" r="4" />
@@ -71,6 +71,14 @@
                 <path d="M28 6 L4 6 M28 16 L4 16 M28 26 L4 26 M24 3 L24 9 M8 13 L8 19 M20 23 L20 29" />
             </svg>
         </a>
+        {% if user.id == 1 %}
+            <a href="/requests" class="{% if view == 'requests' %}on{% endif %}">
+                <i>Requests</i>
+                <svg id="i-paperclip" viewBox="0 0 32 32" width="16" height="16">
+                    <path d="M10 9 L10 24 C10 28 13 30 16 30 19 30 22 28 22 24 L22 6 C22 3 20 2 18 2 16 2 14 3 14 6 L14 23 C14 24 15 25 16 25 17 25 18 24 18 23 L18 9" />
+                </svg>
+            </a>
+        {% endif %}
     {% else %}
         <a href="/about" class="{% if view == 'about' %}on{% endif %}">
             <i>About</i>
@@ -92,9 +100,15 @@
                 <path d="M29 17 L29 28 3 28 3 17 M2 8 L30 8 30 16 C30 16 24 20 16 20 8 20 2 16 2 16 L2 8 Z M16 22 L16 18 M20 8 C20 8 20 4 16 4 12 4 12 8 12 8" />
             </svg>
         </a>
+        <a href="/request" class="{% if view == 'request' %}on{% endif %}">
+            <i>Request</i>
+            <svg id="i-gift" viewBox="0 0 32 32" width="16" height="16">
+                <path d="M4 14 L4 30 28 30 28 14 M2 9 L2 14 30 14 30 9 2 9 Z M16 9 C 16 9 14 0 8 3 2 6 16 9 16 9 16 9 18 0 24 3 30 6 16 9 16 9" />
+            </svg>
+        </a>
     {% endif %}
 
-    <a href="/trends" class="{% if view == 'trending' %}on{% endif %}">
+    <a href="/trending/20" class="{% if view == 'trending' %}on{% endif %}">
         <i>Trending</i>
         <svg id="i-activity"viewBox="0 0 32 32" width="16" height="16">
             <path d="M4 16 L11 16 14 29 18 3 21 16 28 16" />

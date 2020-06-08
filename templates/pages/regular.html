@@ -1,13 +1,11 @@
 {% extends "base.html" %}
 
-{% block title %}{{ brand }} / {{ view | capitalize }}{% endblock %}
-
 {% block main %}
-    {% if view in ['search', 'timeline'] %}
+    {% if view == 'search' %}
         {% include "common/query.html" %}
     {% endif %}
 
-    <div class="list top">
+    <div class="list">
         {% for entry in entries %}
             {% if view in ['replying', 'replies'] %}
                 {% include "common/replies.html" %}
@@ -21,9 +19,7 @@
                 {% include "common/entry.html" %}
             {% endif %}
         {% else %}
-            <div class="entry">
-                <div class="content">Uh, nothing here yet.</div>
-            </div>
+            {% include "common/nothing.html" %}
         {% endfor %}
     </div>
 {% endblock %}

@@ -21,19 +21,15 @@
         <a href="/re/{{ entry.id }}">{{ entry.replied }}</a>
 
         {% if entry.parent_id %}
-            <a href="/re/{{ entry.parent_id }}">&not;</a>
+            <a class="done" href="/re/{{ entry.parent_id }}">&not;</a>
         {% endif %}
 
         {% if entry.created_by_id == user.id and entry.saves %}
             <b>{{ entry.saves }} save{% if entry.saves > 1 %}s{% endif %}</b>
         {% endif %}
 
-        {% if entry.created_by_id == user.id %}
-            <b onclick="postDelete(event)" data-id="{{ entry.id }}">
-                delete
-            </b>
-        {% else %}
-            {% if entry.id in user.saved_list %}
+        {% if entry.created_by_id != user.id %}
+            {% if entry.id in user.saves %}
                 <b onclick="postUnsave(event)" data-id="{{ entry.id }}">
                     unsave
                 </b>
@@ -42,6 +38,12 @@
                     save
                 </b>
             {% endif %}
+        {% endif %}
+
+        {% if user.id in [entry.created_by_id, entry.parent.created_by_id] and not entry.replies %}
+            <b onclick="postDelete(event)" data-id="{{ entry.id }}">
+                delete
+            </b>
         {% endif %}
     </div>
 </div>

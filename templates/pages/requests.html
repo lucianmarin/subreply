@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block main %}
+    <div class="list">
+        {% for entry in entries %}
+            <div class="entry">
+                <div class="author">{{ entry.email }}</div>
+                <div class="content">{{ entry.reason | parser }}</div>
+            </div>
+        {% else %}
+            {% include "common/nothing.html" %}
+        {% endfor %}
+    </div>
+{% endblock %}

@@ -7,9 +7,13 @@
         <a class="handle" href="/{{ member }}">
             @{{ member }}
         </a>
-        <b>&bull;</b>
+        <b class="{{ member.status }}">&bull;</b>
         <a class="ago" href="/{{ member }}">
-            {{ entry.created_at | shortdate }} ago
+            {% if view == 'people' %}
+                {{ entry.seen_at | shortdate }} ago
+            {% else %}
+                {{ entry.created_at | shortdate }} ago
+            {% endif %}
         </a>
     </div>
     {% if member.bio %}
@@ -17,7 +21,7 @@
             {{ member.bio | parser | safe }}
         </div>
     {% endif %}
-    {% if member.website or member.birthyear or member.country != 'WW' %}
+    {% if member.website or member.birthyear or member.country %}
         <div class="extra">
             {% if member.website %}
                 {{ member.website | parser | safe }}
@@ -25,7 +29,7 @@
             {% if member.birthyear %}
                 ~ {{ member.birthyear | age }} years old
             {% endif %}
-            {% if member.country != 'WW' %}
+            {% if member.country %}
                 from {{ member.country | country }}
             {% endif %}
         </div>

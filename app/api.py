@@ -16,6 +16,10 @@ class DeleteEndpoint:
         if not entry:
             resp.media = {'status': 'not found'}
             return
+        valid_ids = [entry.created_by_id, entry.parent.created_by_id] if entry.parent_id else [entry.created_by_id]
+        if req.user.id not in valid_ids:
+            resp.media = {'status': 'not valid'}
+            return
         if entry.mentioned and not entry.mention_seen_at:
             entry.mentioned.up_mentions()
         if entry.parent and not entry.reply_seen_at:

@@ -1,20 +1,22 @@
 from cgi import FieldStorage
-from os import remove
+from hashlib import md5
 
-from django.db.models import Max, Q
+from django.db.models import Count, Max, Prefetch, Q
 from falcon import status_codes
 from falcon.hooks import before
 from falcon.redirects import HTTPFound
-from unidecode import unidecode
 
 from app.const import COUNTRIES
 from app.helpers import make_hash, parse_metadata, utc_timestamp
 from app.hooks import auth_user, login_required
 from app.jinja import env
-from app.models import Comment, Relation, Save, User
-from app.validation import (authentication, changing, discussion, erasing,
-                            profiling, registration)
+from app.models import Comment, Invitation, Relation, Request, Save, User
+from app.validation import (authentication, changing, profiling, registration,
+                            valid_content, valid_invitation_email, valid_reply,
+                            valid_request_email)
 from project.settings import DEBUG, MAX_AGE, F
+
+PFR = Prefetch('kids', queryset=Comment.objects.order_by('id').select_related('created_by'))
 
 
 class StaticResource(object):
@@ -72,15 +74,14 @@ class SearchResource:
         entries = self.fetch_results(terms) if terms else self.fetch_entries()
         template = env.get_template('pages/regular.html')
         resp.body = template.render(
-            user=req.user, entries=entries, q=q, counter=entries.count(),
-            view='search'
+            user=req.user, entries=entries, q=q, view='search'
         )
 
 
 class FeedResource:
     def fetch_entries(self, user):
         friends = Relation.objects.filter(created_by=user).values('to_user_id')
-        return Comment.objects.filter(created_by__in=friends, parent=None).order_by('-id')
+        return Comment.objects.filter(created_by__in=friends, parent=None).order_by('-id').select_related('created_by').prefetch_related(PFR)
 
     @before(auth_user)
     @before(login_required)
@@ -89,16 +90,18 @@ class FeedResource:
         entries = self.fetch_entries(req.user)
         template = env.get_template('pages/feed.html')
         resp.body = template.render(
-            user=req.user, entries=entries, errors={}, form=form, view='feed'
+            user=req.user, entries=entries[:15], errors={}, form=form, view='feed'
         )
 
     @before(auth_user)
     @before(login_required)
     def on_post(self, req, resp):
         form = FieldStorage(fp=req.stream, environ=req.env)
-        content = unidecode(form.getvalue('content', ''))
+        content = form.getvalue('content', '')
         content = " ".join([p.strip() for p in content.split()])
-        errors = discussion(content, req.user)
+        errors = {}
+        errors['content'] = valid_content(content, req.user)
+        errors = {k: v for k, v in errors.items() if v}
         if errors:
             entries = self.fetch_entries(req.user)
             template = env.get_template('pages/feed.html')
@@ -149,11 +152,13 @@ class ReplyResource:
     def on_post(self, req, resp, id):
         entry = Comment.objects.filter(id=id).first()
         form = FieldStorage(fp=req.stream, environ=req.env)
-        content = unidecode(form.getvalue('content', ''))
+        content = form.getvalue('content', '')
         content = " ".join([p.strip() for p in content.split()])
-        errors = discussion(content, req.user)
-        if entry.created_by_id == req.user.id:
-            errors['author'] = "Can't reply to yourself"
+        mentions, links, hashtags = parse_metadata(content)
+        errors = {}
+        errors['content'] = valid_content(content, req.user)
+        errors['reply'] = valid_reply(entry, req.user, mentions)
+        errors = {k: v for k, v in errors.items() if v}
         if errors:
             ancestors = Comment.objects.filter(id__in=entry.ancestors).order_by('id')
             entries = Comment.objects.filter(parent=entry)
@@ -164,7 +169,6 @@ class ReplyResource:
                 view='reply'
             )
         else:
-            mentions, links, hashtags = parse_metadata(content)
             extra = {}
             extra['hashtag'] = hashtags[0].lower() if hashtags else ''
             extra['link'] = links[0].lower() if links else ''
@@ -179,8 +183,8 @@ class ReplyResource:
             )
             if re.mentioned:
                 re.mentioned.up_mentions()
-            re.add_replies()
             re.up_ancestors()
+            re.add_replies()
             entry.created_by.up_replies()
             raise HTTPFound(f'/re/{id}')
 
@@ -193,15 +197,14 @@ class ProfileResource:
         return Comment.objects.filter(created_by=user).exclude(parent=None).order_by('-id')
 
     @before(auth_user)
-    def on_get_r(self, req, resp, username):
+    def on_get_re(self, req, resp, username):
         self.get_profile(req, resp, username, 'replies')
 
     @before(auth_user)
-    def on_get_t(self, req, resp, username):
+    def on_get_th(self, req, resp, username):
         self.get_profile(req, resp, username, 'threads')
 
     def get_profile(self, req, resp, username, tab):
-        form = FieldStorage(fp=req.stream, environ=req.env)
         member = User.objects.filter(username=username).first()
         if not member:
             template = env.get_template('pages/404.html')
@@ -214,14 +217,13 @@ class ProfileResource:
         is_following = Relation.objects.filter(
             created_by=req.user, to_user=member
         ).exists() if req.user else False
-        country = COUNTRIES[member.country]
+        invite = Invitation.objects.filter(invited=member).first()
+        invited_by = invite.created_by.username if invite else "lucian"
         template = env.get_template('pages/profile.html')
         resp.body = template.render(
-            user=req.user, member=member, entries=entries,
-            tab=tab, threads=threads, replies=replies,
-            is_following=is_following, country=country,
-            counter=entries.count(), form=form, errors={}, status="@lucian ",
-            view='profile'
+            user=req.user, member=member, entries=entries, tab=tab,
+            threads=threads, replies=replies, is_following=is_following,
+            invited_by=invited_by, view='profile'
         )
 
 
@@ -308,7 +310,7 @@ class RepliesResource:
 class ReplyingResource:
     def fetch_entries(self, user):
         friends = Relation.objects.filter(created_by=user).exclude(to_user=user).values('to_user_id')
-        return Comment.objects.filter(created_by__in=friends).exclude(parent=None).order_by('-id')
+        return Comment.objects.filter(created_by__in=friends).exclude(parent=None).exclude(parent__created_by=user).order_by('-id').select_related('created_by', 'parent__created_by', 'parent__parent')
 
     @before(auth_user)
     @before(login_required)
@@ -335,38 +337,75 @@ class SavesResource:
         )
 
 
-class LinksResource:
-    def fetch_entries(self, user):
-        friends = Relation.objects.filter(created_by=user).values('to_user_id')
-        return Comment.objects.filter(created_by_id__in=friends).exclude(link='').order_by('-id')
+class RequestsResource:
+    def fetch_entries(self):
+        return Request.objects.order_by('-id')
 
     @before(auth_user)
     @before(login_required)
     def on_get(self, req, resp):
-        entries = self.fetch_entries(req.user)
-        template = env.get_template('pages/regular.html')
+        entries = self.fetch_entries()
+        template = env.get_template('pages/requests.html')
         resp.body = template.render(
-            user=req.user, entries=entries, counter=entries.count(),
-            description='Links from people you follow',
-            view='links'
+            user=req.user, entries=entries, view='requests'
         )
 
 
 class PeopleResource:
-    def fetch_entries(self, user):
-        users = User.objects.filter(country=user.country).values('id')
-        return Comment.objects.filter(created_by__in=users).order_by('-id')
+    def fetch_local(self, user):
+        return User.objects.filter(country=user.country).order_by('-seen_at')
+
+    def fetch_active(self):
+        return User.objects.order_by('-seen_at')
+
+    def fetch_joined(self):
+        return User.objects.order_by('-id')
+
+    def fetch_popular(self):
+        return User.objects.annotate(posts=Count('comments')).order_by('-posts', '-seen_at')
 
     @before(auth_user)
     @before(login_required)
-    def on_get(self, req, resp):
-        entries = self.fetch_entries(req.user)
-        template = env.get_template('pages/regular.html')
+    def on_get(self, req, resp, kind):
+        if kind == 'active':
+            entries = self.fetch_active()
+        elif kind == 'popular':
+            entries = self.fetch_popular()
+        elif kind == 'joined':
+            entries = self.fetch_joined()
+        elif kind == 'local':
+            entries = self.fetch_local(req.user)
+        else:
+            template = env.get_template('pages/404.html')
+            resp.body = template.render(user=req.user, url=f'people/{kind}')
+            resp.status = status_codes.HTTP_404
+            return
+        template = env.get_template('pages/people.html')
         resp.body = template.render(
-            user=req.user, entries=entries, counter=entries.count(),
-            title=COUNTRIES[req.user.country],
-            description='Statuses from people in your country',
-            view='People'
+            user=req.user, entries=entries, kind=kind, view='people'
+        )
+
+
+class TrendingResource:
+    def fetch_entries(self, limit):
+        limited = Comment.objects.filter(parent=None).exclude(replies=0).order_by('-id').values('id')[:limit]
+        return Comment.objects.filter(id__in=limited).order_by('-replies', '-id').select_related('created_by').prefetch_related(PFR)
+
+    @before(auth_user)
+    def on_get(self, req, resp, limit):
+        try:
+            limit = int(limit)
+        except Exception as e:
+            print(e)
+        if isinstance(limit, str):
+            template = env.get_template('pages/404.html')
+            resp.body = template.render(user=req.user, url=f'trends/{limit}')
+            resp.status = status_codes.HTTP_404
+            return
+        entries = self.fetch_entries(limit)
+        template = env.get_template('pages/trending.html')
+        resp.body = template.render(
+            user=req.user, entries=entries, limit=limit, view='trending'
         )
 
 
@@ -408,37 +447,46 @@ class UnfollowResource:
         raise HTTPFound(req.referer)
 
 
-class EraseResource:
+class InvitationsResource:
+    def fetch_entries(self, user):
+        return Invitation.objects.filter(created_by=user).order_by('-id')
+
     @before(auth_user)
     @before(login_required)
     def on_get(self, req, resp):
         form = FieldStorage(fp=req.stream, environ=req.env)
-        template = env.get_template('pages/erase.html')
+        entries = self.fetch_entries(req.user)
+        template = env.get_template('pages/invitations.html')
         resp.body = template.render(
-            user=req.user, errors={}, form=form,
-            view='erase'
+            user=req.user, errors={}, form=form, entries=entries,
+            view='invitations'
         )
 
     @before(auth_user)
     @before(login_required)
     def on_post(self, req, resp):
         form = FieldStorage(fp=req.stream, environ=req.env)
-        password = form.getvalue('password', '')
-        confirmation = form.getvalue('confirmation', '')
-        warning = form.getvalue('warning', '')
-        print(confirmation, warning)
-        errors = erasing(req.user, password, confirmation, warning)
+        entries = self.fetch_entries(req.user)
+        email = form.getvalue('email', '')
+        errors = {}
+        errors['email'] = valid_invitation_email(email)
+        errors = {k: v for k, v in errors.items() if v}
         if errors:
-            template = env.get_template('pages/erase.html')
+            template = env.get_template('pages/invitations.html')
             resp.body = template.render(
-                user=req.user, errors=errors, form=form,
-                view='erase'
+                user=req.user, errors=errors, form=form, entries=entries,
+                view='invitations'
             )
         else:
-            remove("media/u.{0}.jpg".format(req.user.id))
-            req.user.delete()
-            resp.unset_cookie('identity')
-            raise HTTPFound('/search')
+            salted_email = f"{email}@subreply.com"[::-1]
+            code = md5(salted_email.encode()).hexdigest()
+            i, is_new = Invitation.objects.get_or_create(
+                created_at=utc_timestamp(),
+                created_by=req.user,
+                email=email,
+                code=code
+            )
+            raise HTTPFound('/invitations')
 
 
 class PasswordResource:
@@ -534,6 +582,32 @@ class LoginResource:
             raise HTTPFound('/feed')
 
 
+class RequestResource:
+    def on_get(self, req, resp):
+        form = FieldStorage(fp=req.stream, environ=req.env)
+        template = env.get_template('pages/request.html')
+        resp.body = template.render(errors={}, form=form, view='request')
+
+    def on_post(self, req, resp):
+        form = FieldStorage(fp=req.stream, environ=req.env)
+        email = form.getvalue('email', '').strip().lower()
+        reason = form.getvalue('reason', '').strip()
+        errors = {}
+        errors['email'] = valid_request_email(email)
+        errors['reason'] = "Reason is required" if not reason else None
+        errors = {k: v for k, v in errors.items() if v}
+        if errors:
+            template = env.get_template('pages/request.html')
+            resp.body = template.render(
+                errors=errors, form=form, view='request'
+            )
+        else:
+            r, is_new = Request.objects.get_or_create(
+                created_at=utc_timestamp(), email=email, reason=reason
+            )
+            raise HTTPFound('/about')
+
+
 class LogoutResource:
     def on_get(self, req, resp):
         resp.unset_cookie('identity')
@@ -551,7 +625,7 @@ class RegisterResource:
     def on_post(self, req, resp):
         form = FieldStorage(fp=req.stream, environ=req.env)
         f = {}
-        f['remote_addr'] = '127.0.0.2' if DEBUG else req.access_route[0]
+        f['remote_addr'] = '127.0.0.3' if DEBUG else req.access_route[0]
         f['username'] = form.getvalue('username', '').strip().lower()
         fn_parts = form.getvalue('first_name', '').split()
         f['first_name'] = " ".join([p.strip() for p in fn_parts])
@@ -560,6 +634,7 @@ class RegisterResource:
         f['password1'] = form.getvalue('password1', '')
         f['password2'] = form.getvalue('password2', '')
         f['email'] = form.getvalue('email', '').strip().lower()
+        f['invitation'] = form.getvalue('invitation', '').strip().lower()
         bio_parts = form.getvalue('bio', '').split()
         f['bio'] = " ".join([p.strip() for p in bio_parts])
         f['emoji'] = form.getvalue('emoji', '').strip()
@@ -595,6 +670,9 @@ class RegisterResource:
                 seen_at=utc_timestamp(),
                 created_by=user, to_user=user
             )
+            Invitation.objects.filter(
+                code=f['invitation']
+            ).update(invited=user)
             token = F.encrypt(str(user.id).encode()).decode()
             resp.set_cookie('identity', token, max_age=MAX_AGE)
             raise HTTPFound('/')

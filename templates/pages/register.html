@@ -1,7 +1,5 @@
 {% extends "base.html" %}
 
-{% block title %}{{ brand }} / Register{% endblock %}
-
 {% block main %}
     <div class="title">
         <a href="/register">Register</a>
@@ -12,11 +10,13 @@
                 <div class="left">
                     <label for="id_username">Username<i>*</i></label>
                     <input type="text" name="username" id="id_username"
+                        maxlength="15"
                         value="{{ form.getvalue('username', '') }}">
                 </div>
                 <div class="right">
                     <label for="id_email">Email address<i>*</i></label>
                     <input type="email" name="email" id="id_email"
+                        maxlength="120"
                         value="{{ form.getvalue('email', '') }}">
                 </div>
                 {% if 'username' in errors %}
@@ -30,11 +30,13 @@
                 <div class="left">
                     <label for="id_first_name">First name<i>*</i></label>
                     <input type="text" name="first_name" id="id_first_name"
+                        maxlength="15"
                         value="{{ form.getvalue('first_name', '') }}">
                 </div>
                 <div class="right">
                     <label for="id_last_name">Last name</label>
                     <input type="text" name="last_name" id="id_last_name"
+                        maxlength="15"
                         value="{{ form.getvalue('last_name', '') }}">
                 </div>
                 {% if 'first_name' in errors %}
@@ -48,11 +50,13 @@
                 <div class="left">
                     <label for="id_password1">Password<i>*</i></label>
                     <input type="password" name="password1" id="id_password1"
+                        maxlength="120"
                         value="{{ form.getvalue('password1', '') }}">
                 </div>
                 <div class="right">
                     <label for="id_password2">Password confirmation<i>*</i></label>
                     <input type="password" name="password2" id="id_password2"
+                        maxlength="120"
                         value="{{ form.getvalue('password2', '') }}">
                 </div>
                 {% if 'password' in errors %}
@@ -60,8 +64,16 @@
                 {% endif %}
             </div>
             <div class="line">
+                <label for="id_invitation">Invitation<i>*</i> <i>request one from a member or using the form</i></label>
+                <input type="text" name="invitation" id="id_invitation" maxlength="32"
+                    value="{{ form.getvalue('invitation', '') }}">
+                {% if 'invitation' in errors %}
+                    <div class="error">{{ errors['invitation'] }}</div>
+                {% endif %}
+            </div>
+            <div class="line">
                 <label for="id_bio">Bio <i>your description, contact details or current status</i></label>
-                <input type="text" name="bio" id="id_bio"
+                <input type="text" name="bio" id="id_bio" maxlength="120"
                     value="{{ form.getvalue('bio', '') }}">
                 {% if 'bio' in errors %}
                     <div class="error">{{ errors['bio'] }}</div>
@@ -69,7 +81,8 @@
             </div>
             <div class="line">
                 <label for="id_website">Website <i>your blog, resume or other social profile</i></label>
-                <input type="url" name="website" id="id_website" placeholder="https://"
+                <input type="url" name="website" id="id_website"
+                    maxlength="120" placeholder="https://"
                     value="{{ form.getvalue('website', '') }}">
                 {% if 'website' in errors %}
                     <div class="error">{{ errors['website'] }}</div>
@@ -80,18 +93,20 @@
                     <div class="left">
                         <label for="id_emoji">Emoji status</label>
                         <input type="text" name="emoji" id="id_emoji"
+                            maxlength="15"
                             value="{{ form.getvalue('emoji', '') }}">
                     </div>
                     <div class="right">
                         <label for="id_birthyear">Birthday year</label>
                         <input type="text" name="birthyear" id="id_birthyear"
+                            maxlength="4"
                             value="{{ form.getvalue('birthyear', '') }}">
                     </div>
                 </div>
                 <div class="right">
                     <label for="id_country">Current country</label>
                     <select id="id_country" name="country">
-                        {% set selected = form.getvalue('country', 'WW') %}
+                        {% set selected = form.getvalue('country', '') %}
                         {% for code, name in countries.items() %}
                             <option value="{{ code }}" {% if selected == code %}selected{% endif %}>{{ name }}</option>
                         {% endfor %}

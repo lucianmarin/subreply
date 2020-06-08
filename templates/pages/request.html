@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block main %}
+    <div class="title">
+        <a href="/request">Request</a> invitation
+    </div>
+    <div class="login">
+        <form enctype="multipart/form-data" method="post">
+            <div class="line">
+                <label for="id_email">Email address<i>*</i></label>
+                <input type="text" name="email" id="id_email"
+                    value="{{ form.getvalue('email', '') }}">
+                {% if 'email' in errors %}
+                    <div class="error">{{ errors['email'] }}</div>
+                {% endif %}
+            </div>
+            <div class="line">
+                <label for="id_reason">Reason<i>* as many details as possible</i></label>
+                <textarea name="reason" rows="1" cols="60" maxlength="480" oninput="expand(this)" onkeydown="send(event)"></textarea>
+                {% if 'reason' in errors %}
+                    <div class="error">{{ errors['reason'] }}</div>
+                {% endif %}
+            </div>
+            <div class="line">
+                <input type="submit" value="Request">
+            </div>
+        </form>
+    </div>
+{% endblock %}

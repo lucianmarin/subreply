@@ -1,7 +1,5 @@
 {% extends "base.html" %}
 
-{% block title %}{{ brand }} / @{{ member.username }}{% endblock %}
-
 {% block main %}
     <div class="profile">
         <div class="author">
@@ -12,7 +10,7 @@
             <a class="handle" href="/{{ member }}">
                 @{{ member }}
             </a>
-            <b>&bull;</b>
+            <b class="{{ member.status }}">&bull;</b>
             {% if member.id == user.id %}
                 <a class="ago" href="/settings">edit</a>
             {% else %}
@@ -28,7 +26,7 @@
                 {{ member.bio | parser | safe }}
             </div>
         {% endif %}
-        {% if member.website or member.birthyear or member.country != 'WW' %}
+        {% if member.website or member.birthyear or member.country %}
             <div class="extra">
                 {% if member.website %}
                     {{ member.website | parser | safe }}
@@ -36,19 +34,17 @@
                 {% if member.birthyear %}
                     ~ {{ member.birthyear | age }} years old
                 {% endif %}
-                {% if member.country != 'WW' %}
+                {% if member.country %}
                     from {{ member.country | country }}
                 {% endif %}
             </div>
         {% endif %}
+        <div class="status">
+            Last seen {{ member.seen_at | shortdate }} ago, invited by <a href="/{{ invited_by }}">@{{ invited_by }}</a>.
+        </div>
     </div>
 
-    {# include "common/reply.html" #}
-
     <div class="list">
-        {% for entry in pinned %}
-            {% include "common/entry.html" %}
-        {% endfor %}
         <div class="entry">
             <div class="filters">
                 <a href="/{{ member.username }}" class="{% if tab == 'threads' %}selected{% endif %}">
@@ -59,6 +55,7 @@
                 </a>
             </div>
         </div>
+
         {% for entry in entries %}
             {% if tab == 'threads' %}
                 {% include "common/threads.html" %}
@@ -66,12 +63,7 @@
                 {% include "common/replies.html" %}
             {% endif %}
         {% else %}
-            <div class="entry">
-                <div class="content">Uh, nothing here yet.</div>
-            </div>
+            {% include "common/nothing.html" %}
         {% endfor %}
-        {% if entries | count < counter %}
-            <div class="button" onclick="loadMore(this, 1)">Load more</div>
-        {% endif %}
     </div>
 {% endblock %}

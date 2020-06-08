@@ -32,6 +32,14 @@ input[type=submit] { background-color: var(--dimgray); border: 0 none; border-ra
 
 svg { fill: none; stroke: var(--gray); stroke-linecap: round; stroke-linejoin: round; stroke-width: 2; }
 
+table { margin: 10px 0; width: 100%; }
+
+table th { color: var(--silver); font-weight: normal; padding-bottom: 2px; }
+
+table td { border-top: var(--whitesmoke) 1px solid; padding: 2px 0; }
+
+table td a { color: var(--aqua); }
+
 .container { display: grid; grid-template-columns: calc(50% - 310px) 155px 465px calc(50% - 310px); }
 
 .container > div { min-height: 100vh; }
@@ -70,17 +78,15 @@ svg { fill: none; stroke: var(--gray); stroke-linecap: round; stroke-linejoin: r
 
 .title { font-size: 15px; line-height: 20px; margin: 10px 0; }
 
-.title a { color: var(--black); font-weight: bold; }
+.title a { color: var(--dimgray); }
 
-.title a.off { color: var(--dimgray); font-weight: normal; }
+.title a.on { color: var(--black); font-weight: bold; }
 
 .reply { margin: 10px 0; }
 
-.reply div { background-color: var(--whitesmoke); border-radius: var(--radius); color: var(--gray); padding: 5px 10px; }
+.reply .placeholder { background-color: var(--whitesmoke); border-radius: var(--radius); color: var(--gray); padding: 5px 10px; }
 
-.list { margin-bottom: 10px; }
-
-.list.top { margin-top: 10px; }
+.list { margin: 10px 0; }
 
 .list > .entry:first-child { border-top: 0 none; padding-top: 0; }
 
@@ -90,27 +96,17 @@ svg { fill: none; stroke: var(--gray); stroke-linecap: round; stroke-linejoin: r
 
 .entry { border-top: var(--whitesmoke) 1px solid; padding: 5px 0; }
 
-.entry .author .short, .entry .author .handle, .entry .author b { font-weight: bold; }
+.content { cursor: text; }
 
-.entry .author .handle { color: var(--gray); }
+.content a { color: var(--aqua); }
 
-.entry .author .ago { color: var(--silver); }
+.small { overflow: hidden; }
 
-.entry .author .here { color: green; }
+.small a, .small b { float: left; margin-right: 15px; }
 
-.entry .author .away { color: orange; }
+.small a.done, .small b { color: var(--gray); }
 
-.entry .author .gone { color: var(--gray); }
-
-.entry .content { cursor: text; }
-
-.entry .content a { color: var(--aqua); }
-
-.entry .small { overflow: hidden; }
-
-.entry .small a, .entry .small b { float: left; margin-right: 15px; }
-
-.entry .small b { color: var(--gray); cursor: pointer; }
+.small b { cursor: pointer; }
 
 .separator { background-color: var(--whitesmoke); border-bottom: var(--gainsboro) 1px solid; height: 5px; }
 
@@ -122,11 +118,25 @@ svg { fill: none; stroke: var(--gray); stroke-linecap: round; stroke-linejoin: r
 
 .profile { margin: 10px 0; }
 
-.profile .author .short, .profile .author .handle, .profile .author b { font-weight: bold; }
+.author .short, .author .handle, .author b { font-weight: bold; }
 
-.profile .author .handle { color: var(--gray); }
+.author .handle, .author .ago { color: var(--gray); }
 
-.profile .author .ago { color: var(--silver); }
+.author .here { color: green; }
+
+.author .away { color: orange; }
+
+.author .gone { color: var(--gray); }
+
+.bio a { color: var(--aqua); }
+
+.extra { color: var(--gray); }
+
+.extra a { color: var(--aqua); }
+
+.status { color: var(--silver); font-size: var(--small); }
+
+.status a { color: var(--silver); }
 
 .filters { font-size: var(--small); height: 20px; overflow: hidden; }
 
@@ -152,7 +162,7 @@ svg { fill: none; stroke: var(--gray); stroke-linecap: round; stroke-linejoin: r
 
 .line .right input, .line .right select { border-bottom-left-radius: 0; border-top-left-radius: 0; }
 
-.error { color: var(--red); font-size: 13px; }
+.error { color: var(--red); font-size: var(--small); }
 
 .about p { margin-bottom: 10px; }
 

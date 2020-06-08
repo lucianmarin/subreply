@@ -27,21 +27,18 @@ class User(models.Model):
 
     remote_addr = models.GenericIPAddressField()
     joined_at = models.FloatField(default=.0)
-    seen_at = models.FloatField(default=.0)
-    verified_at = models.FloatField(default=.0)
+    seen_at = models.FloatField(default=.0, db_index=True)
 
     emoji = models.CharField(max_length=15, default='')
-    country = models.CharField(max_length=2, default='WW')
+    country = models.CharField(max_length=2, default='')
     birthyear = models.CharField(max_length=4, default='')
     bio = models.CharField(max_length=120, default='')
     website = models.CharField(max_length=120, default='')
 
-    donations = models.IntegerField(default=0)
-
     notif_followers = models.PositiveIntegerField(default=0)
     notif_mentions = models.PositiveIntegerField(default=0)
     notif_replies = models.PositiveIntegerField(default=0)
-    saved_list = fields.ArrayField(models.PositiveIntegerField(), default=list)
+    saves = fields.ArrayField(models.PositiveIntegerField(), default=list)
 
     @property
     def full_name(self):
@@ -78,8 +75,8 @@ class User(models.Model):
         self.save(update_fields=['notif_replies'])
 
     def up_saves(self):
-        self.saved_list = list(self.saves.values_list('to_comment_id', flat=True))
-        self.save(update_fields=['saved_list'])
+        self.saves = list(self.saved.values_list('to_comment_id', flat=True))
+        self.save(update_fields=['saves'])
 
     def up_seen(self, remote_addr):
         fmt = "%Y-%m-%d-%p"
@@ -143,16 +140,16 @@ class Comment(models.Model):
         self.save(update_fields=['ancestors'])
 
     def up_saves(self):
-        self.saves = self.saved.count()
+        self.saves = self.saved_by.count()
         self.save(update_fields=['saves'])
 
 
 class Save(models.Model):
     created_at = models.FloatField(default=.0)
     created_by = models.ForeignKey('User', on_delete=models.CASCADE,
-                                   related_name='saves')
-    to_comment = models.ForeignKey('Comment', on_delete=models.CASCADE,
                                    related_name='saved')
+    to_comment = models.ForeignKey('Comment', on_delete=models.CASCADE,
+                                   related_name='saved_by')
 
 
 class Relation(models.Model):
@@ -162,3 +159,19 @@ class Relation(models.Model):
     to_user = models.ForeignKey('User', on_delete=models.CASCADE,
                                 related_name='followers')
     seen_at = models.FloatField(default=.0)
+
+
+class Invitation(models.Model):
+    created_at = models.FloatField(default=.0)
+    created_by = models.ForeignKey('User', on_delete=models.CASCADE,
+                                   related_name='invitations')
+    email = models.CharField(max_length=120, unique=True)
+    code = models.CharField(max_length=32, unique=True)
+    invited = models.ForeignKey('User', on_delete=models.CASCADE, null=True,
+                                related_name='invited_by')
+
+
+class Request(models.Model):
+    created_at = models.FloatField(default=.0)
+    email = models.CharField(max_length=120, unique=True)
+    reason = models.CharField(max_length=480)

@@ -2,12 +2,14 @@
     <form enctype="multipart/form-data" method="post" autocomplete="off">
         {% if entry.created_by == user %}
             {% if entry.replies %}
-                <div>Reply back to people</div>
+                <div class="placeholder">Reply back to people</div>
             {% else %}
-                <div>No reply yet</div>
+                <div class="placeholder">No reply yet</div>
             {% endif %}
         {% elif duplicate %}
-            <div>Already replied to @{{ entry.created_by }}</div>
+            <div class="placeholder">
+                Already replied to @{{ entry.created_by }}
+            </div>
         {% else %}
             <textarea placeholder="Reply to @{{ entry.created_by }}" name="content" rows="1" cols="60" maxlength="480" oninput="expand(this)" onkeydown="send(event)">{{ form.getvalue('content', status) }}</textarea>
         {% endif %}

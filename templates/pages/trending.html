@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block main %}
+    <div class="list">
+        <div class="entry">
+            <div class="filters">
+                {% for i in [20, 80, 320] %}
+                    <a href="/trending/{{ i }}" class="{% if limit == i %}selected{% endif %}">
+                        {{ i }} threads
+                    </a>
+                {% endfor %}
+            </div>
+        </div>
+
+        {% for entry in entries %}
+            {% include "common/threads.html" %}
+        {% else %}
+            {% include "common/nothing.html" %}
+        {% endfor %}
+    </div>
+{% endblock %}

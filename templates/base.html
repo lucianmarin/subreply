@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>{% block title %}{{ brand }}{% endblock %}</title>
+    <title>{{ brand }} / {{ view | capitalize }}</title>
     {% include "meta.html" %}
     {% block meta %}{% endblock %}
 </head>

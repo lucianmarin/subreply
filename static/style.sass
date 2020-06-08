@@ -106,6 +106,19 @@ svg
     stroke-linejoin: round
     stroke-width: 2
 
+table
+    margin: 10px 0
+    width: 100%
+    th
+        color: var(--silver)
+        font-weight: normal
+        padding-bottom: 2px
+    td
+        border-top: var(--whitesmoke) 1px solid
+        padding: 2px 0
+        a
+            color: var(--aqua)
+
 .container
     display: grid
     grid-template-columns: calc(50% - 310px) 155px 465px calc(50% - 310px)
@@ -181,24 +194,21 @@ svg
     line-height: 20px
     margin: 10px 0
     a
-        color: var(--black)
-        font-weight: bold
-        &.off
-            color: var(--dimgray)
-            font-weight: normal
+        color: var(--dimgray)
+        &.on
+            color: var(--black)
+            font-weight: bold
 
 .reply
     margin: 10px 0
-    div
+    .placeholder
         background-color: var(--whitesmoke)
         border-radius: var(--radius)
         color: var(--gray)
         padding: 5px 10px
 
 .list
-    margin-bottom: 10px
-    &.top
-        margin-top: 10px
+    margin: 10px 0
     &> .entry
         &:first-child
             border-top: 0 none
@@ -212,31 +222,21 @@ svg
 .entry
     border-top: var(--whitesmoke) 1px solid
     padding: 5px 0
-    .author
-        .short, .handle, b
-            font-weight: bold
-        .handle
-            color: var(--gray)
-        .ago
-            color: var(--silver)
-        .here
-            color: green
-        .away
-            color: orange
-        .gone
-            color: var(--gray)
-    .content
-        cursor: text
-        a
-            color: var(--aqua)
-    .small
-        overflow: hidden
-        a, b
-            float: left
-            margin-right: 15px
-        b
-            color: var(--gray)
-            cursor: pointer
+
+.content
+    cursor: text
+    a
+        color: var(--aqua)
+
+.small
+    overflow: hidden
+    a, b
+        float: left
+        margin-right: 15px
+    a.done, b
+        color: var(--gray)
+    b
+        cursor: pointer
 
 .separator
     background-color: var(--whitesmoke)
@@ -271,13 +271,33 @@ svg
 
 .profile
     margin: 10px 0
-    .author
-        .short, .handle, b
-            font-weight: bold
-        .handle
-            color: var(--gray)
-        .ago
-            color: var(--silver)
+
+.author
+    .short, .handle, b
+        font-weight: bold
+    .handle, .ago
+        color: var(--gray)
+    .here
+        color: green
+    .away
+        color: orange
+    .gone
+        color: var(--gray)
+
+.bio
+    a
+        color: var(--aqua)
+
+.extra
+    color: var(--gray)
+    a
+        color: var(--aqua)
+
+.status
+    color: var(--silver)
+    font-size: var(--small)
+    a
+        color: var(--silver)
 
 .filters
     font-size: var(--small)
@@ -321,7 +341,7 @@ svg
 
 .error
     color: var(--red)
-    font-size: 13px
+    font-size: var(--small)
 
 .about
     p
