@@ -2,7 +2,7 @@
 
 {% block main %}
     <div class="title">
-        <a href="/register">Register</a>
+        <a href="/register" class="on">Register</a>
     </div>
     <div class="register">
         <form enctype="multipart/form-data" method="post" autocomplete="off">
@@ -14,7 +14,7 @@
                         value="{{ form.getvalue('username', '') }}">
                 </div>
                 <div class="right">
-                    <label for="id_email">Email address<i>*</i></label>
+                    <label for="id_email">Email<i>*</i> <i>invitation only</i></label>
                     <input type="email" name="email" id="id_email"
                         maxlength="120"
                         value="{{ form.getvalue('email', '') }}">
@@ -61,14 +61,6 @@
                 </div>
                 {% if 'password' in errors %}
                     <div class="error">{{ errors['password'] }}</div>
-                {% endif %}
-            </div>
-            <div class="line">
-                <label for="id_invitation">Invitation<i>*</i> <i>request one from a member or using the form</i></label>
-                <input type="text" name="invitation" id="id_invitation" maxlength="32"
-                    value="{{ form.getvalue('invitation', '') }}">
-                {% if 'invitation' in errors %}
-                    <div class="error">{{ errors['invitation'] }}</div>
                 {% endif %}
             </div>
             <div class="line">

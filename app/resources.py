@@ -1,5 +1,4 @@
 from cgi import FieldStorage
-from hashlib import md5
 
 from django.db.models import Count, Max, Prefetch, Q
 from falcon import status_codes
@@ -478,13 +477,10 @@ class InvitationsResource:
                 view='invitations'
             )
         else:
-            salted_email = f"{email}@subreply.com"[::-1]
-            code = md5(salted_email.encode()).hexdigest()
             i, is_new = Invitation.objects.get_or_create(
                 created_at=utc_timestamp(),
                 created_by=req.user,
-                email=email,
-                code=code
+                email=email
             )
             raise HTTPFound('/invitations')
 
@@ -634,7 +630,6 @@ class RegisterResource:
         f['password1'] = form.getvalue('password1', '')
         f['password2'] = form.getvalue('password2', '')
         f['email'] = form.getvalue('email', '').strip().lower()
-        f['invitation'] = form.getvalue('invitation', '').strip().lower()
         bio_parts = form.getvalue('bio', '').split()
         f['bio'] = " ".join([p.strip() for p in bio_parts])
         f['emoji'] = form.getvalue('emoji', '').strip()

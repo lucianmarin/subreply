@@ -5,23 +5,11 @@
         {% include "common/thread.html" %}
     {% endif %}
 
-    {% if view in ['search', 'timeline'] %}
-        {% include "common/query.html" %}
-    {% endif %}
-
     <div class="list">
-        {% if view not in ['feed', 'search', 'timeline'] %}
-            <div class="entry">
-                <div class="small">{{ description }}.</div>
-            </div>
-        {% endif %}
-
         {% for entry in entries %}
             {% include "common/threads.html" %}
         {% else %}
-            <div class="entry">
-                <div class="content">Uh, nothing here yet.</div>
-            </div>
+            {% include "common/empty.html" %}
         {% endfor %}
     </div>
 {% endblock %}

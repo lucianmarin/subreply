@@ -18,7 +18,7 @@
                         value="{% if form %}{{ form.getvalue('username', '') }}{% else %}{{ user.username }}{% endif %}">
                 </div>
                 <div class="right">
-                    <label for="id_email">Email address<i>*</i></label>
+                    <label for="id_email">Email<i>*</i></label>
                     <input type="email" name="email" id="id_email"
                         maxlength="120"
                         value="{% if form %}{{ form.getvalue('email', '') }}{% else %}{{ user.email }}{% endif %}">

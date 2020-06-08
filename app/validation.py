@@ -128,6 +128,8 @@ def valid_email(value, user_id=0):
             return "Email can't be sent to this address"
         elif User.objects.filter(email=value).exclude(id=user_id).exists():
             return "Email is used by someone else"
+        elif not user_id and not Invitation.objects.filter(email=value).exists():
+            return "Email isn't invited"
 
 
 def valid_invitation_email(value):
@@ -322,6 +324,5 @@ def registration(f):
     errors['birthyear'] = valid_birthyear(f['birthyear'])
     errors['country'] = valid_country(f['country'])
     errors['emoji'] = valid_emoji(f['emoji'])
-    errors['invitation'] = valid_invitation(f['invitation'], f['email'])
     errors = {k: v for k, v in errors.items() if v}
     return errors

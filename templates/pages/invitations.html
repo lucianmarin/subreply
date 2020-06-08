@@ -20,25 +20,28 @@
     <table cellpadding="0">
         <thead>
             <tr>
-                <th>Email / User</th>
-                <th>Code</th>
+                <th>Email</th>
+                <th>Account</th>
             </tr>
         </thead>
         <tbody>
             {% for entry in entries %}
                 <tr>
-                    <td align="left">
+                    <td align="left">{{ entry.email }}</td>
+                    <td align="right">
                         {% if entry.invited %}
                             <a href="/{{ entry.invited }}">
                                 @{{ entry.invited }}
                             </a>
                         {% else %}
-                            {{ entry.email }}
+                            {{ entry.created_at | shortdate }}
                         {% endif %}
                     </td>
-                    <td align="right">{{ entry.code }}</td>
                 </tr>
             {% endfor %}
+            <tr>
+                <td colspan="2">Please invite only people who can understand and write in English. No email will be sent, tell them individually.</td>
+            </tr>
         </tbody>
     </table>
 {% endblock %}

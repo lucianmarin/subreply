@@ -166,7 +166,6 @@ class Invitation(models.Model):
     created_by = models.ForeignKey('User', on_delete=models.CASCADE,
                                    related_name='invitations')
     email = models.CharField(max_length=120, unique=True)
-    code = models.CharField(max_length=32, unique=True)
     invited = models.ForeignKey('User', on_delete=models.CASCADE, null=True,
                                 related_name='invited_by')
 
