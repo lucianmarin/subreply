@@ -61,11 +61,11 @@ class SearchResource:
         for term in terms:
             term = term[1:] if term.startswith('#') else term
             query &= Q(content__icontains=term)
-        return Comment.objects.filter(query).order_by('-id')
+        return Comment.objects.filter(query).order_by('-id').select_related('created_by')
 
     def fetch_entries(self):
         last_ids = User.objects.annotate(last_id=Max('comments__id')).values('last_id')
-        return Comment.objects.filter(id__in=last_ids).order_by('-id')
+        return Comment.objects.filter(id__in=last_ids).order_by('-id').select_related('created_by').prefetch_related('parent')
 
     @before(auth_user)
     def on_get(self, req, resp):
@@ -127,29 +127,33 @@ class FeedResource:
             raise HTTPFound('/')
 
 
-class SingleResource:
+class ReplyResource:
     @before(auth_user)
-    def on_get(self, req, resp, id):
-        entry = Comment.objects.filter(id=id).first()
+    def on_get(self, req, resp, username, id):
+        entry = Comment.objects.filter(
+            id=id, created_by__username=username
+        ).first()
         if not entry:
             template = env.get_template('pages/404.html')
-            resp.body = template.render(user=req.user, url=f're/{id}')
+            resp.body = template.render(user=req.user, url=f'{username}/{id}')
             resp.status = status_codes.HTTP_404
             return
         ancestors = Comment.objects.filter(id__in=entry.ancestors).order_by('id')
         duplicate = Comment.objects.filter(parent=entry, created_by=req.user).exists() if req.user else True
         entries = Comment.objects.filter(parent=entry)
         form = FieldStorage(fp=req.stream, environ=req.env)
-        template = env.get_template('pages/single.html')
+        template = env.get_template('pages/reply.html')
         resp.body = template.render(
             user=req.user, entry=entry, form=form, errors={}, entries=entries,
-            ancestors=ancestors, duplicate=duplicate, view='single'
+            ancestors=ancestors, duplicate=duplicate, view='reply'
         )
 
     @before(auth_user)
     @before(login_required)
-    def on_post(self, req, resp, id):
-        entry = Comment.objects.filter(id=id).first()
+    def on_post(self, req, resp, username, id):
+        entry = Comment.objects.filter(
+            id=id, created_by__username=username
+        ).first()
         form = FieldStorage(fp=req.stream, environ=req.env)
         content = form.getvalue('content', '')
         content = " ".join([p.strip() for p in content.split()])
@@ -161,11 +165,11 @@ class SingleResource:
         if errors:
             ancestors = Comment.objects.filter(id__in=entry.ancestors).order_by('id')
             entries = Comment.objects.filter(parent=entry)
-            template = env.get_template('pages/single.html')
+            template = env.get_template('pages/reply.html')
             resp.body = template.render(
                 user=req.user, entry=entry, form=form, errors=errors,
                 entries=entries, ancestors=ancestors, duplicate=False,
-                view='single'
+                view='reply'
             )
         else:
             extra = {}
@@ -185,7 +189,7 @@ class SingleResource:
             re.up_ancestors()
             re.add_replies()
             entry.created_by.up_replies()
-            raise HTTPFound(f'/re/{id}')
+            raise HTTPFound(f'/{username}/{id}')
 
 
 class ProfileResource:
@@ -254,12 +258,12 @@ class FollowersResource:
     @before(login_required)
     def on_get(self, req, resp):
         entries = self.fetch_entries(req.user)
-        if req.user.notif_followers:
-            self.clear_followers(req.user)
         template = env.get_template('pages/regular.html')
         resp.body = template.render(
             user=req.user, entries=entries, view='followers'
         )
+        if req.user.notif_followers:
+            self.clear_followers(req.user)
 
 
 class MentionsResource:
@@ -276,12 +280,12 @@ class MentionsResource:
     @before(login_required)
     def on_get(self, req, resp):
         entries = self.fetch_entries(req.user)
-        if req.user.notif_mentions:
-            self.clear_mentions(req.user)
         template = env.get_template('pages/regular.html')
         resp.body = template.render(
             user=req.user, entries=entries, view='mentions'
         )
+        if req.user.notif_mentions:
+            self.clear_mentions(req.user)
 
 
 class RepliesResource:
@@ -298,12 +302,12 @@ class RepliesResource:
     @before(login_required)
     def on_get(self, req, resp):
         entries = self.fetch_entries(req.user)
-        if req.user.notif_replies:
-            self.clear_replies(req.user)
         template = env.get_template('pages/regular.html')
         resp.body = template.render(
             user=req.user, entries=entries, view='replies'
         )
+        if req.user.notif_replies:
+            self.clear_replies(req.user)
 
 
 class ReplyingResource:

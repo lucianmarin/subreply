@@ -12,7 +12,7 @@
             @{{ entry.created_by }}
         </a>
         <b class="{{ entry.created_by.status }}">&bull;</b>
-        <a class="ago" href="/re/{{ entry.id }}">
+        <a class="ago" href="/{{ entry.created_by }}/{{ entry.id }}">
             {{ entry.created_at | shortdate }} ago
         </a>
     </div>
@@ -20,11 +20,9 @@
         {{ entry.content | parser | safe }}
     </div>
     <div class="small">
-        <a href="/re/{{ entry.id }}">{{ entry.replied }}</a>
-
-        {% if entry.parent_id %}
-            <a class="done" href="/re/{{ entry.parent_id }}">&not;</a>
-        {% endif %}
+        <a href="/{{ entry.created_by }}/{{ entry.id }}">
+            {{ entry.replied }}{% if entry.parent_id %}&nbsp;&nbsp;&not;{% endif %}
+        </a>
 
         {% if entry.created_by_id == user.id and entry.saves %}
             <b>{{ entry.saves }} save{% if entry.saves > 1 %}s{% endif %}</b>

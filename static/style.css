@@ -140,7 +140,7 @@ table td a { text-decoration: underline; }
 
 .filters { font-size: var(--small); height: 20px; overflow: hidden; }
 
-.filters a { color: var(--silver); display: block; float: left; margin-right: 10px; }
+.filters a { color: var(--silver); display: block; float: left; margin-right: 15px; }
 
 .filters a:hover { color: var(--gray); }
 
