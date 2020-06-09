@@ -1,6 +1,10 @@
 <div class="entry">
     <div class="author">
-        <i>{{ member.emoji }}</i>
+        {% if member.emoji %}
+            <a class="emoji" href="/{{ member }}">
+                {{ member.emoji }}
+            </a>
+        {% endif %}
         <a class="short" href="/{{ member }}">
             {{ member.full_name }}
         </a>
@@ -8,19 +12,33 @@
             @{{ member }}
         </a>
         <b class="{{ member.status }}">&bull;</b>
-        <a class="ago" href="/{{ member }}">
-            {% if view == 'people' %}
-                {{ entry.seen_at | shortdate }} ago
+        {% if view == 'profile' %}
+            {% if member.id == user.id %}
+                <a class="ago" href="/settings">edit</a>
             {% else %}
-                {{ entry.created_at | shortdate }} ago
+                {% if is_following %}
+                    <a class="ago" href="/{{ member.username }}/unfollow">unfollow</a>
+                {% else %}
+                    <a class="ago" href="/{{ member.username }}/follow">follow</a>
+                {% endif %}
             {% endif %}
-        </a>
+        {% elif view == 'people' %}
+            <a class="ago" href="/{{ member }}">
+                {{ entry.seen_at | shortdate }} ago
+            </a>
+        {% else %}
+            <a class="ago" href="/{{ member }}">
+                {{ entry.created_at | shortdate }} ago
+            </a>
+        {% endif %}
     </div>
+
     {% if member.bio %}
         <div class="bio">
             {{ member.bio | parser | safe }}
         </div>
     {% endif %}
+
     {% if member.website or member.birthyear or member.country %}
         <div class="extra">
             {% if member.website %}

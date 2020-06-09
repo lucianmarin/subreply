@@ -26,11 +26,11 @@ def valid_content(value, user):
         return "Hashtag a single channel"
     elif len(hashtags) == 1:
         hashtag = hashtags[0].lower()
-        if hashtag > 15:
+        if len(hashtag) > 15:
             return "Hashtag can't be longer than 15 characters"
     elif len(links) == 1:
         link = links[0].lower()
-        if link > 120:
+        if len(link) > 120:
             return "Link can't be longer than 120 characters"
     elif len(mentions) == 1:
         mention = mentions[0].lower()

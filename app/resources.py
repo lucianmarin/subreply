@@ -57,10 +57,11 @@ class AboutResource:
 
 class SearchResource:
     def fetch_results(self, terms):
-        query = Q(content__icontains=terms[0])
-        for term in terms[1:]:
+        query = Q()
+        for term in terms:
+            term = term[1:] if term.startswith('#') else term
             query &= Q(content__icontains=term)
-        return Comment.objects.filter(query).order_by('pinned_by_id', '-id')
+        return Comment.objects.filter(query).order_by('-id')
 
     def fetch_entries(self):
         last_ids = User.objects.annotate(last_id=Max('comments__id')).values('last_id')
@@ -126,9 +127,8 @@ class FeedResource:
             raise HTTPFound('/')
 
 
-class ReplyResource:
+class SingleResource:
     @before(auth_user)
-    @before(login_required)
     def on_get(self, req, resp, id):
         entry = Comment.objects.filter(id=id).first()
         if not entry:
@@ -137,13 +137,13 @@ class ReplyResource:
             resp.status = status_codes.HTTP_404
             return
         ancestors = Comment.objects.filter(id__in=entry.ancestors).order_by('id')
-        duplicate = Comment.objects.filter(parent=entry, created_by=req.user).exists()
+        duplicate = Comment.objects.filter(parent=entry, created_by=req.user).exists() if req.user else True
         entries = Comment.objects.filter(parent=entry)
         form = FieldStorage(fp=req.stream, environ=req.env)
-        template = env.get_template('pages/reply.html')
+        template = env.get_template('pages/single.html')
         resp.body = template.render(
             user=req.user, entry=entry, form=form, errors={}, entries=entries,
-            ancestors=ancestors, duplicate=duplicate, view='reply'
+            ancestors=ancestors, duplicate=duplicate, view='single'
         )
 
     @before(auth_user)
@@ -161,11 +161,11 @@ class ReplyResource:
         if errors:
             ancestors = Comment.objects.filter(id__in=entry.ancestors).order_by('id')
             entries = Comment.objects.filter(parent=entry)
-            template = env.get_template('pages/reply.html')
+            template = env.get_template('pages/single.html')
             resp.body = template.render(
                 user=req.user, entry=entry, form=form, errors=errors,
                 entries=entries, ancestors=ancestors, duplicate=False,
-                view='reply'
+                view='single'
             )
         else:
             extra = {}
@@ -321,7 +321,7 @@ class ReplyingResource:
         )
 
 
-class SavesResource:
+class SavedResource:
     def fetch_entries(self, user):
         saves = Save.objects.filter(created_by=user).values('to_comment_id')
         return Comment.objects.filter(id__in=saves).order_by('-id')
@@ -332,7 +332,7 @@ class SavesResource:
         entries = self.fetch_entries(req.user)
         template = env.get_template('pages/regular.html')
         resp.body = template.render(
-            user=req.user, entries=entries, view='saves'
+            user=req.user, entries=entries, view='saved'
         )
 
 

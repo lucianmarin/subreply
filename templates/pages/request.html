@@ -4,6 +4,7 @@
     <div class="title">
         <a href="/request" class="on">Request</a> invitation
     </div>
+
     <div class="login">
         <form enctype="multipart/form-data" method="post">
             <div class="line">
@@ -15,7 +16,7 @@
                 {% endif %}
             </div>
             <div class="line">
-                <label for="id_reason">Reason<i>* as many details as possible</i></label>
+                <label for="id_reason">Reason<i>* details or links to your blog or other social profiles</i></label>
                 <textarea name="reason" rows="1" cols="60" maxlength="480" oninput="expand(this)" onkeydown="send(event)"></textarea>
                 {% if 'reason' in errors %}
                     <div class="error">{{ errors['reason'] }}</div>

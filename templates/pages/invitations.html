@@ -3,12 +3,12 @@
 {% block main %}
     <div class="title">
         <a href="/settings">Settings</a>
-        <a href="/password">Password</a>
         <a href="/invitations" class="on">Invitations</a>
+        <a href="/password">Password</a>
         <a href="/logout">Logout</a>
     </div>
 
-    <div class="regiser">
+    <div class="reply">
         <form enctype="multipart/form-data" method="post" autocomplete="off">
             <input type="text" name="email" placeholder="Email address" id="id_email" value="{{ form.getvalue('email', '') }}">
             {% for name, error in errors.items() %}
@@ -27,20 +27,25 @@
         <tbody>
             {% for entry in entries %}
                 <tr>
-                    <td align="left">{{ entry.email }}</td>
+                    <td align="left">
+                        <a href="mailto:{{ entry.email }}?subject=Subreply.com&body=Invited.">{{ entry.email }}</a>
+                    </td>
                     <td align="right">
                         {% if entry.invited %}
                             <a href="/{{ entry.invited }}">
                                 @{{ entry.invited }}
                             </a>
                         {% else %}
-                            {{ entry.created_at | shortdate }}
+                            {{ entry.created_at | shortdate }} ago
                         {% endif %}
                     </td>
                 </tr>
             {% endfor %}
-            <tr>
-                <td colspan="2">Please invite only people who can understand and write in English. No email will be sent, tell them individually.</td>
+            <tr class="info">
+                <td colspan="2">Invite people who can understand and write in English.</td>
+            </tr>
+            <tr class="info">
+                <td colspan="2">No automatic email is sent. Write to them individually.</td>
             </tr>
         </tbody>
     </table>

@@ -2,6 +2,7 @@ from cryptography.fernet import Fernet
 from project.local import DEBUG, SIGNATURE, SECRET_KEY
 
 ALLOWED_HOSTS = []
+AUTH_PASSWORD_VALIDATORS = []
 INSTALLED_APPS = ["app", "django_extensions"]
 MIDDLEWARE = []
 TEMPLATES = []
@@ -16,7 +17,6 @@ DATABASES = {
         'PORT': "6432"
     }
 }
-AUTH_PASSWORD_VALIDATORS = []
 
 LANGUAGE_CODE = "en-us"
 TIME_ZONE = "UTC"
@@ -24,13 +24,18 @@ USE_I18N = False
 USE_L10N = False
 USE_TZ = False
 
+# cookies
 F = Fernet(SIGNATURE.encode())
 MAX_AGE = 3600 * 24 * 365
+
+# registration
 INVALID = [
     "register", "login", "logout", "feed", "following", "followers",
-    "dubfi", "newsfi", "api", "local", "search", "settings",
+    "sub", "subreply", "sublevel",
+    "api", "local", "search", "settings",
     "profile", "erase", "password", "delete", "timeline",
     "about", "static", "media", "terms", "privacy", "policy",
+    "requests", "invitations", "people", "trends", "trending",
     "links", "mentions", "pins", "saves",
     "linked", "mentioned", "pinned", "saved",
     "link", "mention", "pin", "save"

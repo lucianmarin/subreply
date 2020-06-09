@@ -1,50 +1,15 @@
 {% extends "base.html" %}
 
 {% block main %}
-    <div class="profile">
-        <div class="author">
-            <i>{{ member.emoji }}</i>
-            <a class="short" href="/{{ member }}">
-                {{ member.full_name }}
-            </a>
-            <a class="handle" href="/{{ member }}">
-                @{{ member }}
-            </a>
-            <b class="{{ member.status }}">&bull;</b>
-            {% if member.id == user.id %}
-                <a class="ago" href="/settings">edit</a>
-            {% else %}
-                {% if is_following %}
-                    <a class="ago" href="/{{ member.username }}/unfollow">unfollow</a>
-                {% else %}
-                    <a class="ago" href="/{{ member.username }}/follow">follow</a>
-                {% endif %}
-            {% endif %}
-        </div>
-        {% if member.bio %}
-            <div class="bio">
-                {{ member.bio | parser | safe }}
-            </div>
-        {% endif %}
-        {% if member.website or member.birthyear or member.country %}
-            <div class="extra">
-                {% if member.website %}
-                    {{ member.website | parser | safe }}
-                {% endif %}
-                {% if member.birthyear %}
-                    ~ {{ member.birthyear | age }} years old
-                {% endif %}
-                {% if member.country %}
-                    from {{ member.country | country }}
-                {% endif %}
-            </div>
-        {% endif %}
-        <div class="status">
-            Last seen {{ member.seen_at | shortdate }} ago, invited by <a href="/{{ invited_by }}">@{{ invited_by }}</a>.
-        </div>
-    </div>
-
     <div class="list">
+        {% include "common/user.html" %}
+
+        <div class="entry">
+            <div class="status">
+                Last seen {{ member.seen_at | shortdate }} ago. Invited by <a href="/{{ invited_by }}">@{{ invited_by }}</a>.
+            </div>
+        </div>
+
         <div class="entry">
             <div class="filters">
                 <a href="/{{ member.username }}" class="{% if tab == 'threads' %}selected{% endif %}">

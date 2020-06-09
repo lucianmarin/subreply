@@ -91,7 +91,7 @@ textarea
         outline: 0 none
 
 input[type=submit]
-    background-color: var(--dimgray)
+    background-color: var(--black)
     border: 0 none
     border-radius: var(--radius)
     color: var(--whitesmoke)
@@ -109,6 +109,9 @@ svg
 table
     margin: 10px 0
     width: 100%
+    .info
+        color: var(--gray)
+        font-size: var(--small)
     th
         color: var(--silver)
         font-weight: normal
@@ -117,7 +120,7 @@ table
         border-top: var(--whitesmoke) 1px solid
         padding: 2px 0
         a
-            color: var(--aqua)
+            text-decoration: underline
 
 .container
     display: grid
@@ -202,9 +205,10 @@ table
 .reply
     margin: 10px 0
     .placeholder
-        background-color: var(--whitesmoke)
+        background: var(--whitesmoke)
+        background: linear-gradient(90deg, var(--white) 0%, var(--whitesmoke) 100%)
         border-radius: var(--radius)
-        color: var(--gray)
+        color: var(--silver)
         padding: 5px 10px
 
 .list
@@ -220,13 +224,13 @@ table
     margin-left: 30px
 
 .entry
-    border-top: var(--whitesmoke) 1px solid
+    border-top: var(--gainsboro) 1px dotted
     padding: 5px 0
 
 .content
     cursor: text
     a
-        color: var(--aqua)
+        text-decoration: underline
 
 .small
     overflow: hidden
@@ -269,9 +273,6 @@ table
         top: calc(50% - 125px)
         position: absolute
 
-.profile
-    margin: 10px 0
-
 .author
     .short, .handle, b
         font-weight: bold
@@ -286,12 +287,13 @@ table
 
 .bio
     a
-        color: var(--aqua)
+        text-decoration: underline
 
 .extra
     color: var(--gray)
     a
-        color: var(--aqua)
+        color: var(--gray)
+        text-decoration: underline
 
 .status
     color: var(--silver)
@@ -334,7 +336,7 @@ table
         width: calc(50% - 1px)
         select
             width: 100%
-            border-right: var(--silver) var(--radius) solid
+            border-right: var(--gainsboro) var(--radius) solid
         input, select
             border-bottom-left-radius: 0
             border-top-left-radius: 0
@@ -344,6 +346,8 @@ table
     font-size: var(--small)
 
 .about
+    a
+        text-decoration: underline
     p
         margin-bottom: 10px
     ol
