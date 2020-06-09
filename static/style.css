@@ -10,7 +10,7 @@ html { --small: 13px; --radius: 5px; --d: 0.2s; --white: #fff; --whitesmoke: #f4
 
 body { background-color: var(--gainsboro); color: var(--black); cursor: default; }
 
-a { color: var(--black); text-decoration: none; }
+a { color: var(--black); cursor: pointer; text-decoration: none; }
 
 b, i, u { font-style: normal; font-weight: normal; text-decoration: none; }
 
@@ -104,11 +104,11 @@ table td a { text-decoration: underline; }
 
 .small { overflow: hidden; }
 
-.small a, .small b { float: left; margin-right: 15px; }
+.small a, .small b { color: var(--gray); float: left; margin-left: 15px; }
 
-.small a.done, .small b { color: var(--gray); }
+.small a:first-child, .small b:first-child { margin-left: 0; }
 
-.small b { cursor: pointer; }
+.small a.perma { color: var(--black); }
 
 .separator { background-color: var(--whitesmoke); border-bottom: var(--gainsboro) 1px solid; height: 5px; }
 

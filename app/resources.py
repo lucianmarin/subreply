@@ -327,8 +327,7 @@ class ReplyingResource:
 
 class SavedResource:
     def fetch_entries(self, user):
-        saves = Save.objects.filter(created_by=user).values('to_comment_id')
-        return Comment.objects.filter(id__in=saves).order_by('-id')
+        return Save.objects.filter(created_by=user)
 
     @before(auth_user)
     @before(login_required)

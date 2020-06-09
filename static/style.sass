@@ -44,6 +44,7 @@ body
 
 a
     color: var(--black)
+    cursor: pointer
     text-decoration: none
 
 b, i, u
@@ -235,12 +236,13 @@ table
 .small
     overflow: hidden
     a, b
-        float: left
-        margin-right: 15px
-    a.done, b
         color: var(--gray)
-    b
-        cursor: pointer
+        float: left
+        margin-left: 15px
+        &:first-child
+            margin-left: 0
+    a.perma
+        color: var(--black)
 
 .separator
     background-color: var(--whitesmoke)

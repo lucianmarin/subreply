@@ -16,7 +16,7 @@ function postDelete(event) {
     var small = element.parentElement;
     var id = element.dataset.id;
     if (id != "0") {
-        var confirm = document.createElement('b');
+        var confirm = document.createElement('a');
         element.innerText = "undo";
         confirm.innerText = "yes";
         confirm.onclick = function (event) {
