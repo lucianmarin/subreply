@@ -1,4 +1,4 @@
-html { --small: 13px; --radius: 5px; --d: 0.2s; --white: #fff; --whitesmoke: #f4f4f4; --gainsboro: #e0e0e0; --silver: #c0c0c0; --gray: #808080; --dimgray: #606060; --black: #000; --aqua: #0080f0; --ocean: #003080; --red: #ff4020; }
+html { --small: 13px; --radius: 5px; --d: 0.2s; --white: #fff; --whitesmoke: #f0f0f0; --gainsboro: #e0e0e0; --silver: #c0c0c0; --gray: #808080; --dimgray: #606060; --black: #000; --aqua: #0080f0; --ocean: #003080; --red: #ff4020; }
 
 ::-moz-placeholder { color: #1f1f1f; }
 
@@ -16,7 +16,7 @@ b, i, u { font-style: normal; font-weight: normal; text-decoration: none; }
 
 form, input, img, label { display: block; }
 
-body, label, input, select, textarea { font-family: "Fira Sans", "Clear Sans", sans-serif; font-size: 13.5px; line-height: 20px; }
+body, label, input, select, textarea { font-family: "Fira Sans", sans-serif; font-size: 13.5px; line-height: 20px; }
 
 label { color: var(--black); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
@@ -42,7 +42,7 @@ table td { border-top: var(--whitesmoke) 1px solid; padding: 2px 0; }
 
 table td a { text-decoration: underline; }
 
-.container { display: grid; grid-template-columns: calc(50% - 310px) 155px 465px calc(50% - 310px); }
+.container { display: grid; grid-template-columns: calc(50% - 320px) 160px 480px calc(50% - 320px); }
 
 .container > div { min-height: 100vh; }
 
@@ -56,9 +56,7 @@ table td a { text-decoration: underline; }
 
 .logo { margin: 10px 15px; overflow: hidden; position: sticky; top: 10px; }
 
-.logo a { background-color: var(--white); border-radius: 15px; display: block; float: right; font-size: 10.5px; height: 30px; line-height: 30px; text-align: center; width: 30px; }
-
-.logo a.selected { background-color: var(--black); color: var(--white); }
+.logo a { background-color: var(--black); border-radius: 15px; color: var(--white); display: block; float: right; font-size: 10.5px; height: 30px; line-height: 30px; text-align: center; width: 30px; }
 
 .links { position: sticky; text-align: right; top: 50px; }
 
@@ -73,6 +71,8 @@ table td a { text-decoration: underline; }
 .links a.on svg { stroke: var(--silver); }
 
 .links a.red svg { stroke: var(--red); }
+
+.links a span { margin-left: 1px; }
 
 .links img { float: right; }
 
@@ -96,7 +96,7 @@ table td a { text-decoration: underline; }
 
 .sublist { margin-left: 30px; }
 
-.entry { border-top: var(--gainsboro) 1px dotted; padding: 5px 0; }
+.entry { border-top: var(--whitesmoke) 1px solid; padding: 5px 0; }
 
 .content { cursor: text; }
 
@@ -107,8 +107,6 @@ table td a { text-decoration: underline; }
 .small a, .small b { color: var(--gray); float: left; margin-left: 15px; }
 
 .small a:first-child, .small b:first-child { margin-left: 0; }
-
-.small a.perma { color: var(--black); }
 
 .separator { background-color: var(--whitesmoke); border-bottom: var(--gainsboro) 1px solid; height: 5px; }
 
@@ -176,7 +174,7 @@ table td a { text-decoration: underline; }
 
 .about ol li:last-child { border-bottom: 0 none; padding-bottom: 0; }
 
-.promo { line-height: 15px; padding: 15px; color: var(--gray); }
+.promo { position: sticky; line-height: 15px; padding: 10px 15px; color: var(--gray); top: 423px; z-index: 0; }
 
 .promo a { color: var(--black); }
 
@@ -184,6 +182,6 @@ table td a { text-decoration: underline; }
 
 @media (max-width: 600px) { .container { display: grid; grid-template-columns: 0 50px calc(100% - 50px) 0; } .main { padding: 0 10px; } .logo { margin: 10px; } .promo, .links i { display: none; } .links svg { margin-left: 0; stroke: var(--black); } }
 
-@font-face { font-family: "Clear Sans"; font-style: normal; font-weight: normal; src: url(/static/clear-regular.woff) format("woff"); }
+@font-face { font-family: "Fira Sans"; font-style: normal; font-weight: normal; src: url(/static/firasans-regular.woff2) format("woff2"); }
 
-@font-face { font-family: "Clear Sans"; font-style: normal; font-weight: bold; src: url(/static/clear-bold.woff) format("woff"); }
+@font-face { font-family: "Fira Sans"; font-style: normal; font-weight: bold; src: url(/static/firasans-bold.woff2) format("woff2"); }

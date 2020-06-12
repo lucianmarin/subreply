@@ -48,6 +48,8 @@ def shortdate(timestamp):
 
 def superscript(number):
     """Convert 1 to sup(1)."""
+    if not number:
+        return "&deg;"
     text = str(number)
     text = text.replace('0', chr(8304))
     text = text.replace('1', chr(185))

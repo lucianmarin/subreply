@@ -40,7 +40,7 @@ app.add_route('/search', resources.SearchResource())
 app.add_route('/people/{kind}', resources.PeopleResource())
 app.add_route('/trending/{limit}', resources.TrendingResource())
 
-app.add_route('/{username}/{id}', resources.ReplyResource())
+app.add_route('/{username}/{base}', resources.ReplyResource())
 app.add_route('/{username}/unfollow', resources.UnfollowResource())
 app.add_route('/{username}/follow', resources.FollowResource())
 app.add_route('/{username}/replies', resources.ProfileResource(), suffix='re')

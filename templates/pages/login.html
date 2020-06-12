@@ -18,12 +18,12 @@
                     <input type="password" name="password" id="id_password"
                         value="{{ form.getvalue('password', '') }}">
                 </div>
-                {% for error in errors.get('username', []) %}
-                    <div class="error">{{ error }}</div>
-                {% endfor %}
-                {% for error in errors.get('password', []) %}
-                    <div class="error">{{ error }}</div>
-                {% endfor %}
+                {% if 'username' in errors %}
+                    <div class="error">{{ errors['username'] }}</div>
+                {% endif %}
+                {% if 'password' in errors %}
+                    <div class="error">{{ errors['password'] }}</div>
+                {% endif %}
             </div>
             <div class="line">
                 <input type="submit" value="Login">

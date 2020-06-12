@@ -4,8 +4,6 @@ from datetime import datetime, timezone
 from hashlib import pbkdf2_hmac
 from random import choice
 
-from PIL import Image, ImageOps
-
 
 def utc_timestamp():
     return datetime.now(timezone.utc).timestamp()
@@ -50,7 +48,7 @@ def generate_salt(length=12):
     return "".join(choice(chars) for i in range(length))
 
 
-def make_hash(password):
+def build_hash(password):
     salt = generate_salt()
     iterations = 55555
     dk = pbkdf2_hmac('sha256', password.encode(), salt.encode(), iterations)
@@ -65,19 +63,13 @@ def verify_hash(password, hashed):
     return h == old_h
 
 
-def save_image(file, name, size=240):
-    image = Image.open(file)
-    try:
-        exif = dict(image._getexif().items())
-        orientation = exif.get(274, None)
-        if orientation == 3:
-            image = image.rotate(180, expand=True)
-        elif orientation == 6:
-            image = image.rotate(270, expand=True)
-        elif orientation == 8:
-            image = image.rotate(90, expand=True)
-    except (AttributeError, KeyError, IndexError):
-        pass
-    image = image.convert('RGB')
-    image = ImageOps.fit(image, (size, size), Image.LANCZOS, 0, (0.5, 0.5))
-    image.save(name, 'JPEG', quality=80, subsampling=0, progressive=True)
+def base36encode(number):
+    alphabet, base36 = "0123456789abcdefghijklmnopqrstuvwxyz", ""
+    while number:
+        number, i = divmod(number, 36)
+        base36 = alphabet[i] + base36
+    return base36 or alphabet[0]
+
+
+def base36decode(number):
+    return int(number, 36)

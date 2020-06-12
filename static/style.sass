@@ -3,7 +3,7 @@ html
     --radius: 5px
     --d: 0.2s
     --white: #fff
-    --whitesmoke: #f4f4f4
+    --whitesmoke: #f0f0f0
     --gainsboro: #e0e0e0
     --silver: #c0c0c0
     --gray: #808080
@@ -56,7 +56,7 @@ form, input, img, label
     display: block
 
 body, label, input, select, textarea
-    font-family: "Fira Sans", "Clear Sans", sans-serif
+    font-family: "Fira Sans", sans-serif
     font-size: 13.5px
     line-height: 20px
 
@@ -125,7 +125,7 @@ table
 
 .container
     display: grid
-    grid-template-columns: calc(50% - 310px) 155px 465px calc(50% - 310px)
+    grid-template-columns: calc(50% - 320px) 160px 480px calc(50% - 320px)
     &> div
         min-height: 100vh
 
@@ -149,8 +149,9 @@ table
     position: sticky
     top: 10px
     a
-        background-color: var(--white)
+        background-color: var(--black)
         border-radius: 15px
+        color: var(--white)
         display: block
         float: right
         font-size: 10.5px
@@ -158,9 +159,6 @@ table
         line-height: 30px
         text-align: center
         width: 30px
-        &.selected
-            background-color: var(--black)
-            color: var(--white)
 
 .links
     position: sticky
@@ -186,6 +184,8 @@ table
         &.red
             svg
                 stroke: var(--red)
+        span
+            margin-left: 1px
     img
         float: right
     svg
@@ -225,7 +225,7 @@ table
     margin-left: 30px
 
 .entry
-    border-top: var(--gainsboro) 1px dotted
+    border-top: var(--whitesmoke) 1px solid
     padding: 5px 0
 
 .content
@@ -241,8 +241,6 @@ table
         margin-left: 15px
         &:first-child
             margin-left: 0
-    a.perma
-        color: var(--black)
 
 .separator
     background-color: var(--whitesmoke)
@@ -365,9 +363,12 @@ table
                 padding-bottom: 0
 
 .promo
+    position: sticky
     line-height: 15px
-    padding: 15px
+    padding: 10px 15px
     color: var(--gray)
+    top: 423px
+    z-index: 0
     a
         color: var(--black)
     h5, h6
@@ -387,14 +388,26 @@ table
         margin-left: 0
         stroke: var(--black)
 
-@font-face
-    font-family: "Clear Sans"
-    font-style: normal
-    font-weight: normal
-    src: url(/static/clear-regular.woff) format("woff")
+// @font-face
+//     font-family: "Clear Sans"
+//     font-style: normal
+//     font-weight: normal
+//     src: url(/static/clearsans-regular.woff) format("woff")
+
+// @font-face
+//     font-family: "Clear Sans"
+//     font-style: normal
+//     font-weight: bold
+//     src: url(/static/clearsans-bold.woff) format("woff")
 
 @font-face
-    font-family: "Clear Sans"
+    font-family: "Fira Sans"
+    font-style: normal
+    font-weight: normal
+    src: url(/static/firasans-regular.woff2) format("woff2")
+
+@font-face
+    font-family: "Fira Sans"
     font-style: normal
     font-weight: bold
-    src: url(/static/clear-bold.woff) format("woff")
+    src: url(/static/firasans-bold.woff2) format("woff2")

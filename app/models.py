@@ -101,14 +101,14 @@ class Comment(models.Model):
     mentioned = models.ForeignKey('User', on_delete=models.SET_NULL,
                                   null=True, related_name='mentions')
     content = models.CharField(max_length=480, unique=True)
-    hashtag = models.CharField(max_length=15, default='', db_index=True)
-    link = models.CharField(max_length=120, default='', db_index=True)
-    mention = models.CharField(max_length=15, default='', db_index=True)
+    hashtag = models.CharField(max_length=15, default='')
+    link = models.CharField(max_length=120, default='')
+    mention = models.CharField(max_length=15, default='')
     edited_at = models.FloatField(default=.0)
     mention_seen_at = models.FloatField(default=.0)
     reply_seen_at = models.FloatField(default=.0)
     replies = models.IntegerField(default=0, db_index=True)
-    saves = models.IntegerField(default=0, db_index=True)
+    saves = models.IntegerField(default=0)
 
     class Meta:
         unique_together = ['parent', 'created_by']
@@ -121,6 +121,15 @@ class Comment(models.Model):
             return '1 reply'
         else:
             return '{0} replies'.format(self.replies)
+
+    @property
+    def base(self):
+        number = self.id
+        alphabet, base36 = "0123456789abcdefghijklmnopqrstuvwxyz", ""
+        while number:
+            number, i = divmod(number, 36)
+            base36 = alphabet[i] + base36
+        return base36 or alphabet[0]
 
     def get_ancestors(self):
         if self.parent_id is None:
