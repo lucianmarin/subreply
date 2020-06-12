@@ -1,6 +1,6 @@
 PREVIOUS=$PWD
-cd ~/falcondub/
+cd ~/subreply/
 git pull
 python3 manage.py migrate
-pkill -HUP -F dub.pid
+pkill -HUP -F sub.pid
 cd $PREVIOUS
