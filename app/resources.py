@@ -47,7 +47,7 @@ class MainResource:
         if req.user:
             raise HTTPFound('/feed')
         else:
-            raise HTTPFound('/trending/30')
+            raise HTTPFound('/search')
 
 
 class AboutResource:
