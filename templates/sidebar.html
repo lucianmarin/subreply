@@ -1,7 +1,7 @@
 <div class="logo">
     {% if user %}
         {% if user.id == 1 %}
-            <a href="/requests">luc</a>
+            <a href="/requests">{{ user.requests }}</a>
         {% else %}
             <a href="/{{ user }}">{{ user[:3] }}</a>
         {% endif %}

@@ -52,4 +52,8 @@
             {% endif %}
         </div>
     {% endif %}
+
+    {% if user.id == 1 %}
+        <div class="extra">{{ member.email }}</div>
+    {% endif %}
 </div>
