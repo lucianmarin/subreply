@@ -19,7 +19,7 @@
                 <label for="id_reason">Reason<i>* as many details as possible</i></label>
                 <textarea name="reason" rows="4" cols="60" maxlength="480"
                     placeholder="Include links to your blog or social profiles"
-                    oninput="expand(this)" onkeydown="send(event)"></textarea>
+                    oninput="expand(this)" onkeydown="send(event)">{{ form.getvalue('reason', '') }}</textarea>
                 {% if 'reason' in errors %}
                     <div class="error">{{ errors['reason'] }}</div>
                 {% endif %}
