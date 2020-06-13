@@ -75,6 +75,12 @@
                 <circle cx="16" cy="16" r="14" />
             </svg>
         </a>
+        <a href="/invitation" class="{% if view == 'invitation' %}on{% endif %}">
+            <i>Invitation</i>
+            <svg id="i-gift" viewBox="0 0 32 32" width="16" height="16">
+                <path d="M4 14 L4 30 28 30 28 14 M2 9 L2 14 30 14 30 9 2 9 Z M16 9 C 16 9 14 0 8 3 2 6 16 9 16 9 16 9 18 0 24 3 30 6 16 9 16 9" />
+            </svg>
+        </a>
         <a href="/login" class="{% if view == 'login' %}on{% endif %}">
             <i>Login</i>
             <svg id="i-lock" viewBox="0 0 32 32" width="16" height="16">
@@ -86,12 +92,6 @@
             <i>Register</i>
             <svg id="i-portfolio" viewBox="0 0 32 32" width="16" height="16">
                 <path d="M29 17 L29 28 3 28 3 17 M2 8 L30 8 30 16 C30 16 24 20 16 20 8 20 2 16 2 16 L2 8 Z M16 22 L16 18 M20 8 C20 8 20 4 16 4 12 4 12 8 12 8" />
-            </svg>
-        </a>
-        <a href="/request" class="{% if view == 'request' %}on{% endif %}">
-            <i>Request</i>
-            <svg id="i-gift" viewBox="0 0 32 32" width="16" height="16">
-                <path d="M4 14 L4 30 28 30 28 14 M2 9 L2 14 30 14 30 9 2 9 Z M16 9 C 16 9 14 0 8 3 2 6 16 9 16 9 16 9 18 0 24 3 30 6 16 9 16 9" />
             </svg>
         </a>
     {% endif %}

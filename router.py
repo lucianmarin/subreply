@@ -33,7 +33,7 @@ app.add_route('/about', resources.AboutResource())
 app.add_route('/login', resources.LoginResource())
 app.add_route('/logout', resources.LogoutResource())
 app.add_route('/register', resources.RegisterResource())
-app.add_route('/request', resources.RequestResource())
+app.add_route('/invitation', resources.InvitationResource())
 
 app.add_route('/requests', resources.RequestsResource())
 app.add_route('/search', resources.SearchResource())

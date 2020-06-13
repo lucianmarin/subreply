@@ -576,11 +576,11 @@ class LoginResource:
             raise HTTPFound('/feed')
 
 
-class RequestResource:
+class InvitationResource:
     def on_get(self, req, resp):
         form = FieldStorage(fp=req.stream, environ=req.env)
-        template = env.get_template('pages/request.html')
-        resp.body = template.render(errors={}, form=form, view='request')
+        template = env.get_template('pages/invitation.html')
+        resp.body = template.render(errors={}, form=form, view='invitation')
 
     def on_post(self, req, resp):
         form = FieldStorage(fp=req.stream, environ=req.env)
@@ -591,12 +591,12 @@ class RequestResource:
         errors['reason'] = "Reason is required" if not reason else None
         errors = {k: v for k, v in errors.items() if v}
         if errors:
-            template = env.get_template('pages/request.html')
+            template = env.get_template('pages/invitation.html')
             resp.body = template.render(
-                errors=errors, form=form, view='request'
+                errors=errors, form=form, view='invitation'
             )
         else:
-            r, is_new = Request.objects.get_or_create(
+            Request.objects.get_or_create(
                 created_at=utc_timestamp(), email=email, reason=reason
             )
             raise HTTPFound('/about')
