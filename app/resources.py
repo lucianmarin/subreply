@@ -1,6 +1,6 @@
 from cgi import FieldStorage
 
-from django.db.models import Count, Max, Prefetch, Q
+from django.db.models import Max, Prefetch, Q
 from falcon import status_codes
 from falcon.hooks import before
 from falcon.redirects import HTTPFound
@@ -18,7 +18,13 @@ from project.settings import DEBUG, MAX_AGE, F
 PFR = Prefetch('kids', queryset=Comment.objects.order_by('id').select_related('created_by'))
 
 
-class StaticResource(object):
+def not_found(resp, user, url):
+    template = env.get_template('pages/404.html')
+    resp.body = template.render(user=user, url=url)
+    resp.status = status_codes.HTTP_404
+
+
+class StaticResource:
     binary = ['png', 'jpg', 'woff', 'woff2']
     mime_types = {
         'js': "application/javascript",
@@ -142,10 +148,8 @@ class ReplyResource:
         entry = Comment.objects.filter(
             id=int(base, 36)
         ).select_related('created_by').first()
-        if not entry and entry.created_by.username != username:
-            template = env.get_template('pages/404.html')
-            resp.body = template.render(user=req.user, url=f'{username}/{base}')
-            resp.status = status_codes.HTTP_404
+        if not entry and entry.created_by.username != username.lower():
+            not_found(resp, req.user, f'{username}/{base}')
             return
         duplicate = Comment.objects.filter(
             parent=entry, created_by=req.user
@@ -219,11 +223,9 @@ class ProfileResource:
         self.get_profile(req, resp, username, 'threads')
 
     def get_profile(self, req, resp, username, tab):
-        member = User.objects.filter(username=username).first()
+        member = User.objects.filter(username=username.lower()).first()
         if not member:
-            template = env.get_template('pages/404.html')
-            resp.body = template.render(user=req.user, url=username)
-            resp.status = status_codes.HTTP_404
+            not_found(resp, req.user, username)
             return
         entries = self.fetch_threads(member) if tab == 'threads' else self.fetch_replies(member)
         threads = self.fetch_threads(member).count()
@@ -410,42 +412,36 @@ class TrendingResource:
         )
 
 
-class FollowResource:
+class ActionResource:
+    def follow(self, user, member):
+        Relation.objects.get_or_create(
+            created_at=utc_timestamp(), created_by=user, to_user=member
+        )
+        member.up_followers()
+
+    def unfollow(self, user, member):
+        Relation.objects.filter(created_by=user, to_user=member).delete()
+        member.up_followers()
+
     @before(auth_user)
     @before(login_required)
-    def on_get(self, req, resp, username):
-        member = User.objects.filter(username=username).first()
-        if not member:
-            template = env.get_template('pages/404.html')
-            resp.body = template.render(user=req.user, url=username)
-            resp.status = status_codes.HTTP_404
-            return
-        if req.user and member.id != req.user.id:
-            Relation.objects.get_or_create(
-                created_at=utc_timestamp(),
-                created_by=req.user,
-                to_user=member
-            )
-            member.up_followers()
-        raise HTTPFound(req.referer)
+    def on_get_f(self, req, resp, username):
+        self.get_action(req, resp, username, 'follow')
 
-
-class UnfollowResource:
     @before(auth_user)
     @before(login_required)
-    def on_get(self, req, resp, username):
-        member = User.objects.filter(username=username).first()
+    def on_get_unf(self, req, resp, username):
+        self.get_action(req, resp, username, 'unfollow')
+
+    def get_action(self, req, resp, username, action):
+        member = User.objects.filter(username=username.lower()).first()
         if not member:
-            template = env.get_template('pages/404.html')
-            resp.body = template.render(user=req.user, url=username)
-            resp.status = status_codes.HTTP_404
+            self.not_found(resp, req.user, username)
             return
         if req.user and member.id != req.user.id:
-            Relation.objects.filter(
-                created_by=req.user, to_user=member
-            ).delete()
-            member.up_followers()
-        raise HTTPFound(req.referer)
+            fn = getattr(self, action)
+            fn(req.user, member)
+        raise HTTPFound(f'/{username}')
 
 
 class InvitationsResource:

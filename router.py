@@ -41,8 +41,8 @@ app.add_route('/people', resources.PeopleResource())
 app.add_route('/trending', resources.TrendingResource())
 
 app.add_route('/{username}/{base}', resources.ReplyResource())
-app.add_route('/{username}/unfollow', resources.UnfollowResource())
-app.add_route('/{username}/follow', resources.FollowResource())
+app.add_route('/{username}/unfollow', resources.ActionResource(), suffix="unf")
+app.add_route('/{username}/follow', resources.ActionResource(), suffix="f")
 app.add_route('/{username}/replies', resources.ProfileResource(), suffix='re')
 app.add_route('/{username}', resources.ProfileResource(), suffix='th')
 
