@@ -23,7 +23,7 @@
             {% elif view == 'saved' %}
                 {% set entry = entry.to_comment %}
                 {% include "common/entry.html" %}
-            {% elif view in ['mentions', 'saved' 'search'] %}
+            {% elif view in ['mentions', 'saved', 'search'] %}
                 {% include "common/entry.html" %}
             {% endif %}
         {% else %}
