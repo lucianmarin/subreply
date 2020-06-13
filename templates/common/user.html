@@ -17,9 +17,9 @@
                 <a class="ago" href="/settings">edit</a>
             {% else %}
                 {% if is_following %}
-                    <a class="ago" href="/{{ member.username }}/unfollow">unfollow</a>
+                    <a class="ago" href="/{{ member }}/unfollow">unfollow</a>
                 {% else %}
-                    <a class="ago" href="/{{ member.username }}/follow">follow</a>
+                    <a class="ago" href="/{{ member }}/follow">follow</a>
                 {% endif %}
             {% endif %}
         {% elif view == 'people' %}
@@ -50,10 +50,9 @@
             {% if member.country %}
                 from {{ member.country | country }}
             {% endif %}
+            {% if user.id == 1 %}
+                {{ member.email }}
+            {% endif %}
         </div>
-    {% endif %}
-
-    {% if user.id == 1 %}
-        <div class="extra">{{ member.email }}</div>
     {% endif %}
 </div>
