@@ -40,6 +40,9 @@ class User(models.Model):
     notif_replies = models.PositiveIntegerField(default=0)
     saves = fields.ArrayField(models.PositiveIntegerField(), default=list)
 
+    def __str__(self):
+        return self.username
+
     @property
     def full_name(self):
         return "{0} {1}".format(self.first_name, self.last_name).strip()
@@ -87,9 +90,6 @@ class User(models.Model):
             self.seen_at = datetime.utcnow().timestamp()
             self.save(update_fields=['remote_addr', 'seen_at'])
 
-    def __str__(self):
-        return self.username
-
 
 class Comment(models.Model):
     ancestors = fields.ArrayField(models.PositiveIntegerField(), default=list)
@@ -112,6 +112,9 @@ class Comment(models.Model):
 
     class Meta:
         unique_together = ['parent', 'created_by']
+
+    def __str__(self):
+        return self.content
 
     @property
     def replied(self):
