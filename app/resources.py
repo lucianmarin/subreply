@@ -77,7 +77,7 @@ class SearchResource:
         template = env.get_template('pages/regular.html')
         resp.body = template.render(
             user=req.user, entries=entries[:15], q=q, view='search',
-            placeholder="Seach content"
+            placeholder="Search content"
         )
 
 
