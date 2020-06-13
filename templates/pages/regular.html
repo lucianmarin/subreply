@@ -1,14 +1,19 @@
 {% extends "base.html" %}
 
 {% block main %}
-    {% if view == 'search' %}
+    {% if view in ['people', 'search'] %}
         {% include "common/query.html" %}
     {% endif %}
 
     <div class="list">
         {% for entry in entries %}
-            {% if view in ['replying', 'replies'] %}
+            {% if view == 'trending' %}
+                {% include "common/threads.html" %}
+            {% elif view in ['replying', 'replies'] %}
                 {% include "common/replies.html" %}
+            {% elif view == 'people' %}
+                {% set member = entry %}
+                {% include "common/user.html" %}
             {% elif view == 'following' %}
                 {% set member = entry.to_user %}
                 {% include "common/user.html" %}
@@ -18,7 +23,7 @@
             {% elif view == 'saved' %}
                 {% set entry = entry.to_comment %}
                 {% include "common/entry.html" %}
-            {% elif view in ['mentions', 'saved', 'search'] %}
+            {% elif view in ['mentions', 'saved' 'search'] %}
                 {% include "common/entry.html" %}
             {% endif %}
         {% else %}

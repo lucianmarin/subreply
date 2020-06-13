@@ -4,7 +4,7 @@ from app.const import COUNTRIES
 
 
 def country(code):
-    return COUNTRIES[code]
+    return COUNTRIES.get(code, 'None')
 
 
 def age(year):

@@ -10,7 +10,8 @@ TEMPLATES = []
 DATABASES = {
     'default': {
         'ENGINE': "django.db.backends.postgresql_psycopg2",
-        'NAME': "subreply",
+        # 'NAME': "subreply",
+        'NAME': "old_sub",
         'USER': "postgres",
         'PASSWORD': "postgres",
         'HOST': "",

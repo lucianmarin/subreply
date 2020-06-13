@@ -37,8 +37,8 @@ app.add_route('/request', resources.RequestResource())
 
 app.add_route('/requests', resources.RequestsResource())
 app.add_route('/search', resources.SearchResource())
-app.add_route('/people/{kind}', resources.PeopleResource())
-app.add_route('/trending/{limit}', resources.TrendingResource())
+app.add_route('/people', resources.PeopleResource())
+app.add_route('/trending', resources.TrendingResource())
 
 app.add_route('/{username}/{base}', resources.ReplyResource())
 app.add_route('/{username}/unfollow', resources.UnfollowResource())

@@ -76,7 +76,8 @@ class SearchResource:
         entries = self.fetch_results(terms) if terms else self.fetch_entries()
         template = env.get_template('pages/regular.html')
         resp.body = template.render(
-            user=req.user, entries=entries[:15], q=q, view='search'
+            user=req.user, entries=entries[:15], q=q, view='search',
+            placeholder="Seach content"
         )
 
 
@@ -364,37 +365,34 @@ class RequestsResource:
 
 
 class PeopleResource:
-    def fetch_local(self, user):
-        return User.objects.filter(country=user.country).order_by('-seen_at')
+    fields = [
+        "username", "first_name", "last_name", "email",
+        "bio", "birthyear", "country", "emoji", "website"
+    ]
 
-    def fetch_active(self):
+    def fetch_results(self, terms):
+        query = Q()
+        for term in terms:
+            term = term[1:] if term.startswith('@') else term
+            subquery = Q()
+            for field in self.fields:
+                icontains = {f'{field}__icontains': term}
+                subquery |= Q(**icontains)
+            query &= subquery
+        return User.objects.filter(query).order_by('-seen_at')
+
+    def fetch_entries(self):
         return User.objects.order_by('-seen_at')
 
-    def fetch_joined(self):
-        return User.objects.order_by('-id')
-
-    def fetch_popular(self):
-        return User.objects.annotate(posts=Count('comments')).order_by('-posts', '-seen_at')
-
     @before(auth_user)
-    @before(login_required)
-    def on_get(self, req, resp, kind):
-        if kind == 'active':
-            entries = self.fetch_active()
-        elif kind == 'popular':
-            entries = self.fetch_popular()
-        elif kind == 'joined':
-            entries = self.fetch_joined()
-        elif kind == 'local':
-            entries = self.fetch_local(req.user)
-        else:
-            template = env.get_template('pages/404.html')
-            resp.body = template.render(user=req.user, url=f'people/{kind}')
-            resp.status = status_codes.HTTP_404
-            return
-        template = env.get_template('pages/people.html')
+    def on_get(self, req, resp):
+        q = req.params.get('q', '').strip()
+        terms = [t for t in q.split()]
+        entries = self.fetch_results(terms) if terms else self.fetch_entries()
+        template = env.get_template('pages/regular.html')
         resp.body = template.render(
-            user=req.user, entries=entries[:45], kind=kind, view='people'
+            user=req.user, entries=entries[:15], q=q, view='people',
+            placeholder="Find people"
         )
 
 
@@ -404,20 +402,11 @@ class TrendingResource:
         return Comment.objects.filter(id__in=limited).order_by('-replies', '-id').select_related('created_by').prefetch_related(PFR)
 
     @before(auth_user)
-    def on_get(self, req, resp, limit):
-        try:
-            limit = int(limit)
-        except Exception as e:
-            print(e)
-        if isinstance(limit, str):
-            template = env.get_template('pages/404.html')
-            resp.body = template.render(user=req.user, url=f'trends/{limit}')
-            resp.status = status_codes.HTTP_404
-            return
-        entries = self.fetch_entries(limit)
-        template = env.get_template('pages/trending.html')
+    def on_get(self, req, resp):
+        entries = self.fetch_entries(30)
+        template = env.get_template('pages/regular.html')
         resp.body = template.render(
-            user=req.user, entries=entries[:15], limit=limit, view='trending'
+            user=req.user, entries=entries[:15], view='trending'
         )
 
 
