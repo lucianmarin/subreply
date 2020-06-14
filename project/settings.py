@@ -31,7 +31,7 @@ MAX_AGE = 3600 * 24 * 365
 # registration
 INVALID = [
     "register", "login", "logout", "feed", "following", "followers",
-    "sub", "subreply", "sublevel", "luc", "lm", "lucianmarin",
+    "sub", "subcafe", "sublevel", "luc", "lm", "lucianmarin",
     "re", "reply", "api", "local", "search", "settings",
     "profile", "erase", "password", "delete", "timeline",
     "about", "static", "media", "terms", "privacy", "policy",
