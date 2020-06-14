@@ -17,10 +17,6 @@ app.add_route('/api/delete/{id}', api.DeleteEndpoint())
 app.add_route('/api/save/{id}', api.SaveEndpoint())
 app.add_route('/api/unsave/{id}', api.UnsaveEndpoint())
 
-app.add_route('/invitations', resources.InvitationsResource())
-app.add_route('/password', resources.PasswordResource())
-app.add_route('/settings', resources.SettingsResource())
-
 app.add_route('/feed', resources.FeedResource())
 app.add_route('/replying', resources.ReplyingResource())
 app.add_route('/following', resources.FollowingResource())
@@ -29,16 +25,17 @@ app.add_route('/mentions', resources.MentionsResource())
 app.add_route('/replies', resources.RepliesResource())
 app.add_route('/saved', resources.SavedResource())
 
+app.add_route('/search', resources.SearchResource())
+app.add_route('/people', resources.PeopleResource())
+app.add_route('/trending', resources.TrendingResource())
+
 app.add_route('/about', resources.AboutResource())
 app.add_route('/login', resources.LoginResource())
 app.add_route('/logout', resources.LogoutResource())
 app.add_route('/register', resources.RegisterResource())
-app.add_route('/invitation', resources.InvitationResource())
 
-app.add_route('/requests', resources.RequestsResource())
-app.add_route('/search', resources.SearchResource())
-app.add_route('/people', resources.PeopleResource())
-app.add_route('/trending', resources.TrendingResource())
+app.add_route('/password', resources.PasswordResource())
+app.add_route('/settings', resources.SettingsResource())
 
 app.add_route('/{username}/{base}', resources.ReplyResource())
 app.add_route('/{username}/unfollow', resources.ActionResource(), suffix="unf")

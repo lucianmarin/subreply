@@ -100,7 +100,7 @@ class Comment(models.Model):
                                    related_name='comments')
     mentioned = models.ForeignKey('User', on_delete=models.SET_NULL,
                                   null=True, related_name='mentions')
-    content = models.CharField(max_length=480, unique=True)
+    content = models.CharField(max_length=480, unique=True, db_index=True)
     hashtag = models.CharField(max_length=15, default='')
     link = models.CharField(max_length=120, default='')
     mention = models.CharField(max_length=15, default='')
@@ -171,18 +171,3 @@ class Relation(models.Model):
     to_user = models.ForeignKey('User', on_delete=models.CASCADE,
                                 related_name='followers')
     seen_at = models.FloatField(default=.0)
-
-
-class Invitation(models.Model):
-    created_at = models.FloatField(default=.0)
-    created_by = models.ForeignKey('User', on_delete=models.CASCADE,
-                                   related_name='invitations')
-    email = models.CharField(max_length=120, unique=True)
-    invited = models.ForeignKey('User', on_delete=models.CASCADE, null=True,
-                                related_name='invited_by')
-
-
-class Request(models.Model):
-    created_at = models.FloatField(default=.0)
-    email = models.CharField(max_length=120, unique=True)
-    reason = models.CharField(max_length=480)

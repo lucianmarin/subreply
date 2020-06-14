@@ -9,10 +9,9 @@ from app.const import COUNTRIES
 from app.helpers import build_hash, parse_metadata, utc_timestamp
 from app.hooks import auth_user, login_required
 from app.jinja import env
-from app.models import Comment, Invitation, Relation, Request, Save, User
+from app.models import Comment, Relation, Save, User
 from app.validation import (authentication, changing, profiling, registration,
-                            valid_content, valid_invitation_email, valid_reply,
-                            valid_request_email)
+                            valid_content, valid_reply)
 from project.settings import DEBUG, MAX_AGE, F
 
 PFR = Prefetch('kids', queryset=Comment.objects.order_by('id').select_related('created_by'))
@@ -53,7 +52,7 @@ class MainResource:
         if req.user:
             raise HTTPFound('/feed')
         else:
-            raise HTTPFound('/search')
+            raise HTTPFound('/trending')
 
 
 class AboutResource:
@@ -233,13 +232,11 @@ class ProfileResource:
         is_following = Relation.objects.filter(
             created_by=req.user, to_user=member
         ).exists() if req.user else False
-        invite = Invitation.objects.filter(invited=member).first()
-        invited_by = invite.created_by.username if invite else "lucian"
         template = env.get_template('pages/profile.html')
         resp.body = template.render(
             user=req.user, member=member, entries=entries[:15], tab=tab,
             threads=threads, replies=replies, is_following=is_following,
-            invited_by=invited_by, view='profile'
+            view='profile'
         )
 
 
@@ -352,20 +349,6 @@ class SavedResource:
         )
 
 
-class RequestsResource:
-    def fetch_entries(self):
-        return Request.objects.order_by('-id')
-
-    @before(auth_user)
-    @before(login_required)
-    def on_get(self, req, resp):
-        entries = self.fetch_entries()
-        template = env.get_template('pages/requests.html')
-        resp.body = template.render(
-            user=req.user, entries=entries[:45], view='requests'
-        )
-
-
 class PeopleResource:
     fields = [
         "username", "first_name", "last_name", "email",
@@ -442,45 +425,6 @@ class ActionResource:
             fn = getattr(self, action)
             fn(req.user, member)
         raise HTTPFound(f'/{username}')
-
-
-class InvitationsResource:
-    def fetch_entries(self, user):
-        return Invitation.objects.filter(created_by=user).order_by('-id')
-
-    @before(auth_user)
-    @before(login_required)
-    def on_get(self, req, resp):
-        form = FieldStorage(fp=req.stream, environ=req.env)
-        entries = self.fetch_entries(req.user)
-        template = env.get_template('pages/invitations.html')
-        resp.body = template.render(
-            user=req.user, errors={}, form=form, entries=entries,
-            view='invitations'
-        )
-
-    @before(auth_user)
-    @before(login_required)
-    def on_post(self, req, resp):
-        form = FieldStorage(fp=req.stream, environ=req.env)
-        entries = self.fetch_entries(req.user)
-        email = form.getvalue('email', '')
-        errors = {}
-        errors['email'] = valid_invitation_email(email)
-        errors = {k: v for k, v in errors.items() if v}
-        if errors:
-            template = env.get_template('pages/invitations.html')
-            resp.body = template.render(
-                user=req.user, errors=errors, form=form, entries=entries,
-                view='invitations'
-            )
-        else:
-            i, is_new = Invitation.objects.get_or_create(
-                created_at=utc_timestamp(),
-                created_by=req.user,
-                email=email
-            )
-            raise HTTPFound('/invitations')
 
 
 class PasswordResource:
@@ -576,32 +520,6 @@ class LoginResource:
             raise HTTPFound('/feed')
 
 
-class InvitationResource:
-    def on_get(self, req, resp):
-        form = FieldStorage(fp=req.stream, environ=req.env)
-        template = env.get_template('pages/invitation.html')
-        resp.body = template.render(errors={}, form=form, view='invitation')
-
-    def on_post(self, req, resp):
-        form = FieldStorage(fp=req.stream, environ=req.env)
-        email = form.getvalue('email', '').strip().lower()
-        reason = form.getvalue('reason', '').strip()
-        errors = {}
-        errors['email'] = valid_request_email(email)
-        errors['reason'] = "Reason is required" if not reason else None
-        errors = {k: v for k, v in errors.items() if v}
-        if errors:
-            template = env.get_template('pages/invitation.html')
-            resp.body = template.render(
-                errors=errors, form=form, view='invitation'
-            )
-        else:
-            Request.objects.get_or_create(
-                created_at=utc_timestamp(), email=email, reason=reason
-            )
-            raise HTTPFound('/about')
-
-
 class LogoutResource:
     def on_get(self, req, resp):
         resp.unset_cookie('identity')
@@ -662,7 +580,6 @@ class RegisterResource:
                 created_at=utc_timestamp(), seen_at=utc_timestamp(),
                 created_by=user, to_user=user
             )
-            Invitation.objects.filter(email=f['email']).update(invited=user)
             token = F.encrypt(str(user.id).encode()).decode()
             resp.set_cookie('identity', token, max_age=MAX_AGE)
             raise HTTPFound('/')

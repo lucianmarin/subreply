@@ -6,7 +6,7 @@ from dns.resolver import query as dns_query
 
 from app.const import COUNTRIES, MAX_YEAR, MIN_YEAR
 from app.helpers import parse_metadata, verify_hash
-from app.models import Comment, Invitation, Request, User
+from app.models import Comment, User
 from project.settings import INVALID
 
 
@@ -128,58 +128,6 @@ def valid_email(value, user_id=0):
             return "Email can't be sent to this address"
         elif User.objects.filter(email=value).exclude(id=user_id).exists():
             return "Email is used by someone else"
-        elif not user_id and not Invitation.objects.filter(email=value).exists():
-            return "Email isn't invited"
-
-
-def valid_invitation_email(value):
-    if not value:
-        return "Email can't be blank"
-    elif len(value) > 120:
-        return "Email can't be longer than 120 characters"
-    elif len(value) != len(value.encode()):
-        return "Email should use English alphabet"
-    elif "@" not in value:
-        return "Email isn't a valid address"
-    else:
-        handle, domain = value.split('@', 1)
-        try:
-            has_mx = bool(dns_query(domain, 'MX'))
-        except Exception as e:
-            has_mx = False
-            print(e)
-        if not has_mx:
-            return "Email can't be sent to this address"
-        elif Invitation.objects.filter(email=value).exists():
-            return "Email was already invited"
-        elif User.objects.filter(email=value).exists():
-            return "Email is used by someone else"
-
-
-def valid_request_email(value):
-    if not value:
-        return "Email can't be blank"
-    elif len(value) > 120:
-        return "Email can't be longer than 120 characters"
-    elif len(value) != len(value.encode()):
-        return "Email should use English alphabet"
-    elif "@" not in value:
-        return "Email isn't a valid address"
-    else:
-        handle, domain = value.split('@', 1)
-        try:
-            has_mx = bool(dns_query(domain, 'MX'))
-        except Exception as e:
-            has_mx = False
-            print(e)
-        if not has_mx:
-            return "Email can't be sent to this address"
-        elif Request.objects.filter(email=value).exists():
-            return "Email has already sent a request"
-        elif Invitation.objects.filter(email=value).exists():
-            return "Email was already invited"
-        elif User.objects.filter(email=value).exists():
-            return "Email is used by someone else"
 
 
 def valid_bio(value, username, user_id=0):
@@ -275,15 +223,6 @@ def valid_emoji(value, user_id=0):
             users = User.objects.filter(Q(emoji=value) | Q(emoji=value[::-1])).exclude(id=user_id).exists()
             if users:
                 return "Emoji already taken"
-
-
-def valid_invitation(value, email):
-    if not value:
-        return "Invitation code is required"
-    else:
-        invitations = Invitation.objects.filter(code=value, email=email).exists()
-        if not invitations:
-            return "Invitation wasn't found"
 
 
 def changing(user, current, password1, password2):

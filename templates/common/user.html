@@ -1,16 +1,10 @@
 <div class="entry">
     <div class="author">
         {% if member.emoji %}
-            <a class="emoji" href="/{{ member }}">
-                {{ member.emoji }}
-            </a>
+            <a class="emoji" href="/{{ member }}">{{ member.emoji }}</a>
         {% endif %}
-        <a class="short" href="/{{ member }}">
-            {{ member.full_name }}
-        </a>
-        <a class="handle" href="/{{ member }}">
-            @{{ member }}
-        </a>
+        <a class="short" href="/{{ member }}">{{ member.full_name }}</a>
+        <a class="handle" href="/{{ member }}">@{{ member }}</a>
         <b class="{{ member.status }}">&bull;</b>
         {% if view == 'profile' %}
             {% if member.id == user.id %}
@@ -49,9 +43,6 @@
             {% endif %}
             {% if member.country %}
                 from {{ member.country | country }}
-            {% endif %}
-            {% if user.id == 1 %}
-                {{ member.email }}
             {% endif %}
         </div>
     {% endif %}
