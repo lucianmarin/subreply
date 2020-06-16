@@ -598,7 +598,9 @@ class ResetResource:
     def on_post(self, req, resp):
         form = FieldStorage(fp=req.stream, environ=req.env)
         email = form.getvalue('email', '').strip().lower()
+        # clean up
         one_day_ago = utc_timestamp() - 24 * 3600
+        Reset.objects.filter(created_at__lt=one_day_ago).delete()
         errors = {}
         user = User.objects.filter(email=email).first()
         if not user:
@@ -613,15 +615,13 @@ class ResetResource:
             template = env.get_template('pages/reset.html')
             resp.body = template.render(errors=errors, form=form, view='reset')
         else:
-            # clean up
-            Reset.objects.filter(created_at__lt=one_day_ago).delete()
             # generate code
             plain = "{0}-{1}".format(utc_timestamp(), user.email)
             code = hashlib.md5(plain.encode()).hexdigest()
             # compose email
             m = Message(
-                html=T("<html><p>Hello,</p><p>You can change your password for @{{ username }} on Subreply using the following link https://subreply.com/reset/{{ code }} and after that you will be logged in with the new credentials.</p><p>Delete this email if you didn't make this request.</p>"),
-                text=T("Hello,\nYou can change your password for @{{ username }} on Subreply using the following link https://subreply.com/reset/{{ code }} and after that you will be logged in with the new credentials.\nDelete this email if you didn't make this request."),
+                html=T("<html><p>Hello,</p><p>You can change your password for @{{ username }} on Subreply using the following link https://subreply.com/reset/{{ code }} and after that you will be logged in with the new credentials.</p><p>Delete this email if you didn't make such request.</p>"),
+                text=T("Hello,\nYou can change your password for @{{ username }} on Subreply using the following link https://subreply.com/reset/{{ code }} and after that you will be logged in with the new credentials.\nDelete this email if you didn't make such request."),
                 subject=T("Reset password"),
                 mail_from=("Subreply", "subreply@outlook.com")
             )

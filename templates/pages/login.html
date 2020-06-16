@@ -9,12 +9,12 @@
         <form enctype="multipart/form-data" method="post">
             <div class="line">
                 <div class="left">
-                    <label for="id_username">Username or email</label>
+                    <label for="id_username">Username or email<i>*</i></label>
                     <input type="text" name="username" id="id_username"
                         value="{{ form.getvalue('username', '') }}">
                 </div>
                 <div class="right">
-                    <label for="id_password">Password</label>
+                    <label for="id_password">Password<i>*</i></label>
                     <input type="password" name="password" id="id_password"
                         value="{{ form.getvalue('password', '') }}">
                 </div>
