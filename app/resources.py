@@ -1,6 +1,9 @@
+import hashlib
 from cgi import FieldStorage
 
 from django.db.models import Max, Prefetch, Q
+from emails import Message
+from emails.template import JinjaTemplate as T
 from falcon import status_codes
 from falcon.hooks import before
 from falcon.redirects import HTTPFound
@@ -10,10 +13,10 @@ from app.const import COUNTRIES
 from app.helpers import build_hash, parse_metadata, utc_timestamp
 from app.hooks import auth_user, login_required
 from app.jinja import env
-from app.models import Comment, Relation, Save, User
+from app.models import Comment, Relation, Reset, Save, User
 from app.validation import (authentication, changing, profiling, registration,
-                            valid_content, valid_reply)
-from project.settings import DEBUG, MAX_AGE, F
+                            valid_content, valid_reply, valid_password)
+from project.settings import DEBUG, MAX_AGE, SMTP, F
 
 PFR = Prefetch('kids', queryset=Comment.objects.order_by('id').select_related('created_by'))
 
@@ -510,14 +513,14 @@ class LoginResource:
     def on_post(self, req, resp):
         form = FieldStorage(fp=req.stream, environ=req.env)
         username = form.getvalue('username', '').strip().lower()
-        password = form.getvalue('password', '').strip()
+        password = form.getvalue('password', '')
         errors, user = authentication(username, password)
         if errors:
             template = env.get_template('pages/login.html')
             resp.body = template.render(errors=errors, form=form, view='login')
         else:
             token = F.encrypt(str(user.id).encode())
-            resp.set_cookie('identity', token.decode(), max_age=MAX_AGE)
+            resp.set_cookie('identity', token.decode(), path="/", max_age=MAX_AGE)
             raise HTTPFound('/feed')
 
 
@@ -581,6 +584,94 @@ class RegisterResource:
                 created_at=utc_timestamp(), seen_at=utc_timestamp(),
                 created_by=user, to_user=user
             )
-            token = F.encrypt(str(user.id).encode()).decode()
-            resp.set_cookie('identity', token, max_age=MAX_AGE)
-            raise HTTPFound('/')
+            token = F.encrypt(str(user.id).encode())
+            resp.set_cookie('identity', token.decode(), path="/", max_age=MAX_AGE)
+            raise HTTPFound('/feed')
+
+
+class ResetResource:
+    def on_get(self, req, resp):
+        form = FieldStorage(fp=req.stream, environ=req.env)
+        template = env.get_template('pages/reset.html')
+        resp.body = template.render(errors={}, form=form, view='reset')
+
+    def on_post(self, req, resp):
+        form = FieldStorage(fp=req.stream, environ=req.env)
+        email = form.getvalue('email', '').strip().lower()
+        one_day_ago = utc_timestamp() - 24 * 3600
+        errors = {}
+        user = User.objects.filter(email=email).first()
+        if not user:
+            errors['username'] = "Email doesn't exist"
+        else:
+            reset = Reset.objects.filter(
+                email=user.email, created_at__gt=one_day_ago
+            ).exists()
+            if reset:
+                errors['reset'] = "Reset already exists"
+        if errors:
+            template = env.get_template('pages/reset.html')
+            resp.body = template.render(errors=errors, form=form, view='reset')
+        else:
+            # clean up
+            Reset.objects.filter(created_at__lt=one_day_ago).delete()
+            # generate code
+            plain = "{0}-{1}".format(utc_timestamp(), user.email)
+            code = hashlib.md5(plain.encode()).hexdigest()
+            # compose email
+            m = Message(
+                html=T("<html><p>Hello,</p><p>You can change your password for @{{ username }} on Subreply using the following link https://subreply.com/reset/{{ code }} and after that you will be logged in with the new credentials.</p><p>Delete this email if you didn't make this request.</p>"),
+                text=T("Hello,\nYou can change your password for @{{ username }} on Subreply using the following link https://subreply.com/reset/{{ code }} and after that you will be logged in with the new credentials.\nDelete this email if you didn't make this request."),
+                subject=T("Reset password"),
+                mail_from=("Subreply", "subreply@outlook.com")
+            )
+            # send email
+            response = m.send(
+                render={"username": user, "code": code}, to=user.email, smtp=SMTP
+            )
+            # create reset entry
+            if response.status_code == 250:
+                Reset.objects.get_or_create(
+                    created_at=utc_timestamp(), email=user.email, code=code
+                )
+                print("message sent")
+            else:
+                print("message not sent")
+            raise HTTPFound('/login')
+
+
+class ChangeResource:
+    def on_get(self, req, resp, code):
+        reset = Reset.objects.filter(code=code).first()
+        if not reset:
+            raise HTTPFound('/login')
+        form = FieldStorage(fp=req.stream, environ=req.env)
+        template = env.get_template('pages/change.html')
+        resp.body = template.render(
+            code=code, errors={}, form=form, view='change'
+        )
+
+    def on_post(self, req, resp, code):
+        form = FieldStorage(fp=req.stream, environ=req.env)
+        email = form.getvalue('email', '').strip().lower()
+        password1 = form.getvalue('password1', '')
+        password2 = form.getvalue('password2', '')
+        errors = {}
+        reset = Reset.objects.filter(email=email, code=code).first()
+        if not reset:
+            errors['email'] = "Email isn't requesting a reset"
+        errors['password'] = valid_password(password1, password2)
+        errors = {k: v for k, v in errors.items() if v}
+        if errors:
+            template = env.get_template('pages/change.html')
+            resp.body = template.render(
+                code=code, errors=errors, form=form, view='change'
+            )
+        else:
+            user = User.objects.filter(email=email).first()
+            user.password = build_hash(password1)
+            user.save(update_fields=['password'])
+            token = F.encrypt(str(user.id).encode())
+            resp.set_cookie('identity', token.decode(), path="/", max_age=MAX_AGE)
+            reset.delete()
+            raise HTTPFound('/feed')

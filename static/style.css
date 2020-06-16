@@ -146,7 +146,9 @@ table td a { text-decoration: underline; }
 
 .filters a.selected { color: var(--dimgray); }
 
-.line { margin-bottom: 10px; overflow: hidden; }
+.line { line-height: 30px; margin-bottom: 10px; overflow: hidden; }
+
+.line a { color: var(--silver); font-size: var(--small); }
 
 .line .cell { display: table-cell; padding: 0 5px; height: 20px; vertical-align: middle; }
 

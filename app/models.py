@@ -171,3 +171,9 @@ class Relation(models.Model):
     to_user = models.ForeignKey('User', on_delete=models.CASCADE,
                                 related_name='followers')
     seen_at = models.FloatField(default=.0)
+
+
+class Reset(models.Model):
+    created_at = models.FloatField(default=.0)
+    email = models.CharField(max_length=120, unique=True)
+    code = models.CharField(max_length=32, default='')

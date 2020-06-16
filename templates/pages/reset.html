@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block main %}
+    <div class="title">
+        <a href="/reset" class="on">Reset</a> password request
+    </div>
+
+    <div class="login">
+        <form enctype="multipart/form-data" method="post">
+            <div class="line">
+                <label for="id_email">Email address</label>
+                <input type="text" name="email" id="id_email"
+                    value="{{ form.getvalue('email', '') }}">
+                {% if 'email' in errors %}
+                    <div class="error">{{ errors['email'] }}</div>
+                {% endif %}
+                {% if 'reset' in errors %}
+                    <div class="error">{{ errors['reset'] }}</div>
+                {% endif %}
+            </div>
+            <div class="line">
+                <input type="submit" value="Send">
+            </div>
+        </form>
+    </div>
+{% endblock %}
