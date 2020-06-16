@@ -2,12 +2,13 @@ cryptography
 django
 django-extensions
 dnspython
+emails
 emoji
 falcon
+grapheme
 gunicorn
 jinja2
 meinheld
 psycopg2-binary
 requests
 unidecode
-grapheme

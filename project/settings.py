@@ -1,5 +1,6 @@
 from cryptography.fernet import Fernet
-from project.local import DEBUG, SIGNATURE, SECRET_KEY
+
+from project.local import DEBUG, SECRET_KEY, SIGNATURE, SMTP
 
 ALLOWED_HOSTS = []
 AUTH_PASSWORD_VALIDATORS = []

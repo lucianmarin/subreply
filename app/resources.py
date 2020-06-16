@@ -4,6 +4,7 @@ from django.db.models import Max, Prefetch, Q
 from falcon import status_codes
 from falcon.hooks import before
 from falcon.redirects import HTTPFound
+from unidecode import unidecode
 
 from app.const import COUNTRIES
 from app.helpers import build_hash, parse_metadata, utc_timestamp
@@ -105,7 +106,7 @@ class FeedResource:
     @before(login_required)
     def on_post(self, req, resp):
         form = FieldStorage(fp=req.stream, environ=req.env)
-        content = form.getvalue('content', '')
+        content = unidecode(form.getvalue('content', ''))
         content = " ".join([p.strip() for p in content.split()])
         errors = {}
         errors['content'] = valid_content(content, req.user)
@@ -169,7 +170,7 @@ class ReplyResource:
             id=int(base, 36)
         ).select_related('created_by').first()
         form = FieldStorage(fp=req.stream, environ=req.env)
-        content = form.getvalue('content', '')
+        content = unidecode(form.getvalue('content', ''))
         content = " ".join([p.strip() for p in content.split()])
         mentions, links, hashtags = parse_metadata(content)
         errors = {}
