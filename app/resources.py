@@ -527,7 +527,7 @@ class LoginResource:
 class LogoutResource:
     def on_get(self, req, resp):
         resp.unset_cookie('identity')
-        raise HTTPFound('/search')
+        raise HTTPFound('/trending')
 
 
 class RegisterResource:
