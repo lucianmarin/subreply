@@ -144,13 +144,13 @@ class ReplyResource:
         return Comment.objects.filter(parent=entry).select_related('created_by').prefetch_related(PFR)
 
     def fetch_ancestors(self, entry):
-        return Comment.objects.filter(id__in=entry.ancestors).order_by('id').select_related('created_by')
+        return Comment.objects.filter(id__in=entry.ancestors).order_by('id').select_related('created_by', 'parent')
 
     @before(auth_user)
     def on_get(self, req, resp, username, base):
         entry = Comment.objects.filter(
             id=int(base, 36)
-        ).select_related('created_by').first()
+        ).select_related('created_by', 'parent').first()
         if not entry and entry.created_by.username != username.lower():
             not_found(resp, req.user, f'{username}/{base}')
             return
@@ -282,7 +282,7 @@ class FollowersResource:
 
 class MentionsResource:
     def fetch_entries(self, user):
-        return Comment.objects.filter(mentioned=user).order_by('-id')
+        return Comment.objects.filter(mentioned=user).order_by('-id').order_by('-id').select_related('created_by', 'parent')
 
     def clear_mentions(self, user):
         Comment.objects.filter(
@@ -341,7 +341,7 @@ class ReplyingResource:
 
 class SavedResource:
     def fetch_entries(self, user):
-        return Save.objects.filter(created_by=user)
+        return Save.objects.filter(created_by=user).order_by('-id').select_related('to_comment__created_by', 'to_comment__parent')
 
     @before(auth_user)
     @before(login_required)
