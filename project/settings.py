@@ -34,7 +34,7 @@ INVALID = [
     "register", "login", "logout", "feed", "following", "followers",
     "sub", "subcafe", "sublevel", "luc", "lm", "lucianmarin",
     "re", "reply", "api", "local", "search", "settings",
-    "profile", "erase", "password", "delete", "timeline",
+    "profile", "reset", "password", "delete", "timeline",
     "about", "static", "media", "terms", "privacy", "policy",
     "requests", "invitations", "people", "trends", "trending",
     "links", "mentions", "pins", "saves",
