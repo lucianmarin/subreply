@@ -85,7 +85,7 @@ class SearchResource:
         entries = self.fetch_results(terms) if terms else self.fetch_entries()
         template = env.get_template('pages/regular.html')
         resp.body = template.render(
-            user=req.user, entries=entries[:15], q=q, view='search',
+            user=req.user, entries=entries[:30], q=q, view='search',
             placeholder="Search content"
         )
 
