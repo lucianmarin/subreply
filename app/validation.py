@@ -44,7 +44,7 @@ def valid_content(value, user):
         duplicate = Comment.objects.filter(content=value).first()
         # last_uids = Comment.objects.order_by('-id').values_list('created_by_id', flat=True)[:5]
         if duplicate:
-            return f'Same status of <a href="/re/{duplicate.id}">@{duplicate.created_by}</a>'
+            return f'Already written by <a href="/{duplicate.created_by}/{duplicate.base}">@{duplicate.created_by}</a>'
         # elif all(uid == user.id for uid in last_uids):
         #     return "Please wait your turn"
 

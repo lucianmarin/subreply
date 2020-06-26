@@ -3,6 +3,7 @@ __pycache__
 *.so
 *.c
 build/
+emails/
 media/
 local.py
 sub.pid
