@@ -236,11 +236,14 @@ class ProfileResource:
         is_following = Relation.objects.filter(
             created_by=req.user, to_user=member
         ).exists() if req.user else False
+        is_followed = Relation.objects.filter(
+            created_by=member, to_user=req.user
+        ).exists() if req.user else False
         template = env.get_template('pages/profile.html')
         resp.body = template.render(
-            user=req.user, member=member, entries=entries[:15], tab=tab,
-            threads=threads, replies=replies, is_following=is_following,
-            view='profile'
+            user=req.user, member=member, entries=entries[:15],
+            tab=tab, is_following=is_following, is_followed=is_followed,
+            threads=threads, replies=replies, view='profile'
         )
 
 

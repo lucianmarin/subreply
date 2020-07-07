@@ -19,6 +19,12 @@ html
 ::-webkit-input-placeholder
     color: var(--gray)
 
+@mixin overflow
+    overflow: hidden
+    text-overflow: ellipsis
+    white-space: nowrap
+
+
 @media (prefers-color-scheme: dark)
     html
         --white: #000
@@ -62,9 +68,7 @@ body, label, input, select, textarea
 
 label
     color: var(--black)
-    overflow: hidden
-    text-overflow: ellipsis
-    white-space: nowrap
+    @include overflow
     i
         color: var(--gray)
 
@@ -298,6 +302,7 @@ table
 .status
     color: var(--silver)
     font-size: var(--small)
+    @include overflow
     a
         color: var(--silver)
 

@@ -8,6 +8,7 @@
             <div class="status">
                 Joined {{ member.joined_at | shortdate }} ago.
                 Seen {{ member.seen_at | shortdate }} ago.
+                {% if is_followed %}Follows you.{% endif %}
             </div>
         </div>
 
