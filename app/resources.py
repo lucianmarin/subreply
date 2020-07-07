@@ -72,7 +72,7 @@ class SearchResource:
         for term in terms:
             term = term[1:] if term.startswith('#') else term
             query &= Q(content__icontains=term)
-        return Comment.objects.filter(query).order_by('-replies', '-id').select_related('created_by').prefetch_related('parent')
+        return Comment.objects.filter(query).order_by('-id').select_related('created_by').prefetch_related('parent')
 
     def fetch_entries(self):
         last_ids = User.objects.annotate(last_id=Max('comments__id')).values('last_id')
