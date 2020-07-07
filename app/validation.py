@@ -5,6 +5,7 @@ from django.db.models import Q
 from dns.resolver import query as dns_query
 
 from app.const import COUNTRIES, MAX_YEAR, MIN_YEAR
+from app.filters import shortdate
 from app.helpers import parse_metadata, verify_hash
 from app.models import Comment, User
 from project.settings import INVALID
@@ -41,10 +42,12 @@ def valid_content(value, user):
             if not users:
                 return "@{0} isn't an user".format(mention)
     else:
-        duplicate = Comment.objects.filter(content=value).first()
+        duplicate = Comment.objects.filter(
+            content__iexact=value, created_by=user
+        ).first()
         # last_uids = Comment.objects.order_by('-id').values_list('created_by_id', flat=True)[:5]
         if duplicate:
-            return f'Written by <a href="/{duplicate.created_by}/{duplicate.base}">@{duplicate.created_by}</a>, reformulate?'
+            return f'You wrote the same <a href="/{duplicate.created_by}/{duplicate.base}">{shortdate(duplicate.created_at)} ago</a>'
         # elif all(uid == user.id for uid in last_uids):
         #     return "Please wait your turn"
 

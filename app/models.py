@@ -100,7 +100,7 @@ class Comment(models.Model):
                                    related_name='comments')
     mentioned = models.ForeignKey('User', on_delete=models.SET_NULL,
                                   null=True, related_name='mentions')
-    content = models.CharField(max_length=480, unique=True, db_index=True)
+    content = models.CharField(max_length=480, db_index=True)
     hashtag = models.CharField(max_length=15, default='')
     link = models.CharField(max_length=120, default='')
     mention = models.CharField(max_length=15, default='')

@@ -164,6 +164,8 @@ table td a { text-decoration: underline; }
 
 .error { color: var(--red); font-size: var(--small); }
 
+.error a { color: var(--red); text-decoration: underline; }
+
 .about a { text-decoration: underline; }
 
 .about p { margin-bottom: 10px; }
