@@ -1,5 +1,7 @@
 html
-    --small: 13px
+    --tiny: 10.667px
+    --small: 12.8px
+    --regular: 13.6px
     --radius: 5px
     --d: 0.2s
     --white: #fff
@@ -7,7 +9,6 @@ html
     --gainsboro: #e0e0e0
     --silver: #c0c0c0
     --gray: #808080
-    --dimgray: #606060
     --black: #000
     --aqua: #0080f0
     --ocean: #003080
@@ -32,7 +33,6 @@ html
         --gainsboro: #282828
         --silver: #484848
         --gray: #808080
-        --dimgray: #c0c0c0
         --black: #e0e0e0
         --aqua: #00d0f0
         --ocean: #00f0ff
@@ -52,6 +52,7 @@ a
     color: var(--black)
     cursor: pointer
     text-decoration: none
+    transition: var(--d) color
 
 b, i, u
     font-style: normal
@@ -63,7 +64,7 @@ form, input, img, label
 
 body, label, input, select, textarea
     font-family: "Fira Sans", sans-serif
-    font-size: 13.5px
+    font-size: var(--regular)
     line-height: 20px
 
 label
@@ -158,7 +159,7 @@ table
         color: var(--white)
         display: block
         float: right
-        font-size: 10.5px
+        font-size: var(--tiny)
         height: 30px
         line-height: 30px
         text-align: center
@@ -202,7 +203,7 @@ table
     line-height: 20px
     margin: 10px 0
     a
-        color: var(--dimgray)
+        color: var(--gray)
         &.on
             color: var(--black)
             font-weight: bold
@@ -320,7 +321,7 @@ table
         &:last-child
             margin-right: 0
         &.selected
-            color: var(--dimgray)
+            color: var(--gray)
 
 .line
     line-height: 30px
@@ -386,7 +387,7 @@ table
     h5, h6
         font-weight: normal
 
-@media (max-width: 600px)
+@media (max-width: 640px)
     .container
         display: grid
         grid-template-columns: 0 50px calc(100% - 50px) 0
@@ -399,18 +400,6 @@ table
     .links svg
         margin-left: 0
         stroke: var(--black)
-
-// @font-face
-//     font-family: "Clear Sans"
-//     font-style: normal
-//     font-weight: normal
-//     src: url(/static/clearsans-regular.woff) format("woff")
-
-// @font-face
-//     font-family: "Clear Sans"
-//     font-style: normal
-//     font-weight: bold
-//     src: url(/static/clearsans-bold.woff) format("woff")
 
 @font-face
     font-family: "Fira Sans"

@@ -1,22 +1,22 @@
-html { --small: 13px; --radius: 5px; --d: 0.2s; --white: #fff; --whitesmoke: #f0f0f0; --gainsboro: #e0e0e0; --silver: #c0c0c0; --gray: #808080; --dimgray: #606060; --black: #000; --aqua: #0080f0; --ocean: #003080; --red: #ff4020; }
+html { --tiny: 10.667px; --small: 12.8px; --regular: 13.6px; --radius: 5px; --d: 0.2s; --white: #fff; --whitesmoke: #f0f0f0; --gainsboro: #e0e0e0; --silver: #c0c0c0; --gray: #808080; --black: #000; --aqua: #0080f0; --ocean: #003080; --red: #ff4020; }
 
 ::-moz-placeholder { color: #1f1f1f; }
 
 ::-webkit-input-placeholder { color: var(--gray); }
 
-@media (prefers-color-scheme: dark) { html { --white: #000; --whitesmoke: #181818; --gainsboro: #282828; --silver: #484848; --gray: #808080; --dimgray: #c0c0c0; --black: #e0e0e0; --aqua: #00d0f0; --ocean: #00f0ff; } ::-moz-placeholder { color: #eeeeee; } }
+@media (prefers-color-scheme: dark) { html { --white: #000; --whitesmoke: #181818; --gainsboro: #282828; --silver: #484848; --gray: #808080; --black: #e0e0e0; --aqua: #00d0f0; --ocean: #00f0ff; } ::-moz-placeholder { color: #eeeeee; } }
 
 * { margin: 0; padding: 0; }
 
 body { background-color: var(--gainsboro); color: var(--black); cursor: default; }
 
-a { color: var(--black); cursor: pointer; text-decoration: none; }
+a { color: var(--black); cursor: pointer; text-decoration: none; transition: var(--d) color; }
 
 b, i, u { font-style: normal; font-weight: normal; text-decoration: none; }
 
 form, input, img, label { display: block; }
 
-body, label, input, select, textarea { font-family: "Fira Sans", sans-serif; font-size: 13.5px; line-height: 20px; }
+body, label, input, select, textarea { font-family: "Fira Sans", sans-serif; font-size: var(--regular); line-height: 20px; }
 
 label { color: var(--black); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
@@ -56,7 +56,7 @@ table td a { text-decoration: underline; }
 
 .logo { margin: 10px 15px; overflow: hidden; position: sticky; top: 10px; }
 
-.logo a { background-color: var(--black); border-radius: 15px; color: var(--white); display: block; float: right; font-size: 10.5px; height: 30px; line-height: 30px; text-align: center; width: 30px; }
+.logo a { background-color: var(--black); border-radius: 15px; color: var(--white); display: block; float: right; font-size: var(--tiny); height: 30px; line-height: 30px; text-align: center; width: 30px; }
 
 .links { position: sticky; text-align: right; top: 50px; }
 
@@ -80,7 +80,7 @@ table td a { text-decoration: underline; }
 
 .title { font-size: 15px; line-height: 20px; margin: 10px 0; }
 
-.title a { color: var(--dimgray); }
+.title a { color: var(--gray); }
 
 .title a.on { color: var(--black); font-weight: bold; }
 
@@ -144,7 +144,7 @@ table td a { text-decoration: underline; }
 
 .filters a:last-child { margin-right: 0; }
 
-.filters a.selected { color: var(--dimgray); }
+.filters a.selected { color: var(--gray); }
 
 .line { line-height: 30px; margin-bottom: 10px; overflow: hidden; }
 
@@ -184,7 +184,7 @@ table td a { text-decoration: underline; }
 
 .promo h5, .promo h6 { font-weight: normal; }
 
-@media (max-width: 600px) { .container { display: grid; grid-template-columns: 0 50px calc(100% - 50px) 0; } .main { padding: 0 10px; } .logo { margin: 10px; } .promo, .links i { display: none; } .links svg { margin-left: 0; stroke: var(--black); } }
+@media (max-width: 640px) { .container { display: grid; grid-template-columns: 0 50px calc(100% - 50px) 0; } .main { padding: 0 10px; } .logo { margin: 10px; } .promo, .links i { display: none; } .links svg { margin-left: 0; stroke: var(--black); } }
 
 @font-face { font-family: "Fira Sans"; font-style: normal; font-weight: normal; src: url(/static/firasans-regular.woff2) format("woff2"); }
 

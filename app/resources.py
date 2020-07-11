@@ -238,7 +238,7 @@ class ProfileResource:
         ).exists() if req.user else False
         is_followed = Relation.objects.filter(
             created_by=member, to_user=req.user
-        ).exists() if req.user else False
+        ).exclude(created_by=req.user).exists() if req.user else False
         template = env.get_template('pages/profile.html')
         resp.body = template.render(
             user=req.user, member=member, entries=entries[:15],
