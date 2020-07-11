@@ -1,7 +1,9 @@
 html
-    --tiny: 10.667px
-    --small: 12.8px
-    --regular: 13.6px
+    -ms-text-size-adjust: 100%
+    -webkit-text-size-adjust: 100%
+    --tiny: 10.5px
+    --small: 13px
+    --regular: 13.5px
     --radius: 5px
     --d: 0.2s
     --white: #fff
@@ -52,7 +54,7 @@ a
     color: var(--black)
     cursor: pointer
     text-decoration: none
-    transition: var(--d) color
+    transition: color var(--d)
 
 b, i, u
     font-style: normal
