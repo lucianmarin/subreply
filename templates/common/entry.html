@@ -1,12 +1,12 @@
 <div class="entry">
     <div class="author">
         {% if entry.created_by.emoji %}
-            <a class="emoji" href="/{{ member }}">
+            <a class="emoji" href="/{{ entry.created_by }}">
                 {{ entry.created_by.emoji }}
             </a>
         {% endif %}
         <a class="short" href="/{{ entry.created_by }}">
-            {{ entry.created_by.short_name }}
+            {{ entry.created_by.full_name }}
         </a>
         <a class="handle" href="/{{ entry.created_by }}">
             @{{ entry.created_by }}
