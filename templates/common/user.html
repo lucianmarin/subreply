@@ -26,13 +26,11 @@
             </a>
         {% endif %}
     </div>
-
     {% if member.bio %}
         <div class="bio">
             {{ member.bio | parser | safe }}
         </div>
     {% endif %}
-
     {% if member.website or member.birthyear or member.country %}
         <div class="extra">
             {% if member.website %}
