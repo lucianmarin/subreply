@@ -93,6 +93,7 @@ def valid_username(value, remote_addr='', user_id=0):
 
 
 def valid_first_name(value):
+    limits = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
     if not value:
         return "First name can't be blank"
     elif len(value) > 15:
@@ -101,16 +102,17 @@ def valid_first_name(value):
         return "First name is just too short"
     elif any(slur in value.lower() for slur in SLURS):
         return "First name is prohibited"
-    elif len(value) != len(value.encode()):
+    elif not all(c in limits for c in value):
         return "First name should use English alphabet"
 
 
 def valid_last_name(value):
+    limits = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
     if len(value) > 15:
         return "Last name can't be longer than 15 characters"
     elif any(slur in value.lower() for slur in SLURS):
         return "Last name is prohibited"
-    elif len(value) != len(value.encode()):
+    elif not all(c in limits for c in value):
         return "Last name should use English alphabet"
 
 
