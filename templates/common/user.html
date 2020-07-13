@@ -3,7 +3,7 @@
         {% if member.emoji %}
             <a class="emoji" href="/{{ member }}">{{ member.emoji }}</a>
         {% endif %}
-        <a class="short" href="/{{ member }}">{{ member.full_name }}</a>
+        <a class="short" href="/{{ member }}">{{ member.full_name | escape }}</a>
         <a class="handle" href="/{{ member }}">@{{ member }}</a>
         <b class="{{ member.status }}">&bull;</b>
         {% if view == 'profile' %}

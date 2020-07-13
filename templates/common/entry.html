@@ -6,7 +6,7 @@
             </a>
         {% endif %}
         <a class="short" href="/{{ entry.created_by }}">
-            {{ entry.created_by.full_name }}
+            {{ entry.created_by.full_name | escape }}
         </a>
         <a class="handle" href="/{{ entry.created_by }}">
             @{{ entry.created_by }}
