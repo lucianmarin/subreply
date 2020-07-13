@@ -12,13 +12,20 @@ from project.settings import INVALID
 
 
 def valid_content(value, user):
+    https = ('http://', 'https://')
+    words = [w for w in value.split() if not w.startswith(https)]
     mentions, links, hashtags = parse_metadata(value)
+    duplicate = Comment.objects.filter(content__iexact=value, created_by=user).first()
     if not value:
         return "Status can't be blank"
     elif len(value) > 480:
         return "Status can't be longer than 480 characters"
     elif len(value) != len(value.encode()):
         return "Only English alphabet allowed"
+    elif any(len(word) > 16 for word in words):
+        return "Use spaces or shorter words"
+    elif duplicate:
+        return f'You wrote the same <a href="/{duplicate.created_by}/{duplicate.base}">{shortdate(duplicate.created_at)} ago</a>'
     elif len(mentions) > 1:
         return "Mention a single user"
     elif len(links) > 1:
@@ -41,15 +48,6 @@ def valid_content(value, user):
             users = User.objects.filter(username=mention).exists()
             if not users:
                 return "@{0} isn't an user".format(mention)
-    else:
-        duplicate = Comment.objects.filter(
-            content__iexact=value, created_by=user
-        ).first()
-        # last_uids = Comment.objects.order_by('-id').values_list('created_by_id', flat=True)[:5]
-        if duplicate:
-            return f'You wrote the same <a href="/{duplicate.created_by}/{duplicate.base}">{shortdate(duplicate.created_at)} ago</a>'
-        # elif all(uid == user.id for uid in last_uids):
-        #     return "Please wait your turn"
 
 
 def valid_reply(entry, user, mentions):
