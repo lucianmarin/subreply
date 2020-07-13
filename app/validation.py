@@ -4,7 +4,6 @@ import requests
 from dns.resolver import query as dns_query
 
 from app.const import COUNTRIES, MAX_YEAR, MIN_YEAR
-from app.filters import shortdate
 from app.helpers import parse_metadata, verify_hash
 from app.models import Comment, User
 from project.settings import INVALID, SLURS
@@ -24,7 +23,7 @@ def valid_content(value, user):
     elif any(len(word) > 48 for word in words):
         return "One or more words are too long"
     elif duplicate:
-        return f'You wrote the same <a href="/{duplicate.created_by}/{duplicate.base}">{shortdate(duplicate.created_at)} ago</a>'
+        return f'Written by <a href="/{duplicate.created_by}/{duplicate.base}">@{duplicate.created_by}</a>'
     elif len(mentions) > 1:
         return "Mention a single user"
     elif len(links) > 1:
