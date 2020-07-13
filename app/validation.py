@@ -14,7 +14,7 @@ def valid_content(value, user):
     https = ('http://', 'https://')
     words = [w for w in value.split() if not w.startswith(https)]
     mentions, links, hashtags = parse_metadata(value)
-    duplicate = Comment.objects.filter(content__iexact=value, created_by=user).first()
+    duplicate = Comment.objects.filter(content__iexact=value).first()
     if not value:
         return "Status can't be blank"
     elif len(value) > 480:
