@@ -22,7 +22,7 @@ def valid_content(value, user):
         return "Status can't be longer than 480 characters"
     elif len(value) != len(value.encode()):
         return "Only English alphabet allowed"
-    elif any(len(word) > 24 for word in words):
+    elif any(len(word) > 48 for word in words):
         return "One or more words are too long"
     elif duplicate:
         return f'You wrote the same <a href="/{duplicate.created_by}/{duplicate.base}">{shortdate(duplicate.created_at)} ago</a>'
