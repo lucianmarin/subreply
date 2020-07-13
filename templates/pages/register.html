@@ -46,6 +46,9 @@
                 {% if 'last_name' in errors %}
                     <div class="error">{{ errors['last_name'] }}</div>
                 {% endif %}
+                {% if 'full_name' in errors %}
+                    <div class="error">{{ errors['full_name'] }}</div>
+                {% endif %}
             </div>
             <div class="line">
                 <div class="left">

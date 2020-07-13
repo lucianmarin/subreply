@@ -6,20 +6,17 @@
         <a href="/password">Password</a>
         <a href="/logout">Logout</a>
     </div>
-
     <div class="register">
         <form enctype="multipart/form-data" method="post" autocomplete="off">
             <div class="line">
                 <div class="left">
                     <label for="id_username">Username<i>*</i></label>
-                    <input type="text" name="username" id="id_username"
-                        maxlength="15"
+                    <input type="text" name="username" id="id_username" maxlength="15"
                         value="{% if form %}{{ form.getvalue('username', '') }}{% else %}{{ user.username }}{% endif %}">
                 </div>
                 <div class="right">
                     <label for="id_email">Email address<i>*</i></label>
-                    <input type="email" name="email" id="id_email"
-                        maxlength="120"
+                    <input type="email" name="email" id="id_email" maxlength="120"
                         value="{% if form %}{{ form.getvalue('email', '') }}{% else %}{{ user.email }}{% endif %}">
                 </div>
                 {% if 'username' in errors %}
@@ -32,14 +29,12 @@
             <div class="line">
                 <div class="left">
                     <label for="id_first_name">First name<i>*</i></label>
-                    <input type="text" name="first_name" id="id_first_name"
-                        maxlength="15"
+                    <input type="text" name="first_name" id="id_first_name" maxlength="15"
                         value="{% if form %}{{ form.getvalue('first_name', '') }}{% else %}{{ user.first_name }}{% endif %}">
                 </div>
                 <div class="right">
                     <label for="id_last_name">Last name</label>
-                    <input type="text" name="last_name" id="id_last_name"
-                        maxlength="15"
+                    <input type="text" name="last_name" id="id_last_name" maxlength="15"
                         value="{% if form %}{{ form.getvalue('last_name', '') }}{% else %}{{ user.last_name }}{% endif %}">
                 </div>
                 {% if 'first_name' in errors %}
@@ -47,6 +42,9 @@
                 {% endif %}
                 {% if 'last_name' in errors %}
                     <div class="error">{{ errors['last_name'] }}</div>
+                {% endif %}
+                {% if 'full_name' in errors %}
+                    <div class="error">{{ errors['full_name'] }}</div>
                 {% endif %}
             </div>
             <div class="line">
@@ -59,8 +57,7 @@
             </div>
             <div class="line">
                 <label for="id_website">Website <i>your blog, resume or other social profile</i></label>
-                <input type="text" name="website" id="id_website"
-                    maxlength="120"
+                <input type="text" name="website" id="id_website" maxlength="120"
                     value="{% if form %}{{ form.getvalue('website', '') }}{% else %}{{ user.website }}{% endif %}">
                 {% if 'website' in errors %}
                     <div class="error">{{ errors['website'] }}</div>
@@ -70,14 +67,12 @@
                 <div class="left">
                     <div class="left">
                         <label for="id_emoji">Emoji status</label>
-                        <input type="text" name="emoji" id="id_emoji"
-                            maxlength="15"
+                        <input type="text" name="emoji" id="id_emoji" maxlength="15"
                             value="{% if form %}{{ form.getvalue('emoji', '') }}{% else %}{{ user.emoji }}{% endif %}">
                     </div>
                     <div class="right">
                         <label for="id_year">Birthday year</label>
-                        <input type="text" name="birthyear" id="id_birthyear"
-                            maxlength="4"
+                        <input type="text" name="birthyear" id="id_birthyear" maxlength="4"
                             value="{% if form %}{{ form.getvalue('birthyear', '') }}{% else %}{{ user.birthyear }}{% endif %}">
                     </div>
                 </div>

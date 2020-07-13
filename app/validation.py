@@ -109,6 +109,12 @@ def valid_last_name(value):
         return "Last name should use English alphabet"
 
 
+def valid_full_name(first_name, last_name):
+    if first_name and last_name:
+        if first_name.lower() == last_name.lower():
+            return "First and last names should be different"
+
+
 def valid_email(value, user_id=0):
     if not value:
         return "Email can't be blank"
@@ -240,6 +246,7 @@ def profiling(f, user_id):
     errors['username'] = valid_username(f['username'], user_id=user_id)
     errors['first_name'] = valid_first_name(f['first_name'])
     errors['last_name'] = valid_last_name(f['last_name'])
+    errors['full_name'] = valid_full_name(f['first_name'], f['last_name'])
     errors['email'] = valid_email(f['email'], user_id=user_id)
     errors['website'] = valid_website(f['website'], user_id=user_id)
     errors['bio'] = valid_bio(f['bio'], f['username'], user_id=user_id)
@@ -257,6 +264,7 @@ def registration(f):
     )
     errors['first_name'] = valid_first_name(f['first_name'])
     errors['last_name'] = valid_last_name(f['last_name'])
+    errors['full_name'] = valid_full_name(f['first_name'], f['last_name'])
     errors['password'] = valid_password(f['password1'], f['password2'])
     errors['email'] = valid_email(f['email'])
     errors['website'] = valid_website(f['website'])
