@@ -16,7 +16,7 @@ def generate_passphrase(n=4):
 
 
 def parse_metadata(text):
-    limits = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_'
+    limits = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_"
     words = text.split()
     hashtags = []
     links = []

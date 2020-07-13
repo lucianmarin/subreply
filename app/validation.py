@@ -93,7 +93,7 @@ def valid_username(value, remote_addr='', user_id=0):
 
 
 def valid_first_name(value):
-    limits = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
+    limits = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
     if not value:
         return "First name can't be blank"
     elif len(value) > 15:
@@ -107,7 +107,7 @@ def valid_first_name(value):
 
 
 def valid_last_name(value):
-    limits = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
+    limits = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
     if len(value) > 15:
         return "Last name can't be longer than 15 characters"
     elif any(slur in value.lower() for slur in SLURS):
@@ -120,6 +120,8 @@ def valid_full_name(first_name, last_name):
     if first_name and last_name:
         if first_name.lower() == last_name.lower():
             return "First and last names should be different"
+        elif any(slur in f"{first_name}{last_name}".lower() for slur in SLURS):
+            return "Full name is prohibited"
 
 
 def valid_email(value, user_id=0):
