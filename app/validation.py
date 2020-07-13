@@ -1,7 +1,6 @@
 import emoji
 import grapheme
 import requests
-from django.db.models import Q
 from dns.resolver import query as dns_query
 
 from app.const import COUNTRIES, MAX_YEAR, MIN_YEAR
@@ -100,6 +99,8 @@ def valid_first_name(value):
         return "First name can't be longer than 15 characters"
     elif len(value) == 1:
         return "First name is just too short"
+    elif any(slur in value.lower() for slur in SLURS):
+        return "First name is prohibited"
     elif len(value) != len(value.encode()):
         return "First name should use English alphabet"
 
@@ -107,6 +108,8 @@ def valid_first_name(value):
 def valid_last_name(value):
     if len(value) > 15:
         return "Last name can't be longer than 15 characters"
+    elif any(slur in value.lower() for slur in SLURS):
+        return "Last name is prohibited"
     elif len(value) != len(value.encode()):
         return "Last name should use English alphabet"
 
@@ -142,10 +145,15 @@ def valid_email(value, user_id=0):
 def valid_bio(value, username, user_id=0):
     if value:
         mentions, links, hashtags = parse_metadata(value)
+        duplicate = User.objects.filter(bio=value).exclude(id=user_id).exists()
         if len(value) > 120:
             return "Bio can't be longer than 120 characters"
         elif len(value) != len(value.encode()):
             return "Only English alphabet allowed"
+        elif any(slur in value.lower() for slur in SLURS):
+            return "Bio contains prohibited words"
+        elif duplicate:
+            return "Bio is used by someone else"
         elif len(mentions) > 1:
             return "Mention a single user"
         elif len(links) > 1:
@@ -164,20 +172,19 @@ def valid_bio(value, username, user_id=0):
                 users = User.objects.filter(username=mention).exists()
                 if not users:
                     return "@{0} isn't an user".format(mention)
-        else:
-            users = User.objects.filter(bio=value).exclude(id=user_id).exists()
-            if users:
-                return "Bio is used by someone else"
 
 
 def valid_website(value, user_id=0):
     if value:
+        duplicate = User.objects.filter(website=value).exclude(id=user_id).exists()
         if len(value) > 120:
             return "Website can't be longer than 120 characters"
         elif len(value) != len(value.encode()):
             return "Website should use English alphabet"
         elif not value.startswith(('http://', 'https://')):
             return "Website hasn't a valid http(s) address"
+        elif duplicate:
+            return "Website is used by someone else"
         else:
             try:
                 headers = requests.head(value, allow_redirects=True, timeout=5).headers
@@ -186,10 +193,6 @@ def valid_website(value, user_id=0):
                 print(e)
             if 'text/html' not in headers.get('Content-Type', '').lower():
                 return "Website isn't a valid HTML page"
-            else:
-                users = User.objects.filter(website=value).exclude(id=user_id).exists()
-                if users:
-                    return "Website is used by someone else"
 
 
 def valid_password(value1, value2):
@@ -222,16 +225,15 @@ def valid_country(value):
 
 def valid_emoji(value, user_id=0):
     if value:
+        duplicate = User.objects.filter(emoji=value).exclude(id=user_id).exists()
         if grapheme.length(value) != emoji.emoji_count(value):
             return "Emoji only for status"
         elif emoji.emoji_count(value) > 2:
             return "Emoji are too many"
         elif emoji.emoji_count(value) == 2 and value[0] == value[1]:
             return "Emoji should be different"
-        else:
-            users = User.objects.filter(Q(emoji=value) | Q(emoji=value[::-1])).exclude(id=user_id).exists()
-            if users:
-                return "Emoji already taken"
+        elif duplicate:
+            return "Emoji already taken"
 
 
 def changing(user, current, password1, password2):

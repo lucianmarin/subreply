@@ -146,7 +146,7 @@ table td a { text-decoration: underline; }
 
 .filters a.selected { color: var(--gray); }
 
-.line { line-height: 30px; margin-bottom: 10px; overflow: hidden; }
+.line { margin-bottom: 10px; overflow: hidden; }
 
 .line a { color: var(--gray); font-size: var(--small); }
 
@@ -162,7 +162,7 @@ table td a { text-decoration: underline; }
 
 .line .right input, .line .right select { border-bottom-left-radius: 0; border-top-left-radius: 0; }
 
-.error { color: var(--red); font-size: var(--small); }
+.error { clear: both; color: var(--red); font-size: var(--small); }
 
 .error a { color: var(--red); text-decoration: underline; }
 
