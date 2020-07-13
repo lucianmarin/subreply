@@ -8,7 +8,7 @@ from app.const import COUNTRIES, MAX_YEAR, MIN_YEAR
 from app.filters import shortdate
 from app.helpers import parse_metadata, verify_hash
 from app.models import Comment, User
-from project.settings import INVALID
+from project.settings import INVALID, SLURS
 
 
 def valid_content(value, user):
@@ -81,6 +81,8 @@ def valid_username(value, remote_addr='', user_id=0):
         return "Username can't be longer than 15 characters"
     elif not all(c in limits for c in value):
         return "Username can be only alphanumeric"
+    elif any(slur in value for slur in SLURS):
+        return "Username is prohibited"
     elif value in INVALID:
         return "Username isn't valid"
     elif "__" in value:
