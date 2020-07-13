@@ -83,7 +83,7 @@ function expand(element, height=10) {
 }
 
 function send(event) {
-    if (event.keyCode === 13 && !event.shiftKey) {
+    if (event.keyCode === 13) {
         event.preventDefault();
         event.currentTarget.parentElement.submit();
     }
