@@ -42,7 +42,7 @@ table td { border-top: var(--whitesmoke) 1px solid; padding: 2px 0; }
 
 table td a { text-decoration: underline; }
 
-.container { display: grid; grid-template-columns: calc(50% - 320px) 160px 480px calc(50% - 320px); }
+.container { display: grid; grid-template-columns: calc(50% - 340px) 170px 510px calc(50% - 340px); }
 
 .container > div { min-height: 100vh; }
 
@@ -184,7 +184,7 @@ table td a { text-decoration: underline; }
 
 .promo h5, .promo h6 { font-weight: normal; }
 
-@media (max-width: 640px) { .container { display: grid; grid-template-columns: 0 50px calc(100% - 50px) 0; } .main { padding: 0 10px; } .logo { margin: 10px; } .promo, .links i { display: none; } .links svg { margin-left: 0; stroke: var(--black); } }
+@media (max-width: 680px) { .container { display: grid; grid-template-columns: 0 50px calc(100% - 50px) 0; } .main { padding: 0 10px; } .logo { margin: 10px; } .promo, .links i { display: none; } .links svg { margin-left: 0; stroke: var(--black); } }
 
 @font-face { font-family: "Fira Sans"; font-style: normal; font-weight: normal; src: url(/static/firasans-regular.woff2) format("woff2"); }
 
