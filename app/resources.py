@@ -151,7 +151,7 @@ class ReplyResource:
         entry = Comment.objects.filter(
             id=int(base, 36)
         ).select_related('created_by', 'parent').first()
-        if not entry and entry.created_by.username != username.lower():
+        if not entry or entry.created_by.username != username.lower():
             not_found(resp, req.user, f'{username}/{base}')
             return
         duplicate = Comment.objects.filter(
