@@ -482,9 +482,9 @@ class SettingsResource:
         f = {}
         f['username'] = form.getvalue('username', '').strip().lower()
         fn_parts = form.getvalue('first_name', '').split()
-        f['first_name'] = "".join([p.strip() for p in fn_parts])
+        f['first_name'] = "".join([p.strip() for p in fn_parts]).capitalize()
         ln_parts = form.getvalue('last_name', '').split()
-        f['last_name'] = "".join([p.strip() for p in ln_parts])
+        f['last_name'] = "".join([p.strip() for p in ln_parts]).capitalize()
         f['email'] = form.getvalue('email', '').strip().lower()
         bio_parts = form.getvalue('bio', '').split()
         f['bio'] = " ".join([p.strip() for p in bio_parts])
@@ -547,9 +547,9 @@ class RegisterResource:
         f['remote_addr'] = '127.0.0.3' if DEBUG else req.access_route[0]
         f['username'] = form.getvalue('username', '').strip().lower()
         fn_parts = form.getvalue('first_name', '').split()
-        f['first_name'] = "".join([p.strip() for p in fn_parts])
+        f['first_name'] = "".join([p.strip() for p in fn_parts]).capitalize()
         ln_parts = form.getvalue('last_name', '').split()
-        f['last_name'] = "".join([p.strip() for p in ln_parts])
+        f['last_name'] = "".join([p.strip() for p in ln_parts]).capitalize()
         f['password1'] = form.getvalue('password1', '')
         f['password2'] = form.getvalue('password2', '')
         f['email'] = form.getvalue('email', '').strip().lower()
