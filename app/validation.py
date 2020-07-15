@@ -10,8 +10,6 @@ from project.settings import INVALID, SLURS
 
 
 def valid_content(value, user):
-    https = ('http://', 'https://')
-    words = [w for w in value.split() if not w.startswith(https)]
     mentions, links, hashtags = parse_metadata(value)
     duplicate = Comment.objects.filter(content__iexact=value).first()
     if not value:
@@ -20,8 +18,6 @@ def valid_content(value, user):
         return "Status can't be longer than 480 characters"
     elif len(value) != len(value.encode()):
         return "Only English alphabet allowed"
-    elif any(len(word) > 48 for word in words):
-        return "One or more words are too long"
     elif duplicate:
         return f'Written by <a href="/{duplicate.created_by}/{duplicate.base}">@{duplicate.created_by}</a>'
     elif len(mentions) > 1:
@@ -30,31 +26,23 @@ def valid_content(value, user):
         return "Link a single address"
     elif len(hashtags) > 1:
         return "Hashtag a single channel"
-    elif len(hashtags) == 1:
-        hashtag = hashtags[0].lower()
-        if len(hashtag) > 15:
-            return "Hashtag can't be longer than 15 characters"
-    elif len(links) == 1:
-        link = links[0].lower()
-        if len(link) > 120:
-            return "Link can't be longer than 120 characters"
-    elif len(mentions) == 1:
+    elif hashtags and len(hashtags[0]) > 15:
+        return "Hashtag can't be longer than 15 characters"
+    elif links and len(links[0]) > 120:
+        return "Link can't be longer than 120 characters"
+    elif mentions:
         mention = mentions[0].lower()
         if mention == user.username:
             return "Can't mention yourself"
-        else:
-            users = User.objects.filter(username=mention).exists()
-            if not users:
-                return "@{0} isn't an user".format(mention)
+        elif not User.objects.filter(username=mention).exists():
+            return "@{0} isn't an user".format(mention)
 
 
 def valid_reply(entry, user, mentions):
     if entry.created_by_id == user.id:
         return "Can't reply to yourself"
-    elif len(mentions) == 1:
-        mention = mentions[0].lower()
-        if mention == entry.created_by.username:
-            return "Can't mention the author"
+    elif len(mentions) == 1 and mentions[0].lower() == entry.created_by.username:
+        return "Can't mention the author"
 
 
 def authentication(username, password):
@@ -169,18 +157,14 @@ def valid_bio(value, username, user_id=0):
             return "Link a single address"
         elif len(hashtags) > 1:
             return "Hashtag a single channel"
-        elif len(hashtags) == 1:
-            hashtag = hashtags[0].lower()
-            if hashtag > 120:
-                return "Hashtag can't be longer than 15 characters"
-        elif len(mentions) == 1:
+        elif len(hashtags) and len(hashtags[0]) > 120:
+            return "Hashtag can't be longer than 15 characters"
+        elif len(mentions):
             mention = mentions[0].lower()
             if mention == username:
                 return "Can't mention yourself"
-            else:
-                users = User.objects.filter(username=mention).exists()
-                if not users:
-                    return "@{0} isn't an user".format(mention)
+            elif not User.objects.filter(username=mention).exists():
+                return "@{0} isn't an user".format(mention)
 
 
 def valid_website(value, user_id=0):
