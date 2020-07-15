@@ -4,7 +4,7 @@ import requests
 from dns.resolver import query as dns_query
 
 from app.const import COUNTRIES, MAX_YEAR, MIN_YEAR
-from app.helpers import parse_metadata, verify_hash
+from app.helpers import parse_metadata, verify_hash, repetions
 from app.models import Comment, User
 from project.settings import INVALID, SLURS
 
@@ -81,6 +81,8 @@ def valid_username(value, remote_addr='', user_id=0):
         return "Username can be only alphanumeric"
     elif any(slur in value for slur in SLURS):
         return "Username is prohibited"
+    elif repetions(value) > 3:
+        return "Username contains repeating characters"
     elif value in INVALID:
         return "Username isn't valid"
     elif "__" in value:
@@ -103,6 +105,8 @@ def valid_first_name(value):
         return "First name is prohibited"
     elif not all(c in limits for c in value):
         return "First name should use English alphabet"
+    elif repetions(value) > 3:
+        return "First name contains repeating characters"
 
 
 def valid_last_name(value):
@@ -113,6 +117,8 @@ def valid_last_name(value):
         return "Last name is prohibited"
     elif not all(c in limits for c in value):
         return "Last name should use English alphabet"
+    elif value and repetions(value) > 3:
+        return "Last name contains repeating characters"
 
 
 def valid_full_name(first_name, last_name):

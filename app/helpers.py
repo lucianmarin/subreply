@@ -5,6 +5,13 @@ from hashlib import pbkdf2_hmac
 from random import choice
 
 
+def repetions(word):
+    rep = {}
+    for c in word:
+        rep[c] = rep[c] + 1 if c in rep else 1
+    return max(rep.values())
+
+
 def utc_timestamp():
     return datetime.now(timezone.utc).timestamp()
 
