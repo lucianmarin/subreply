@@ -5,9 +5,9 @@ from hashlib import pbkdf2_hmac
 from random import choice
 
 
-def has_repetions(word):
+def has_repetions(word, n=3):
     for char in word:
-        if f"{char}{char}{char}" in word:
+        if char * n in word:
             return True
     return False
 
