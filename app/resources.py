@@ -21,6 +21,23 @@ from project.settings import DEBUG, MAX_AGE, SMTP, F
 PFR = Prefetch('kids', queryset=Comment.objects.order_by('id').select_related('created_by'))
 
 
+def paginate(req, qs, limit=15):
+    try:
+        page = int(req.params.get('p', '1').strip())
+    except Exception as e:
+        print(e)
+        page = 1
+    page = page if page else 1
+    bottom = (page - 1) * limit
+    top = bottom + limit + 1
+    query = qs[bottom:top]
+    pages = {
+        'this': page, 'prev': page - 1,
+        'next': page + 1 if len(query) == limit + 1 else 0,
+    }
+    return query[:limit], pages
+
+
 def not_found(resp, user, url):
     template = env.get_template('pages/404.html')
     resp.body = template.render(user=user, url=url)
@@ -81,7 +98,7 @@ class SearchResource:
     @before(auth_user)
     def on_get(self, req, resp):
         q = req.params.get('q', '').strip()
-        terms = [t for t in q.split()]
+        terms = [t.strip() for t in q.split()]
         entries = self.fetch_results(terms) if terms else self.fetch_entries()
         template = env.get_template('pages/regular.html')
         resp.body = template.render(
@@ -91,18 +108,20 @@ class SearchResource:
 
 
 class FeedResource:
-    def fetch_entries(self, user):
-        friends = Relation.objects.filter(created_by=user).values('to_user_id')
-        return Comment.objects.filter(created_by__in=friends, parent=None).order_by('-id').select_related('created_by').prefetch_related(PFR)
+    def fetch_entries(self, req):
+        friends = Relation.objects.filter(created_by=req.user).values('to_user_id')
+        entries = Comment.objects.filter(created_by__in=friends, parent=None).order_by('-id').select_related('created_by').prefetch_related(PFR)
+        return paginate(req, entries)
 
     @before(auth_user)
     @before(login_required)
     def on_get(self, req, resp):
         form = FieldStorage(fp=req.stream, environ=req.env)
-        entries = self.fetch_entries(req.user)
+        entries, pages = self.fetch_entries(req)
         template = env.get_template('pages/feed.html')
         resp.body = template.render(
-            user=req.user, entries=entries[:15], errors={}, form=form, view='feed'
+            user=req.user, entries=entries, pages=pages, errors={},
+            form=form, view='feed'
         )
 
     @before(auth_user)
@@ -115,10 +134,10 @@ class FeedResource:
         errors['content'] = valid_content(content, req.user)
         errors = {k: v for k, v in errors.items() if v}
         if errors:
-            entries = self.fetch_entries(req.user)
+            entries, pages = self.fetch_entries(req)
             template = env.get_template('pages/feed.html')
             resp.body = template.render(
-                user=req.user, entries=entries[:15], errors=errors, form=form,
+                user=req.user, entries=entries, errors=errors, form=form,
                 view='feed'
             )
         else:

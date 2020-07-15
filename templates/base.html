@@ -15,6 +15,15 @@
         </div>
         <div class="main">
             {% block main %}{% endblock %}
+            {% if pages %}
+                <div class="pages">
+                    <a href="?p={{ pages.prev }}">{{ pages.prev }}</a>
+                    <b>&nbsp;&frasl;&nbsp;</b>
+                    <a href="?p={{ pages.this }}">{{ pages.this }}</a>
+                    <b>&nbsp;&frasl;&nbsp;</b>
+                    <a href="?p={{ pages.next }}">{{ pages.next }}</a>
+                </div>
+            {% endif %}
         </div>
         <div class="rightside"></div>
     </div>
