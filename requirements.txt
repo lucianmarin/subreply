@@ -9,6 +9,7 @@ grapheme
 gunicorn
 jinja2
 meinheld
+num2words
 psycopg2-binary
 requests
 unidecode

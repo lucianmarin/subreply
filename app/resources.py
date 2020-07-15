@@ -408,16 +408,17 @@ class PeopleResource:
 
 
 class TrendingResource:
-    def fetch_entries(self, limit):
+    def fetch_entries(self, req, limit):
         limited = Comment.objects.filter(parent=None).exclude(replies=0).order_by('-id').values('id')[:limit]
-        return Comment.objects.filter(id__in=limited).order_by('-replies', '-id').select_related('created_by').prefetch_related(PFR)
+        entries = Comment.objects.filter(id__in=limited).order_by('-replies', '-id').select_related('created_by').prefetch_related(PFR)
+        return paginate(req, entries)
 
     @before(auth_user)
     def on_get(self, req, resp):
-        entries = self.fetch_entries(30)
+        entries, pages = self.fetch_entries(req, 30)
         template = env.get_template('pages/regular.html')
         resp.body = template.render(
-            user=req.user, entries=entries[:15], view='trending'
+            user=req.user, entries=entries, pages=pages, view='trending'
         )
 
 

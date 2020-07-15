@@ -230,6 +230,8 @@ table
 
 .sublist
     margin-left: 30px
+    &:last-child .entry:last-child
+        padding-bottom: 0
 
 .entry
     border-top: var(--whitesmoke) 1px solid
@@ -312,6 +314,26 @@ table
 .filters
     font-size: var(--small)
     height: 20px
+    overflow: hidden
+    a
+        color: var(--silver)
+        display: block
+        float: left
+        margin-right: 15px
+        &:hover
+            color: var(--gray)
+        &:last-child
+            margin-right: 0
+        &.selected
+            color: var(--gray)
+
+.pages
+    font-size: var(--small)
+    margin-top: -5px
+    margin-bottom: 5px
+    padding: 5px 0
+    padding-left: 30px
+    border-top: var(--whitesmoke) 1px solid
     overflow: hidden
     a
         color: var(--silver)
