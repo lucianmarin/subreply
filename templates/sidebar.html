@@ -1,5 +1,7 @@
 <div class="logo">
-    {% if user %}
+    {% if pages and pages.this != 1 %}
+        <a href="?p={{ pages.this }}">{{ pages.this }}</a>
+    {% elif user %}
         <a href="/{{ user }}">{{ user.username[:3] }}</a>
     {% else %}
         <a href="/about">sub</a>

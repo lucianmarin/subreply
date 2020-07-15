@@ -15,6 +15,9 @@
         </div>
         <div class="main">
             {% block main %}{% endblock %}
+            {% if pages %}
+                {% include "pages.html" %}
+            {% endif %}
         </div>
         <div class="rightside"></div>
     </div>

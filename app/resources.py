@@ -21,6 +21,26 @@ from project.settings import DEBUG, MAX_AGE, SMTP, F
 PFR = Prefetch('kids', queryset=Comment.objects.order_by('id').select_related('created_by'))
 
 
+def paginate(req, qs, limit=15):
+    try:
+        page = int(req.params.get('p', '1').strip())
+    except Exception as e:
+        print(e)
+        page = 1
+    page = abs(page) if page else 1
+    bottom = (page - 1) * limit
+    top = bottom + limit + 1
+    query = qs[bottom:top]
+    if not len(query):
+        query = qs[:limit + 1]
+        page = 1
+    pages = {
+        'prev': page - 1, 'this': page,
+        'next': page + 1 if len(query) == limit + 1 else 0,
+    }
+    return query[:limit], pages
+
+
 def not_found(resp, user, url):
     template = env.get_template('pages/404.html')
     resp.body = template.render(user=user, url=url)
@@ -81,7 +101,7 @@ class SearchResource:
     @before(auth_user)
     def on_get(self, req, resp):
         q = req.params.get('q', '').strip()
-        terms = [t for t in q.split()]
+        terms = [t.strip() for t in q.split()]
         entries = self.fetch_results(terms) if terms else self.fetch_entries()
         template = env.get_template('pages/regular.html')
         resp.body = template.render(
@@ -91,18 +111,20 @@ class SearchResource:
 
 
 class FeedResource:
-    def fetch_entries(self, user):
-        friends = Relation.objects.filter(created_by=user).values('to_user_id')
-        return Comment.objects.filter(created_by__in=friends, parent=None).order_by('-id').select_related('created_by').prefetch_related(PFR)
+    def fetch_entries(self, req):
+        friends = Relation.objects.filter(created_by=req.user).values('to_user_id')
+        entries = Comment.objects.filter(created_by__in=friends, parent=None).order_by('-id').select_related('created_by').prefetch_related(PFR)
+        return paginate(req, entries)
 
     @before(auth_user)
     @before(login_required)
     def on_get(self, req, resp):
         form = FieldStorage(fp=req.stream, environ=req.env)
-        entries = self.fetch_entries(req.user)
+        entries, pages = self.fetch_entries(req)
         template = env.get_template('pages/feed.html')
         resp.body = template.render(
-            user=req.user, entries=entries[:15], errors={}, form=form, view='feed'
+            user=req.user, entries=entries, pages=pages, errors={},
+            form=form, view='feed'
         )
 
     @before(auth_user)
@@ -115,11 +137,11 @@ class FeedResource:
         errors['content'] = valid_content(content, req.user)
         errors = {k: v for k, v in errors.items() if v}
         if errors:
-            entries = self.fetch_entries(req.user)
+            entries, pages = self.fetch_entries(req)
             template = env.get_template('pages/feed.html')
             resp.body = template.render(
-                user=req.user, entries=entries[:15], errors=errors, form=form,
-                view='feed'
+                user=req.user, entries=entries, pages=pages, errors=errors,
+                form=form, view='feed'
             )
         else:
             mentions, links, hashtags = parse_metadata(content)
@@ -217,6 +239,13 @@ class ProfileResource:
     def fetch_replies(self, user):
         return Comment.objects.filter(created_by=user).exclude(parent=None).order_by('-id').select_related('created_by', 'parent__created_by', 'parent__parent')
 
+    def fetch_entries(self, req, member, tab):
+        if tab == 'threads':
+            entries = self.fetch_threads(member)
+        elif tab == 'replies':
+            entries = self.fetch_replies(member)
+        return paginate(req, entries)
+
     @before(auth_user)
     def on_get_re(self, req, resp, username):
         self.get_profile(req, resp, username, 'replies')
@@ -230,7 +259,7 @@ class ProfileResource:
         if not member:
             not_found(resp, req.user, username)
             return
-        entries = self.fetch_threads(member) if tab == 'threads' else self.fetch_replies(member)
+        entries, pages = self.fetch_entries(req, member, tab)
         threads = self.fetch_threads(member).count()
         replies = self.fetch_replies(member).count()
         is_following = Relation.objects.filter(
@@ -241,29 +270,31 @@ class ProfileResource:
         ).exclude(created_by=req.user).exists() if req.user else False
         template = env.get_template('pages/profile.html')
         resp.body = template.render(
-            user=req.user, member=member, entries=entries[:15],
+            user=req.user, member=member, entries=entries, pages=pages,
             tab=tab, is_following=is_following, is_followed=is_followed,
             threads=threads, replies=replies, view='profile'
         )
 
 
 class FollowingResource:
-    def fetch_entries(self, user):
-        return Relation.objects.filter(created_by=user).exclude(to_user=user).order_by('-id').select_related('to_user')
+    def fetch_entries(self, req):
+        entries = Relation.objects.filter(created_by=req.user).exclude(to_user=req.user).order_by('-id').select_related('to_user')
+        return paginate(req, entries, 45)
 
     @before(auth_user)
     @before(login_required)
     def on_get(self, req, resp):
-        entries = self.fetch_entries(req.user)
+        entries, pages = self.fetch_entries(req)
         template = env.get_template('pages/regular.html')
         resp.body = template.render(
-            user=req.user, entries=entries[:45], view='following'
+            user=req.user, entries=entries, pages=pages, view='following'
         )
 
 
 class FollowersResource:
-    def fetch_entries(self, user):
-        return Relation.objects.filter(to_user=user).exclude(created_by=user).order_by('-id').select_related('created_by')
+    def fetch_entries(self, req):
+        entries = Relation.objects.filter(to_user=req.user).exclude(created_by=req.user).order_by('-id').select_related('created_by')
+        return paginate(req, entries, 45)
 
     def clear_followers(self, user):
         Relation.objects.filter(
@@ -274,18 +305,19 @@ class FollowersResource:
     @before(auth_user)
     @before(login_required)
     def on_get(self, req, resp):
-        entries = self.fetch_entries(req.user)
+        entries, pages = self.fetch_entries(req)
         template = env.get_template('pages/regular.html')
         resp.body = template.render(
-            user=req.user, entries=entries[:45], view='followers'
+            user=req.user, entries=entries, pages=pages, view='followers'
         )
         if req.user.notif_followers:
             self.clear_followers(req.user)
 
 
 class MentionsResource:
-    def fetch_entries(self, user):
-        return Comment.objects.filter(mentioned=user).order_by('-id').order_by('-id').select_related('created_by', 'parent')
+    def fetch_entries(self, req):
+        entries = Comment.objects.filter(mentioned=req.user).order_by('-id').order_by('-id').select_related('created_by', 'parent')
+        return paginate(req, entries, 30)
 
     def clear_mentions(self, user):
         Comment.objects.filter(
@@ -296,18 +328,19 @@ class MentionsResource:
     @before(auth_user)
     @before(login_required)
     def on_get(self, req, resp):
-        entries = self.fetch_entries(req.user)
+        entries, pages = self.fetch_entries(req)
         template = env.get_template('pages/regular.html')
         resp.body = template.render(
-            user=req.user, entries=entries[:30], view='mentions'
+            user=req.user, entries=entries, pages=pages, view='mentions'
         )
         if req.user.notif_mentions:
             self.clear_mentions(req.user)
 
 
 class RepliesResource:
-    def fetch_entries(self, user):
-        return Comment.objects.filter(parent__created_by=user).order_by('-id').select_related('created_by', 'parent__created_by', 'parent__parent')
+    def fetch_entries(self, req):
+        entries = Comment.objects.filter(parent__created_by=req.user).order_by('-id').select_related('created_by', 'parent__created_by', 'parent__parent')
+        return paginate(req, entries)
 
     def clear_replies(self, user):
         Comment.objects.filter(
@@ -318,41 +351,43 @@ class RepliesResource:
     @before(auth_user)
     @before(login_required)
     def on_get(self, req, resp):
-        entries = self.fetch_entries(req.user)
+        entries, pages = self.fetch_entries(req)
         template = env.get_template('pages/regular.html')
         resp.body = template.render(
-            user=req.user, entries=entries[:15], view='replies'
+            user=req.user, entries=entries, pages=pages, view='replies'
         )
         if req.user.notif_replies:
             self.clear_replies(req.user)
 
 
 class ReplyingResource:
-    def fetch_entries(self, user):
-        friends = Relation.objects.filter(created_by=user).exclude(to_user=user).values('to_user_id')
-        return Comment.objects.filter(created_by__in=friends).exclude(parent=None).exclude(parent__created_by=user).order_by('-id').select_related('created_by', 'parent__created_by', 'parent__parent')
+    def fetch_entries(self, req):
+        friends = Relation.objects.filter(created_by=req.user).exclude(to_user=req.user).values('to_user_id')
+        entries = Comment.objects.filter(created_by__in=friends).exclude(parent=None).exclude(parent__created_by=req.user).order_by('-id').select_related('created_by', 'parent__created_by', 'parent__parent')
+        return paginate(req, entries)
 
     @before(auth_user)
     @before(login_required)
     def on_get(self, req, resp):
-        entries = self.fetch_entries(req.user)
+        entries, pages = self.fetch_entries(req)
         template = env.get_template('pages/regular.html')
         resp.body = template.render(
-            user=req.user, entries=entries[:15], view='replying'
+            user=req.user, entries=entries, pages=pages, view='replying'
         )
 
 
 class SavedResource:
-    def fetch_entries(self, user):
-        return Save.objects.filter(created_by=user).order_by('-id').select_related('to_comment__created_by', 'to_comment__parent')
+    def fetch_entries(self, req):
+        entries = Save.objects.filter(created_by=req.user).order_by('-id').select_related('to_comment__created_by', 'to_comment__parent')
+        return paginate(req, entries, 30)
 
     @before(auth_user)
     @before(login_required)
     def on_get(self, req, resp):
-        entries = self.fetch_entries(req.user)
+        entries, pages = self.fetch_entries(req)
         template = env.get_template('pages/regular.html')
         resp.body = template.render(
-            user=req.user, entries=entries[:30], view='saved'
+            user=req.user, entries=entries, pages=pages, view='saved'
         )
 
 
@@ -389,16 +424,17 @@ class PeopleResource:
 
 
 class TrendingResource:
-    def fetch_entries(self, limit):
+    def fetch_entries(self, req, limit):
         limited = Comment.objects.filter(parent=None).exclude(replies=0).order_by('-id').values('id')[:limit]
-        return Comment.objects.filter(id__in=limited).order_by('-replies', '-id').select_related('created_by').prefetch_related(PFR)
+        entries = Comment.objects.filter(id__in=limited).order_by('-replies', '-id').select_related('created_by').prefetch_related(PFR)
+        return paginate(req, entries)
 
     @before(auth_user)
     def on_get(self, req, resp):
-        entries = self.fetch_entries(30)
+        entries, pages = self.fetch_entries(req, 30)
         template = env.get_template('pages/regular.html')
         resp.body = template.render(
-            user=req.user, entries=entries[:15], view='trending'
+            user=req.user, entries=entries, pages=pages, view='trending'
         )
 
 

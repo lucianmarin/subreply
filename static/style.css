@@ -96,6 +96,8 @@ table td a { text-decoration: underline; }
 
 .sublist { margin-left: 30px; }
 
+.sublist:last-child .entry:last-child { padding-bottom: 0; }
+
 .entry { border-top: var(--whitesmoke) 1px solid; padding: 5px 0; }
 
 .content { cursor: text; word-break: break-word; }
@@ -143,6 +145,16 @@ table td a { text-decoration: underline; }
 .filters a:last-child { margin-right: 0; }
 
 .filters a.selected { color: var(--gray); }
+
+.pages { font-size: var(--small); margin-top: -5px; margin-bottom: 5px; padding: 5px 0; padding-left: 30px; border-top: var(--whitesmoke) 1px solid; overflow: hidden; }
+
+.pages a { color: var(--silver); display: block; float: left; margin-right: 15px; }
+
+.pages a:hover { color: var(--gray); }
+
+.pages a:last-child { margin-right: 0; }
+
+.pages a.selected { color: var(--gray); }
 
 .line { margin-bottom: 10px; overflow: hidden; }
 
