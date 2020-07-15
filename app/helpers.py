@@ -5,11 +5,11 @@ from hashlib import pbkdf2_hmac
 from random import choice
 
 
-def repetions(word):
-    rep = {}
-    for c in word:
-        rep[c] = rep[c] + 1 if c in rep else 1
-    return max(rep.values())
+def has_repetions(word):
+    for char in word:
+        if f"{char}{char}{char}" in word:
+            return True
+    return False
 
 
 def utc_timestamp():
