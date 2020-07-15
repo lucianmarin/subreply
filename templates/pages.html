@@ -1,0 +1,15 @@
+<div class="pages">
+    {% if pages.prev %}
+        <a href="?p={{ pages.prev }}">
+            {{ pages.prev | num2words(to='ordinal') }}
+        </a>
+    {% endif %}
+    <a class="selected" href="?p={{ pages.this }}">
+        {{ pages.this | num2words(to='ordinal') }}
+    </a>
+    {% if pages.next %}
+        <a href="?p={{ pages.next }}">
+            {{ pages.next | num2words(to='ordinal') }}
+        </a>
+    {% endif %}
+</div>
