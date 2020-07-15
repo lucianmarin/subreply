@@ -34,10 +34,13 @@ def paginate(req, qs, limit=15):
     if not len(query):
         query = qs[:limit + 1]
         page = 1
+        bottom = 0
     pages = {
         'prev': page - 1, 'this': page,
         'next': page + 1 if len(query) == limit + 1 else 0,
     }
+    if not bottom and len(query) < limit + 1:
+        pages = {}
     return query[:limit], pages
 
 
