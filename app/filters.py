@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 
 from app.const import COUNTRIES
 
@@ -7,16 +7,13 @@ def country(code):
     return COUNTRIES.get(code, 'None')
 
 
-def age(year):
-    birthday = datetime(int(year), 7, 2).timestamp()
-    now = datetime.utcnow().timestamp()
-    seconds = 3600 * 24 * 365
-    return round((now - birthday) / seconds)
+def age(birthyear):
+    return datetime.now(timezone.utc).year - int(birthyear)
 
 
 def shortdate(timestamp):
     """Short time interval for a timestamp."""
-    seconds = datetime.utcnow().timestamp() - timestamp
+    seconds = datetime.now(timezone.utc).timestamp() - timestamp
     milliseconds = round(seconds * 1000)
     seconds = round(seconds)
     days = seconds // (3600 * 24)
@@ -95,15 +92,15 @@ def parser(text):
             if len(address) > 21:
                 address = address[:18] + '...'
             if address:
-                word = '<a href="{0}" rel="external nofollow">{1}</a>'.format(word, address)
+                word = f'<a href="{word}" rel="external nofollow">{address}</a>'
         elif word.startswith('@'):
             handle = word[1:]
             if handle and all(c in limits for c in handle):
-                word = '<a href="/{0}" rel="author">@{0}</a>'.format(handle)
+                word = f'<a href="/{handle}" rel="author">@{handle}</a>'
         elif word.startswith('#'):
             handle = word[1:]
             if handle and all(c in limits for c in handle):
-                word = '<a href="/search/&#63;q=%23{0}" rel="tag">#{0}</a>'.format(handle)
+                word = f'<a href="/search/?q=%23{handle}" rel="tag">#{handle}</a>'
         # wrap word
         words[index] = startswith + word + endswith
     return " ".join(words)
