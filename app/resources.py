@@ -89,29 +89,6 @@ class AboutResource:
         resp.body = template.render(user=req.user, view='about')
 
 
-class SearchResource:
-    def fetch_results(self, terms):
-        query = Q()
-        for term in terms:
-            query &= Q(content__icontains=term)
-        return Comment.objects.filter(query).order_by('-id').select_related('created_by').prefetch_related('parent')
-
-    def fetch_entries(self):
-        last_ids = User.objects.annotate(last_id=Max('comments__id')).values('last_id')
-        return Comment.objects.filter(id__in=last_ids).order_by('-id').select_related('created_by').prefetch_related('parent')
-
-    @before(auth_user)
-    def on_get(self, req, resp):
-        q = req.params.get('q', '').strip()
-        terms = [t.strip() for t in q.split()]
-        entries = self.fetch_results(terms) if terms else self.fetch_entries()
-        template = env.get_template('pages/regular.html')
-        resp.body = template.render(
-            user=req.user, entries=entries[:30], q=q, view='search',
-            placeholder="Search content"
-        )
-
-
 class FeedResource:
     def fetch_entries(self, req):
         friends = Relation.objects.filter(created_by=req.user).values('to_user_id')
@@ -399,29 +376,61 @@ class PeopleResource:
         "bio", "birthyear", "country", "emoji", "website"
     ]
 
-    def fetch_results(self, terms):
+    def build_query(self, terms):
         query = Q()
         for term in terms:
-            term = term[1:] if term.startswith('@') else term
             subquery = Q()
             for field in self.fields:
                 icontains = {f'{field}__icontains': term}
                 subquery |= Q(**icontains)
             query &= subquery
-        return User.objects.filter(query).order_by('-seen_at')
+        return query
 
-    def fetch_entries(self):
-        return User.objects.order_by('-seen_at')
+    def fetch_entries(self, req, terms):
+        entries = User.objects.order_by('-seen_at')
+        if terms:
+            q = self.build_query(terms)
+            entries = entries.filter(q)
+        return paginate(req, entries, 45)
 
     @before(auth_user)
     def on_get(self, req, resp):
         q = req.params.get('q', '').strip()
-        terms = [t for t in q.split()]
-        entries = self.fetch_results(terms) if terms else self.fetch_entries()
+        terms = [t.strip() for t in q.split() if t.strip()]
+        entries, pages = self.fetch_entries(req, terms)
         template = env.get_template('pages/regular.html')
         resp.body = template.render(
-            user=req.user, entries=entries[:45], q=q, view='people',
-            placeholder="Find people"
+            user=req.user, entries=entries, pages=pages, q=q,
+            view='people', placeholder="Find people"
+        )
+
+
+class SearchResource:
+    def build_query(self, terms):
+        query = Q()
+        for term in terms:
+            query &= Q(content__icontains=term)
+        return query
+
+    def fetch_entries(self, req, terms):
+        if terms:
+            q = self.build_query(terms)
+            qs = Comment.objects.filter(q)
+        else:
+            last_ids = User.objects.annotate(last_id=Max('comments__id')).values('last_id')
+            qs = Comment.objects.filter(id__in=last_ids)
+        entries = qs.order_by('-id').select_related('created_by').prefetch_related('parent')
+        return paginate(req, entries, 30)
+
+    @before(auth_user)
+    def on_get(self, req, resp):
+        q = req.params.get('q', '').strip()
+        terms = [t.strip() for t in q.split() if t.strip()]
+        entries, pages = self.fetch_entries(req, terms)
+        template = env.get_template('pages/regular.html')
+        resp.body = template.render(
+            user=req.user, entries=entries, pages=pages, q=q,
+            view='search', placeholder="Search content"
         )
 
 

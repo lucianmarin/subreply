@@ -1,14 +1,14 @@
 <div class="pages">
     {% if pages.prev %}
-        <a href="?p={{ pages.prev }}">
+        <a href="?{% if q %}q={{ q | quote }}&{% endif %}p={{ pages.prev }}">
             {{ pages.prev | num2words(to='ordinal') }}
         </a>
     {% endif %}
-    <a class="selected" href="?p={{ pages.this }}">
+    <a class="selected" href="?{% if q %}q={{ q | quote }}&{% endif %}p={{ pages.this }}">
         {{ pages.this | num2words(to='ordinal') }}
     </a>
     {% if pages.next %}
-        <a href="?p={{ pages.next }}">
+        <a href="?{% if q %}q={{ q | quote }}&{% endif %}p={{ pages.next }}">
             {{ pages.next | num2words(to='ordinal') }}
         </a>
     {% endif %}
