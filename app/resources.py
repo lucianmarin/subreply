@@ -93,7 +93,6 @@ class SearchResource:
     def fetch_results(self, terms):
         query = Q()
         for term in terms:
-            term = term[1:] if term.startswith('#') else term
             query &= Q(content__icontains=term)
         return Comment.objects.filter(query).order_by('-id').select_related('created_by').prefetch_related('parent')
 
