@@ -387,10 +387,8 @@ class PeopleResource:
         return query
 
     def fetch_entries(self, req, terms):
-        entries = User.objects.order_by('-seen_at')
-        if terms:
-            q = self.build_query(terms)
-            entries = entries.filter(q)
+        q = self.build_query(terms)
+        entries = User.objects.filter(q).order_by('-seen_at')
         return paginate(req, entries, 45)
 
     @before(auth_user)
@@ -413,13 +411,9 @@ class SearchResource:
         return query
 
     def fetch_entries(self, req, terms):
-        if terms:
-            q = self.build_query(terms)
-            qs = Comment.objects.filter(q)
-        else:
-            last_ids = User.objects.annotate(last_id=Max('comments__id')).values('last_id')
-            qs = Comment.objects.filter(id__in=last_ids)
-        entries = qs.order_by('-id').select_related('created_by').prefetch_related('parent')
+        last_ids = User.objects.annotate(last_id=Max('comments__id')).values('last_id')
+        q = self.build_query(terms) if terms else Q(id__in=last_ids)
+        entries = Comment.objects.filter(q).order_by('-id').select_related('created_by').prefetch_related('parent')
         return paginate(req, entries, 30)
 
     @before(auth_user)
