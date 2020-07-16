@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block meta %}
+    <script>
+        function bodyLoad() {
+            var content = document.getElementById('id_content');
+            expand(content);
+        }
+    </script>
+{% endblock %}
+
+{% block main %}
+    <div class="list">
+        {% for entry in ancestors %}
+            {% include "common/entry.html" %}
+        {% endfor %}
+        {% include "common/entry.html" %}
+    </div>
+
+    {% include "common/edit.html" %}
+{% endblock %}

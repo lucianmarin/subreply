@@ -7,7 +7,7 @@
     {% block meta %}{% endblock %}
 </head>
 
-<body>
+{% if view == 'edit' %}<body onload="bodyLoad()">{% else %}<body>{% endif %}
     <div class="container">
         <div class="leftside"></div>
         <div class="sidebar">

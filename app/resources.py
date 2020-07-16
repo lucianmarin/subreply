@@ -15,7 +15,7 @@ from app.hooks import auth_user, login_required
 from app.jinja import env
 from app.models import Comment, Relation, Reset, Save, User
 from app.validation import (authentication, changing, profiling, registration,
-                            valid_content, valid_reply, valid_password)
+                            valid_content, valid_edit, valid_reply, valid_password)
 from project.settings import DEBUG, MAX_AGE, SMTP, F
 
 PFR = Prefetch('kids', queryset=Comment.objects.order_by('id').select_related('created_by'))
@@ -111,7 +111,7 @@ class FeedResource:
     def on_post(self, req, resp):
         form = FieldStorage(fp=req.stream, environ=req.env)
         content = unidecode(form.getvalue('content', ''))
-        content = " ".join([p.strip() for p in content.split()])
+        content = " ".join([w.strip() for w in content.split()])
         errors = {}
         errors['content'] = valid_content(content, req.user)
         errors = {k: v for k, v in errors.items() if v}
@@ -153,7 +153,7 @@ class ReplyResource:
             id=int(base, 36)
         ).select_related('created_by', 'parent').first()
         if not entry or entry.created_by.username != username.lower():
-            not_found(resp, req.user, f'{username}/{base}')
+            not_found(resp, req.user, f'/{username}/{base}')
             return
         duplicate = Comment.objects.filter(
             parent=entry, created_by=req.user
@@ -172,10 +172,10 @@ class ReplyResource:
     def on_post(self, req, resp, username, base):
         entry = Comment.objects.filter(
             id=int(base, 36)
-        ).select_related('created_by').first()
+        ).select_related('created_by', 'parent').first()
         form = FieldStorage(fp=req.stream, environ=req.env)
         content = unidecode(form.getvalue('content', ''))
-        content = " ".join([p.strip() for p in content.split()])
+        content = " ".join([w.strip() for w in content.split()])
         mentions, links, hashtags = parse_metadata(content)
         errors = {}
         errors['content'] = valid_content(content, req.user)
@@ -209,6 +209,60 @@ class ReplyResource:
             re.add_replies()
             entry.created_by.up_replies()
             raise HTTPFound(f'/{username}/{base}')
+
+
+class EditResource:
+    @before(auth_user)
+    @before(login_required)
+    def on_get(self, req, resp, base):
+        entry = Comment.objects.filter(
+            id=int(base, 36)
+        ).select_related('created_by', 'parent').first()
+        if not entry or entry.created_by != req.user or entry.replies or entry.mention:
+            not_found(resp, req.user, f'/edit/{base}')
+            return
+        ancestors = [entry.parent] if entry.parent_id else []
+        form = FieldStorage(fp=req.stream, environ=req.env)
+        template = env.get_template('pages/edit.html')
+        resp.body = template.render(
+            user=req.user, entry=entry, form=form, errors={},
+            ancestors=ancestors, view='edit'
+        )
+
+    @before(auth_user)
+    @before(login_required)
+    def on_post(self, req, resp, base):
+        entry = Comment.objects.filter(
+            id=int(base, 36)
+        ).select_related('created_by', 'parent').first()
+        form = FieldStorage(fp=req.stream, environ=req.env)
+        content = unidecode(form.getvalue('content', ''))
+        content = " ".join([w.strip() for w in content.split()])
+        mentions, links, hashtags = parse_metadata(content)
+        errors = {}
+        errors['content'] = valid_content(content, req.user)
+        if entry.parent_id:
+            errors['edit'] = valid_edit(entry, req.user, mentions)
+        errors = {k: v for k, v in errors.items() if v}
+        if errors:
+            ancestors = [entry.parent] if entry.parent_id else []
+            template = env.get_template('pages/edit.html')
+            resp.body = template.render(
+                user=req.user, entry=entry, form=form, errors=errors,
+                ancestors=ancestors, view='edit'
+            )
+        else:
+            fields = ['content', 'edited_at', 'hashtag', 'link', 'mention', 'mentioned']
+            entry.content = content
+            entry.edited_at = utc_timestamp()
+            entry.hashtag = hashtags[0].lower() if hashtags else ''
+            entry.link = links[0].lower() if links else ''
+            entry.mention = mentions[0].lower() if mentions else ''
+            entry.mentioned = User.objects.get(username=mentions[0].lower()) if mentions else None
+            entry.save(update_fields=fields)
+            if entry.mentioned:
+                entry.mentioned.up_mentions()
+            raise HTTPFound(f'/{entry.created_by}/{base}')
 
 
 class ProfileResource:

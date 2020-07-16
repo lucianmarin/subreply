@@ -38,6 +38,11 @@ def valid_content(value, user):
             return "@{0} isn't an user".format(mention)
 
 
+def valid_edit(entry, user, mentions):
+    if len(mentions) == 1 and mentions[0].lower() == entry.created_by.username:
+        return "Can't mention the author"
+
+
 def valid_reply(entry, user, mentions):
     if entry.created_by_id == user.id:
         return "Can't reply to yourself"

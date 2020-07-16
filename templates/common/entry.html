@@ -13,7 +13,11 @@
         </a>
         <b class="{{ entry.created_by.status }}">&bull;</b>
         <a class="ago" href="/{{ entry.created_by }}/{{ entry.base }}">
-            {{ entry.created_at | shortdate }} ago
+            {% if entry.edited_at %}
+                edited {{ entry.edited_at | shortdate }} ago
+            {% else %}
+                {{ entry.created_at | shortdate }} ago
+            {% endif %}
         </a>
     </div>
     <div class="content">
@@ -24,16 +28,21 @@
             {{ entry.replied }} {% if not entry.parent_id %}&not;{% endif %}
         </a>
         {% if user %}
-            {% if entry.created_by_id == user.id and entry.saves %}
-                <b>{{ entry.saves }} save{% if entry.saves > 1 %}s{% endif %}</b>
-            {% endif %}
-            {% if entry.created_by_id != user.id %}
+            {% if entry.created_by_id == user.id %}
+                {% if entry.saves %}
+                    <b>{{ entry.saves }} save{% if entry.saves > 1 %}s{% endif %}</b>
+                {% endif %}
+                {% if not entry.mention and not entry.replies %}
+                    <a href="/edit/{{ entry.base }}">edit</a>
+                {% endif %}
+            {% else %}
                 {% if entry.id in user.saves %}
                     <a onclick="postUnsave(event)" data-id="{{ entry.id }}">unsave</a>
                 {% else %}
                     <a onclick="postSave(event)" data-id="{{ entry.id }}">save</a>
                 {% endif %}
             {% endif %}
+
             {% if user.id in [entry.created_by_id, entry.parent.created_by_id] and not entry.replies %}
                 <a onclick="postDelete(event)" data-id="{{ entry.id }}">
                     delete
