@@ -22,7 +22,7 @@ html
 ::-webkit-input-placeholder
     color: var(--gray)
 
-@mixin overflow
+@mixin dots
     overflow: hidden
     text-overflow: ellipsis
     white-space: nowrap
@@ -71,7 +71,7 @@ body, label, input, select, textarea
 
 label
     color: var(--black)
-    @include overflow
+    @include dots
     i
         color: var(--gray)
 
@@ -284,6 +284,7 @@ table
         position: absolute
 
 .author
+    @include dots
     .short, .handle, b
         font-weight: bold
     .handle, .ago
@@ -304,7 +305,7 @@ table
 .status
     color: var(--silver)
     font-size: var(--small)
-    @include overflow
+    @include dots
     a
         color: var(--silver)
 

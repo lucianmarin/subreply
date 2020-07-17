@@ -118,6 +118,8 @@ table td a { text-decoration: underline; }
 
 .showcase img { border: var(--white) 5px solid; border-radius: var(--radius); cursor: zoom-out; left: calc(50% - 125px); top: calc(50% - 125px); position: absolute; }
 
+.author { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
 .author .short, .author .handle, .author b { font-weight: bold; }
 
 .author .handle, .author .ago { color: var(--gray); }
