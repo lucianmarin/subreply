@@ -83,11 +83,11 @@ class User(models.Model):
 
     def up_seen(self, remote_addr):
         fmt = "%Y-%m-%d-%p"
-        today = datetime.utcnow().strftime(fmt)
+        last_day = datetime.now(timezone.utc).strftime(fmt)
         last_seen = datetime.fromtimestamp(self.seen_at).strftime(fmt)
-        if today != last_seen:
+        if last_day != last_seen:
             self.remote_addr = remote_addr
-            self.seen_at = datetime.utcnow().timestamp()
+            self.seen_at = datetime.now(timezone.utc).timestamp()
             self.save(update_fields=['remote_addr', 'seen_at'])
 
 

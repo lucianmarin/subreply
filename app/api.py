@@ -1,6 +1,8 @@
-from datetime import datetime
+from datetime import datetime, timezone
+
 from falcon.constants import MEDIA_JSON
 from falcon.hooks import before
+
 from app.hooks import auth_user
 from app.models import Comment, Save
 
@@ -43,7 +45,7 @@ class SaveEndpoint:
             resp.media = {'status': 'not found'}
             return
         Save.objects.get_or_create(
-            created_at=datetime.utcnow().timestamp(),
+            created_at=datetime.now(timezone.utc).timestamp(),
             created_by=req.user,
             to_comment=entry
         )
