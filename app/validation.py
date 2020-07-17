@@ -3,7 +3,7 @@ import grapheme
 import requests
 from dns.resolver import query as dns_query
 
-from app.const import COUNTRIES, MAX_YEAR, MIN_YEAR
+from app.const import COUNTRIES, MAX_YEAR, MIN_YEAR, LATIN
 from app.helpers import parse_metadata, verify_hash, has_repetions
 from app.models import Comment, User
 from project.settings import INVALID, SLURS
@@ -39,6 +39,8 @@ def valid_content(value, user):
 
 
 def valid_edit(entry, user, mentions):
+    # if entry.replies:
+    #     return "Someone replied in the meantime"
     if len(mentions) == 1 and mentions[0].lower() == entry.created_by.username:
         return "Can't mention the author"
 
@@ -87,7 +89,6 @@ def valid_username(value, remote_addr='', user_id=0):
 
 
 def valid_first_name(value):
-    limits = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
     if not value:
         return "First name can't be blank"
     elif len(value) > 15:
@@ -96,20 +97,19 @@ def valid_first_name(value):
         return "First name is just too short"
     elif any(slur in value.lower() for slur in SLURS):
         return "First name is prohibited"
-    elif not all(c in limits for c in value):
-        return "First name should use English alphabet"
+    elif not all(c in LATIN for c in value):
+        return "First name should use Latin characters"
     elif has_repetions(value):
         return "First name contains repeating characters"
 
 
 def valid_last_name(value):
-    limits = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
     if len(value) > 15:
         return "Last name can't be longer than 15 characters"
     elif any(slur in value.lower() for slur in SLURS):
         return "Last name is prohibited"
-    elif not all(c in limits for c in value):
-        return "Last name should use English alphabet"
+    elif not all(c in LATIN for c in value):
+        return "Last name should use Latin characters"
     elif value and has_repetions(value):
         return "Last name contains repeating characters"
 
