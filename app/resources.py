@@ -153,7 +153,7 @@ class ReplyResource:
             id=int(base, 36)
         ).select_related('created_by', 'parent').first()
         if not entry or entry.created_by.username != username.lower():
-            not_found(resp, req.user, f'/{username}/{base}')
+            not_found(resp, req.user, f'{username}/{base}')
             return
         duplicate = Comment.objects.filter(
             parent=entry, created_by=req.user
@@ -219,7 +219,7 @@ class EditResource:
             id=int(base, 36)
         ).select_related('created_by', 'parent').first()
         if not entry or entry.created_by != req.user or entry.replies or entry.mention:
-            not_found(resp, req.user, f'/edit/{base}')
+            not_found(resp, req.user, f'edit/{base}')
             return
         ancestors = [entry.parent] if entry.parent_id else []
         form = FieldStorage(fp=req.stream, environ=req.env)
