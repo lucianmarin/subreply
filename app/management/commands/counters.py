@@ -18,13 +18,13 @@ class Command(BaseCommand):
         statuses = Comment.objects.filter(parent=None, replies=0).count()
         threads = Comment.objects.filter(parent=None).exclude(replies=0).count()
         replies = Comment.objects.exclude(parent=None).count()
-        print('---', 'total')
-        print('accounts', accounts)
-        print('subscriptions', subscriptions)
-        print('saves', saves)
-        print('statuses', statuses)
-        print('threads', threads)
-        print('replies', replies)
+        print('total:')
+        print('  accounts:', accounts)
+        print('  subscriptions:', subscriptions)
+        print('  saves:', saves)
+        print('  statuses:', statuses)
+        print('  threads:', threads)
+        print('  replies:', replies)
 
     def yearly(self):
         for year in self.years:
@@ -50,13 +50,13 @@ class Command(BaseCommand):
             replies = Comment.objects.filter(
                 created_at__gt=first_day, created_at__lt=last_day
             ).exclude(parent=None).count()
-            print('---', year)
-            print('accounts', accounts)
-            print('subscriptions', subscriptions)
-            print('saves', saves)
-            print('statuses', statuses)
-            print('threads', threads)
-            print('replies', replies)
+            print(f'{year}:')
+            print('  accounts:', accounts)
+            print('  subscriptions:', subscriptions)
+            print('  saves:', saves)
+            print('  statuses:', statuses)
+            print('  threads:', threads)
+            print('  replies:', replies)
 
     def handle(self, *args, **options):
         self.yearly()
