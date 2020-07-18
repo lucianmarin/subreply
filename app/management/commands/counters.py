@@ -1,4 +1,5 @@
 from django.core.management.base import BaseCommand
+from django.db.models import F
 
 from app.models import Comment, Relation, Save, User
 
@@ -8,12 +9,12 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         users = User.objects.count()
-        relations = Relation.objects.count()
+        subs = Relation.objects.exclude(created_by_id=F('to_user_id')).count()
         saves = Save.objects.count()
         threads = Comment.objects.filter(parent=None).count()
         replies = Comment.objects.exclude(parent=None).count()
         print('users', users)
-        print('relations', relations)
+        print('subs', subs)
         print('saves', saves)
         print('threads', threads)
         print('replies', replies)
