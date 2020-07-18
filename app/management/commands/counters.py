@@ -6,19 +6,21 @@ from app.models import Comment, Relation, Save, User
 
 
 class Command(BaseCommand):
-    help = "Count users, comments, etc."
+    help = "Count accounts, comments, etc."
     years = range(2014, datetime.now().year + 1)
 
     def total(self):
-        users = User.objects.count()
-        subs = Relation.objects.exclude(created_by_id=F('to_user_id')).count()
+        accounts = User.objects.count()
+        followings = Relation.objects.exclude(
+            created_by_id=F('to_user_id')
+        ).count()
         saves = Save.objects.count()
         statuses = Comment.objects.filter(parent=None, replies=0).count()
         threads = Comment.objects.filter(parent=None).exclude(replies=0).count()
         replies = Comment.objects.exclude(parent=None).count()
         print('---', 'total')
-        print('users', users)
-        print('subs', subs)
+        print('accounts', accounts)
+        print('followings', followings)
         print('saves', saves)
         print('statuses', statuses)
         print('threads', threads)
@@ -28,10 +30,10 @@ class Command(BaseCommand):
         for year in self.years:
             first_day = datetime(year, 1, 1).timestamp()
             last_day = datetime(year, 12, 31).timestamp()
-            users = User.objects.filter(
+            accounts = User.objects.filter(
                 joined_at__gt=first_day, joined_at__lt=last_day
             ).count()
-            subs = Relation.objects.filter(
+            followings = Relation.objects.filter(
                 created_at__gt=first_day, created_at__lt=last_day
             ).exclude(created_by_id=F('to_user_id')).count()
             saves = Save.objects.filter(
@@ -49,8 +51,8 @@ class Command(BaseCommand):
                 created_at__gt=first_day, created_at__lt=last_day
             ).exclude(parent=None).count()
             print('---', year)
-            print('users', users)
-            print('subs', subs)
+            print('accounts', accounts)
+            print('followings', followings)
             print('saves', saves)
             print('statuses', statuses)
             print('threads', threads)
