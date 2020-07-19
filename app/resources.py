@@ -142,7 +142,7 @@ class FeedResource:
 
 class ReplyResource:
     def fetch_entries(self, entry):
-        return Comment.objects.filter(parent=entry).order_by('id').select_related('created_by').prefetch_related(PFR)
+        return Comment.objects.filter(parent=entry).order_by('-id').select_related('created_by').prefetch_related(PFR)
 
     def fetch_ancestors(self, entry):
         return Comment.objects.filter(id__in=entry.ancestors).order_by('id').select_related('created_by', 'parent')
