@@ -34,7 +34,7 @@ SLURS = ["nigger", "fuck", "cunt", "stupid", "whore", "hitler"]
 # registration
 INVALID = [
     "register", "login", "logout", "feed", "following", "followers",
-    "sub", "subcafe", "sublevel", "luc", "lm", "lucianmarin",
+    "sub", "subcafe", "sublevel", "luc", "lm", "lucianmarin", "set",
     "re", "reply", "api", "local", "search", "settings",
     "profile", "reset", "password", "delete", "timeline",
     "about", "static", "media", "terms", "privacy", "policy",

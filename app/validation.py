@@ -11,7 +11,24 @@ from project.settings import INVALID, SLURS
 
 def valid_content(value, user):
     mentions, links, hashtags = parse_metadata(value)
+    # duplicate topic against old topics
+    # duplicate reply against replies for topic including topic
+    # duplicate content against all account content
+    # valid_update
+    # valid_reply
     duplicate = Comment.objects.filter(content__iexact=value).first()
+    # if entry.parent_id is None:
+    #     duplicate = Comment.objects.filter(
+    #         content__iexact=value, parent=None
+    #     ).first()
+    # else:
+    #     parent_id = min(entry.acenstors)
+    #     duplicate = Comment.objects.filter(
+    #         content__iexact=value, parent_id=parent_id
+    #     )
+    # reduplicate = Comment.objects.filter(
+    #     content__iexact=value, created_by=user
+    # ).first()
     if not value:
         return "Status can't be blank"
     elif len(value) > 480:

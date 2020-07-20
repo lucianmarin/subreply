@@ -6,6 +6,22 @@
     {% endif %}
 
     <div class="list">
+        {% if view == 'trending' %}
+            <div class="entry">
+                <div class="filters">
+                    <a href="/set/small" class="{% if sample == 30 %}selected{% endif %}">
+                        30 threads
+                    </a>
+                    <a href="/set/medium" class="{% if sample == 60 %}selected{% endif %}">
+                        60 threads
+                    </a>
+                    <a href="/set/large" class="{% if sample == 90 %}selected{% endif %}">
+                        90 threads
+                    </a>
+                </div>
+            </div>
+        {% endif %}
+
         {% for entry in entries %}
             {% if view == 'trending' %}
                 {% include "common/threads.html" %}

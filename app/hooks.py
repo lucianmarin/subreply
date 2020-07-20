@@ -6,7 +6,11 @@ from project.settings import F
 
 def auth_user(req, resp, resource, params):
     token = req.cookies.get('identity', '')
-    identity = F.decrypt(token.encode()).decode() if token else 0
+    try:
+        identity = F.decrypt(token.encode()).decode() if token else 0
+    except Exception as e:
+        print(e)
+        identity = 0
     req.user = User.objects.filter(id=identity).first()
     if req.user:
         remote_addr = req.access_route[0]
