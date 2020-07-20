@@ -177,15 +177,17 @@ def valid_bio(value, username, user_id=0):
             return "Bio contains prohibited words"
         elif duplicate:
             return "Bio is used by someone else"
+        elif has_repetions(value):
+            return "Bio contains repeating characters"
         elif len(mentions) > 1:
             return "Mention a single user"
         elif len(links) > 1:
             return "Link a single address"
         elif len(hashtags) > 1:
             return "Hashtag a single channel"
-        elif len(hashtags) and len(hashtags[0]) > 120:
+        elif hashtags and len(hashtags[0]) > 120:
             return "Hashtag can't be longer than 15 characters"
-        elif len(mentions):
+        elif mentions:
             mention = mentions[0].lower()
             if mention == username:
                 return "Can't mention yourself"
