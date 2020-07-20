@@ -1,10 +1,12 @@
 import emoji
 import grapheme
 import requests
+from django.db.models import Q
 from dns.resolver import query as dns_query
 
-from app.const import COUNTRIES, MAX_YEAR, MIN_YEAR, LATIN
-from app.helpers import parse_metadata, verify_hash, has_repetions
+from app.filters import shortdate
+from app.const import COUNTRIES, LATIN, MAX_YEAR, MIN_YEAR
+from app.helpers import has_repetions, parse_metadata, verify_hash
 from app.models import Comment, User
 from project.settings import INVALID, SLURS
 
@@ -14,21 +16,9 @@ def valid_content(value, user):
     # duplicate topic against old topics
     # duplicate reply against replies for topic including topic
     # duplicate content against all account content
-    # valid_update
-    # valid_reply
-    duplicate = Comment.objects.filter(content__iexact=value).first()
-    # if entry.parent_id is None:
-    #     duplicate = Comment.objects.filter(
-    #         content__iexact=value, parent=None
-    #     ).first()
-    # else:
-    #     parent_id = min(entry.acenstors)
-    #     duplicate = Comment.objects.filter(
-    #         content__iexact=value, parent_id=parent_id
-    #     )
-    # reduplicate = Comment.objects.filter(
-    #     content__iexact=value, created_by=user
-    # ).first()
+    duplicate = Comment.objects.filter(
+        content__iexact=value, created_by=user
+    ).first()
     if not value:
         return "Status can't be blank"
     elif len(value) > 480:
@@ -36,7 +26,7 @@ def valid_content(value, user):
     elif len(value) != len(value.encode()):
         return "Only English alphabet allowed"
     elif duplicate:
-        return f'Written by <a href="/{duplicate.created_by}/{duplicate.base}">@{duplicate.created_by}</a>'
+        return f'You wrote this <a href="/{duplicate.created_by}/{duplicate.base}">{shortdate(duplicate.created_at)} ago</a>'
     elif len(mentions) > 1:
         return "Mention a single user"
     elif len(links) > 1:
@@ -56,14 +46,28 @@ def valid_content(value, user):
 
 
 def valid_edit(entry, user, mentions):
-    # if entry.replies:
-    #     return "Someone replied in the meantime"
     if len(mentions) == 1 and mentions[0].lower() == entry.created_by.username:
         return "Can't mention the author"
+    # elif entry.replies:
+    #     return "Someone replied in the meantime"
 
 
-def valid_reply(entry, user, mentions):
-    if entry.created_by_id == user.id:
+def valid_thread(value):
+    duplicate = Comment.objects.filter(
+        content__iexact=value, parent=None
+    ).first()
+    if duplicate:
+        return f'Thread started by <a href="/{duplicate.created_by}/{duplicate.base}">@{duplicate.created_by}</a>'
+
+
+def valid_reply(entry, user, value, mentions):
+    t_id = min(entry.ancestors) if entry.ancestors else entry.id
+    duplicate = Comment.objects.filter(
+        (Q(ancestors__contains=[t_id]) | Q(id=t_id)) & Q(content__iexact=value)
+    ).first()
+    if duplicate:
+        return f'Replied by <a href="/{duplicate.created_by}/{duplicate.base}">@{duplicate.created_by}</a> in thread'
+    elif entry.created_by_id == user.id:
         return "Can't reply to yourself"
     elif len(mentions) == 1 and mentions[0].lower() == entry.created_by.username:
         return "Can't mention the author"

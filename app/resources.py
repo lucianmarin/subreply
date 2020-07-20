@@ -15,7 +15,8 @@ from app.hooks import auth_user, login_required
 from app.jinja import env
 from app.models import Comment, Relation, Reset, Save, User
 from app.validation import (authentication, changing, profiling, registration,
-                            valid_content, valid_edit, valid_reply, valid_password)
+                            valid_content, valid_edit, valid_password,
+                            valid_reply, valid_thread)
 from project.settings import DEBUG, MAX_AGE, SMTP, F
 
 PFR = Prefetch('kids', queryset=Comment.objects.order_by('id').select_related('created_by'))
@@ -114,6 +115,7 @@ class FeedResource:
         content = " ".join([w.strip() for w in content.split()])
         errors = {}
         errors['content'] = valid_content(content, req.user)
+        errors['thread'] = valid_thread(content)
         errors = {k: v for k, v in errors.items() if v}
         if errors:
             entries, pages = self.fetch_entries(req)
@@ -179,7 +181,7 @@ class ReplyResource:
         mentions, links, hashtags = parse_metadata(content)
         errors = {}
         errors['content'] = valid_content(content, req.user)
-        errors['reply'] = valid_reply(entry, req.user, mentions)
+        errors['reply'] = valid_reply(entry, req.user, content, mentions)
         errors = {k: v for k, v in errors.items() if v}
         if errors:
             ancestors = self.fetch_ancestors(entry)
