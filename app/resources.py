@@ -491,7 +491,7 @@ class SetResource:
 
 
 class TrendingResource:
-    samples = {'small': 45, 'medium': 90, 'large': 135}
+    samples = {'small': 45, 'medium': 90, 'large': 180}
 
     def fetch_entries(self, req, limit):
         limited = Comment.objects.filter(parent=None).exclude(replies=0).order_by('-id').values('id')[:limit]
