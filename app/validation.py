@@ -45,13 +45,6 @@ def valid_content(value, user):
             return "@{0} isn't an user".format(mention)
 
 
-def valid_edit(entry, user, mentions):
-    if len(mentions) == 1 and mentions[0].lower() == entry.created_by.username:
-        return "Can't mention the author"
-    # elif entry.replies:
-    #     return "Someone replied in the meantime"
-
-
 def valid_thread(value):
     duplicate = Comment.objects.filter(
         content__iexact=value, parent=None

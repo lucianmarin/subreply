@@ -15,8 +15,8 @@ from app.hooks import auth_user, login_required
 from app.jinja import env
 from app.models import Comment, Relation, Reset, Save, User
 from app.validation import (authentication, changing, profiling, registration,
-                            valid_content, valid_edit, valid_password,
-                            valid_reply, valid_thread)
+                            valid_content, valid_password, valid_reply,
+                            valid_thread)
 from project.settings import DEBUG, MAX_AGE, SMTP, F
 
 PFR = Prefetch('kids', queryset=Comment.objects.order_by('id').select_related('created_by'))
@@ -244,7 +244,9 @@ class EditResource:
         errors = {}
         errors['content'] = valid_content(content, req.user)
         if entry.parent_id:
-            errors['edit'] = valid_edit(entry, req.user, mentions)
+            errors['reply'] = valid_reply(entry, req.user, content, mentions)
+        else:
+            errors['thread'] = valid_thread(content)
         errors = {k: v for k, v in errors.items() if v}
         if errors:
             ancestors = [entry.parent] if entry.parent_id else []
