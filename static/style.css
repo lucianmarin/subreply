@@ -1,4 +1,4 @@
-html { -ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; --tiny: 10.5px; --small: 13px; --regular: 13.5px; --radius: 5px; --d: 0.2s; --white: #fff; --whitesmoke: #f0f0f0; --gainsboro: #e0e0e0; --silver: #c0c0c0; --gray: #808080; --black: #000; --aqua: #0080f0; --ocean: #003080; --red: #ff4020; }
+html { -ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; --tiny: 10.5px; --small: 13px; --regular: 13.5px; --radius: 5px; --d: 0.2s; --white: #fff; --whitesmoke: #f0f0f0; --gainsboro: #e0e0e0; --silver: #c0c0c0; --gray: #808080; --black: #000; --aqua: #0080f0; --ocean: #003080; --orange: #FF2600; --purple: #9437FF; }
 
 ::-moz-placeholder { color: #1f1f1f; }
 
@@ -70,7 +70,7 @@ table td a { text-decoration: underline; }
 
 .links a.on svg { stroke: var(--silver); }
 
-.links a.red svg { stroke: var(--red); }
+.links a.accent svg { stroke: var(--purple); }
 
 .links a span { margin-left: 1px; }
 
@@ -166,9 +166,9 @@ table td a { text-decoration: underline; }
 
 .line .right input, .line .right select { border-bottom-left-radius: 0; border-top-left-radius: 0; }
 
-.error { clear: both; color: var(--red); font-size: var(--small); }
+.error { clear: both; color: var(--orange); font-size: var(--small); }
 
-.error a { color: var(--red); text-decoration: underline; }
+.error a { color: var(--orange); text-decoration: underline; }
 
 .about a { text-decoration: underline; }
 
