@@ -465,7 +465,7 @@ class PeopleResource:
 
 
 class DiscoverResource:
-    kinds = {'mixed': 'mixed', 'replies': 'replies', 'threads': 'threads'}
+    kinds = {'intermixed': 'intermixed', 'replies': 'replies', 'threads': 'threads'}
 
     def build_query(self, terms):
         query = Q()
@@ -484,8 +484,8 @@ class DiscoverResource:
 
     @before(auth_user)
     def on_get(self, req, resp):
-        kind = req.cookies.get('discover', 'mixed')
-        kind = kind if kind in self.kinds.keys() else 'mixed'
+        kind = req.cookies.get('discover', 'intermixed')
+        kind = kind if kind in self.kinds.keys() else 'intermixed'
         q = req.params.get('q', '').strip()
         terms = [t.strip() for t in q.split() if t.strip()]
         entries, pages = self.fetch_entries(req, terms, kind)
@@ -499,7 +499,7 @@ class DiscoverResource:
 class SetResource:
     @before(auth_user)
     def on_get_d(self, req, resp, value):
-        value = value if value in ['mixed', 'replies', 'threads'] else 'mixed'
+        value = value if value in ['intermixed', 'replies', 'threads'] else 'intermixed'
         resp.set_cookie('discover', value, path="/", max_age=MAX_AGE)
         raise HTTPFound('/discover')
 
