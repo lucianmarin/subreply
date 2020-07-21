@@ -495,7 +495,7 @@ class SetResource:
 
 
 class TrendingResource:
-    samples = {'small': 30, 'medium': 120, 'large': 480}
+    samples = {'small': 15, 'medium': 30, 'large': 45}
 
     def fetch_entries(self, req, limit):
         limited = Comment.objects.filter(parent=None).exclude(replies=0).order_by('-id').values('id')[:limit]
@@ -510,7 +510,7 @@ class TrendingResource:
         entries, pages = self.fetch_entries(req, self.samples[sample])
         template = env.get_template('pages/regular.html')
         resp.body = template.render(
-            user=req.user, entries=entries, pages=pages,
+            user=req.user, entries=entries, pages=pages, samples=self.samples,
             sample=self.samples[sample], view='trending'
         )
 

@@ -109,10 +109,14 @@ input[type=submit]
 
 svg
     fill: none
-    stroke: var(--gray)
+    stroke: var(--black)
     stroke-linecap: round
     stroke-linejoin: round
     stroke-width: 2
+    path
+        fill: var(--white)
+    circle
+        fill: var(--white)
 
 table
     margin: 10px 0
@@ -187,7 +191,11 @@ table
             background-color: var(--white)
             color: var(--gray)
             svg
-                stroke: var(--silver)
+                stroke: var(--gray)
+                path
+                    fill: var(--whitesmoke)
+                circle
+                    fill: var(--whitesmoke)
         &.accent
             svg
                 stroke: var(--orange)
@@ -391,7 +399,6 @@ table
         display: none
     .links svg
         margin-left: 0
-        stroke: var(--black)
 
 @font-face
     font-family: "Fira Sans"
