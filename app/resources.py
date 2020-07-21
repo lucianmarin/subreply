@@ -462,35 +462,49 @@ class PeopleResource:
 
 
 class SearchResource:
+    kinds = ['combined', 'replies', 'threads']
+
     def build_query(self, terms):
         query = Q()
         for term in terms:
             query &= Q(content__icontains=term)
         return query
 
-    def fetch_entries(self, req, terms):
+    def fetch_entries(self, req, terms, kind):
         last_ids = User.objects.annotate(last_id=Max('comments__id')).values('last_id')
         q = self.build_query(terms) if terms else Q(id__in=last_ids)
-        entries = Comment.objects.filter(q).order_by('-id').select_related('created_by').prefetch_related('parent')
+        if kind == 'threads':
+            q &= Q(parent=None)
+        eq = Q(parent=None) if kind == 'replies' else Q()
+        entries = Comment.objects.filter(q).exclude(eq).order_by('-id').select_related('created_by').prefetch_related('parent')
         return paginate(req, entries, 30)
 
     @before(auth_user)
     def on_get(self, req, resp):
+        kind = req.cookies.get('search', 'combined')
+        if kind not in self.kinds:
+            kind = 'combined'
         q = req.params.get('q', '').strip()
         terms = [t.strip() for t in q.split() if t.strip()]
-        entries, pages = self.fetch_entries(req, terms)
+        entries, pages = self.fetch_entries(req, terms, kind)
         template = env.get_template('pages/regular.html')
         resp.body = template.render(
-            user=req.user, entries=entries, pages=pages, q=q,
-            view='search', placeholder="Search content"
+            user=req.user, entries=entries, pages=pages, q=q, kinds=self.kinds,
+            kind=kind, view='search', placeholder="Search content"
         )
 
 
 class SetResource:
     @before(auth_user)
-    def on_get(self, req, resp, sample):
-        value = sample if sample in ['small', 'medium', 'large'] else 'small'
-        resp.set_cookie('set', value, path="/", max_age=MAX_AGE)
+    def on_get_s(self, req, resp, value):
+        value = value if value in ['combined', 'replies', 'threads'] else 'combined'
+        resp.set_cookie('search', value, path="/", max_age=MAX_AGE)
+        raise HTTPFound('/search')
+
+    @before(auth_user)
+    def on_get_t(self, req, resp, value):
+        value = value if value in ['small', 'medium', 'large'] else 'small'
+        resp.set_cookie('trending', value, path="/", max_age=MAX_AGE)
         raise HTTPFound('/trending')
 
 
@@ -504,8 +518,8 @@ class TrendingResource:
 
     @before(auth_user)
     def on_get(self, req, resp):
-        sample = req.cookies.get('set', 'small')
-        if sample not in ['small', 'medium', 'large']:
+        sample = req.cookies.get('trending', 'small')
+        if sample not in self.samples.keys():
             sample = 'small'
         entries, pages = self.fetch_entries(req, self.samples[sample])
         template = env.get_template('pages/regular.html')

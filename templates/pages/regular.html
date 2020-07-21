@@ -10,8 +10,20 @@
             <div class="entry">
                 <div class="filters">
                     {% for kind, count in samples.items() %}
-                        <a href="/set/{{ kind }}" class="{% if sample == count %}selected{% endif %}">
+                        <a href="/set/t/{{ kind }}" class="{% if sample == count %}selected{% endif %}">
                             {{ count }} threads
+                        </a>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+
+        {% if view == 'search' %}
+            <div class="entry">
+                <div class="filters">
+                    {% for value in kinds %}
+                        <a href="/set/s/{{ value }}" class="{% if kind == value %}selected{% endif %}">
+                            {{ value }}
                         </a>
                     {% endfor %}
                 </div>
