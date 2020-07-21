@@ -143,36 +143,36 @@ class FeedResource:
 
 
 class ReplyResource:
-    def fetch_entries(self, entry):
-        return Comment.objects.filter(parent=entry).order_by('-id').select_related('created_by').prefetch_related(PFR)
+    def fetch_entries(self, parent):
+        return Comment.objects.filter(parent=parent).order_by('-id').select_related('created_by').prefetch_related(PFR)
 
-    def fetch_ancestors(self, entry):
-        return Comment.objects.filter(id__in=entry.ancestors).order_by('id').select_related('created_by', 'parent')
+    def fetch_ancestors(self, parent):
+        return Comment.objects.filter(id__in=parent.ancestors).order_by('id').select_related('created_by', 'parent')
 
     @before(auth_user)
     def on_get(self, req, resp, username, base):
-        entry = Comment.objects.filter(
+        parent = Comment.objects.filter(
             id=int(base, 36)
         ).select_related('created_by', 'parent').first()
-        if not entry or entry.created_by.username != username.lower():
+        if not parent or parent.created_by.username != username.lower():
             not_found(resp, req.user, f'{username}/{base}')
             return
         duplicate = Comment.objects.filter(
-            parent=entry, created_by=req.user
+            parent=parent, created_by=req.user
         ).exists() if req.user else True
-        ancestors = self.fetch_ancestors(entry)
-        entries = self.fetch_entries(entry)
+        ancestors = self.fetch_ancestors(parent)
+        entries = self.fetch_entries(parent)
         form = FieldStorage(fp=req.stream, environ=req.env)
         template = env.get_template('pages/reply.html')
         resp.body = template.render(
-            user=req.user, entry=entry, form=form, errors={}, entries=entries,
+            user=req.user, entry=parent, form=form, errors={}, entries=entries,
             ancestors=ancestors, duplicate=duplicate, view='reply'
         )
 
     @before(auth_user)
     @before(login_required)
     def on_post(self, req, resp, username, base):
-        entry = Comment.objects.filter(
+        parent = Comment.objects.filter(
             id=int(base, 36)
         ).select_related('created_by', 'parent').first()
         form = FieldStorage(fp=req.stream, environ=req.env)
@@ -181,14 +181,14 @@ class ReplyResource:
         mentions, links, hashtags = parse_metadata(content)
         errors = {}
         errors['content'] = valid_content(content, req.user)
-        errors['reply'] = valid_reply(entry, req.user, content, mentions)
+        errors['reply'] = valid_reply(parent, req.user, content, mentions)
         errors = {k: v for k, v in errors.items() if v}
         if errors:
-            ancestors = self.fetch_ancestors(entry)
-            entries = self.fetch_entries(entry)
+            ancestors = self.fetch_ancestors(parent)
+            entries = self.fetch_entries(parent)
             template = env.get_template('pages/reply.html')
             resp.body = template.render(
-                user=req.user, entry=entry, form=form, errors=errors,
+                user=req.user, entry=parent, form=form, errors=errors,
                 entries=entries, ancestors=ancestors, duplicate=False,
                 view='reply'
             )
@@ -199,7 +199,7 @@ class ReplyResource:
             extra['mention'] = mentions[0].lower() if mentions else ''
             extra['mentioned'] = User.objects.get(username=mentions[0].lower()) if mentions else None
             re, is_new = Comment.objects.get_or_create(
-                parent=entry,
+                parent=parent,
                 content=content,
                 created_at=utc_timestamp(),
                 created_by=req.user,
@@ -209,7 +209,7 @@ class ReplyResource:
                 re.mentioned.up_mentions()
             re.up_ancestors()
             re.add_replies()
-            entry.created_by.up_replies()
+            parent.created_by.up_replies()
             raise HTTPFound(f'/{username}/{base}')
 
 
@@ -462,7 +462,7 @@ class PeopleResource:
 
 
 class SearchResource:
-    kinds = {'combined': 'combined', 'replies': 'replies', 'threads': 'threads'}
+    kinds = {'mixed': 'mixed', 'replies': 'replies', 'threads': 'threads'}
 
     def build_query(self, terms):
         query = Q()
@@ -481,9 +481,9 @@ class SearchResource:
 
     @before(auth_user)
     def on_get(self, req, resp):
-        kind = req.cookies.get('search', 'combined')
+        kind = req.cookies.get('search', 'mixed')
         if kind not in self.kinds.keys():
-            kind = 'combined'
+            kind = 'mixed'
         q = req.params.get('q', '').strip()
         terms = [t.strip() for t in q.split() if t.strip()]
         entries, pages = self.fetch_entries(req, terms, kind)
@@ -497,7 +497,7 @@ class SearchResource:
 class SetResource:
     @before(auth_user)
     def on_get_s(self, req, resp, value):
-        value = value if value in ['combined', 'replies', 'threads'] else 'combined'
+        value = value if value in ['mixed', 'replies', 'threads'] else 'mixed'
         resp.set_cookie('search', value, path="/", max_age=MAX_AGE)
         raise HTTPFound('/search')
 
