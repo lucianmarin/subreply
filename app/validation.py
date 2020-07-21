@@ -53,17 +53,17 @@ def valid_thread(value):
         return f'Thread started by <a href="/{duplicate.created_by}/{duplicate.base}">@{duplicate.created_by}</a>'
 
 
-def valid_reply(entry, user, value, mentions):
+def valid_reply(entry, user, value, mentions, is_edit=False):
     t_id = min(entry.ancestors) if entry.ancestors else entry.id
     duplicate = Comment.objects.filter(
         (Q(ancestors__contains=[t_id]) | Q(id=t_id)) & Q(content__iexact=value)
     ).first()
     if duplicate:
         return f'Replied by <a href="/{duplicate.created_by}/{duplicate.base}">@{duplicate.created_by}</a> in thread'
-    elif entry.created_by_id == user.id:
-        return "Can't reply to yourself"
     elif len(mentions) == 1 and mentions[0].lower() == entry.created_by.username:
         return "Can't mention the author"
+    elif not is_edit and entry.created_by_id == user.id:
+        return "Can't reply to yourself"
 
 
 def authentication(username, password):
