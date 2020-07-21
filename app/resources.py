@@ -453,8 +453,7 @@ class PeopleResource:
     @before(auth_user)
     def on_get(self, req, resp):
         kind = req.cookies.get('people', 'seen')
-        if kind not in self.kinds.keys():
-            kind = 'seen'
+        kind = kind if kind in self.kinds.keys() else 'seen'
         q = req.params.get('q', '').strip()
         terms = [t.strip() for t in q.split() if t.strip()]
         entries, pages = self.fetch_entries(req, terms, kind)
@@ -465,7 +464,7 @@ class PeopleResource:
         )
 
 
-class SearchResource:
+class DiscoverResource:
     kinds = {'mixed': 'mixed', 'replies': 'replies', 'threads': 'threads'}
 
     def build_query(self, terms):
@@ -485,31 +484,30 @@ class SearchResource:
 
     @before(auth_user)
     def on_get(self, req, resp):
-        kind = req.cookies.get('search', 'mixed')
-        if kind not in self.kinds.keys():
-            kind = 'mixed'
+        kind = req.cookies.get('discover', 'mixed')
+        kind = kind if kind in self.kinds.keys() else 'mixed'
         q = req.params.get('q', '').strip()
         terms = [t.strip() for t in q.split() if t.strip()]
         entries, pages = self.fetch_entries(req, terms, kind)
         template = env.get_template('pages/regular.html')
         resp.body = template.render(
             user=req.user, entries=entries, pages=pages, q=q, kinds=self.kinds,
-            kind=kind, view='search', placeholder=f"Search {kind}"
+            kind=kind, view='discover', placeholder=f"Search {kind}"
         )
 
 
 class SetResource:
     @before(auth_user)
+    def on_get_d(self, req, resp, value):
+        value = value if value in ['mixed', 'replies', 'threads'] else 'mixed'
+        resp.set_cookie('discover', value, path="/", max_age=MAX_AGE)
+        raise HTTPFound('/discover')
+
+    @before(auth_user)
     def on_get_p(self, req, resp, value):
         value = value if value in ['seen', 'joined'] else 'seen'
         resp.set_cookie('people', value, path="/", max_age=MAX_AGE)
         raise HTTPFound('/people')
-
-    @before(auth_user)
-    def on_get_s(self, req, resp, value):
-        value = value if value in ['mixed', 'replies', 'threads'] else 'mixed'
-        resp.set_cookie('search', value, path="/", max_age=MAX_AGE)
-        raise HTTPFound('/search')
 
     @before(auth_user)
     def on_get_t(self, req, resp, value):
@@ -529,8 +527,7 @@ class TrendingResource:
     @before(auth_user)
     def on_get(self, req, resp):
         kind = req.cookies.get('trending', 'small')
-        if kind not in self.kinds.keys():
-            kind = 'small'
+        kind = kind if kind in self.kinds.keys() else 'small'
         entries, pages = self.fetch_entries(req, self.kinds[kind])
         template = env.get_template('pages/regular.html')
         resp.body = template.render(

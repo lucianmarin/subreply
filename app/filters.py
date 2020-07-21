@@ -100,7 +100,7 @@ def parser(text):
         elif word.startswith('#'):
             handle = word[1:]
             if handle and all(c in limits for c in handle):
-                word = f'<a href="/search/?q=%23{handle}" rel="tag">#{handle}</a>'
+                word = f'<a href="/discover/?q=%23{handle}" rel="tag">#{handle}</a>'
         # wrap word
         words[index] = startswith + word + endswith
     return " ".join(words)

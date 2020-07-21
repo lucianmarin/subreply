@@ -25,7 +25,7 @@ app.add_route('/mentions', resources.MentionsResource())
 app.add_route('/replies', resources.RepliesResource())
 app.add_route('/saved', resources.SavedResource())
 
-app.add_route('/search', resources.SearchResource())
+app.add_route('/discover', resources.DiscoverResource())
 app.add_route('/people', resources.PeopleResource())
 app.add_route('/trending', resources.TrendingResource())
 
@@ -42,8 +42,8 @@ app.add_route('/reset', resources.ResetResource())
 
 app.add_route('/edit/{base}', resources.EditResource())
 app.add_route('/set/trending/{value}', resources.SetResource(), suffix='t')
-app.add_route('/set/search/{value}', resources.SetResource(), suffix='s')
 app.add_route('/set/people/{value}', resources.SetResource(), suffix='p')
+app.add_route('/set/discover/{value}', resources.SetResource(), suffix='d')
 app.add_route('/{username}/{base}', resources.ReplyResource())
 app.add_route('/{username}/unfollow', resources.ActionResource(), suffix="unf")
 app.add_route('/{username}/follow', resources.ActionResource(), suffix="f")
