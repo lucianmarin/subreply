@@ -462,7 +462,7 @@ class PeopleResource:
 
 
 class SearchResource:
-    kinds = ['combined', 'replies', 'threads']
+    kinds = {'combined': 'combined', 'replies': 'replies', 'threads': 'threads'}
 
     def build_query(self, terms):
         query = Q()
@@ -482,7 +482,7 @@ class SearchResource:
     @before(auth_user)
     def on_get(self, req, resp):
         kind = req.cookies.get('search', 'combined')
-        if kind not in self.kinds:
+        if kind not in self.kinds.keys():
             kind = 'combined'
         q = req.params.get('q', '').strip()
         terms = [t.strip() for t in q.split() if t.strip()]
@@ -490,7 +490,7 @@ class SearchResource:
         template = env.get_template('pages/regular.html')
         resp.body = template.render(
             user=req.user, entries=entries, pages=pages, q=q, kinds=self.kinds,
-            kind=kind, view='search', placeholder="Search content"
+            kind=kind, view='search', placeholder=f"Search {kind}"
         )
 
 
@@ -509,7 +509,7 @@ class SetResource:
 
 
 class TrendingResource:
-    samples = {'small': 15, 'medium': 30, 'large': 45}
+    kinds = {'small': 15, 'medium': 30, 'large': 45}
 
     def fetch_entries(self, req, limit):
         limited = Comment.objects.filter(parent=None).exclude(replies=0).order_by('-id').values('id')[:limit]
@@ -518,14 +518,14 @@ class TrendingResource:
 
     @before(auth_user)
     def on_get(self, req, resp):
-        sample = req.cookies.get('trending', 'small')
-        if sample not in self.samples.keys():
-            sample = 'small'
-        entries, pages = self.fetch_entries(req, self.samples[sample])
+        kind = req.cookies.get('trending', 'small')
+        if kind not in self.kinds.keys():
+            kind = 'small'
+        entries, pages = self.fetch_entries(req, self.kinds[kind])
         template = env.get_template('pages/regular.html')
         resp.body = template.render(
-            user=req.user, entries=entries, pages=pages, samples=self.samples,
-            sample=self.samples[sample], view='trending'
+            user=req.user, entries=entries, pages=pages, kinds=self.kinds,
+            kind=kind, view='trending'
         )
 
 
