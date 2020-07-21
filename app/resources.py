@@ -244,7 +244,7 @@ class EditResource:
         errors = {}
         errors['content'] = valid_content(content, req.user)
         if entry.parent_id:
-            errors['reply'] = valid_reply(entry, req.user, content, mentions, True)
+            errors['reply'] = valid_reply(entry.parent, req.user, content, mentions)
         else:
             errors['thread'] = valid_thread(content)
         errors = {k: v for k, v in errors.items() if v}
