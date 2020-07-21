@@ -433,6 +433,7 @@ class PeopleResource:
         "username", "first_name", "last_name", "email",
         "bio", "birthyear", "country", "emoji", "website"
     ]
+    kinds = {'seen': 'last seen', 'joined': 'last joined'}
 
     def build_query(self, terms):
         query = Q()
@@ -444,20 +445,23 @@ class PeopleResource:
             query &= subquery
         return query
 
-    def fetch_entries(self, req, terms):
+    def fetch_entries(self, req, terms, kind):
         q = self.build_query(terms)
-        entries = User.objects.filter(q).order_by('-seen_at')
+        entries = User.objects.filter(q).order_by(f'-{kind}_at')
         return paginate(req, entries, 45)
 
     @before(auth_user)
     def on_get(self, req, resp):
+        kind = req.cookies.get('people', 'seen')
+        if kind not in self.kinds.keys():
+            kind = 'seen'
         q = req.params.get('q', '').strip()
         terms = [t.strip() for t in q.split() if t.strip()]
-        entries, pages = self.fetch_entries(req, terms)
+        entries, pages = self.fetch_entries(req, terms, kind)
         template = env.get_template('pages/regular.html')
         resp.body = template.render(
-            user=req.user, entries=entries, pages=pages, q=q,
-            view='people', placeholder="Find people"
+            user=req.user, entries=entries, pages=pages, kinds=self.kinds, q=q,
+            kind=kind, view='people', placeholder="Find people"
         )
 
 
@@ -495,6 +499,12 @@ class SearchResource:
 
 
 class SetResource:
+    @before(auth_user)
+    def on_get_p(self, req, resp, value):
+        value = value if value in ['seen', 'joined'] else 'seen'
+        resp.set_cookie('people', value, path="/", max_age=MAX_AGE)
+        raise HTTPFound('/people')
+
     @before(auth_user)
     def on_get_s(self, req, resp, value):
         value = value if value in ['mixed', 'replies', 'threads'] else 'mixed'
