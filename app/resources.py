@@ -511,7 +511,7 @@ class SetResource:
 
     @before(auth_user)
     def on_get_t(self, req, resp, value):
-        value = value if value in ['small', 'medium', 'large'] else 'small'
+        value = value if value in ['small', 'medium', 'large'] else 'medium'
         resp.set_cookie('trending', value, path="/", max_age=MAX_AGE)
         raise HTTPFound('/trending')
 
@@ -526,8 +526,8 @@ class TrendingResource:
 
     @before(auth_user)
     def on_get(self, req, resp):
-        kind = req.cookies.get('trending', 'small')
-        kind = kind if kind in self.kinds.keys() else 'small'
+        kind = req.cookies.get('trending', 'medium')
+        kind = kind if kind in self.kinds.keys() else 'medium'
         entries, pages = self.fetch_entries(req, self.kinds[kind])
         template = env.get_template('pages/regular.html')
         resp.body = template.render(
