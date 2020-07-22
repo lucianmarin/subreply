@@ -465,7 +465,7 @@ class PeopleResource:
 
 
 class DiscoverResource:
-    kinds = {'composite': 'composite', 'replies': 'replies', 'threads': 'threads'}
+    kinds = {'entries': 'entries', 'replies': 'replies', 'threads': 'threads'}
 
     def build_query(self, terms):
         query = Q()
@@ -475,7 +475,7 @@ class DiscoverResource:
 
     def fetch_entries(self, req, terms, kind):
         max_id = Max('comments__id')
-        if kind != 'composite':
+        if kind != 'entries':
             is_thread = False if kind == 'replies' else True
             max_id = Max('comments__id', filter=Q(comments__parent__isnull=is_thread))
         last_ids = User.objects.annotate(last_id=max_id).values('last_id')
@@ -485,8 +485,8 @@ class DiscoverResource:
 
     @before(auth_user)
     def on_get(self, req, resp):
-        kind = req.cookies.get('discover', 'composite')
-        kind = kind if kind in self.kinds.keys() else 'composite'
+        kind = req.cookies.get('discover', 'entries')
+        kind = kind if kind in self.kinds.keys() else 'entries'
         q = req.params.get('q', '').strip()
         terms = [t.strip() for t in q.split() if t.strip()]
         entries, pages = self.fetch_entries(req, terms, kind)
@@ -500,7 +500,7 @@ class DiscoverResource:
 class SetResource:
     @before(auth_user)
     def on_get_d(self, req, resp, value):
-        value = value if value in ['composite', 'replies', 'threads'] else 'composite'
+        value = value if value in ['entries', 'replies', 'threads'] else 'entries'
         resp.set_cookie('discover', value, path="/", max_age=MAX_AGE)
         raise HTTPFound('/discover')
 
