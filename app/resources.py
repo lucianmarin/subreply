@@ -683,7 +683,7 @@ class RegisterResource:
     def on_post(self, req, resp):
         form = FieldStorage(fp=req.stream, environ=req.env)
         f = {}
-        f['remote_addr'] = '127.0.0.3' if DEBUG else req.access_route[0]
+        f['remote_addr'] = '127.0.0.4' if DEBUG else req.access_route[0]
         f['username'] = form.getvalue('username', '').strip().lower()
         fn_parts = form.getvalue('first_name', '').split()
         f['first_name'] = "".join([p.strip() for p in fn_parts]).capitalize()

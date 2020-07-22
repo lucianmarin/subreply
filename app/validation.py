@@ -160,7 +160,7 @@ def valid_email(value, user_id=0):
 def valid_bio(value, username, user_id=0):
     if value:
         mentions, links, hashtags = parse_metadata(value)
-        duplicate = User.objects.filter(bio=value).exclude(id=user_id).exists()
+        duplicate = User.objects.filter(bio=value).exclude(id=user_id).first()
         if len(value) > 120:
             return "Bio can't be longer than 120 characters"
         elif len(value) != len(value.encode()):
@@ -168,7 +168,7 @@ def valid_bio(value, username, user_id=0):
         elif any(slur in value.lower() for slur in SLURS):
             return "Bio contains prohibited words"
         elif duplicate:
-            return "Bio is used by someone else"
+            return f'Bio is used by <a href="/{duplicate}">@{duplicate}</a>'
         elif has_repetions(value):
             return "Bio contains repeating characters"
         elif len(mentions) > 1:
@@ -189,7 +189,7 @@ def valid_bio(value, username, user_id=0):
 
 def valid_website(value, user_id=0):
     if value:
-        duplicate = User.objects.filter(website=value).exclude(id=user_id).exists()
+        duplicate = User.objects.filter(website=value).exclude(id=user_id).first()
         if len(value) > 120:
             return "Website can't be longer than 120 characters"
         elif len(value) != len(value.encode()):
@@ -197,7 +197,7 @@ def valid_website(value, user_id=0):
         elif not value.startswith(('http://', 'https://')):
             return "Website hasn't a valid http(s) address"
         elif duplicate:
-            return "Website is used by someone else"
+            return f'Website is used by <a href="/{duplicate}">@{duplicate}</a>'
         else:
             try:
                 headers = requests.head(value, allow_redirects=True, timeout=5).headers
