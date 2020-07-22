@@ -1,4 +1,3 @@
-import emoji
 import grapheme
 import requests
 from django.db.models import Q
@@ -246,7 +245,7 @@ def valid_emoji(value, user_id=0):
         elif grapheme.length(value) == 2 and graphemes[0] == graphemes[1]:
             return "Emoji should be different"
         elif duplicate:
-            return "Emoji status is taken"
+            return f'Emoji status of <a href="/{duplicate}">{duplicate)}</a>'
 
 
 def changing(user, current, password1, password2):
