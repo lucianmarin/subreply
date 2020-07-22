@@ -241,9 +241,9 @@ def valid_emoji(value, user_id=0):
         duplicate = User.objects.filter(emoji=value).exclude(id=user_id).first()
         graphemes = list(grapheme.graphemes(value))
         if grapheme.length(value) > 2:
-            return "Emoji are too many"
+            return "Emojis are more than two"
         elif grapheme.length(value) == 2 and graphemes[0] == graphemes[1]:
-            return "Emoji should be different"
+            return "Emojis are identical"
         elif duplicate:
             return f'Emoji status of <a href="/{duplicate}">@{duplicate}</a>'
 
