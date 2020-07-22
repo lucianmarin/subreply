@@ -238,7 +238,7 @@ def valid_country(value):
 
 def valid_emoji(value, user_id=0):
     if value:
-        duplicate = User.objects.filter(emoji=value).exclude(id=user_id).exists()
+        duplicate = User.objects.filter(emoji=value).exclude(id=user_id).first()
         graphemes = list(grapheme.graphemes(value))
         if grapheme.length(value) > 2:
             return "Emoji are too many"
