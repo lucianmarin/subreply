@@ -474,12 +474,13 @@ class DiscoverResource:
         return query
 
     def fetch_entries(self, req, terms, kind):
-        last_ids = User.objects.annotate(last_id=Max('comments__id')).values('last_id')
+        max_id = Max('comments__id')
+        if kind != 'intermixed':
+            is_thread = False if kind == 'replies' else True
+            max_id = Max('comments__id', filter=Q(comments__parent__isnull=is_thread))
+        last_ids = User.objects.annotate(last_id=max_id).values('last_id')
         q = self.build_query(terms) if terms else Q(id__in=last_ids)
-        if kind == 'threads':
-            q &= Q(parent=None)
-        eq = Q(parent=None) if kind == 'replies' else Q()
-        entries = Comment.objects.filter(q).exclude(eq).order_by('-id').select_related('created_by').prefetch_related('parent')
+        entries = Comment.objects.filter(q).order_by('-id').select_related('created_by').prefetch_related('parent')
         return paginate(req, entries, 30)
 
     @before(auth_user)
