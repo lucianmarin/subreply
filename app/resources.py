@@ -724,10 +724,15 @@ class RegisterResource:
                     'remote_addr': f['remote_addr']
                 }
             )
+            # create self relation
             Relation.objects.get_or_create(
                 created_at=utc_timestamp(), seen_at=utc_timestamp(),
                 created_by=user, to_user=user
             )
+            # clear emoji statuses for unseen people
+            # half_year = utc_timestamp() - (3600 * 24 * 183)
+            # User.objects.filter(seen_at__lt=half_year).update(emoji='')
+            # set id cookie
             token = F.encrypt(str(user.id).encode())
             resp.set_cookie('identity', token.decode(), path="/", max_age=MAX_AGE)
             raise HTTPFound('/feed')

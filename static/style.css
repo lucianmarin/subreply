@@ -170,7 +170,7 @@ table td a { text-decoration: underline; }
 
 .line .right { float: right; width: calc(50% - 1px); }
 
-.line .right select { width: 100%; border-right: var(--gainsboro) var(--radius) solid; }
+.line .right select { width: 100%; border-right: var(--silver) var(--radius) solid; }
 
 .line .right input, .line .right select { border-bottom-left-radius: 0; border-top-left-radius: 0; }
 
