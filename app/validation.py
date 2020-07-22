@@ -240,11 +240,12 @@ def valid_country(value):
 def valid_emoji(value, user_id=0):
     if value:
         duplicate = User.objects.filter(emoji=value).exclude(id=user_id).exists()
-        if grapheme.length(value) != emoji.emoji_count(value):
-            return "Emoji only for status"
-        elif emoji.emoji_count(value) > 2:
+        # if len(value) != emoji.emoji_count(value):
+        #     return "Emoji only for status"
+        graphemes = list(grapheme.graphemes(value))
+        if grapheme.length(value) > 2:
             return "Emoji are too many"
-        elif emoji.emoji_count(value) == 2 and value[0] == value[1]:
+        elif grapheme.length(value) == 2 and graphemes[0] == graphemes[1]:
             return "Emoji should be different"
         elif duplicate:
             return "Emoji already taken"

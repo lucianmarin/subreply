@@ -1,12 +1,14 @@
 import hashlib
 from cgi import FieldStorage
 
+import emoji
 from django.db.models import Max, Prefetch, Q
 from emails import Message
 from emails.template import JinjaTemplate as T
 from falcon import status_codes
 from falcon.hooks import before
 from falcon.redirects import HTTPFound
+from grapheme import graphemes
 from unidecode import unidecode
 
 from app.const import COUNTRIES
@@ -623,7 +625,8 @@ class SettingsResource:
         f['email'] = form.getvalue('email', '').strip().lower()
         bio_parts = form.getvalue('bio', '').split()
         f['bio'] = " ".join([p.strip() for p in bio_parts])
-        f['emoji'] = form.getvalue('emoji', '').strip()
+        emo_parts = graphemes(form.getvalue('emoji', '').strip())
+        f['emoji'] = "".join([c for c in emo_parts if c in emoji.UNICODE_EMOJI])
         f['birthyear'] = form.getvalue('birthyear', '').strip()
         f['country'] = form.getvalue('country', '')
         f['website'] = form.getvalue('website', '').strip().lower()
@@ -687,7 +690,8 @@ class RegisterResource:
         f['last_name'] = "".join([p.strip() for p in ln_parts]).capitalize()
         f['password1'] = form.getvalue('password1', '')
         f['password2'] = form.getvalue('password2', '')
-        f['email'] = form.getvalue('email', '').strip().lower()
+        emo_parts = graphemes(form.getvalue('emoji', '').strip())
+        f['emoji'] = "".join([c for c in emo_parts if c in emoji.UNICODE_EMOJI])
         bio_parts = form.getvalue('bio', '').split()
         f['bio'] = " ".join([p.strip() for p in bio_parts])
         f['emoji'] = form.getvalue('emoji', '').strip()
