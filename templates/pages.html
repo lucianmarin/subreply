@@ -1,15 +1,15 @@
 <div class="pages">
     {% if pages.prev %}
         <a href="?{% if q %}q={{ q | quote }}&{% endif %}p={{ pages.prev }}">
-            {{ pages.prev | num2words(to='ordinal') }}
+            {{ pages.prev | num2words(to='ordinal') | capitalize }}
         </a>
     {% endif %}
     <a class="selected" href="?{% if q %}q={{ q | quote }}&{% endif %}p={{ pages.this }}">
-        {{ pages.this | num2words(to='ordinal') }}
+        {{ pages.this | num2words(to='ordinal') | capitalize }}
     </a>
     {% if pages.next %}
         <a href="?{% if q %}q={{ q | quote }}&{% endif %}p={{ pages.next }}">
-            {{ pages.next | num2words(to='ordinal') }}
+            {{ pages.next | num2words(to='ordinal') | capitalize }}
         </a>
     {% endif %}
 </div>
