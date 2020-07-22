@@ -13,12 +13,12 @@
                 <div class="left">
                     <label for="id_username">Username<i>*</i></label>
                     <input type="text" name="username" id="id_username" maxlength="15"
-                        value="{% if form %}{{ form.getvalue('username', '') }}{% else %}{{ user.username }}{% endif %}">
+                        value="{% if form %}{{ fields.username }}{% else %}{{ user.username }}{% endif %}">
                 </div>
                 <div class="right">
                     <label for="id_email">Email address<i>*</i></label>
                     <input type="email" name="email" id="id_email" maxlength="120"
-                        value="{% if form %}{{ form.getvalue('email', '') }}{% else %}{{ user.email }}{% endif %}">
+                        value="{% if form %}{{ fields.email }}{% else %}{{ user.email }}{% endif %}">
                 </div>
                 {% if 'username' in errors %}
                     <div class="error">{{ errors['username'] }}</div>
@@ -31,12 +31,12 @@
                 <div class="left">
                     <label for="id_first_name">First name<i>*</i></label>
                     <input type="text" name="first_name" id="id_first_name" maxlength="15"
-                        value="{% if form %}{{ form.getvalue('first_name', '') }}{% else %}{{ user.first_name }}{% endif %}">
+                        value="{% if form %}{{ fields.first_name }}{% else %}{{ user.first_name }}{% endif %}">
                 </div>
                 <div class="right">
                     <label for="id_last_name">Last name</label>
                     <input type="text" name="last_name" id="id_last_name" maxlength="15"
-                        value="{% if form %}{{ form.getvalue('last_name', '') }}{% else %}{{ user.last_name }}{% endif %}">
+                        value="{% if form %}{{ fields.last_name }}{% else %}{{ user.last_name }}{% endif %}">
                 </div>
                 {% if 'first_name' in errors %}
                     <div class="error">{{ errors['first_name'] }}</div>
@@ -51,7 +51,7 @@
             <div class="line">
                 <label for="id_bio">Bio <i>your description, contact details or current status</i></label>
                 <input type="text" name="bio" id="id_bio" maxlength="120"
-                    value="{% if form %}{{ form.getvalue('bio', '') }}{% else %}{{ user.bio }}{% endif %}">
+                    value="{% if form %}{{ fields.bio }}{% else %}{{ user.bio }}{% endif %}">
                 {% if 'bio' in errors %}
                     <div class="error">{{ errors['bio'] }}</div>
                 {% endif %}
@@ -59,7 +59,7 @@
             <div class="line">
                 <label for="id_website">Website <i>your blog, resume or other social profile</i></label>
                 <input type="text" name="website" id="id_website" maxlength="120"
-                    value="{% if form %}{{ form.getvalue('website', '') }}{% else %}{{ user.website }}{% endif %}">
+                    value="{% if form %}{{ fields.website }}{% else %}{{ user.website }}{% endif %}">
                 {% if 'website' in errors %}
                     <div class="error">{{ errors['website'] }}</div>
                 {% endif %}
@@ -69,19 +69,19 @@
                     <div class="left">
                         <label for="id_emoji">Emoji status</label>
                         <input type="text" name="emoji" id="id_emoji" maxlength="15"
-                            value="{% if form %}{{ form.getvalue('emoji', '') }}{% else %}{{ user.emoji }}{% endif %}">
+                            value="{% if form %}{{ fields.emoji }}{% else %}{{ user.emoji }}{% endif %}">
                     </div>
                     <div class="right">
                         <label for="id_year">Birthday year</label>
                         <input type="text" name="birthyear" id="id_birthyear" maxlength="4"
-                            value="{% if form %}{{ form.getvalue('birthyear', '') }}{% else %}{{ user.birthyear }}{% endif %}">
+                            value="{% if form %}{{ fields.birthyear }}{% else %}{{ user.birthyear }}{% endif %}">
                     </div>
                 </div>
                 <div class="right">
                     <label for="id_country">Country</label>
                     <select id="id_country" name="country">
                         {% if form %}
-                            {% set selected = form.getvalue('country', '') %}
+                            {% set selected = fields.country %}
                         {% else %}
                             {% set selected = user.country %}
                         {% endif %}

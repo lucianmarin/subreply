@@ -634,7 +634,7 @@ class SettingsResource:
         if errors:
             template = env.get_template('pages/settings.html')
             resp.body = template.render(
-                user=req.user, errors=errors, form=form,
+                user=req.user, errors=errors, form=form, fields=f,
                 countries=COUNTRIES, view='settings'
             )
         else:
@@ -676,7 +676,8 @@ class RegisterResource:
         form = FieldStorage(fp=req.stream, environ=req.env)
         template = env.get_template('pages/register.html')
         resp.body = template.render(
-            countries=COUNTRIES, errors={}, form=form, view='register'
+            countries=COUNTRIES, errors={}, form=form, fields={},
+            view='register'
         )
 
     def on_post(self, req, resp):
@@ -690,11 +691,11 @@ class RegisterResource:
         f['last_name'] = "".join([p.strip() for p in ln_parts]).capitalize()
         f['password1'] = form.getvalue('password1', '')
         f['password2'] = form.getvalue('password2', '')
-        emo_parts = graphemes(form.getvalue('emoji', '').strip())
-        f['emoji'] = "".join([c for c in emo_parts if c in emoji.UNICODE_EMOJI])
+        f['email'] = form.getvalue('email', '').strip().lower()
         bio_parts = form.getvalue('bio', '').split()
         f['bio'] = " ".join([p.strip() for p in bio_parts])
-        f['emoji'] = form.getvalue('emoji', '').strip()
+        emo_parts = graphemes(form.getvalue('emoji', '').strip())
+        f['emoji'] = "".join([c for c in emo_parts if c in emoji.UNICODE_EMOJI])
         f['birthyear'] = form.getvalue('birthyear', '').strip()
         f['country'] = form.getvalue('country', '')
         f['website'] = form.getvalue('website', '').strip().lower()
@@ -702,7 +703,8 @@ class RegisterResource:
         if errors:
             template = env.get_template('pages/register.html')
             resp.body = template.render(
-                countries=COUNTRIES, errors=errors, form=form, view='register'
+                countries=COUNTRIES, errors=errors, form=form, fields=f,
+                view='register'
             )
         else:
             user, is_new = User.objects.get_or_create(
