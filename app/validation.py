@@ -245,7 +245,7 @@ def valid_emoji(value, user_id=0):
         elif grapheme.length(value) == 2 and graphemes[0] == graphemes[1]:
             return "Emoji should be different"
         elif duplicate:
-            return f'Emoji status of <a href="/{duplicate}">{duplicate)}</a>'
+            return f'Emoji status of <a href="/{duplicate}">{duplicate}</a>'
 
 
 def changing(user, current, password1, password2):
