@@ -1,5 +1,6 @@
 import hashlib
 from cgi import FieldStorage
+from urllib.parse import quote_plus
 
 import emoji
 from django.db.models import Max, Prefetch, Q
@@ -478,11 +479,13 @@ class DiscoverResource:
 
     def fetch_entries(self, req, terms, kind):
         max_id = Max('comments__id')
+        sq = Q()
         if kind != "anything":
             is_thread = False if kind == 'replies' else True
+            sq = Q(parent__isnull=is_thread)
             max_id = Max('comments__id', filter=Q(comments__parent__isnull=is_thread))
         last_ids = User.objects.annotate(last_id=max_id).values('last_id')
-        q = self.build_query(terms) if terms else Q(id__in=last_ids)
+        q = self.build_query(terms) & sq if terms else Q(id__in=last_ids)
         entries = Comment.objects.filter(q).order_by('-id').select_related('created_by').prefetch_related('parent')
         return paginate(req, entries, 30)
 
@@ -503,14 +506,20 @@ class DiscoverResource:
 class SetResource:
     @before(auth_user)
     def on_get_d(self, req, resp, value):
+        q = req.params.get('q', '').strip()
         value = value if value in ['anything', 'replies', 'threads'] else 'anything'
         resp.set_cookie('discover', value, path="/", max_age=MAX_AGE)
+        if q:
+            raise HTTPFound(f'/discover?q={quote_plus(q)}')
         raise HTTPFound('/discover')
 
     @before(auth_user)
     def on_get_p(self, req, resp, value):
+        q = req.params.get('q', '').strip()
         value = value if value in ['seen', 'joined'] else 'seen'
         resp.set_cookie('people', value, path="/", max_age=MAX_AGE)
+        if q:
+            raise HTTPFound(f'/people?q={quote_plus(q)}')
         raise HTTPFound('/people')
 
     @before(auth_user)

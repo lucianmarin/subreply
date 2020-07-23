@@ -10,7 +10,7 @@
             <div class="entry">
                 <div class="filters">
                     {% for key, value in kinds.items() %}
-                        <a href="/set/{{ view }}/{{ key }}" class="{% if key == kind %}selected{% endif %}">
+                        <a href="/set/{{ view }}/{{ key }}{% if q %}?q={{ q | quote }}{% endif %}" class="{% if key == kind %}selected{% endif %}">
                             {{ value }} {% if view == 'trending' %}threads{% endif %}
                         </a>
                     {% endfor %}
