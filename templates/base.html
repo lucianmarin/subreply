@@ -1,13 +1,15 @@
 <!doctype html>
-<html>
-
+<html lang="en">
 <head>
     <title>{{ brand }} / {{ view | capitalize }}</title>
     {% include "meta.html" %}
     {% block meta %}{% endblock %}
 </head>
-
-{% if view == 'edit' %}<body onload="bodyLoad()">{% else %}<body>{% endif %}
+{% if view == 'edit' %}
+    <body onload="bodyLoad()">
+{% else %}
+    <body>
+{% endif %}
     <div class="container">
         <div class="leftside"></div>
         <div class="sidebar">
@@ -15,9 +17,7 @@
         </div>
         <div class="main">
             {% block main %}{% endblock %}
-            {% if pages %}
-                {% include "pages.html" %}
-            {% endif %}
+            {% if pages %}{% include "pages.html" %}{% endif %}
         </div>
         <div class="rightside"></div>
     </div>

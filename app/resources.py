@@ -449,7 +449,8 @@ class PeopleResource:
 
     def fetch_entries(self, req, terms, kind):
         q = self.build_query(terms)
-        entries = User.objects.filter(q).order_by(f'-{kind}_at')
+        order_by = '-seen_at' if kind == 'seen' else '-id'
+        entries = User.objects.filter(q).order_by(order_by)
         return paginate(req, entries, 45)
 
     @before(auth_user)
