@@ -1,6 +1,5 @@
 import hashlib
 from cgi import FieldStorage
-from urllib.parse import quote_plus
 
 import emoji
 from django.db.models import Max, Prefetch, Q
@@ -436,7 +435,6 @@ class PeopleResource:
         "username", "first_name", "last_name", "email",
         "bio", "birthyear", "country", "emoji", "website"
     ]
-    kinds = {'seen': 'Last seen', 'joined': 'Last joined'}
 
     def build_query(self, terms):
         query = Q()
@@ -454,22 +452,27 @@ class PeopleResource:
         entries = User.objects.filter(q).order_by(order_by)
         return paginate(req, entries, 45)
 
-    @before(auth_user)
-    def on_get(self, req, resp):
-        kind = req.cookies.get('people', 'seen')
-        kind = kind if kind in self.kinds.keys() else 'seen'
+    def get_people(self, req, resp, kind):
         q = req.params.get('q', '').strip()
         terms = [t.strip() for t in q.split() if t.strip()]
         entries, pages = self.fetch_entries(req, terms, kind)
         template = env.get_template('pages/regular.html')
         resp.body = template.render(
-            user=req.user, entries=entries, pages=pages, kinds=self.kinds, q=q,
-            kind=kind, view='people', placeholder="Find people"
+            user=req.user, entries=entries, pages=pages, q=q, kind=kind,
+            view='people', placeholder="Find people"
         )
+
+    @before(auth_user)
+    def on_get(self, req, resp):
+        self.get_people(req, resp, 'seen')
+
+    @before(auth_user)
+    def on_get_new(self, req, resp):
+        self.get_people(req, resp, 'joined')
 
 
 class DiscoverResource:
-    kinds = {'anything': 'Anything', 'replies': 'Replies', 'threads': 'Threads'}
+    kinds = {'anything': None, 'replies': False, 'threads': True}
 
     def build_query(self, terms):
         query = Q()
@@ -477,11 +480,10 @@ class DiscoverResource:
             query &= Q(content__icontains=term)
         return query
 
-    def fetch_entries(self, req, terms, kind):
+    def fetch_entries(self, req, terms, is_thread):
         max_id = Max('comments__id')
         sq = Q()
-        if kind != "anything":
-            is_thread = False if kind == 'replies' else True
+        if is_thread is not None:
             sq = Q(parent__isnull=is_thread)
             max_id = Max('comments__id', filter=Q(comments__parent__isnull=is_thread))
         last_ids = User.objects.annotate(last_id=max_id).values('last_id')
@@ -489,63 +491,48 @@ class DiscoverResource:
         entries = Comment.objects.filter(q).order_by('-id').select_related('created_by').prefetch_related('parent')
         return paginate(req, entries, 30)
 
-    @before(auth_user)
-    def on_get(self, req, resp):
-        kind = req.cookies.get('discover', 'anything')
-        kind = kind if kind in self.kinds.keys() else 'anything'
+    def get_discover(self, req, resp, kind):
+        is_thread = self.kinds[kind]
         q = req.params.get('q', '').strip()
         terms = [t.strip() for t in q.split() if t.strip()]
-        entries, pages = self.fetch_entries(req, terms, kind)
+        entries, pages = self.fetch_entries(req, terms, is_thread)
         template = env.get_template('pages/regular.html')
         resp.body = template.render(
             user=req.user, entries=entries, pages=pages, q=q, kinds=self.kinds,
             kind=kind, view='discover', placeholder=f"Search {kind}"
         )
 
-
-class SetResource:
     @before(auth_user)
-    def on_get_d(self, req, resp, value):
-        q = req.params.get('q', '').strip()
-        value = value if value in ['anything', 'replies', 'threads'] else 'anything'
-        resp.set_cookie('discover', value, path="/", max_age=MAX_AGE)
-        if q:
-            raise HTTPFound(f'/discover?q={quote_plus(q)}')
-        raise HTTPFound('/discover')
+    def on_get(self, req, resp):
+        self.get_discover(req, resp, 'anything')
 
     @before(auth_user)
-    def on_get_p(self, req, resp, value):
-        q = req.params.get('q', '').strip()
-        value = value if value in ['seen', 'joined'] else 'seen'
-        resp.set_cookie('people', value, path="/", max_age=MAX_AGE)
-        if q:
-            raise HTTPFound(f'/people?q={quote_plus(q)}')
-        raise HTTPFound('/people')
+    def on_get_re(self, req, resp):
+        self.get_discover(req, resp, 'replies')
 
     @before(auth_user)
-    def on_get_t(self, req, resp, value):
-        value = value if value in ['small', 'medium', 'large'] else 'medium'
-        resp.set_cookie('trending', value, path="/", max_age=MAX_AGE)
-        raise HTTPFound('/trending')
+    def on_get_th(self, req, resp):
+        self.get_discover(req, resp, 'threads')
 
 
 class TrendingResource:
-    kinds = {'small': 15, 'medium': 30, 'large': 45}
+    samples = ['15', '30', '45']
 
-    def fetch_entries(self, req, limit):
-        limited = Comment.objects.filter(parent=None).exclude(replies=0).order_by('-id').values('id')[:limit]
-        entries = Comment.objects.filter(id__in=limited).order_by('-replies', '-id').select_related('created_by').prefetch_related(PFR)
+    def fetch_entries(self, req, sample):
+        sampled = Comment.objects.filter(parent=None).exclude(replies=0).order_by('-id').values('id')[:sample]
+        entries = Comment.objects.filter(id__in=sampled).order_by('-replies', '-id').select_related('created_by').prefetch_related(PFR)
         return paginate(req, entries)
 
     @before(auth_user)
-    def on_get(self, req, resp):
-        kind = req.cookies.get('trending', 'medium')
-        kind = kind if kind in self.kinds.keys() else 'medium'
-        entries, pages = self.fetch_entries(req, self.kinds[kind])
+    def on_get(self, req, resp, sample):
+        if sample not in self.samples:
+            raise HTTPFound('/trending/15')
+        sample = int(sample)
+        entries, pages = self.fetch_entries(req, sample)
         template = env.get_template('pages/regular.html')
         resp.body = template.render(
-            user=req.user, entries=entries, pages=pages, kinds=self.kinds,
-            kind=kind, view='trending'
+            user=req.user, entries=entries, pages=pages, sample=sample,
+            view='trending'
         )
 
 

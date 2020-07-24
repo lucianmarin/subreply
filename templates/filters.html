@@ -1,0 +1,28 @@
+<div class="entry">
+    <div class="filters">
+        {% if view == 'trending' %}
+            {% for value in [15, 30, 45] %}
+                <a href="/trending/{{ value }}" class="{% if value == sample %}selected{% endif %}">
+                    {{ value }} threads
+                </a>
+            {% endfor %}
+        {% elif view == 'discover' %}
+            <a href="/discover{% if q %}?q={{ q | quote }}{% endif %}" class="{% if kind == 'anything' %}selected{% endif %}">
+                Anything
+            </a>
+            <a href="/discover/replies{% if q %}?q={{ q | quote }}{% endif %}" class="{% if kind == 'replies' %}selected{% endif %}">
+                Replies
+            </a>
+            <a href="/discover/threads{% if q %}?q={{ q | quote }}{% endif %}" class="{% if kind == 'threads' %}selected{% endif %}">
+                Threads
+            </a>
+        {% elif view == 'people' %}
+            <a href="/people{% if q %}?q={{ q | quote }}{% endif %}" class="{% if kind == 'seen' %}selected{% endif %}">
+                Last seen
+            </a>
+            <a href="/people/joined{% if q %}?q={{ q | quote }}{% endif %}" class="{% if kind == 'joined' %}selected{% endif %}">
+                Last joined
+            </a>
+        {% endif %}
+    </div>
+</div>

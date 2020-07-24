@@ -7,15 +7,7 @@
 
     <div class="list">
         {% if view in ['discover', 'people', 'trending'] %}
-            <div class="entry">
-                <div class="filters">
-                    {% for key, value in kinds.items() %}
-                        <a href="/set/{{ view }}/{{ key }}{% if q %}?q={{ q | quote }}{% endif %}" class="{% if key == kind %}selected{% endif %}">
-                            {{ value }} {% if view == 'trending' %}threads{% endif %}
-                        </a>
-                    {% endfor %}
-                </div>
-            </div>
+            {% include "filters.html" %}
         {% endif %}
 
         {% for entry in entries %}
