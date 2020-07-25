@@ -13,6 +13,8 @@ app.req_options.strip_url_path_trailing_slash = True
 app.resp_options.secure_cookies_by_default = not DEBUG
 
 app.add_route('/', resources.MainResource())
+app.add_route('/trending', resources.MainResource(), suffix="tr")
+
 app.add_route('/api/delete/{id}', api.DeleteEndpoint())
 app.add_route('/api/save/{id}', api.SaveEndpoint())
 app.add_route('/api/unsave/{id}', api.UnsaveEndpoint())

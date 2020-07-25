@@ -84,6 +84,10 @@ class MainResource:
         else:
             raise HTTPFound('/trending/15')
 
+    @before(auth_user)
+    def on_get_tr(self, req, resp):
+        raise HTTPFound('/trending/15')
+
 
 class AboutResource:
     @before(auth_user)
