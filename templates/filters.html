@@ -1,7 +1,7 @@
 <div class="entry">
     <div class="filters">
         {% if view == 'trending' %}
-            {% for value in [15, 30, 45] %}
+            {% for value in samples %}
                 <a href="/trending/{{ value }}" class="{% if value == sample %}selected{% endif %}">
                     {{ value }} threads
                 </a>

@@ -24,7 +24,7 @@ from project.settings import DEBUG, MAX_AGE, SMTP, F
 PFR = Prefetch('kids', queryset=Comment.objects.order_by('id').select_related('created_by'))
 
 
-def paginate(req, qs, limit=15):
+def paginate(req, qs, limit=16):
     try:
         page = int(req.params.get('p', '1').strip())
     except Exception as e:
@@ -82,11 +82,11 @@ class MainResource:
         if req.user:
             raise HTTPFound('/feed')
         else:
-            raise HTTPFound('/trending/15')
+            raise HTTPFound('/trending/16')
 
     @before(auth_user)
     def on_get_tr(self, req, resp):
-        raise HTTPFound('/trending/15')
+        raise HTTPFound('/trending/16')
 
 
 class AboutResource:
@@ -322,7 +322,7 @@ class ProfileResource:
 class FollowingResource:
     def fetch_entries(self, req):
         entries = Relation.objects.filter(created_by=req.user).exclude(to_user=req.user).order_by('-id').select_related('to_user')
-        return paginate(req, entries, 45)
+        return paginate(req, entries, 32)
 
     @before(auth_user)
     @before(login_required)
@@ -337,7 +337,7 @@ class FollowingResource:
 class FollowersResource:
     def fetch_entries(self, req):
         entries = Relation.objects.filter(to_user=req.user).exclude(created_by=req.user).order_by('-id').select_related('created_by')
-        return paginate(req, entries, 45)
+        return paginate(req, entries, 32)
 
     def clear_followers(self, user):
         Relation.objects.filter(
@@ -360,7 +360,7 @@ class FollowersResource:
 class MentionsResource:
     def fetch_entries(self, req):
         entries = Comment.objects.filter(mentioned=req.user).order_by('-id').order_by('-id').select_related('created_by', 'parent')
-        return paginate(req, entries, 30)
+        return paginate(req, entries, 24)
 
     def clear_mentions(self, user):
         Comment.objects.filter(
@@ -422,7 +422,7 @@ class ReplyingResource:
 class SavedResource:
     def fetch_entries(self, req):
         entries = Save.objects.filter(created_by=req.user).order_by('-id').select_related('to_comment__created_by', 'to_comment__parent')
-        return paginate(req, entries, 30)
+        return paginate(req, entries, 24)
 
     @before(auth_user)
     @before(login_required)
@@ -454,7 +454,7 @@ class PeopleResource:
         q = self.build_query(terms)
         order_by = '-seen_at' if kind == 'seen' else '-id'
         entries = User.objects.filter(q).order_by(order_by)
-        return paginate(req, entries, 45)
+        return paginate(req, entries, 32)
 
     def get_people(self, req, resp, kind):
         q = req.params.get('q', '').strip()
@@ -493,7 +493,7 @@ class DiscoverResource:
         last_ids = User.objects.annotate(last_id=max_id).values('last_id')
         q = self.build_query(terms) & sq if terms else Q(id__in=last_ids)
         entries = Comment.objects.filter(q).order_by('-id').select_related('created_by').prefetch_related('parent')
-        return paginate(req, entries, 30)
+        return paginate(req, entries, 24)
 
     def get_discover(self, req, resp, kind):
         is_thread = self.kinds[kind]
@@ -520,23 +520,22 @@ class DiscoverResource:
 
 
 class TrendingResource:
-    samples = ['15', '30', '45']
+    samples = ['16', '32', '48']
 
     def fetch_entries(self, req, sample):
-        sampled = Comment.objects.filter(parent=None).exclude(replies=0).order_by('-id').values('id')[:sample]
+        sampled = Comment.objects.filter(parent=None).exclude(replies=0).order_by('-id').values('id')[:int(sample)]
         entries = Comment.objects.filter(id__in=sampled).order_by('-replies', '-id').select_related('created_by').prefetch_related(PFR)
         return paginate(req, entries)
 
     @before(auth_user)
     def on_get(self, req, resp, sample):
         if sample not in self.samples:
-            raise HTTPFound('/trending/15')
-        sample = int(sample)
+            raise HTTPFound('/trending/16')
         entries, pages = self.fetch_entries(req, sample)
         template = env.get_template('pages/regular.html')
         resp.body = template.render(
-            user=req.user, entries=entries, pages=pages, sample=sample,
-            view='trending'
+            user=req.user, entries=entries, pages=pages, samples=self.samples,
+            sample=sample, view='trending'
         )
 
 
@@ -669,7 +668,7 @@ class LoginResource:
 class LogoutResource:
     def on_get(self, req, resp):
         resp.unset_cookie('identity')
-        raise HTTPFound('/trending/15')
+        raise HTTPFound('/trending/16')
 
 
 class RegisterResource:
