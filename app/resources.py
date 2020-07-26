@@ -82,11 +82,14 @@ class MainResource:
         if req.user:
             raise HTTPFound('/feed')
         else:
-            raise HTTPFound('/trending/16')
+            raise HTTPFound('/trending/48')
 
     @before(auth_user)
     def on_get_tr(self, req, resp):
-        raise HTTPFound('/trending/16')
+        if req.user:
+            raise HTTPFound('/trending/16')
+        else:
+            raise HTTPFound('/trending/48')
 
 
 class AboutResource:
@@ -668,7 +671,7 @@ class LoginResource:
 class LogoutResource:
     def on_get(self, req, resp):
         resp.unset_cookie('identity')
-        raise HTTPFound('/trending/16')
+        raise HTTPFound('/trending/48')
 
 
 class RegisterResource:
