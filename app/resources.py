@@ -686,7 +686,8 @@ class RegisterResource:
     def on_post(self, req, resp):
         form = FieldStorage(fp=req.stream, environ=req.env)
         f = {}
-        f['user_agent'] = req.headers.get('USER-AGENT', '')
+        user_agent = req.headers.get('USER-AGENT', '').strip()
+        f['user_agent'] = user_agent if user_agent else 'empty'
         f['remote_addr'] = '127.0.0.5' if DEBUG else req.access_route[0]
         f['username'] = form.getvalue('username', '').strip().lower()
         fn_parts = form.getvalue('first_name', '').split()

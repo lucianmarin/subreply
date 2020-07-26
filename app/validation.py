@@ -80,12 +80,10 @@ def authentication(username, password):
     return errors, user
 
 
-def valid_username(value, remote_addr='', user_agent=None, user_id=0):
+def valid_username(value, remote_addr='', user_agent='', user_id=0):
     limits = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_"
-    is_browser = True
-    if user_agent is not None:
-        ua = parse(user_agent)
-        is_browser = ua.is_pc or ua.is_tablet or ua.is_mobile
+    ua = parse(user_agent)
+    is_browser = ua.is_pc or ua.is_tablet or ua.is_mobile
     if not value:
         return "Username can't be blank"
     elif len(value) > 15:
@@ -102,7 +100,7 @@ def valid_username(value, remote_addr='', user_agent=None, user_id=0):
         return "Username has consecutive underscores"
     elif remote_addr and User.objects.filter(remote_addr=remote_addr).exists():
         return "Username registered from this IP address"
-    elif user_agent is not None and not is_browser:
+    elif user_agent and not is_browser:
         return "User isn't using a PC, tablet or mobile"
     elif User.objects.filter(username=value).exclude(id=user_id).exists():
         return "Username is already taken"
