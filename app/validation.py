@@ -2,9 +2,10 @@ import grapheme
 import requests
 from django.db.models import Q
 from dns.resolver import query as dns_query
+from user_agents import parse
 
-from app.filters import shortdate
 from app.const import COUNTRIES, LATIN, MAX_YEAR, MIN_YEAR
+from app.filters import shortdate
 from app.helpers import has_repetions, parse_metadata, verify_hash
 from app.models import Comment, User
 from project.settings import INVALID, SLURS
@@ -79,8 +80,12 @@ def authentication(username, password):
     return errors, user
 
 
-def valid_username(value, remote_addr='', user_id=0):
+def valid_username(value, remote_addr='', user_agent=None, user_id=0):
     limits = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_"
+    is_browser = True
+    if user_agent is not None:
+        ua = parse(user_agent)
+        is_browser = ua.is_pc or ua.is_tablet or ua.is_mobile
     if not value:
         return "Username can't be blank"
     elif len(value) > 15:
@@ -97,6 +102,8 @@ def valid_username(value, remote_addr='', user_id=0):
         return "Username has consecutive underscores"
     elif remote_addr and User.objects.filter(remote_addr=remote_addr).exists():
         return "Username registered from this IP address"
+    elif user_agent is not None and not is_browser:
+        return "User isn't using a PC, tablet or mobile"
     elif User.objects.filter(username=value).exclude(id=user_id).exists():
         return "Username is already taken"
 
@@ -200,7 +207,9 @@ def valid_website(value, user_id=0):
             return f'Website is used by <a href="/{duplicate}">@{duplicate}</a>'
         else:
             try:
-                headers = requests.head(value, allow_redirects=True, timeout=5).headers
+                headers = requests.head(
+                    value, allow_redirects=True, timeout=5
+                ).headers
             except Exception as e:
                 headers = {}
                 print(e)
@@ -276,7 +285,7 @@ def profiling(f, user_id):
 def registration(f):
     errors = {}
     errors['username'] = valid_username(
-        f['username'], remote_addr=f['remote_addr']
+        f['username'], remote_addr=f['remote_addr'], user_agent=f['user_agent']
     )
     errors['first_name'] = valid_first_name(f['first_name'])
     errors['last_name'] = valid_last_name(f['last_name'])

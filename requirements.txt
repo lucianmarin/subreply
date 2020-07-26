@@ -13,3 +13,4 @@ num2words
 psycopg2-binary
 requests
 unidecode
+user-agents
