@@ -149,6 +149,8 @@ def valid_email(value, user_id=0):
         return "Email should use English alphabet"
     elif "@" not in value:
         return "Email isn't a valid address"
+    elif User.objects.filter(email=value).exclude(id=user_id).exists():
+        return "Email is used by someone else"
     else:
         handle, domain = value.split('@', 1)
         try:
@@ -158,8 +160,6 @@ def valid_email(value, user_id=0):
             print(e)
         if not has_mx:
             return "Email can't be sent to this address"
-        elif User.objects.filter(email=value).exclude(id=user_id).exists():
-            return "Email is used by someone else"
 
 
 def valid_bio(value, username, user_id=0):
