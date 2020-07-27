@@ -32,7 +32,7 @@
                 {% if entry.saves %}
                     <b>{{ entry.saves }} save{% if entry.saves > 1 %}s{% endif %}</b>
                 {% endif %}
-                {% if not entry.mention and not entry.replies %}
+                {% if not entry.replies %}
                     <a href="/edit/{{ entry.base }}">edit</a>
                 {% endif %}
             {% else %}

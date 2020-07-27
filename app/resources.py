@@ -229,7 +229,7 @@ class EditResource:
         entry = Comment.objects.filter(
             id=int(base, 36)
         ).select_related('created_by', 'parent').first()
-        if not entry or entry.created_by != req.user or entry.replies or entry.mention:
+        if not entry or entry.created_by != req.user or entry.replies:
             not_found(resp, req.user, f'edit/{base}')
             return
         ancestors = [entry.parent] if entry.parent_id else []
@@ -265,14 +265,18 @@ class EditResource:
                 ancestors=ancestors, view='edit'
             )
         else:
-            fields = ['content', 'edited_at', 'hashtag', 'link', 'mention', 'mentioned']
+            fields = ['content', 'edited_at', 'hashtag', 'link', 'mention', 'mentioned', 'mention_seen_at']
+            previously_mentioned = entry.mentioned
             entry.content = content
             entry.edited_at = utc_timestamp()
             entry.hashtag = hashtags[0].lower() if hashtags else ''
             entry.link = links[0].lower() if links else ''
             entry.mention = mentions[0].lower() if mentions else ''
             entry.mentioned = User.objects.get(username=mentions[0].lower()) if mentions else None
+            entry.mention_seen_at = .0
             entry.save(update_fields=fields)
+            if previously_mentioned:
+                previously_mentioned.up_mentions()
             if entry.mentioned:
                 entry.mentioned.up_mentions()
             raise HTTPFound(f'/{entry.created_by}/{base}')
