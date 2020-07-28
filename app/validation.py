@@ -94,16 +94,16 @@ def valid_username(value, remote_addr='', user_agent='', user_id=0):
         return "Username is prohibited"
     elif has_repetions(value):
         return "Username contains repeating characters"
+    elif "__" in value:
+        return "Username contains consecutive underscores"
     elif value in INVALID:
         return "Username isn't valid"
-    elif "__" in value:
-        return "Username has consecutive underscores"
+    elif User.objects.filter(username=value).exclude(id=user_id).exists():
+        return "Username is already taken"
     elif remote_addr and User.objects.filter(remote_addr=remote_addr).exists():
         return "Username registered from this IP address"
     elif user_agent and not is_browser:
-        return "User isn't using a PC, tablet or mobile"
-    elif User.objects.filter(username=value).exclude(id=user_id).exists():
-        return "Username is already taken"
+        return "You aren't using a PC, tablet or mobile phone"
 
 
 def valid_first_name(value):
