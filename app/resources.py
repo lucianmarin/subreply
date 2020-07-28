@@ -121,7 +121,8 @@ class FeedResource:
         content = " ".join([w.strip() for w in content.split()])
         errors = {}
         errors['content'] = valid_content(content, req.user)
-        errors['thread'] = valid_thread(content)
+        if not errors['content']:
+            errors['content'] = valid_thread(content)
         errors = {k: v for k, v in errors.items() if v}
         if errors:
             entries, pages = self.fetch_entries(req)
@@ -187,7 +188,8 @@ class ReplyResource:
         mentions, links, hashtags = parse_metadata(content)
         errors = {}
         errors['content'] = valid_content(content, req.user)
-        errors['reply'] = valid_reply(parent, req.user, content, mentions)
+        if not errors['content']:
+            errors['content'] = valid_reply(parent, req.user, content, mentions)
         errors = {k: v for k, v in errors.items() if v}
         if errors:
             ancestors = self.fetch_ancestors(parent)
@@ -249,10 +251,11 @@ class EditResource:
         mentions, links, hashtags = parse_metadata(content)
         errors = {}
         errors['content'] = valid_content(content, req.user)
-        if entry.parent_id:
-            errors['reply'] = valid_reply(entry.parent, req.user, content, mentions)
-        else:
-            errors['thread'] = valid_thread(content)
+        if not errors['content']:
+            if entry.parent_id:
+                errors['content'] = valid_reply(entry.parent, req.user, content, mentions)
+            else:
+                errors['content'] = valid_thread(content)
         errors = {k: v for k, v in errors.items() if v}
         if errors:
             ancestors = [entry.parent] if entry.parent_id else []
@@ -262,7 +265,10 @@ class EditResource:
                 ancestors=ancestors, view='edit'
             )
         else:
-            fields = ['content', 'edited_at', 'hashtag', 'link', 'mention', 'mentioned', 'mention_seen_at']
+            fields = [
+                'content', 'edited_at', 'hashtag', 'link',
+                'mention', 'mentioned', 'mention_seen_at'
+            ]
             previously_mentioned = entry.mentioned
             entry.content = content
             entry.edited_at = utc_timestamp()
