@@ -25,12 +25,8 @@ PFR = Prefetch('kids', queryset=Comment.objects.order_by('id').select_related('c
 
 
 def paginate(req, qs, limit=16):
-    try:
-        page = int(req.params.get('p', '1').strip())
-    except Exception as e:
-        print(e)
-        page = 1
-    page = abs(page) if page else 1
+    p = req.params.get('p', '1').strip()
+    page = int(p) if p.isdecimal() else 1
     bottom = (page - 1) * limit
     top = bottom + limit + 1
     query = qs[bottom:top]
@@ -39,7 +35,8 @@ def paginate(req, qs, limit=16):
         page = 1
         bottom = 0
     pages = {
-        'prev': page - 1, 'this': page,
+        'prev': page - 1,
+        'this': page,
         'next': page + 1 if len(query) == limit + 1 else 0,
     }
     if not bottom and len(query) < limit + 1:
@@ -273,7 +270,8 @@ class EditResource:
             entry.link = links[0].lower() if links else ''
             entry.mention = mentions[0].lower() if mentions else ''
             entry.mentioned = User.objects.get(username=mentions[0].lower()) if mentions else None
-            entry.mention_seen_at = .0
+            if previously_mentioned != entry.mentioned:
+                entry.mention_seen_at = .0
             entry.save(update_fields=fields)
             if previously_mentioned:
                 previously_mentioned.up_mentions()
