@@ -76,12 +76,15 @@ def parser(text):
         if word.endswith(('.', ',', '!', '?', ':', ';')):
             endswith = word[-1:]
             word = word[:-1]
-        if word.endswith(')'):
+        if word.endswith((')', ']', '}', "'", '"')):
             endswith = word[-1:] + endswith
             word = word[:-1]
-        if word.startswith('('):
-            startswith = "("
+        if word.startswith(('(', '[', '{', "'", '"')):
+            startswith = word[:1]
             word = word[1:]
+        if word.endswith("'s"):
+            endswith = word[-2:] + endswith
+            word = word[:-2]
         # replace word
         if word.startswith(('http://', 'https://')):
             protocol, separator, address = word.partition('://')

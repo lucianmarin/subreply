@@ -31,10 +31,12 @@ def parse_metadata(text):
     for word in words:
         if word.endswith(('.', ',', '!', '?', ':', ';')):
             word = word[:-1]
-        if word.endswith(')'):
+        if word.endswith((')', ']', '}', "'", '"')):
             word = word[:-1]
-        if word.startswith('('):
+        if word.startswith(('(', '[', '{', "'", '"')):
             word = word[1:]
+        if word.endswith("'s"):
+            word = word[:-2]
         if word.startswith(('http://', 'https://')):
             protocol, separator, address = word.partition('://')
             if "." in address:
