@@ -13,7 +13,6 @@ app.req_options.strip_url_path_trailing_slash = True
 app.resp_options.secure_cookies_by_default = not DEBUG
 
 app.add_route('/', resources.MainResource())
-app.add_route('/trending', resources.MainResource(), suffix="tr")
 
 app.add_route('/api/delete/{id}', api.DeleteEndpoint())
 app.add_route('/api/save/{id}', api.SaveEndpoint())
@@ -32,7 +31,9 @@ app.add_route('/discover/replies', resources.DiscoverResource(), suffix='re')
 app.add_route('/discover/threads', resources.DiscoverResource(), suffix="th")
 app.add_route('/people', resources.PeopleResource())
 app.add_route('/people/joined', resources.PeopleResource(), suffix='new')
-app.add_route('/trending/{sample}', resources.TrendingResource())
+app.add_route('/trending', resources.TrendingResource())
+app.add_route('/trending/less', resources.TrendingResource(), suffix="less")
+app.add_route('/trending/more', resources.TrendingResource(), suffix="more")
 
 app.add_route('/about', resources.AboutResource())
 app.add_route('/login', resources.LoginResource())

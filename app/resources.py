@@ -79,14 +79,7 @@ class MainResource:
         if req.user:
             raise HTTPFound('/feed')
         else:
-            raise HTTPFound('/trending/48')
-
-    @before(auth_user)
-    def on_get_tr(self, req, resp):
-        if req.user:
-            raise HTTPFound('/trending/16')
-        else:
-            raise HTTPFound('/trending/48')
+            raise HTTPFound('/trending')
 
 
 class AboutResource:
@@ -513,7 +506,7 @@ class DiscoverResource:
         entries, pages = self.fetch_entries(req, terms, is_thread)
         template = env.get_template('pages/regular.html')
         resp.body = template.render(
-            user=req.user, entries=entries, pages=pages, q=q, kinds=self.kinds,
+            user=req.user, entries=entries, pages=pages, q=q,
             kind=kind, view='discover', placeholder=f"Search {kind}"
         )
 
@@ -531,23 +524,32 @@ class DiscoverResource:
 
 
 class TrendingResource:
-    samples = ['16', '32', '48']
+    kinds = {16: 'less', 32: 'none', 48: 'more'}
 
     def fetch_entries(self, req, sample):
-        sampled = Comment.objects.filter(parent=None).exclude(replies=0).order_by('-id').values('id')[:int(sample)]
+        sampled = Comment.objects.filter(parent=None).exclude(replies=0).order_by('-id').values('id')[:sample]
         entries = Comment.objects.filter(id__in=sampled).order_by('-replies', '-id').select_related('created_by').prefetch_related(PFR)
         return paginate(req, entries)
 
-    @before(auth_user)
-    def on_get(self, req, resp, sample):
-        if sample not in self.samples:
-            raise HTTPFound('/trending/16')
+    def get_trending(self, req, resp, sample):
         entries, pages = self.fetch_entries(req, sample)
         template = env.get_template('pages/regular.html')
         resp.body = template.render(
-            user=req.user, entries=entries, pages=pages, samples=self.samples,
-            sample=sample, view='trending'
+            user=req.user, entries=entries, pages=pages,
+            kind=self.kinds[sample], view='trending'
         )
+
+    @before(auth_user)
+    def on_get(self, req, resp):
+        self.get_trending(req, resp, 32)
+
+    @before(auth_user)
+    def on_get_less(self, req, resp):
+        self.get_trending(req, resp, 16)
+
+    @before(auth_user)
+    def on_get_more(self, req, resp):
+        self.get_trending(req, resp, 48)
 
 
 class ActionResource:
@@ -679,7 +681,7 @@ class LoginResource:
 class LogoutResource:
     def on_get(self, req, resp):
         resp.unset_cookie('identity')
-        raise HTTPFound('/trending/48')
+        raise HTTPFound('/trending')
 
 
 class RegisterResource:

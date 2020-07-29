@@ -1,11 +1,15 @@
 <div class="entry">
     <div class="filters">
         {% if view == 'trending' %}
-            {% for value in samples %}
-                <a href="/trending/{{ value }}" class="{% if value == sample %}selected{% endif %}">
-                    {{ value }} threads
-                </a>
-            {% endfor %}
+            <a href="/trending/less" class="{% if kind == 'less' %}selected{% endif %}">
+                16 threads
+            </a>
+            <a href="/trending" class="{% if kind == 'none' %}selected{% endif %}">
+                32 threads
+            </a>
+            <a href="/trending/more" class="{% if kind == 'more' %}selected{% endif %}">
+                48 threads
+            </a>
         {% elif view == 'discover' %}
             <a href="/discover{% if q %}?q={{ q | quote }}{% endif %}" class="{% if kind == 'anything' %}selected{% endif %}">
                 Anything
