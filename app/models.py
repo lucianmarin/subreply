@@ -45,6 +45,8 @@ class User(models.Model):
 
     @property
     def full_name(self):
+        if len(self.last_name) == 1:
+            return "{0} {1}.".format(self.first_name, self.last_name)
         return "{0} {1}".format(self.first_name, self.last_name).strip()
 
     @property
