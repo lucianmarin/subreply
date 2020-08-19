@@ -1,0 +1,6 @@
+0 0 1 */1 * certbot renew --renew-hook "systemctl reload nginx"
+
+*/20 * * * * python3 ~/newscafe/manage.py fetch
+
+0 * * * * zcat -f ~/log/news.log.gz | goaccess --ignore-crawlers --output ~/log/news.html -
+0 * * * * zcat -f ~/log/sub.log.gz | goaccess --ignore-crawlers --output ~/log/sub.html -
