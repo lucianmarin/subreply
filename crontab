@@ -4,3 +4,5 @@
 
 0 * * * * zcat -f ~/log/news.log.gz | goaccess --ignore-crawlers --output ~/log/news.html -
 0 * * * * zcat -f ~/log/sub.log.gz | goaccess --ignore-crawlers --output ~/log/sub.html -
+
+# sudo certbot certonly -d sublevel.net
