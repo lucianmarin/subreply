@@ -1,14 +1,14 @@
 <div class="entry">
     <div class="filters">
         {% if view == 'trending' %}
-            <a href="/trending/less" class="{% if kind == 'less' %}selected{% endif %}">
-                16 threads
+            <a href="/trending/new" class="{% if kind == 'new' %}selected{% endif %}">
+                Newest
             </a>
-            <a href="/trending" class="{% if kind == 'none' %}selected{% endif %}">
-                32 threads
+            <a href="/trending" class="{% if kind == 'late' %}selected{% endif %}">
+                Latest
             </a>
-            <a href="/trending/more" class="{% if kind == 'more' %}selected{% endif %}">
-                48 threads
+            <a href="/trending/old" class="{% if kind == 'old' %}selected{% endif %}">
+                Oldest
             </a>
         {% elif view == 'discover' %}
             <a href="/discover{% if q %}?q={{ q | quote }}{% endif %}" class="{% if kind == 'anything' %}selected{% endif %}">

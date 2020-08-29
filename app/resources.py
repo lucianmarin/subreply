@@ -476,7 +476,7 @@ class PeopleResource:
         self.get_people(req, resp, 'seen')
 
     @before(auth_user)
-    def on_get_new(self, req, resp):
+    def on_get_joined(self, req, resp):
         self.get_people(req, resp, 'joined')
 
 
@@ -525,32 +525,33 @@ class DiscoverResource:
 
 
 class TrendingResource:
-    kinds = {16: 'less', 32: 'none', 48: 'more'}
+    kinds = {'new': (0, 16), 'late': (16, 32), 'old': (32, 48)}
 
     def fetch_entries(self, req, sample):
-        sampled = Comment.objects.filter(parent=None).exclude(replies=0).order_by('-id').values('id')[:sample]
-        entries = Comment.objects.filter(id__in=sampled).order_by('-replies', '-id').select_related('created_by').prefetch_related(PFR)
+        start, end = sample
+        sampling = Comment.objects.filter(parent=None).exclude(replies=0).order_by('-id').values('id')[start:end]
+        entries = Comment.objects.filter(id__in=sampling).order_by('-replies', '-id').select_related('created_by').prefetch_related(PFR)
         return paginate(req, entries)
 
     def get_trending(self, req, resp, sample):
-        entries, pages = self.fetch_entries(req, sample)
+        entries, pages = self.fetch_entries(req, self.kinds[sample])
         template = env.get_template('pages/regular.html')
         resp.body = template.render(
             user=req.user, entries=entries, pages=pages,
-            kind=self.kinds[sample], view='trending'
+            kind=sample, view='trending'
         )
 
     @before(auth_user)
     def on_get(self, req, resp):
-        self.get_trending(req, resp, 32)
+        self.get_trending(req, resp, 'late')
 
     @before(auth_user)
-    def on_get_less(self, req, resp):
-        self.get_trending(req, resp, 16)
+    def on_get_new(self, req, resp):
+        self.get_trending(req, resp, 'new')
 
     @before(auth_user)
-    def on_get_more(self, req, resp):
-        self.get_trending(req, resp, 48)
+    def on_get_old(self, req, resp):
+        self.get_trending(req, resp, 'old')
 
 
 class ActionResource:
