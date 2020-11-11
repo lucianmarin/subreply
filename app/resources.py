@@ -525,11 +525,7 @@ class TrendingResource:
 
     @before(auth_user)
     def on_get(self, req, resp, sample):
-        try:
-            sample = abs(int(sample))
-        except Exception as e:
-            print(e)
-            return not_found(resp, req.user, f'/trending/{sample}')
+        sample = int(sample) if sample.isdecimal() and int(sample) else 16
         entries, pages = self.fetch_entries(req, sample)
         template = env.get_template('pages/regular.html')
         resp.body = template.render(
