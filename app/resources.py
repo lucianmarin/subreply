@@ -4,11 +4,12 @@ from cgi import FieldStorage
 import emoji
 from django.db.models import Max, Prefetch, Q
 from emails import Message
-from emails.template import JinjaTemplate as T
+from emails.template import JinjaTemplate as Tpl
 from falcon import status_codes
 from falcon.hooks import before
 from falcon.redirects import HTTPFound
 from grapheme import graphemes
+from project.settings import DEBUG, MAX_AGE, SMTP, F
 from unidecode import unidecode
 
 from app.const import COUNTRIES
@@ -19,7 +20,6 @@ from app.models import Comment, Relation, Reset, Save, User
 from app.validation import (authentication, changing, profiling, registration,
                             valid_content, valid_password, valid_reply,
                             valid_thread)
-from project.settings import DEBUG, MAX_AGE, SMTP, F
 
 PFR = Prefetch('kids', queryset=Comment.objects.order_by('id').select_related('created_by'))
 
@@ -288,11 +288,8 @@ class ProfileResource:
         return Comment.objects.filter(created_by=user).exclude(parent=None).order_by('-id').select_related('created_by', 'parent__created_by', 'parent__parent')
 
     def fetch_entries(self, req, member, tab):
-        if tab == 'threads':
-            entries = self.fetch_threads(member)
-        elif tab == 'replies':
-            entries = self.fetch_replies(member)
-        return paginate(req, entries)
+        method = getattr(self, f'fetch_{tab}')
+        return paginate(req, method(member))
 
     @before(auth_user)
     def on_get_re(self, req, resp, username):
@@ -525,33 +522,25 @@ class DiscoverResource:
 
 
 class TrendingResource:
-    kinds = {'new': (0, 16), 'late': (16, 32), 'old': (32, 48)}
-
     def fetch_entries(self, req, sample):
-        start, end = sample
-        sampling = Comment.objects.filter(parent=None).exclude(replies=0).order_by('-id').values('id')[start:end]
+        sampling = Comment.objects.filter(parent=None).exclude(replies=0).order_by('-id').values('id')[:sample]
         entries = Comment.objects.filter(id__in=sampling).order_by('-replies', '-id').select_related('created_by').prefetch_related(PFR)
         return paginate(req, entries)
 
-    def get_trending(self, req, resp, sample):
-        entries, pages = self.fetch_entries(req, self.kinds[sample])
+    @before(auth_user)
+    def on_get(self, req, resp, sample):
+        try:
+            sample = abs(int(sample))
+        except Exception as e:
+            not_found(resp, req.user, f'trending/{sample}')
+            print(e)
+            return
+        entries, pages = self.fetch_entries(req, sample)
         template = env.get_template('pages/regular.html')
         resp.body = template.render(
             user=req.user, entries=entries, pages=pages,
-            kind=sample, view='trending'
+            sample=sample, view='trending'
         )
-
-    @before(auth_user)
-    def on_get(self, req, resp):
-        self.get_trending(req, resp, 'late')
-
-    @before(auth_user)
-    def on_get_new(self, req, resp):
-        self.get_trending(req, resp, 'new')
-
-    @before(auth_user)
-    def on_get_old(self, req, resp):
-        self.get_trending(req, resp, 'old')
 
 
 class ActionResource:
@@ -578,7 +567,7 @@ class ActionResource:
     def get_action(self, req, resp, username, action):
         member = User.objects.filter(username=username.lower()).first()
         if not member:
-            self.not_found(resp, req.user, username)
+            not_found(resp, req.user, username)
             return
         if req.user and member.id != req.user.id:
             fn = getattr(self, action)
@@ -786,9 +775,9 @@ class ResetResource:
             code = hashlib.md5(plain.encode()).hexdigest()
             # compose email
             m = Message(
-                html=T("<html><p>Hello,</p><p>You can change your password for @{{ username }} on Subreply using the following link https://subreply.com/reset/{{ code }} and after that you will be logged in with the new credentials.</p><p>Delete this email if you didn't make such request.</p>"),
-                text=T("Hello,\nYou can change your password for @{{ username }} on Subreply using the following link https://subreply.com/reset/{{ code }} and after that you will be logged in with the new credentials.\nDelete this email if you didn't make such request."),
-                subject=T("Reset password"),
+                html=Tpl("<html><p>Hello,</p><p>You can change your password for @{{ username }} on Subreply using the following link https://subreply.com/reset/{{ code }} and after that you will be logged in with the new credentials.</p><p>Delete this email if you didn't make such request.</p>"),
+                text=Tpl("Hello,\nYou can change your password for @{{ username }} on Subreply using the following link https://subreply.com/reset/{{ code }} and after that you will be logged in with the new credentials.\nDelete this email if you didn't make such request."),
+                subject=Tpl("Reset password"),
                 mail_from=("Subreply", "subreply@outlook.com")
             )
             # send email

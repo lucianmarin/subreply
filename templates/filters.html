@@ -1,15 +1,11 @@
 <div class="entry">
     <div class="filters">
         {% if view == 'trending' %}
-            <a href="/trending/new" class="{% if kind == 'new' %}selected{% endif %}">
-                Newest
-            </a>
-            <a href="/trending" class="{% if kind == 'late' %}selected{% endif %}">
-                Latest
-            </a>
-            <a href="/trending/old" class="{% if kind == 'old' %}selected{% endif %}">
-                Oldest
-            </a>
+            {% for kind in [32, 64, 128] %}
+                <a href="/trending/{{ kind }}" class="{% if sample == kind %}selected{% endif %}">
+                    {{ kind }} threads
+                </a>
+            {% endfor %}
         {% elif view == 'discover' %}
             <a href="/discover{% if q %}?q={{ q | quote }}{% endif %}" class="{% if kind == 'anything' %}selected{% endif %}">
                 Anything
