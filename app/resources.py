@@ -80,7 +80,7 @@ class MainResource:
         if req.user:
             raise HTTPFound('/feed')
         else:
-            raise HTTPFound('/trending')
+            raise HTTPFound('/trending/16')
 
 
 class AboutResource:
@@ -156,7 +156,7 @@ class ReplyResource:
             id=int(base, 36)
         ).select_related('created_by', 'parent').first()
         if not parent or parent.created_by.username != username.lower():
-            not_found(resp, req.user, f'{username}/{base}')
+            not_found(resp, req.user, f'/{username}/{base}')
             return
         duplicate = Comment.objects.filter(
             parent=parent, created_by=req.user
@@ -223,7 +223,7 @@ class EditResource:
             id=int(base, 36)
         ).select_related('created_by', 'parent').first()
         if not entry or entry.created_by != req.user or entry.replies:
-            not_found(resp, req.user, f'edit/{base}')
+            not_found(resp, req.user, f'/edit/{base}')
             return
         ancestors = [entry.parent] if entry.parent_id else []
         form = FieldStorage(fp=req.stream, environ=req.env)
@@ -302,7 +302,7 @@ class ProfileResource:
     def get_profile(self, req, resp, username, tab):
         member = User.objects.filter(username=username.lower()).first()
         if not member:
-            not_found(resp, req.user, username)
+            not_found(resp, req.user, f'/{username}')
             return
         entries, pages = self.fetch_entries(req, member, tab)
         threads = self.fetch_threads(member).count()
@@ -532,7 +532,7 @@ class TrendingResource:
         try:
             sample = abs(int(sample))
         except Exception as e:
-            not_found(resp, req.user, f'trending/{sample}')
+            not_found(resp, req.user, f'/trending/{sample}')
             print(e)
             return
         entries, pages = self.fetch_entries(req, sample)
@@ -567,7 +567,7 @@ class ActionResource:
     def get_action(self, req, resp, username, action):
         member = User.objects.filter(username=username.lower()).first()
         if not member:
-            not_found(resp, req.user, username)
+            not_found(resp, req.user, f'/{username}')
             return
         if req.user and member.id != req.user.id:
             fn = getattr(self, action)
@@ -672,7 +672,7 @@ class LoginResource:
 class LogoutResource:
     def on_get(self, req, resp):
         resp.unset_cookie('identity')
-        raise HTTPFound('/trending')
+        raise HTTPFound('/trending/16')
 
 
 class RegisterResource:
