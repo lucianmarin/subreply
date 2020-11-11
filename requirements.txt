@@ -5,11 +5,15 @@ dnspython
 emails
 emoji
 falcon
+flake8
+flake8-return
+flake8-simplify
 grapheme
 gunicorn
 jinja2
 meinheld
 num2words
+pep8-naming
 psycopg2-binary
 requests
 unidecode
