@@ -55,8 +55,7 @@ def superscript(number):
     text = text.replace('6', chr(8310))
     text = text.replace('7', chr(8311))
     text = text.replace('8', chr(8312))
-    text = text.replace('9', chr(8313))
-    return text
+    return text.replace('9', chr(8313))
 
 
 def parser(text):

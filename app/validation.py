@@ -260,8 +260,7 @@ def changing(user, current, password1, password2):
     if not verify_hash(current, user.password):
         errors['current'] = "Password doesn't match"
     errors['password'] = valid_password(password1, password2)
-    errors = {k: v for k, v in errors.items() if v}
-    return errors
+    return {k: v for k, v in errors.items() if v}
 
 
 def profiling(f, user_id):
@@ -276,8 +275,7 @@ def profiling(f, user_id):
     errors['birthyear'] = valid_birthyear(f['birthyear'])
     errors['country'] = valid_country(f['country'])
     errors['emoji'] = valid_emoji(f['emoji'], user_id=user_id)
-    errors = {k: v for k, v in errors.items() if v}
-    return errors
+    return {k: v for k, v in errors.items() if v}
 
 
 def registration(f):
@@ -295,5 +293,4 @@ def registration(f):
     errors['birthyear'] = valid_birthyear(f['birthyear'])
     errors['country'] = valid_country(f['country'])
     errors['emoji'] = valid_emoji(f['emoji'])
-    errors = {k: v for k, v in errors.items() if v}
-    return errors
+    return {k: v for k, v in errors.items() if v}
