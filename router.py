@@ -31,6 +31,7 @@ app.add_route('/discover/replies', resources.DiscoverResource(), suffix="re")
 app.add_route('/discover/threads', resources.DiscoverResource(), suffix="th")
 app.add_route('/people', resources.PeopleResource())
 app.add_route('/people/joined', resources.PeopleResource(), suffix="joined")
+app.add_route('/trending', resources.TrendingResource(), suffix="default")
 app.add_route('/trending/{sample}', resources.TrendingResource())
 
 app.add_route('/about', resources.AboutResource())

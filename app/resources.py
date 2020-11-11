@@ -26,8 +26,7 @@ PFR = Prefetch('kids', queryset=Comment.objects.order_by('id').select_related('c
 
 def paginate(req, qs, limit=16):
     p = req.params.get('p', '1').strip()
-    p_int = int(p) if p.isdecimal() else 1
-    page = p_int if p_int else 1
+    page = int(p) if p.isdecimal() and int(p) else 1
     bottom = (page - 1) * limit
     top = bottom + limit + 1
     query = qs[bottom:top]
@@ -80,7 +79,7 @@ class MainResource:
         if req.user:
             raise HTTPFound('/feed')
         else:
-            raise HTTPFound('/trending/16')
+            raise HTTPFound('/trending')
 
 
 class AboutResource:
@@ -156,8 +155,7 @@ class ReplyResource:
             id=int(base, 36)
         ).select_related('created_by', 'parent').first()
         if not parent or parent.created_by.username != username.lower():
-            not_found(resp, req.user, f'/{username}/{base}')
-            return
+            return not_found(resp, req.user, f'/{username}/{base}')
         duplicate = Comment.objects.filter(
             parent=parent, created_by=req.user
         ).exists() if req.user else True
@@ -223,8 +221,7 @@ class EditResource:
             id=int(base, 36)
         ).select_related('created_by', 'parent').first()
         if not entry or entry.created_by != req.user or entry.replies:
-            not_found(resp, req.user, f'/edit/{base}')
-            return
+            return not_found(resp, req.user, f'/edit/{base}')
         ancestors = [entry.parent] if entry.parent_id else []
         form = FieldStorage(fp=req.stream, environ=req.env)
         template = env.get_template('pages/edit.html')
@@ -302,8 +299,7 @@ class ProfileResource:
     def get_profile(self, req, resp, username, tab):
         member = User.objects.filter(username=username.lower()).first()
         if not member:
-            not_found(resp, req.user, f'/{username}')
-            return
+            return not_found(resp, req.user, f'/{username}')
         entries, pages = self.fetch_entries(req, member, tab)
         threads = self.fetch_threads(member).count()
         replies = self.fetch_replies(member).count()
@@ -532,15 +528,17 @@ class TrendingResource:
         try:
             sample = abs(int(sample))
         except Exception as e:
-            not_found(resp, req.user, f'/trending/{sample}')
             print(e)
-            return
+            return not_found(resp, req.user, f'/trending/{sample}')
         entries, pages = self.fetch_entries(req, sample)
         template = env.get_template('pages/regular.html')
         resp.body = template.render(
             user=req.user, entries=entries, pages=pages,
             sample=sample, view='trending'
         )
+
+    def on_get_default(self, req, resp):
+        self.on_get(req, resp, '16')
 
 
 class ActionResource:
@@ -567,8 +565,7 @@ class ActionResource:
     def get_action(self, req, resp, username, action):
         member = User.objects.filter(username=username.lower()).first()
         if not member:
-            not_found(resp, req.user, f'/{username}')
-            return
+            return not_found(resp, req.user, f'/{username}')
         if req.user and member.id != req.user.id:
             fn = getattr(self, action)
             fn(req.user, member)
@@ -672,7 +669,7 @@ class LoginResource:
 class LogoutResource:
     def on_get(self, req, resp):
         resp.unset_cookie('identity')
-        raise HTTPFound('/trending/16')
+        raise HTTPFound('/trending')
 
 
 class RegisterResource:
