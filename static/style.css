@@ -1,4 +1,4 @@
-html { -ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; --tiny: 11px; --small: 14px; --regular: 14px; --radius: 5px; --d: 0.2s; --white: #fff; --whitesmoke: #f0f0f0; --gainsboro: #e0e0e0; --silver: #c0c0c0; --gray: #808080; --black: #000; --aqua: #0080f0; --ocean: #003080; --orange: #FF2600; }
+html { -ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; --sup: 9px; --tiny: 11px; --small: 13px; --regular: 14px; --radius: 5px; --d: 0.2s; --white: #fff; --whitesmoke: #f0f0f0; --gainsboro: #e0e0e0; --silver: #c0c0c0; --gray: #808080; --black: #000; --aqua: #0080f0; --ocean: #003080; --orange: #FF2600; }
 
 ::-moz-placeholder { color: #1f1f1f; }
 
@@ -16,11 +16,13 @@ b, i, u { font-style: normal; font-weight: normal; text-decoration: none; }
 
 form, input, img, label { display: block; }
 
-body, label, input, select, textarea { font-family: "Fira Sans", sans-serif; font-size: var(--regular); line-height: 20px; }
+body, label, input, select, textarea { font-family: "Route 159", sans-serif; font-size: var(--regular); line-height: 20px; }
 
 label { color: var(--black); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 label i { color: var(--gray); }
+
+sup { line-height: 0; }
 
 input[type=file] { display: none; }
 
@@ -28,7 +30,7 @@ input[type=text], input[type=password], input[type=email], input[type=url], sele
 
 input[type=text]:focus, input[type=password]:focus, input[type=email]:focus, input[type=url]:focus, select:focus, textarea:focus { outline: 0 none; }
 
-input[type=submit] { background-color: var(--black); border: 0 none; border-radius: var(--radius); color: var(--whitesmoke); cursor: pointer; float: right; padding: 5px 15px; }
+input[type=submit] { background-color: var(--black); border: 0 none; border-radius: var(--radius); color: var(--whitesmoke); cursor: pointer; float: right; font-size: var(--small); padding: 5px 15px; }
 
 svg { fill: none; stroke: var(--black); stroke-linecap: round; stroke-linejoin: round; stroke-width: 2; }
 
@@ -80,7 +82,7 @@ table td a { text-decoration: underline; }
 
 .links a.accent svg { stroke: var(--orange); }
 
-.links a span { margin-left: 1px; }
+.links a sup { font-size: var(--sup); font-weight: bold; margin-left: 1px; }
 
 .links img { float: right; }
 
@@ -112,13 +114,13 @@ table td a { text-decoration: underline; }
 
 .content a { text-decoration: underline; }
 
-.small { overflow: hidden; }
+.small { font-size: var(--small); overflow: hidden; }
 
 .small a, .small b { color: var(--gray); float: left; margin-left: 15px; }
 
 .small a:first-child, .small b:first-child { margin-left: 0; }
 
-.author { color: var(--gray); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.author { color: var(--gray); font-size: var(--small); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 .author .short, .author .handle, .author b { font-weight: bold; }
 
@@ -130,7 +132,7 @@ table td a { text-decoration: underline; }
 
 .author .gone { color: var(--gray); }
 
-.extra { color: var(--gray); }
+.extra { color: var(--gray); font-size: var(--small); }
 
 .extra a { color: var(--gray); text-decoration: underline; }
 
@@ -198,6 +200,6 @@ table td a { text-decoration: underline; }
 
 @media (max-width: 680px) { .container { display: grid; grid-template-columns: 0 50px calc(100% - 50px) 0; } .main { padding: 0 10px; } .logo { margin: 10px; } .promo, .links i { display: none; } .links svg { margin-left: 0; } }
 
-@font-face { font-family: "Fira Sans"; font-style: normal; font-weight: normal; src: url(/static/firasans-regular.woff2) format("woff2"); }
+@font-face { font-family: "Route 159"; font-style: normal; font-weight: normal; src: url(/static/route159-regular.woff2) format("woff2"); }
 
-@font-face { font-family: "Fira Sans"; font-style: normal; font-weight: bold; src: url(/static/firasans-bold.woff2) format("woff2"); }
+@font-face { font-family: "Route 159"; font-style: normal; font-weight: bold; src: url(/static/route159-bold.woff2) format("woff2"); }

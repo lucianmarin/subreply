@@ -1,8 +1,9 @@
 html
     -ms-text-size-adjust: 100%
     -webkit-text-size-adjust: 100%
+    --sup: 9px
     --tiny: 11px
-    --small: 14px
+    --small: 13px
     --regular: 14px
     --radius: 5px
     --d: 0.2s
@@ -26,7 +27,6 @@ html
     overflow: hidden
     text-overflow: ellipsis
     white-space: nowrap
-
 
 @media (prefers-color-scheme: dark)
     html
@@ -65,7 +65,7 @@ form, input, img, label
     display: block
 
 body, label, input, select, textarea
-    font-family: "Fira Sans", sans-serif
+    font-family: "Route 159", sans-serif
     font-size: var(--regular)
     line-height: 20px
 
@@ -74,6 +74,9 @@ label
     @include dots
     i
         color: var(--gray)
+
+sup
+    line-height: 0
 
 input[type=file]
     display: none
@@ -105,6 +108,7 @@ input[type=submit]
     color: var(--whitesmoke)
     cursor: pointer
     float: right
+    font-size: var(--small)
     padding: 5px 15px
 
 svg
@@ -199,7 +203,9 @@ table
         &.accent
             svg
                 stroke: var(--orange)
-        span
+        sup
+            font-size: var(--sup)
+            font-weight: bold
             margin-left: 1px
     img
         float: right
@@ -252,6 +258,7 @@ table
         text-decoration: underline
 
 .small
+    font-size: var(--small)
     overflow: hidden
     a, b
         color: var(--gray)
@@ -262,6 +269,7 @@ table
 
 .author
     color: var(--gray)
+    font-size: var(--small)
     @include dots
     .short, .handle, b
         font-weight: bold
@@ -276,6 +284,7 @@ table
 
 .extra
     color: var(--gray)
+    font-size: var(--small)
     a
         color: var(--gray)
         text-decoration: underline
@@ -401,13 +410,13 @@ table
         margin-left: 0
 
 @font-face
-    font-family: "Fira Sans"
+    font-family: "Route 159"
     font-style: normal
     font-weight: normal
-    src: url(/static/firasans-regular.woff2) format("woff2")
+    src: url(/static/route159-regular.woff2) format("woff2")
 
 @font-face
-    font-family: "Fira Sans"
+    font-family: "Route 159"
     font-style: normal
     font-weight: bold
-    src: url(/static/firasans-bold.woff2) format("woff2")
+    src: url(/static/route159-bold.woff2) format("woff2")

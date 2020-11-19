@@ -29,19 +29,19 @@
             </svg>
         </a>
         <a href="/followers" class="{% if view == 'followers' %}on{% endif %} {% if user.notif_followers %}accent{% endif %}">
-            <i>Followers<span>{{ user.notif_followers | superscript }}</span></i>
+            <i>Followers<sup>{{ user.notif_followers }}</sup></i>
             <svg id="i-signout" viewBox="0 0 32 32" width="16" height="16">
                 <path d="M28 16 L8 16 M20 8 L28 16 20 24 M11 28 L3 28 3 4 11 4" />
             </svg>
         </a>
         <a href="/mentions" class="{% if view == 'mentions' %}on{% endif %} {% if user.notif_mentions %}accent{% endif %}">
-            <i>Mentions<span>{{ user.notif_mentions | superscript }}</span></i>
+            <i>Mentions<sup>{{ user.notif_mentions }}</sup></i>
             <svg id="i-bell" viewBox="0 0 32 32" width="16" height="16">
                 <path d="M8 17 C8 12 9 6 16 6 23 6 24 12 24 17 24 22 27 25 27 25 L5 25 C5 25 8 22 8 17 Z M20 25 C20 25 20 29 16 29 12 29 12 25 12 25 M16 3 L16 6" />
             </svg>
         </a>
         <a href="/replies" class="{% if view == 'replies' %}on{% endif %} {% if user.notif_replies %}accent{% endif %}">
-            <i>Replies<span>{{ user.notif_replies | superscript }}</span></i>
+            <i>Replies<sup>{{ user.notif_replies }}</sup></i>
             <svg id="i-reply" viewBox="0 0 32 32" width="16" height="16">
                 <path d="M10 6 L3 14 10 22 M3 14 L18 14 C26 14 30 18 30 26" />
             </svg>
