@@ -200,6 +200,6 @@ table td a { text-decoration: underline; }
 
 @media (max-width: 680px) { .container { display: grid; grid-template-columns: 0 50px calc(100% - 50px) 0; } .main { padding: 0 10px; } .logo { margin: 10px; } .promo, .links i { display: none; } .links svg { margin-left: 0; } }
 
-@font-face { font-family: "Route 159"; font-style: normal; font-weight: normal; src: url(/static/route159-regular.woff2) format("woff2"); }
+@font-face { font-family: "Route 159"; font-style: normal; font-weight: normal; src: url(/static/route159-regular.woff) format("woff"); }
 
-@font-face { font-family: "Route 159"; font-style: normal; font-weight: bold; src: url(/static/route159-bold.woff2) format("woff2"); }
+@font-face { font-family: "Route 159"; font-style: normal; font-weight: bold; src: url(/static/route159-bold.woff) format("woff"); }
