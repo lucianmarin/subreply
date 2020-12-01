@@ -1,18 +1,16 @@
 import hashlib
 from cgi import FieldStorage
 
-import emoji
 from django.db.models import Max, Prefetch, Q
 from emails import Message
 from emails.template import JinjaTemplate as Tpl
 from falcon import status_codes
 from falcon.hooks import before
 from falcon.redirects import HTTPFound
-from grapheme import graphemes
 from project.settings import DEBUG, MAX_AGE, SMTP, F
-from unidecode import unidecode
 
 from app.const import COUNTRIES
+from app.forms import get_content, get_emoji
 from app.helpers import build_hash, parse_metadata, utc_timestamp
 from app.hooks import auth_user, login_required
 from app.jinja import env
@@ -110,8 +108,7 @@ class FeedResource:
     @before(login_required)
     def on_post(self, req, resp):
         form = FieldStorage(fp=req.stream, environ=req.env)
-        content = unidecode(form.getvalue('content', ''))
-        content = " ".join([w.strip() for w in content.split()])
+        content = get_content(form)
         errors = {}
         errors['content'] = valid_content(content, req.user)
         if not errors['content']:
@@ -175,8 +172,7 @@ class ReplyResource:
             id=int(base, 36)
         ).select_related('created_by', 'parent').first()
         form = FieldStorage(fp=req.stream, environ=req.env)
-        content = unidecode(form.getvalue('content', ''))
-        content = " ".join([w.strip() for w in content.split()])
+        content = get_content(form)
         mentions, links, hashtags = parse_metadata(content)
         errors = {}
         errors['content'] = valid_content(content, req.user)
@@ -237,8 +233,7 @@ class EditResource:
             id=int(base, 36)
         ).select_related('created_by', 'parent').first()
         form = FieldStorage(fp=req.stream, environ=req.env)
-        content = unidecode(form.getvalue('content', ''))
-        content = " ".join([w.strip() for w in content.split()])
+        content = get_content(form)
         mentions, links, hashtags = parse_metadata(content)
         errors = {}
         errors['content'] = valid_content(content, req.user)
@@ -622,8 +617,7 @@ class SettingsResource:
         f['email'] = form.getvalue('email', '').strip().lower()
         bio_parts = form.getvalue('bio', '').split()
         f['bio'] = " ".join([p.strip() for p in bio_parts])
-        emo_parts = graphemes(form.getvalue('emoji', '').strip())
-        f['emoji'] = "".join([c for c in emo_parts if c in emoji.UNICODE_EMOJI])
+        f['emoji'] = get_emoji(form)
         f['birthyear'] = form.getvalue('birthyear', '').strip()
         f['country'] = form.getvalue('country', '')
         f['website'] = form.getvalue('website', '').strip().lower()
@@ -693,8 +687,7 @@ class RegisterResource:
         f['email'] = form.getvalue('email', '').strip().lower()
         bio_parts = form.getvalue('bio', '').split()
         f['bio'] = " ".join([p.strip() for p in bio_parts])
-        emo_parts = graphemes(form.getvalue('emoji', '').strip())
-        f['emoji'] = "".join([c for c in emo_parts if c in emoji.UNICODE_EMOJI])
+        f['emoji'] = get_emoji(form)
         f['birthyear'] = form.getvalue('birthyear', '').strip()
         f['country'] = form.getvalue('country', '')
         f['website'] = form.getvalue('website', '').strip().lower()

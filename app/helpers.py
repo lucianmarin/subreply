@@ -6,10 +6,11 @@ from random import choice
 
 
 def has_repetions(word, n=3):
-    for char in word:
-        if char * n in word:
-            return True
-    return False
+    # for char in word:
+    #     if char * n in word:
+    #         return True
+    # return False
+    return any(char * n in word for char in word)
 
 
 def utc_timestamp():
