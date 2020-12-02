@@ -8,7 +8,7 @@ from dns.resolver import query as dns_query
 from project.settings import INVALID, SLURS
 from user_agents import parse
 
-from app.const import COUNTRIES, LATIN, MAX_YEAR, MIN_YEAR
+from app.const import LATIN, MAX_YEAR, MIN_YEAR
 from app.filters import shortdate
 from app.helpers import has_repetions, parse_metadata, verify_hash
 from app.models import Comment, User

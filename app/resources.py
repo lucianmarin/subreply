@@ -430,7 +430,7 @@ class SavedResource:
 class PeopleResource:
     fields = [
         "username", "first_name", "last_name", "email",
-        "bio", "birthmonth", "location", "emoji", "website"
+        "bio", "birthday", "location", "emoji", "website"
     ]
 
     def build_query(self, terms):
