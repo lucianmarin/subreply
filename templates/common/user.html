@@ -35,13 +35,13 @@
             {{ member.bio | parser | safe }}
         </div>
     {% endif %}
-    {% if member.website or member.birthyear or member.country %}
+    {% if member.website or member.birthday or member.country %}
         <div class="extra">
             {% if member.website %}
                 {{ member.website | parser | safe }}
             {% endif %}
-            {% if member.birthyear %}
-                ~ {{ member.birthyear | age }} years old
+            {% if member.birthday %}
+                ~ {{ member.birthday | age }} years old
             {% endif %}
             {% if member.location %}
                 in {{ member.location }}

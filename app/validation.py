@@ -1,4 +1,5 @@
 import json
+from datetime import date
 
 import grapheme
 import requests
@@ -232,17 +233,37 @@ def valid_password(value1, value2):
         return "Password needs a lowercase letter"
 
 
-def valid_birthyear(value):
+def valid_birthday(value, delimiter="-"):
     if value:
-        if len(value) != 4:
-            return "Birthday as 4-digit year"
-        elif value not in map(str, range(MIN_YEAR, MAX_YEAR + 1)):
-            return "Birthday year from {0} to {1}".format(MIN_YEAR, MAX_YEAR)
-
-
-def valid_country(value):
-    if value not in COUNTRIES:
-        return "Country code is invalid"
+        years = [str(y) for y in range(MIN_YEAR, MAX_YEAR + 1)]
+        months = [str(m).zfill(2) for m in range(1, 13)]
+        days = [str(d).zfill(2) for d in range(1, 32)]
+        if value.count(delimiter) > 2:
+            return "Birthday has an invalid format"
+        elif len(value) > 10:
+            return "Birthday is too long"
+        elif value.count(delimiter) == 2:
+            year, month, day = value.split(delimiter)
+            if year not in years:
+                return "Year is not between {0}-{1}".format(MIN_YEAR, MAX_YEAR)
+            elif month not in months:
+                return "Month is not between 01-12"
+            elif day not in days:
+                return "Day is not between 01-31"
+            else:
+                try:
+                    _ = date(int(year), int(month), int(day))
+                except Exception as e:
+                    print(e)
+                    return "Birthday is invalid"
+        elif value.count(delimiter):
+            year, month = value.split(delimiter)
+            if year not in years:
+                return "Year is not between {0}-{1}".format(MIN_YEAR, MAX_YEAR)
+            elif month not in months:
+                return "Month is not between 01-12"
+        elif value not in years:
+            return "Year is not between {0}-{1}".format(MIN_YEAR, MAX_YEAR)
 
 
 def valid_location(value, delimiter=", "):
@@ -291,7 +312,7 @@ def profiling(f, user_id):
     errors['email'] = valid_email(f['email'], user_id=user_id)
     errors['website'] = valid_website(f['website'], user_id=user_id)
     errors['bio'] = valid_bio(f['bio'], f['username'], user_id=user_id)
-    errors['birthyear'] = valid_birthyear(f['birthyear'])
+    errors['birthday'] = valid_birthday(f['birthday'])
     errors['location'] = valid_location(f['location'])
     errors['emoji'] = valid_emoji(f['emoji'], user_id=user_id)
     return {k: v for k, v in errors.items() if v}
@@ -309,7 +330,7 @@ def registration(f):
     errors['email'] = valid_email(f['email'])
     errors['website'] = valid_website(f['website'])
     errors['bio'] = valid_bio(f['bio'], f['username'])
-    errors['birthyear'] = valid_birthyear(f['birthyear'])
+    errors['birthday'] = valid_birthday(f['birthday'])
     errors['location'] = valid_location(f['location'])
     errors['emoji'] = valid_emoji(f['emoji'])
     return {k: v for k, v in errors.items() if v}

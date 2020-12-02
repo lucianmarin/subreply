@@ -31,8 +31,7 @@ class User(models.Model):
 
     emoji = models.CharField(max_length=15, default='')
     location = models.CharField(max_length=60, default='')
-    country = models.CharField(max_length=2, default='')
-    birthyear = models.CharField(max_length=4, default='')
+    birthday = models.CharField(max_length=10, default='')
     bio = models.CharField(max_length=120, default='')
     website = models.CharField(max_length=120, default='')
 

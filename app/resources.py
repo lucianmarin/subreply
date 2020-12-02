@@ -430,7 +430,7 @@ class SavedResource:
 class PeopleResource:
     fields = [
         "username", "first_name", "last_name", "email",
-        "bio", "birthyear", "location", "emoji", "website"
+        "bio", "birthmonth", "location", "emoji", "website"
     ]
 
     def build_query(self, terms):
@@ -618,7 +618,7 @@ class SettingsResource:
         bio_parts = form.getvalue('bio', '').split()
         f['bio'] = " ".join([p.strip() for p in bio_parts])
         f['emoji'] = get_emoji(form)
-        f['birthyear'] = form.getvalue('birthyear', '').strip()
+        f['birthday'] = form.getvalue('birthday', '').strip()
         f['location'] = form.getvalue('location', '')
         f['website'] = form.getvalue('website', '').strip().lower()
         errors = profiling(f, req.user.id)
@@ -688,7 +688,7 @@ class RegisterResource:
         bio_parts = form.getvalue('bio', '').split()
         f['bio'] = " ".join([p.strip() for p in bio_parts])
         f['emoji'] = get_emoji(form)
-        f['birthyear'] = form.getvalue('birthyear', '').strip()
+        f['birthday'] = form.getvalue('birthday', '').strip()
         f['location'] = form.getvalue('location', '')
         f['website'] = form.getvalue('website', '').strip().lower()
         errors = registration(f)
@@ -707,7 +707,7 @@ class RegisterResource:
                     'password': build_hash(f['password1']),
                     'email': f['email'],
                     'bio': f['bio'],
-                    'birthyear': f['birthyear'],
+                    'birthday': f['birthday'],
                     'location': f['location'],
                     'emoji': f['emoji'],
                     'website': f['website'],

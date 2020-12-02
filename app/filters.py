@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 
 from app.const import COUNTRIES
 
@@ -7,8 +7,15 @@ def country(code):
     return COUNTRIES.get(code, 'None')
 
 
-def age(birthyear):
-    return datetime.now(timezone.utc).year - int(birthyear)
+def age(birthday, delimiter="-"):
+    if birthday.count(delimiter):
+        integers = [int(v) for v in birthday.split(delimiter)]
+        integers += [15] if len(integers) == 2 else []
+        year, month, day = integers
+        delta = datetime.now(timezone.utc).date() - date(year, month, day)
+        years = round(delta.days / 365.25, 1)
+        return int(years) if years.is_integer() else years
+    return datetime.now(timezone.utc).year - int(birthday)
 
 
 def shortdate(timestamp):
