@@ -30,6 +30,7 @@ class User(models.Model):
     seen_at = models.FloatField(default=.0, db_index=True)
 
     emoji = models.CharField(max_length=15, default='')
+    location = models.CharField(max_length=60, default='')
     country = models.CharField(max_length=2, default='')
     birthyear = models.CharField(max_length=4, default='')
     bio = models.CharField(max_length=120, default='')

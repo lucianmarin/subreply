@@ -43,8 +43,8 @@
             {% if member.birthyear %}
                 ~ {{ member.birthyear | age }} years old
             {% endif %}
-            {% if member.country %}
-                from {{ member.country | country }}
+            {% if member.location %}
+                in {{ member.location }}
             {% endif %}
         </div>
     {% endif %}

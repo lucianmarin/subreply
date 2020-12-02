@@ -430,7 +430,7 @@ class SavedResource:
 class PeopleResource:
     fields = [
         "username", "first_name", "last_name", "email",
-        "bio", "birthyear", "country", "emoji", "website"
+        "bio", "birthyear", "location", "emoji", "website"
     ]
 
     def build_query(self, terms):
@@ -619,7 +619,7 @@ class SettingsResource:
         f['bio'] = " ".join([p.strip() for p in bio_parts])
         f['emoji'] = get_emoji(form)
         f['birthyear'] = form.getvalue('birthyear', '').strip()
-        f['country'] = form.getvalue('country', '')
+        f['location'] = form.getvalue('location', '')
         f['website'] = form.getvalue('website', '').strip().lower()
         errors = profiling(f, req.user.id)
         if errors:
@@ -689,7 +689,7 @@ class RegisterResource:
         f['bio'] = " ".join([p.strip() for p in bio_parts])
         f['emoji'] = get_emoji(form)
         f['birthyear'] = form.getvalue('birthyear', '').strip()
-        f['country'] = form.getvalue('country', '')
+        f['location'] = form.getvalue('location', '')
         f['website'] = form.getvalue('website', '').strip().lower()
         errors = registration(f)
         if errors:
@@ -708,7 +708,7 @@ class RegisterResource:
                     'email': f['email'],
                     'bio': f['bio'],
                     'birthyear': f['birthyear'],
-                    'country': f['country'],
+                    'location': f['location'],
                     'emoji': f['emoji'],
                     'website': f['website'],
                     'joined_at': utc_timestamp(),

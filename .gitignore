@@ -8,3 +8,4 @@ media/
 local.py
 sub.pid
 db_*.json
+*.csv

@@ -1,14 +1,16 @@
+import json
+
 import grapheme
 import requests
 from django.db.models import Q
 from dns.resolver import query as dns_query
+from project.settings import INVALID, SLURS
 from user_agents import parse
 
 from app.const import COUNTRIES, LATIN, MAX_YEAR, MIN_YEAR
 from app.filters import shortdate
 from app.helpers import has_repetions, parse_metadata, verify_hash
 from app.models import Comment, User
-from project.settings import INVALID, SLURS
 
 
 def valid_content(value, user):
@@ -243,6 +245,22 @@ def valid_country(value):
         return "Country code is invalid"
 
 
+def valid_location(value, delimiter=", "):
+    if value:
+        with open('static/cities.json') as file:
+            world = json.load(file)
+        if value.count(delimiter) > 1:
+            return "City, Country or just Country"
+        elif value.count(delimiter):
+            city, country = value.split(delimiter)
+            if country not in world:
+                return "Country is invalid"
+            elif city not in world[country]:
+                return "City is invalid"
+        elif value not in world:
+            return "Country is invalid"
+
+
 def valid_emoji(value, user_id=0):
     if value:
         print(value)
@@ -274,7 +292,7 @@ def profiling(f, user_id):
     errors['website'] = valid_website(f['website'], user_id=user_id)
     errors['bio'] = valid_bio(f['bio'], f['username'], user_id=user_id)
     errors['birthyear'] = valid_birthyear(f['birthyear'])
-    errors['country'] = valid_country(f['country'])
+    errors['location'] = valid_location(f['location'])
     errors['emoji'] = valid_emoji(f['emoji'], user_id=user_id)
     return {k: v for k, v in errors.items() if v}
 
@@ -292,6 +310,6 @@ def registration(f):
     errors['website'] = valid_website(f['website'])
     errors['bio'] = valid_bio(f['bio'], f['username'])
     errors['birthyear'] = valid_birthyear(f['birthyear'])
-    errors['country'] = valid_country(f['country'])
+    errors['location'] = valid_location(f['location'])
     errors['emoji'] = valid_emoji(f['emoji'])
     return {k: v for k, v in errors.items() if v}

@@ -92,13 +92,10 @@
                     </div>
                 </div>
                 <div class="right">
-                    <label for="id_country">Country</label>
-                    <select id="id_country" name="country">
-                        {% set selected = fields.country %}
-                        {% for code, name in countries.items() %}
-                            <option value="{{ code }}" {% if selected == code %}selected{% endif %}>{{ name }}</option>
-                        {% endfor %}
-                    </select>
+                    <label for="id_location">Location</label>
+                    <input type="text" name="location" id="id_location" maxlength="60"
+                        placeholder="City, Country"
+                        value="{% if form %}{{ fields.location }}{% else %}{{ user.location }}{% endif %}">
                 </div>
                 {% if 'emoji' in errors %}
                     <div class="error">{{ errors['emoji'] }}</div>
@@ -106,8 +103,8 @@
                 {% if 'birthyear' in errors %}
                     <div class="error">{{ errors['birthyear'] }}</div>
                 {% endif %}
-                {% if 'country' in errors %}
-                    <div class="error">{{ errors['country'] }}</div>
+                {% if 'location' in errors %}
+                    <div class="error">{{ errors['location'] }}</div>
                 {% endif %}
             </div>
             <div class="line">
