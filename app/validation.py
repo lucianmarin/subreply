@@ -236,8 +236,9 @@ def valid_password(value1, value2):
 def valid_birthday(value, delimiter="-"):
     if value:
         years = [str(y) for y in range(MIN_YEAR, MAX_YEAR + 1)]
-        months = [str(m).zfill(2) for m in range(1, 13)]
-        days = [str(d).zfill(2) for d in range(1, 32)]
+        zeroes = [str(z).zfill(2) for z in range(1, 10)]
+        months = [str(m) for m in range(1, 13)] + zeroes
+        days = [str(d) for d in range(1, 32)] + zeroes
         if value.count(delimiter) > 2:
             return "Birthday has an invalid format"
         elif len(value) > 10:
@@ -247,9 +248,9 @@ def valid_birthday(value, delimiter="-"):
             if year not in years:
                 return "Year is not between {0}-{1}".format(MIN_YEAR, MAX_YEAR)
             elif month not in months:
-                return "Month is not between 01-12"
+                return "Month is not between 1-12"
             elif day not in days:
-                return "Day is not between 01-31"
+                return "Day is not between 1-31"
             else:
                 try:
                     _ = date(int(year), int(month), int(day))
@@ -261,7 +262,7 @@ def valid_birthday(value, delimiter="-"):
             if year not in years:
                 return "Year is not between {0}-{1}".format(MIN_YEAR, MAX_YEAR)
             elif month not in months:
-                return "Month is not between 01-12"
+                return "Month is not between 1-12"
         elif value not in years:
             return "Year is not between {0}-{1}".format(MIN_YEAR, MAX_YEAR)
 

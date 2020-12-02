@@ -8,6 +8,7 @@ def country(code):
 
 
 def age(birthday, delimiter="-"):
+    """Age based on yyyy-mm-dd format."""
     if birthday.count(delimiter):
         integers = [int(v) for v in birthday.split(delimiter)]
         integers += [15] if len(integers) == 2 else []
