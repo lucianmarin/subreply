@@ -162,7 +162,7 @@ table td a { text-decoration: underline; }
 
 .line { margin-bottom: 10px; overflow: hidden; }
 
-.line a { color: var(--gray); font-size: var(--small); }
+.line a { color: var(--gray); display: block; float: left; font-size: var(--small); margin: 5px 0; }
 
 .line .cell { display: table-cell; padding: 0 5px; height: 20px; vertical-align: middle; }
 
