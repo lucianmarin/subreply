@@ -3150,7 +3150,7 @@
         "Terrebonne",
         "Thames Centre",
         "The Blue Mountains",
-        "The Nation / La Nation",
+        "The Nation",
         "The Pas",
         "Thetford Mines",
         "Thompson",
@@ -3193,7 +3193,7 @@
         "Wellington North",
         "West Grey",
         "West Lincoln",
-        "West Nipissing / Nipissing Ouest",
+        "West Nipissing",
         "West Perth",
         "West St. Paul",
         "West Vancouver",
@@ -4432,7 +4432,7 @@
         "Nicosia",
         "Paphos"
     ],
-    "Czechia": [
+    "Czech Republic": [
         "As",
         "Bakov nad Jizerou",
         "Bechyne",
@@ -14448,10 +14448,6 @@
         "Ruhango",
         "Ruhengeri",
         "Rwamagana"
-    ],
-    "Saint Helena, Ascension and Tristan da Cunha": [
-        "Edinburgh of the Seven Seas",
-        "Georgetown"
     ],
     "Saint Kitts and Nevis": [
         "Basseterre"

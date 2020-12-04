@@ -26,6 +26,7 @@ class Command(BaseCommand):
             ("Korea, South", "South Korea"),
             ("Korea, North", "North Korea"),
             ("Curaçao", "Curacao"),
+            ("Czechia", "Czech Republic"),
             ("Côte D’Ivoire", "Cote d'Ivoire"),
             ("Congo (Brazzaville)", "Congo-Brazzaville"),
             ("Congo (Kinshasa)", "Congo-Kinshasa"),
@@ -49,7 +50,7 @@ class Command(BaseCommand):
         ]
         for before, after in replaces:
             v = v.replace(before, after)
-        return v
+        return v.split(" / ")[0]
 
     def convert(self):
         world = defaultdict(set)
@@ -58,10 +59,11 @@ class Command(BaseCommand):
         for row in reader:
             country = self.fix_country(row['country'])
             city = self.fix_city(row['city_ascii'])
-            world[country].add(city)
             name = f"{city}, {country}"
-            if len(name) > maxim:
-                maxim, loc = len(name), name
+            if name.count(", ") == 1:
+                world[country].add(city)
+                if len(name) > maxim:
+                    maxim, loc = len(name), name
 
         print('max', maxim)
         print('loc', loc)
