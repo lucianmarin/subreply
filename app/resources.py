@@ -9,7 +9,6 @@ from falcon.hooks import before
 from falcon.redirects import HTTPFound
 from project.settings import DEBUG, MAX_AGE, SMTP, F
 
-from app.const import COUNTRIES
 from app.forms import get_content, get_emoji
 from app.helpers import build_hash, parse_metadata, utc_timestamp
 from app.hooks import auth_user, login_required
@@ -600,8 +599,7 @@ class SettingsResource:
         form = FieldStorage(fp=req.stream, environ=req.env)
         template = env.get_template('pages/settings.html')
         resp.body = template.render(
-            user=req.user, errors={}, form=form,
-            countries=COUNTRIES, view='settings'
+            user=req.user, errors={}, form=form, view='settings'
         )
 
     @before(auth_user)
@@ -625,8 +623,7 @@ class SettingsResource:
         if errors:
             template = env.get_template('pages/settings.html')
             resp.body = template.render(
-                user=req.user, errors=errors, form=form, fields=f,
-                countries=COUNTRIES, view='settings'
+                user=req.user, errors=errors, form=form, fields=f, view='settings'
             )
         else:
             for field, value in f.items():
@@ -667,8 +664,7 @@ class RegisterResource:
         form = FieldStorage(fp=req.stream, environ=req.env)
         template = env.get_template('pages/register.html')
         resp.body = template.render(
-            countries=COUNTRIES, errors={}, form=form, fields={},
-            view='register'
+            errors={}, form=form, fields={}, view='register'
         )
 
     def on_post(self, req, resp):
@@ -695,8 +691,7 @@ class RegisterResource:
         if errors:
             template = env.get_template('pages/register.html')
             resp.body = template.render(
-                countries=COUNTRIES, errors=errors, form=form, fields=f,
-                view='register'
+                errors=errors, form=form, fields=f, view='register'
             )
         else:
             user, is_new = User.objects.get_or_create(

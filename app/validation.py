@@ -1,4 +1,3 @@
-import json
 from datetime import date
 
 import grapheme
@@ -8,7 +7,7 @@ from dns.resolver import query as dns_query
 from project.settings import INVALID, SLURS
 from user_agents import parse
 
-from app.const import LATIN, MAX_YEAR, MIN_YEAR
+from app.const import LATIN, MAX_YEAR, MIN_YEAR, WORLD
 from app.filters import shortdate
 from app.helpers import has_repetions, parse_metadata, verify_hash
 from app.models import Comment, User
@@ -269,17 +268,15 @@ def valid_birthday(value, delimiter="-"):
 
 def valid_location(value, delimiter=", "):
     if value:
-        with open('static/cities.json') as file:
-            world = json.load(file)
         if value.count(delimiter) > 1:
             return "City, Country or just Country"
         elif value.count(delimiter):
             city, country = value.split(delimiter)
-            if country not in world:
+            if country not in WORLD:
                 return "Country is invalid"
-            elif city not in world[country]:
+            elif city not in WORLD[country]:
                 return "City is invalid"
-        elif value not in world:
+        elif value not in WORLD:
             return "Country is invalid"
 
 

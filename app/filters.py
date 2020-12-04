@@ -1,11 +1,5 @@
 from datetime import date, datetime, timezone
 
-from app.const import COUNTRIES
-
-
-def country(code):
-    return COUNTRIES.get(code, 'None')
-
 
 def age(birthday, delimiter="-"):
     """Age based on yyyy-mm-dd format."""
