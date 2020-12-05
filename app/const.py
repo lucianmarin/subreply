@@ -36,6 +36,18 @@ LATIN += "ȠȡȢȣȤȥȦȧȨȩȪȫȬȭȮȯ"
 LATIN += "ȰȱȲȳȴȵȶȷȸȹȺȻȼȽȾȿ"
 LATIN += "ɀɁɂɃɄɅɆɇɈɉɊɋɌɍɎɏ"
 
-HTML = "<html><p>Hello,</p><p>You can change your password for @{{ username }} on Subreply using the following link https://subreply.com/reset/{{ code }} and after that you will be logged in with the new credentials.</p><p>Delete this email if you didn't make such request.</p>"
+HTML = (
+    "<html>"
+    "<p>Hello,</p>"
+    "<p>You can change your password for @{{ username }} on Subreply by going to https://subreply.com/change and use the code below.</p>"
+    "<p>Your secret code is: {{ code }}</p>"
+    "<p>Delete this email if you didn't make such request.</p>"
+    "</html>"
+)
 
-TEXT = "Hello,\nYou can change your password for @{{ username }} on Subreply using the following link https://subreply.com/reset/{{ code }} and after that you will be logged in with the new credentials.\nDelete this email if you didn't make such request."
+TEXT = (
+    "Hello,\n"
+    "You can change your password for @{{ username }} on Subreply by going to https://subreply.com/change and use the code below.\n"
+    "Your secret code is: {{ code }}\n"
+    "Delete this email if you didn't make such request."
+)

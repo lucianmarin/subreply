@@ -2,7 +2,7 @@
 
 {% block main %}
     <div class="title">
-        <a href="/reset" class="on">Reset</a> password request
+        <a href="/reset" class="on">Reset</a> password
     </div>
 
     <div class="login">
@@ -13,9 +13,6 @@
                     value="{{ form.getvalue('email', '') }}">
                 {% if 'email' in errors %}
                     <div class="error">{{ errors['email'] }}</div>
-                {% endif %}
-                {% if 'reset' in errors %}
-                    <div class="error">{{ errors['reset'] }}</div>
                 {% endif %}
             </div>
             <div class="line">

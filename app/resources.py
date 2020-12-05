@@ -542,7 +542,7 @@ class ActionResource:
 
     @before(auth_user)
     @before(login_required)
-    def on_get_f(self, req, resp, username):
+    def on_get_flw(self, req, resp, username):
         self.get_action(req, resp, username, 'follow')
 
     @before(auth_user)
@@ -739,14 +739,14 @@ class ResetResource:
             reset = Reset.objects.filter(email=user.email).first()
             if reset:
                 remains = reset.created_at + self.hours * 3600 - utc_timestamp()
-                errors['reset'] = f"Try again in {timeago(remains)}, reset already sent"
+                errors['email'] = f"Try again in {timeago(remains)}, reset already sent"
         if errors:
             template = env.get_template('pages/reset.html')
             resp.body = template.render(errors=errors, form=form, view='reset')
         else:
             # generate code
-            unique = "{0}-{1}".format(user.email, utc_timestamp())
-            code = hashlib.md5(unique.encode()).hexdigest()
+            unique = str(utc_timestamp()).encode()
+            code = hashlib.shake_128(unique).hexdigest(3)
             # compose email
             m = Message(
                 html=JinjaTemplate(HTML),
@@ -763,38 +763,35 @@ class ResetResource:
                 Reset.objects.update_or_create(
                     created_at=utc_timestamp(), email=user.email, code=code
                 )
-                print("message sent")
+                raise HTTPFound('/change')
             else:
-                print("message not sent")
-            raise HTTPFound('/login')
+                raise HTTPFound('/reset')
 
 
 class ChangeResource:
-    def on_get(self, req, resp, code):
-        reset = Reset.objects.filter(code=code).first()
-        if not reset:
-            raise HTTPFound('/login')
+    def on_get(self, req, resp):
         form = FieldStorage(fp=req.stream, environ=req.env)
         template = env.get_template('pages/change.html')
         resp.body = template.render(
-            code=code, errors={}, form=form, view='change'
+            errors={}, form=form, view='change'
         )
 
-    def on_post(self, req, resp, code):
+    def on_post(self, req, resp):
         form = FieldStorage(fp=req.stream, environ=req.env)
+        code = form.getvalue('code', '').strip().lower()
         email = form.getvalue('email', '').strip().lower()
         password1 = form.getvalue('password1', '')
         password2 = form.getvalue('password2', '')
         errors = {}
         reset = Reset.objects.filter(email=email, code=code).first()
         if not reset:
-            errors['email'] = "Email didn't request a reset"
+            errors['email'] = "Email didn't receive this code"
         errors['password'] = valid_password(password1, password2)
         errors = {k: v for k, v in errors.items() if v}
         if errors:
             template = env.get_template('pages/change.html')
             resp.body = template.render(
-                code=code, errors=errors, form=form, view='change'
+                errors=errors, form=form, view='change'
             )
         else:
             user = User.objects.filter(email=email).first()

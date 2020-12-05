@@ -2,15 +2,22 @@
 
 {% block main %}
     <div class="title">
-        <a href="/reset/{{ code }}" class="on">Change</a> password
+        <a href="/change" class="on">Change</a> password
     </div>
 
     <div class="login">
         <form enctype="multipart/form-data" method="post">
             <div class="line">
-                <label for="id_email">Email address*</label>
-                <input type="text" name="email" id="id_email"
-                    value="{{ form.getvalue('email', '') }}">
+                <div class="left">
+                    <label for="id_email">Email address<i>*</i></label>
+                    <input type="text" name="email" id="id_email"
+                        value="{{ form.getvalue('email', '') }}">
+                </div>
+                <div class="right">
+                    <label for="id_code">Secret code<i>*</i></label>
+                    <input type="text" name="code" id="id_code"
+                        value="{{ form.getvalue('code', '') }}">
+                </div>
                 {% if 'email' in errors %}
                     <div class="error">{{ errors['email'] }}</div>
                 {% endif %}

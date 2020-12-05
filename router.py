@@ -42,13 +42,13 @@ app.add_route('/register', resources.RegisterResource())
 app.add_route('/password', resources.PasswordResource())
 app.add_route('/settings', resources.SettingsResource())
 
-app.add_route('/reset/{code}', resources.ChangeResource())
+app.add_route('/change', resources.ChangeResource())
 app.add_route('/reset', resources.ResetResource())
 
 app.add_route('/edit/{base}', resources.EditResource())
 app.add_route('/{username}/{base}', resources.ReplyResource())
 app.add_route('/{username}/unfollow', resources.ActionResource(), suffix="unf")
-app.add_route('/{username}/follow', resources.ActionResource(), suffix="f")
+app.add_route('/{username}/follow', resources.ActionResource(), suffix="flw")
 app.add_route('/{username}/replies', resources.ProfileResource(), suffix="re")
 app.add_route('/{username}', resources.ProfileResource(), suffix="th")
 
