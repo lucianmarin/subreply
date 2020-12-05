@@ -726,6 +726,8 @@ class RegisterResource:
 
 
 class ResetResource:
+    hours = 8
+
     def on_get(self, req, resp):
         form = FieldStorage(fp=req.stream, environ=req.env)
         template = env.get_template('pages/reset.html')
@@ -735,18 +737,18 @@ class ResetResource:
         form = FieldStorage(fp=req.stream, environ=req.env)
         email = form.getvalue('email', '').strip().lower()
         # clean up
-        one_day_ago = utc_timestamp() - 24 * 3600
-        Reset.objects.filter(created_at__lt=one_day_ago).delete()
+        hours_ago = utc_timestamp() - self.hours * 3600
+        Reset.objects.filter(created_at__lt=hours_ago).delete()
         errors = {}
         user = User.objects.filter(email=email).first()
         if not user:
-            errors['username'] = "Email doesn't exist"
+            errors['email'] = "Email doesn't exist"
         else:
             reset = Reset.objects.filter(
-                email=user.email, created_at__gt=one_day_ago
+                email=user.email, created_at__gt=hours_ago
             ).exists()
             if reset:
-                errors['reset'] = "Reset already exists"
+                errors['reset'] = f"Try again in {self.hours}h, reset already sent"
         if errors:
             template = env.get_template('pages/reset.html')
             resp.body = template.render(errors=errors, form=form, view='reset')
@@ -767,7 +769,7 @@ class ResetResource:
             )
             # create reset entry
             if response.status_code == 250:
-                Reset.objects.get_or_create(
+                Reset.objects.update_or_create(
                     created_at=utc_timestamp(), email=user.email, code=code
                 )
                 print("message sent")
@@ -795,7 +797,7 @@ class ChangeResource:
         errors = {}
         reset = Reset.objects.filter(email=email, code=code).first()
         if not reset:
-            errors['email'] = "Email isn't requesting a reset"
+            errors['email'] = "Email didn't request a reset"
         errors['password'] = valid_password(password1, password2)
         errors = {k: v for k, v in errors.items() if v}
         if errors:
