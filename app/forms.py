@@ -1,12 +1,10 @@
-import emoji
-
+from emoji import demojize, emojize
 from unidecode import unidecode
-from grapheme import graphemes
 
 
-def get_content(form):
-    value = form.getvalue('content', '')
-    demojized = emoji.demojize(value)
+def get_content(form, t="content"):
+    value = form.getvalue(t, '')
+    demojized = demojize(value)
     decoded = unidecode(demojized)
     words = [w.strip() for w in decoded.split()]
     return " ".join(words)
@@ -14,7 +12,11 @@ def get_content(form):
 
 def get_emoji(form):
     value = form.getvalue('emoji', '').strip()
-    demojized = emoji.demojize(value)
-    listed = graphemes(emoji.emojize(demojized))
-    chars = [c for c in listed if c in emoji.UNICODE_EMOJI]
-    return "".join(chars)
+    demojized = demojize(value)
+    return emojize(demojized)
+
+
+def get_name(form, t):
+    value = form.getvalue(f'{t}_name', '')
+    chars = [p.strip() for p in value.split()]
+    return "".join(chars).capitalize()

@@ -1,5 +1,6 @@
 from datetime import date
 
+import emoji
 import grapheme
 import requests
 from django.db.models import Q
@@ -282,12 +283,13 @@ def valid_location(value, delimiter=", "):
 
 def valid_emoji(value, user_id=0):
     if value:
-        print(value)
         duplicate = User.objects.filter(emoji=value).exclude(id=user_id).first()
-        graphemes = list(grapheme.graphemes(value))
-        if grapheme.length(value) > 2:
+        emojis = list(grapheme.graphemes(value))
+        if any(emo not in emoji.UNICODE_EMOJI for emo in emojis):
+            return "Emojis only are allowed"
+        if len(emojis) > 2:
             return "Emojis are more than two"
-        elif grapheme.length(value) == 2 and graphemes[0] == graphemes[1]:
+        elif len(emojis) == 2 and emojis[0] == emojis[1]:
             return "Emojis are identical"
         elif duplicate:
             return f'Emoji status of <a href="/{duplicate}">@{duplicate}</a>'

@@ -3,13 +3,15 @@ from cgi import FieldStorage
 
 from django.db.models import Max, Prefetch, Q
 from emails import Message
-from emails.template import JinjaTemplate as Tpl
+from emails.template import JinjaTemplate
 from falcon import status_codes
 from falcon.hooks import before
 from falcon.redirects import HTTPFound
 from project.settings import DEBUG, MAX_AGE, SMTP, F
 
-from app.forms import get_content, get_emoji
+from app.const import HTML, TEXT
+from app.filters import timeago
+from app.forms import get_content, get_emoji, get_name
 from app.helpers import build_hash, parse_metadata, utc_timestamp
 from app.hooks import auth_user, login_required
 from app.jinja import env
@@ -608,13 +610,10 @@ class SettingsResource:
         form = FieldStorage(fp=req.stream, environ=req.env)
         f = {}
         f['username'] = form.getvalue('username', '').strip().lower()
-        fn_parts = form.getvalue('first_name', '').split()
-        f['first_name'] = "".join([p.strip() for p in fn_parts]).capitalize()
-        ln_parts = form.getvalue('last_name', '').split()
-        f['last_name'] = "".join([p.strip() for p in ln_parts]).capitalize()
+        f['first_name'] = get_name(form, 'first')
+        f['last_name'] = get_name(form, 'last')
         f['email'] = form.getvalue('email', '').strip().lower()
-        bio_parts = form.getvalue('bio', '').split()
-        f['bio'] = " ".join([p.strip() for p in bio_parts])
+        f['bio'] = get_content(form, 'bio')
         f['emoji'] = get_emoji(form)
         f['birthday'] = form.getvalue('birthday', '').strip()
         f['location'] = form.getvalue('location', '')
@@ -674,15 +673,12 @@ class RegisterResource:
         f['user_agent'] = user_agent if user_agent else 'empty'
         f['remote_addr'] = '127.0.0.5' if DEBUG else req.access_route[0]
         f['username'] = form.getvalue('username', '').strip().lower()
-        fn_parts = form.getvalue('first_name', '').split()
-        f['first_name'] = "".join([p.strip() for p in fn_parts]).capitalize()
-        ln_parts = form.getvalue('last_name', '').split()
-        f['last_name'] = "".join([p.strip() for p in ln_parts]).capitalize()
+        f['first_name'] = get_name(form, 'first')
+        f['last_name'] = get_name(form, 'last')
         f['password1'] = form.getvalue('password1', '')
         f['password2'] = form.getvalue('password2', '')
         f['email'] = form.getvalue('email', '').strip().lower()
-        bio_parts = form.getvalue('bio', '').split()
-        f['bio'] = " ".join([p.strip() for p in bio_parts])
+        f['bio'] = get_content(form, 'bio')
         f['emoji'] = get_emoji(form)
         f['birthday'] = form.getvalue('birthday', '').strip()
         f['location'] = form.getvalue('location', '')
@@ -744,23 +740,22 @@ class ResetResource:
         if not user:
             errors['email'] = "Email doesn't exist"
         else:
-            reset = Reset.objects.filter(
-                email=user.email, created_at__gt=hours_ago
-            ).exists()
+            reset = Reset.objects.filter(email=user.email).first()
             if reset:
-                errors['reset'] = f"Try again in {self.hours}h, reset already sent"
+                remains = reset.created_at + self.hours * 3600 - utc_timestamp()
+                errors['reset'] = f"Try again in {timeago(remains)}, reset already sent"
         if errors:
             template = env.get_template('pages/reset.html')
             resp.body = template.render(errors=errors, form=form, view='reset')
         else:
             # generate code
-            plain = "{0}-{1}".format(utc_timestamp(), user.email)
-            code = hashlib.md5(plain.encode()).hexdigest()
+            unique = "{0}-{1}".format(user.email, utc_timestamp())
+            code = hashlib.md5(unique.encode()).hexdigest()
             # compose email
             m = Message(
-                html=Tpl("<html><p>Hello,</p><p>You can change your password for @{{ username }} on Subreply using the following link https://subreply.com/reset/{{ code }} and after that you will be logged in with the new credentials.</p><p>Delete this email if you didn't make such request.</p>"),
-                text=Tpl("Hello,\nYou can change your password for @{{ username }} on Subreply using the following link https://subreply.com/reset/{{ code }} and after that you will be logged in with the new credentials.\nDelete this email if you didn't make such request."),
-                subject=Tpl("Reset password"),
+                html=JinjaTemplate(HTML),
+                text=JinjaTemplate(TEXT),
+                subject="Reset password",
                 mail_from=("Subreply", "subreply@outlook.com")
             )
             # send email

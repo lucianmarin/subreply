@@ -1,5 +1,7 @@
 from datetime import date, datetime, timezone
 
+from app.helpers import utc_timestamp
+
 
 def age(birthday, delimiter="-"):
     """Age based on yyyy-mm-dd format."""
@@ -15,13 +17,17 @@ def age(birthday, delimiter="-"):
 
 def shortdate(timestamp):
     """Short time interval for a timestamp."""
-    seconds = datetime.now(timezone.utc).timestamp() - timestamp
+    return timeago(utc_timestamp() - timestamp)
+
+
+def timeago(seconds):
+    """Convert seconds to m, h, d, w, y."""
     milliseconds = round(seconds * 1000)
     seconds = round(seconds)
     days = seconds // (3600 * 24)
-    years = days // 365
-    weeks = (days - 365 * years) // 7
-    days = days - 365 * years
+    years = days // 365.25
+    weeks = (days - 365.25 * years) // 7
+    days = days - 365.25 * years
     if not years and not days:
         if not seconds:
             return "%dms" % milliseconds
