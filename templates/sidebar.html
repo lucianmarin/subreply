@@ -1,6 +1,6 @@
 <div class="logo">
-    {% if pages and pages.this != 1 %}
-        <a href="?p={{ pages.this }}">{{ pages.this }}</a>
+    {% if pages and pages.current != 1 %}
+        <a href="?p={{ pages.current }}">{{ pages.current }}</a>
     {% elif user %}
         <a href="/{{ user }}">{{ user.username[:3] }}</a>
     {% else %}

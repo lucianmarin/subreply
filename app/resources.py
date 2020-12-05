@@ -25,21 +25,17 @@ PFR = Prefetch('kids', queryset=Comment.objects.order_by('id').select_related('c
 
 def paginate(req, qs, limit=16):
     p = req.params.get('p', '1').strip()
-    page = int(p) if p.isdecimal() and int(p) else 1
-    bottom = (page - 1) * limit
-    top = bottom + limit + 1
-    query = qs[bottom:top]
-    if not len(query):
-        query = qs[:limit + 1]
-        page = 1
-        bottom = 0
-    pages = {
-        'prev': page - 1,
-        'this': page,
-        'next': page + 1 if len(query) == limit + 1 else 0,
-    }
-    if not bottom and len(query) < limit + 1:
-        pages = {}
+    page = int(p) if p.isdecimal() and int(p) else 0
+    backward, forward, query, pages = 0, 0, [], {}
+    if page:
+        index = (page - 1) * limit
+        query = qs[index:index + limit + 1]
+        if len(query):
+            backward = page - 1
+        if len(query) == limit + 1:
+            forward = page + 1
+    if backward or forward:
+        pages = {'previous': backward, 'current': page, 'next': forward}
     return query[:limit], pages
 
 
