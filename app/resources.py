@@ -20,7 +20,9 @@ from app.validation import (authentication, changing, profiling, registration,
                             valid_content, valid_password, valid_reply,
                             valid_thread)
 
-PFR = Prefetch('kids', queryset=Comment.objects.order_by('id').select_related('created_by'))
+PFR = Prefetch(
+    'kids', queryset=Comment.objects.order_by('id').select_related('created_by')
+)
 
 
 def paginate(req, qs, limit=16):
@@ -87,7 +89,9 @@ class AboutResource:
 class FeedResource:
     def fetch_entries(self, req):
         friends = Relation.objects.filter(created_by=req.user).values('to_user_id')
-        entries = Comment.objects.filter(created_by__in=friends, parent=None).order_by('-id').select_related('created_by').prefetch_related(PFR)
+        entries = Comment.objects.filter(
+            created_by__in=friends, parent=None
+        ).order_by('-id').select_related('created_by').prefetch_related(PFR)
         return paginate(req, entries)
 
     @before(auth_user)
@@ -138,10 +142,14 @@ class FeedResource:
 
 class ReplyResource:
     def fetch_entries(self, parent):
-        return Comment.objects.filter(parent=parent).order_by('-id').select_related('created_by').prefetch_related(PFR)
+        return Comment.objects.filter(
+            parent=parent
+        ).order_by('-id').select_related('created_by').prefetch_related(PFR)
 
     def fetch_ancestors(self, parent):
-        return Comment.objects.filter(id__in=parent.ancestors).order_by('id').select_related('created_by', 'parent')
+        return Comment.objects.filter(
+            id__in=parent.ancestors
+        ).order_by('id').select_related('created_by', 'parent')
 
     @before(auth_user)
     def on_get(self, req, resp, username, base):
@@ -271,10 +279,16 @@ class EditResource:
 
 class ProfileResource:
     def fetch_threads(self, user):
-        return Comment.objects.filter(created_by=user, parent=None).order_by('-id').select_related('created_by').prefetch_related(PFR)
+        return Comment.objects.filter(
+            created_by=user, parent=None
+        ).order_by('-id').select_related('created_by').prefetch_related(PFR)
 
     def fetch_replies(self, user):
-        return Comment.objects.filter(created_by=user).exclude(parent=None).order_by('-id').select_related('created_by', 'parent__created_by', 'parent__parent')
+        return Comment.objects.filter(
+            created_by=user
+        ).exclude(parent=None).order_by('-id').select_related(
+            'created_by', 'parent__created_by', 'parent__parent'
+        )
 
     def fetch_entries(self, req, member, tab):
         method = getattr(self, f'fetch_{tab}')
@@ -311,7 +325,9 @@ class ProfileResource:
 
 class FollowingResource:
     def fetch_entries(self, req):
-        entries = Relation.objects.filter(created_by=req.user).exclude(to_user=req.user).order_by('-id').select_related('to_user')
+        entries = Relation.objects.filter(
+            created_by=req.user
+        ).exclude(to_user=req.user).order_by('-id').select_related('to_user')
         return paginate(req, entries, 32)
 
     @before(auth_user)
@@ -326,7 +342,9 @@ class FollowingResource:
 
 class FollowersResource:
     def fetch_entries(self, req):
-        entries = Relation.objects.filter(to_user=req.user).exclude(created_by=req.user).order_by('-id').select_related('created_by')
+        entries = Relation.objects.filter(
+            to_user=req.user
+        ).exclude(created_by=req.user).order_by('-id').select_related('created_by')
         return paginate(req, entries, 32)
 
     def clear_followers(self, user):
@@ -349,7 +367,9 @@ class FollowersResource:
 
 class MentionsResource:
     def fetch_entries(self, req):
-        entries = Comment.objects.filter(mentioned=req.user).order_by('-id').order_by('-id').select_related('created_by', 'parent')
+        entries = Comment.objects.filter(
+            mentioned=req.user
+        ).order_by('-id').order_by('-id').select_related('created_by', 'parent')
         return paginate(req, entries, 24)
 
     def clear_mentions(self, user):
@@ -372,7 +392,11 @@ class MentionsResource:
 
 class RepliesResource:
     def fetch_entries(self, req):
-        entries = Comment.objects.filter(parent__created_by=req.user).order_by('-id').select_related('created_by', 'parent__created_by', 'parent__parent')
+        entries = Comment.objects.filter(
+            parent__created_by=req.user
+        ).order_by('-id').select_related(
+            'created_by', 'parent__created_by', 'parent__parent'
+        )
         return paginate(req, entries)
 
     def clear_replies(self, user):
@@ -395,8 +419,14 @@ class RepliesResource:
 
 class ReplyingResource:
     def fetch_entries(self, req):
-        friends = Relation.objects.filter(created_by=req.user).exclude(to_user=req.user).values('to_user_id')
-        entries = Comment.objects.filter(created_by__in=friends).exclude(parent=None).exclude(parent__created_by=req.user).order_by('-id').select_related('created_by', 'parent__created_by', 'parent__parent')
+        friends = Relation.objects.filter(
+            created_by=req.user
+        ).exclude(to_user=req.user).values('to_user_id')
+        entries = Comment.objects.filter(
+            created_by__in=friends
+        ).exclude(parent=None).exclude(parent__created_by=req.user).order_by('-id').select_related(
+            'created_by', 'parent__created_by', 'parent__parent'
+        )
         return paginate(req, entries)
 
     @before(auth_user)
@@ -411,7 +441,9 @@ class ReplyingResource:
 
 class SavedResource:
     def fetch_entries(self, req):
-        entries = Save.objects.filter(created_by=req.user).order_by('-id').select_related('to_comment__created_by', 'to_comment__parent')
+        entries = Save.objects.filter(
+            created_by=req.user
+        ).order_by('-id').select_related('to_comment__created_by', 'to_comment__parent')
         return paginate(req, entries, 24)
 
     @before(auth_user)
@@ -475,14 +507,15 @@ class DiscoverResource:
         return query
 
     def fetch_entries(self, req, terms, is_thread):
-        max_id = Max('comments__id')
         sq = Q()
+        max_id = Max('comments__id')
         if is_thread is not None:
             sq = Q(parent__isnull=is_thread)
             max_id = Max('comments__id', filter=Q(comments__parent__isnull=is_thread))
         last_ids = User.objects.annotate(last_id=max_id).values('last_id')
-        q = self.build_query(terms) & sq if terms else Q(id__in=last_ids)
-        entries = Comment.objects.filter(q).order_by('-id').select_related('created_by').prefetch_related('parent')
+        entries = Comment.objects.filter(
+            self.build_query(terms) & sq if terms else Q(id__in=last_ids)
+        ).order_by('-id').select_related('created_by').prefetch_related('parent')
         return paginate(req, entries, 24)
 
     def get_discover(self, req, resp, kind):
@@ -511,8 +544,12 @@ class DiscoverResource:
 
 class TrendingResource:
     def fetch_entries(self, req, sample):
-        sampling = Comment.objects.filter(parent=None).exclude(replies=0).order_by('-id').values('id')[:sample]
-        entries = Comment.objects.filter(id__in=sampling).order_by('-replies', '-id').select_related('created_by').prefetch_related(PFR)
+        sampling = Comment.objects.filter(
+            parent=None
+        ).exclude(replies=0).order_by('-id').values('id')[:sample]
+        entries = Comment.objects.filter(
+            id__in=sampling
+        ).order_by('-replies', '-id').select_related('created_by').prefetch_related(PFR)
         return paginate(req, entries)
 
     @before(auth_user)
