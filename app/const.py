@@ -39,15 +39,17 @@ LATIN += "ɀɁɂɃɄɅɆɇɈɉɊɋɌɍɎɏ"
 HTML = (
     "<html>"
     "<p>Hello,</p>"
-    "<p>You can change your password for @{{ username }} on Subreply by going to https://subreply.com/change and use the code below.</p>"
+    "<p>Reset your password on Subreply by going to https://subreply.com/change and use the code below.</p>"
     "<p>Your secret code is: {{ code }}</p>"
+    "<p>Your username is: {{ username }}</p>"
     "<p>Delete this email if you didn't make such request.</p>"
     "</html>"
 )
 
 TEXT = (
     "Hello,\n"
-    "You can change your password for @{{ username }} on Subreply by going to https://subreply.com/change and use the code below.\n"
+    "Reset your password on Subreply by going to https://subreply.com/change and use the code below.\n"
     "Your secret code is: {{ code }}\n"
-    "Delete this email if you didn't make such request."
+    "Your username is: {{ username }}\n"
+    "Delete this email if you didn't make such request.\n"
 )
