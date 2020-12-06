@@ -3,7 +3,7 @@
 
 */20 * * * * python3 ~/newscafe/manage.py fetch
 
-0 * * * * zcat -f ~/log/news.log.gz | goaccess --ignore-crawlers --output ~/log/news.html -
-0 * * * * zcat -f ~/log/sub.log.gz | goaccess --ignore-crawlers --output ~/log/sub.html -
+10 * * * * zcat -f ~/log/news.log.gz | goaccess --ignore-crawlers --output ~/log/news.html -
+50 * * * * zcat -f ~/log/sub.log.gz | goaccess --ignore-crawlers --output ~/log/sub.html -
 
 30 12 * * * pg_dump -U postgres subreply | xz > ~/db/subreply.sql.xz
