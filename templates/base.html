@@ -1,7 +1,13 @@
 <!doctype html>
 <html lang="en">
 <head>
-    <title>{{ brand }} / {{ view | capitalize }}</title>
+    <title>
+        {% if view == 'profile' %}
+            {{ brand }} / {{ member }}
+        {% else %}
+            {{ brand }} / {{ view | capitalize }}
+        {% endif %}
+    </title>
     {% include "meta.html" %}
     {% block meta %}{% endblock %}
 </head>
