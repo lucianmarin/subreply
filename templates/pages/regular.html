@@ -27,7 +27,9 @@
             {% elif view == 'saved' %}
                 {% set entry = entry.to_comment %}
                 {% include "common/entry.html" %}
-            {% elif view in ['discover', 'mentioned', 'saved', ] %}
+            {% elif view == 'discover' %}
+                {% include "common/" + kind + ".html" %}
+            {% elif view in ['mentioned', 'saved', ] %}
                 {% include "common/entry.html" %}
             {% endif %}
         {% else %}

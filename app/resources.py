@@ -498,8 +498,6 @@ class PeopleResource:
 
 
 class DiscoverResource:
-    kinds = {'anything': None, 'replies': False, 'threads': True}
-
     def build_query(self, terms):
         query = Q()
         for term in terms:
@@ -507,19 +505,23 @@ class DiscoverResource:
         return query
 
     def fetch_entries(self, req, terms, is_thread):
-        sq = Q()
-        max_id = Max('comments__id')
-        if is_thread is not None:
-            sq = Q(parent__isnull=is_thread)
+        if terms:
+            sq = self.build_query(terms) & Q(parent__isnull=is_thread)
+        else:
             max_id = Max('comments__id', filter=Q(comments__parent__isnull=is_thread))
-        last_ids = User.objects.annotate(last_id=max_id).values('last_id')
-        entries = Comment.objects.filter(
-            self.build_query(terms) & sq if terms else Q(id__in=last_ids)
-        ).order_by('-id').select_related('created_by').prefetch_related('parent')
-        return paginate(req, entries, 24)
+            last_ids = User.objects.annotate(last_id=max_id).values('last_id')
+            sq = Q(id__in=last_ids)
+        entries = Comment.objects.filter(sq).order_by('-id')
+        if is_thread:
+            entries = entries.select_related('created_by').prefetch_related(PFR)
+        else:
+            entries = entries.select_related(
+                'created_by', 'parent__created_by', 'parent__parent'
+            )
+        return paginate(req, entries, 16)
 
-    def get_discover(self, req, resp, kind):
-        is_thread = self.kinds[kind]
+    def get_discover(self, req, resp, is_thread):
+        kind = 'threads' if is_thread else 'replies'
         q = req.params.get('q', '').strip()
         terms = [t.strip() for t in q.split() if t.strip()]
         entries, pages = self.fetch_entries(req, terms, is_thread)
@@ -530,16 +532,12 @@ class DiscoverResource:
         )
 
     @before(auth_user)
-    def on_get(self, req, resp):
-        self.get_discover(req, resp, 'anything')
-
-    @before(auth_user)
     def on_get_replies(self, req, resp):
-        self.get_discover(req, resp, 'replies')
+        self.get_discover(req, resp, False)
 
     @before(auth_user)
     def on_get_threads(self, req, resp):
-        self.get_discover(req, resp, 'threads')
+        self.get_discover(req, resp, True)
 
 
 class TrendingResource:

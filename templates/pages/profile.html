@@ -24,11 +24,7 @@
         </div>
 
         {% for entry in entries %}
-            {% if tab == 'threads' %}
-                {% include "common/threads.html" %}
-            {% else %}
-                {% include "common/replies.html" %}
-            {% endif %}
+            {% include "common/" + tab + ".html" %}
         {% else %}
             {% include "common/nothing.html" %}
         {% endfor %}
