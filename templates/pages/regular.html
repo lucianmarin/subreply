@@ -13,7 +13,7 @@
         {% for entry in entries %}
             {% if view == 'trending' %}
                 {% include "common/threads.html" %}
-            {% elif view in ['replying', 'replies'] %}
+            {% elif view in ['replying', 'replied'] %}
                 {% include "common/replies.html" %}
             {% elif view == 'people' %}
                 {% set member = entry %}
@@ -21,13 +21,13 @@
             {% elif view == 'following' %}
                 {% set member = entry.to_user %}
                 {% include "common/user.html" %}
-            {% elif view == 'followers' %}
+            {% elif view == 'followed' %}
                 {% set member = entry.created_by %}
                 {% include "common/user.html" %}
             {% elif view == 'saved' %}
                 {% set entry = entry.to_comment %}
                 {% include "common/entry.html" %}
-            {% elif view in ['discover', 'mentions', 'saved', ] %}
+            {% elif view in ['discover', 'mentioned', 'saved', ] %}
                 {% include "common/entry.html" %}
             {% endif %}
         {% else %}

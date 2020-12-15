@@ -340,7 +340,7 @@ class FollowingResource:
         )
 
 
-class FollowersResource:
+class FollowedResource:
     def fetch_entries(self, req):
         entries = Relation.objects.filter(
             to_user=req.user
@@ -359,13 +359,13 @@ class FollowersResource:
         entries, pages = self.fetch_entries(req)
         template = env.get_template('pages/regular.html')
         resp.body = template.render(
-            user=req.user, entries=entries, pages=pages, view='followers'
+            user=req.user, entries=entries, pages=pages, view='followed'
         )
         if req.user.notif_followers:
             self.clear_followers(req.user)
 
 
-class MentionsResource:
+class MentionedResource:
     def fetch_entries(self, req):
         entries = Comment.objects.filter(
             mentioned=req.user
@@ -384,13 +384,13 @@ class MentionsResource:
         entries, pages = self.fetch_entries(req)
         template = env.get_template('pages/regular.html')
         resp.body = template.render(
-            user=req.user, entries=entries, pages=pages, view='mentions'
+            user=req.user, entries=entries, pages=pages, view='mentioned'
         )
         if req.user.notif_mentions:
             self.clear_mentions(req.user)
 
 
-class RepliesResource:
+class RepliedResource:
     def fetch_entries(self, req):
         entries = Comment.objects.filter(
             parent__created_by=req.user
@@ -411,7 +411,7 @@ class RepliesResource:
         entries, pages = self.fetch_entries(req)
         template = env.get_template('pages/regular.html')
         resp.body = template.render(
-            user=req.user, entries=entries, pages=pages, view='replies'
+            user=req.user, entries=entries, pages=pages, view='replied'
         )
         if req.user.notif_replies:
             self.clear_replies(req.user)
@@ -489,7 +489,7 @@ class PeopleResource:
         )
 
     @before(auth_user)
-    def on_get(self, req, resp):
+    def on_get_seen(self, req, resp):
         self.get_people(req, resp, 'seen')
 
     @before(auth_user)
@@ -534,11 +534,11 @@ class DiscoverResource:
         self.get_discover(req, resp, 'anything')
 
     @before(auth_user)
-    def on_get_re(self, req, resp):
+    def on_get_replies(self, req, resp):
         self.get_discover(req, resp, 'replies')
 
     @before(auth_user)
-    def on_get_th(self, req, resp):
+    def on_get_threads(self, req, resp):
         self.get_discover(req, resp, 'threads')
 
 

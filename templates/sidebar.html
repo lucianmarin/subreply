@@ -28,20 +28,20 @@
                 <path d="M3 16 L23 16 M15 8 L23 16 15 24 M21 4 L29 4 29 28 21 28" />
             </svg>
         </a>
-        <a href="/followers" class="{% if view == 'followers' %}on{% endif %} {% if user.notif_followers %}accent{% endif %}">
-            <i>Followers<sup>{{ user.notif_followers }}</sup></i>
+        <a href="/followed" class="{% if view == 'followed' %}on{% endif %} {% if user.notif_followers %}accent{% endif %}">
+            <i>Followed<sup>{{ user.notif_followers }}</sup></i>
             <svg id="i-signout" viewBox="0 0 32 32" width="16" height="16">
                 <path d="M28 16 L8 16 M20 8 L28 16 20 24 M11 28 L3 28 3 4 11 4" />
             </svg>
         </a>
-        <a href="/mentions" class="{% if view == 'mentions' %}on{% endif %} {% if user.notif_mentions %}accent{% endif %}">
-            <i>Mentions<sup>{{ user.notif_mentions }}</sup></i>
+        <a href="/mentioned" class="{% if view == 'mentioned' %}on{% endif %} {% if user.notif_mentions %}accent{% endif %}">
+            <i>Mentioned<sup>{{ user.notif_mentions }}</sup></i>
             <svg id="i-bell" viewBox="0 0 32 32" width="16" height="16">
                 <path d="M8 17 C8 12 9 6 16 6 23 6 24 12 24 17 24 22 27 25 27 25 L5 25 C5 25 8 22 8 17 Z M20 25 C20 25 20 29 16 29 12 29 12 25 12 25 M16 3 L16 6" />
             </svg>
         </a>
-        <a href="/replies" class="{% if view == 'replies' %}on{% endif %} {% if user.notif_replies %}accent{% endif %}">
-            <i>Replies<sup>{{ user.notif_replies }}</sup></i>
+        <a href="/replied" class="{% if view == 'replied' %}on{% endif %} {% if user.notif_replies %}accent{% endif %}">
+            <i>Replied<sup>{{ user.notif_replies }}</sup></i>
             <svg id="i-reply" viewBox="0 0 32 32" width="16" height="16">
                 <path d="M10 6 L3 14 10 22 M3 14 L18 14 C26 14 30 18 30 26" />
             </svg>
@@ -52,7 +52,7 @@
                 <path d="M6 2 L26 2 26 30 16 20 6 30 Z" />
             </svg>
         </a>
-        <a href="/people" class="{% if view == 'people' %}on{% endif %}">
+        <a href="/seen" class="{% if view == 'people' %}on{% endif %}">
             <i>People</i>
             <svg id="i-location" viewBox="0 0 32 32" width="16" height="16">
                 <path d="M24 15 C21 22 16 30 16 30 16 30 11 22 8 15 5 8 10 2 16 2 22 2 27 8 24 15 Z" />
@@ -101,7 +101,7 @@
             <path d="M2 16 L30 2 16 30 12 20 Z M30 2 L12 20" />
         </svg>
     </a>
-    <a href="/discover" class="{% if view == 'discover' %}on{% endif %}">
+    <a href="/threads" class="{% if view == 'discover' %}on{% endif %}">
         <i>Discover</i>
         <svg id="i-search" viewBox="0 0 32 32" width="16" height="16">
             <circle cx="14" cy="14" r="12" />

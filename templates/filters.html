@@ -7,20 +7,17 @@
                 </a>
             {% endfor %}
         {% elif view == 'discover' %}
-            <a href="/discover{% if q %}?q={{ q | quote }}{% endif %}" class="{% if kind == 'anything' %}selected{% endif %}">
-                Anything
+            <a href="/threads{% if q %}?q={{ q | quote }}{% endif %}" class="{% if kind == 'threads' %}selected{% endif %}">
+                Last threads
             </a>
-            <a href="/discover/replies{% if q %}?q={{ q | quote }}{% endif %}" class="{% if kind == 'replies' %}selected{% endif %}">
-                Replies
-            </a>
-            <a href="/discover/threads{% if q %}?q={{ q | quote }}{% endif %}" class="{% if kind == 'threads' %}selected{% endif %}">
-                Threads
+            <a href="/replies{% if q %}?q={{ q | quote }}{% endif %}" class="{% if kind == 'replies' %}selected{% endif %}">
+                Last replies
             </a>
         {% elif view == 'people' %}
-            <a href="/people{% if q %}?q={{ q | quote }}{% endif %}" class="{% if kind == 'seen' %}selected{% endif %}">
+            <a href="/seen{% if q %}?q={{ q | quote }}{% endif %}" class="{% if kind == 'seen' %}selected{% endif %}">
                 Last seen
             </a>
-            <a href="/people/joined{% if q %}?q={{ q | quote }}{% endif %}" class="{% if kind == 'joined' %}selected{% endif %}">
+            <a href="/joined{% if q %}?q={{ q | quote }}{% endif %}" class="{% if kind == 'joined' %}selected{% endif %}">
                 Last joined
             </a>
         {% endif %}
