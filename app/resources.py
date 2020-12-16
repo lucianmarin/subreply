@@ -14,7 +14,7 @@ from app.filters import timeago
 from app.forms import get_content, get_emoji, get_name
 from app.helpers import build_hash, parse_metadata, utc_timestamp
 from app.hooks import auth_user, login_required
-from app.jinja import env
+from app.jinja import render
 from app.models import Comment, Relation, Reset, Save, User
 from app.validation import (authentication, changing, profiling, registration,
                             valid_content, valid_password, valid_reply,
@@ -42,8 +42,7 @@ def paginate(req, qs, limit=16):
 
 
 def not_found(resp, user, url):
-    template = env.get_template('pages/404.html')
-    resp.body = template.render(user=user, url=url)
+    resp.body = render(page='404', user=user, url=url)
     resp.status = status_codes.HTTP_404
 
 
@@ -82,8 +81,7 @@ class MainResource:
 class AboutResource:
     @before(auth_user)
     def on_get(self, req, resp):
-        template = env.get_template('pages/about.html')
-        resp.body = template.render(user=req.user, view='about')
+        resp.body = render(page='about', view='about', user=req.user)
 
 
 class FeedResource:
@@ -99,10 +97,9 @@ class FeedResource:
     def on_get(self, req, resp):
         form = FieldStorage(fp=req.stream, environ=req.env)
         entries, pages = self.fetch_entries(req)
-        template = env.get_template('pages/feed.html')
-        resp.body = template.render(
-            user=req.user, entries=entries, pages=pages, errors={},
-            form=form, view='feed'
+        resp.body = render(
+            page='feed', view='feed', form=form,
+            user=req.user, entries=entries, pages=pages, errors={}
         )
 
     @before(auth_user)
@@ -117,10 +114,9 @@ class FeedResource:
         errors = {k: v for k, v in errors.items() if v}
         if errors:
             entries, pages = self.fetch_entries(req)
-            template = env.get_template('pages/feed.html')
-            resp.body = template.render(
-                user=req.user, entries=entries, pages=pages, errors=errors,
-                form=form, view='feed'
+            resp.body = render(
+                page='feed', view='feed', form=form,
+                user=req.user, entries=entries, pages=pages, errors=errors
             )
         else:
             mentions, links, hashtags = parse_metadata(content)
@@ -164,10 +160,10 @@ class ReplyResource:
         ancestors = self.fetch_ancestors(parent)
         entries = self.fetch_entries(parent)
         form = FieldStorage(fp=req.stream, environ=req.env)
-        template = env.get_template('pages/reply.html')
-        resp.body = template.render(
+        resp.body = render(
+            page='reply', view='reply',
             user=req.user, entry=parent, form=form, errors={}, entries=entries,
-            ancestors=ancestors, duplicate=duplicate, view='reply'
+            ancestors=ancestors, duplicate=duplicate
         )
 
     @before(auth_user)
@@ -187,11 +183,10 @@ class ReplyResource:
         if errors:
             ancestors = self.fetch_ancestors(parent)
             entries = self.fetch_entries(parent)
-            template = env.get_template('pages/reply.html')
-            resp.body = template.render(
+            resp.body = render(
+                page='reply', view='reply',
                 user=req.user, entry=parent, form=form, errors=errors,
-                entries=entries, ancestors=ancestors, duplicate=False,
-                view='reply'
+                entries=entries, ancestors=ancestors, duplicate=False
             )
         else:
             extra = {}
@@ -225,10 +220,10 @@ class EditResource:
             return not_found(resp, req.user, f'/edit/{base}')
         ancestors = [entry.parent] if entry.parent_id else []
         form = FieldStorage(fp=req.stream, environ=req.env)
-        template = env.get_template('pages/edit.html')
-        resp.body = template.render(
+        resp.body = render(
+            page='edit', view='edit',
             user=req.user, entry=entry, form=form, errors={},
-            ancestors=ancestors, view='edit'
+            ancestors=ancestors
         )
 
     @before(auth_user)
@@ -250,10 +245,10 @@ class EditResource:
         errors = {k: v for k, v in errors.items() if v}
         if errors:
             ancestors = [entry.parent] if entry.parent_id else []
-            template = env.get_template('pages/edit.html')
-            resp.body = template.render(
+            resp.body = render(
+                page='edit', view='edit',
                 user=req.user, entry=entry, form=form, errors=errors,
-                ancestors=ancestors, view='edit'
+                ancestors=ancestors
             )
         else:
             fields = [
@@ -315,11 +310,11 @@ class ProfileResource:
         is_followed = Relation.objects.filter(
             created_by=member, to_user=req.user
         ).exclude(created_by=req.user).exists() if req.user else False
-        template = env.get_template('pages/profile.html')
-        resp.body = template.render(
+        resp.body = render(
+            page='profile', view='profile',
             user=req.user, member=member, entries=entries, pages=pages,
             tab=tab, is_following=is_following, is_followed=is_followed,
-            threads=threads, replies=replies, view='profile'
+            threads=threads, replies=replies
         )
 
 
@@ -334,13 +329,13 @@ class FollowingResource:
     @before(login_required)
     def on_get(self, req, resp):
         entries, pages = self.fetch_entries(req)
-        template = env.get_template('pages/regular.html')
-        resp.body = template.render(
-            user=req.user, entries=entries, pages=pages, view='following'
+        resp.body = render(
+            page='regular', view='following',
+            user=req.user, entries=entries, pages=pages
         )
 
 
-class FollowedResource:
+class FollowersResource:
     def fetch_entries(self, req):
         entries = Relation.objects.filter(
             to_user=req.user
@@ -357,19 +352,21 @@ class FollowedResource:
     @before(login_required)
     def on_get(self, req, resp):
         entries, pages = self.fetch_entries(req)
-        template = env.get_template('pages/regular.html')
-        resp.body = template.render(
-            user=req.user, entries=entries, pages=pages, view='followed'
+        resp.body = render(
+            page='regular', view='followers',
+            user=req.user, entries=entries, pages=pages
         )
         if req.user.notif_followers:
             self.clear_followers(req.user)
 
 
-class MentionedResource:
+class MentionsResource:
     def fetch_entries(self, req):
         entries = Comment.objects.filter(
             mentioned=req.user
-        ).order_by('-id').order_by('-id').select_related('created_by', 'parent')
+        ).order_by('-id').select_related(
+            'created_by', 'parent__created_by'
+        ).prefetch_related(PFR)
         return paginate(req, entries, 24)
 
     def clear_mentions(self, user):
@@ -382,15 +379,15 @@ class MentionedResource:
     @before(login_required)
     def on_get(self, req, resp):
         entries, pages = self.fetch_entries(req)
-        template = env.get_template('pages/regular.html')
-        resp.body = template.render(
-            user=req.user, entries=entries, pages=pages, view='mentioned'
+        resp.body = render(
+            page='regular', view='mentions',
+            user=req.user, entries=entries, pages=pages
         )
         if req.user.notif_mentions:
             self.clear_mentions(req.user)
 
 
-class RepliedResource:
+class RepliesResource:
     def fetch_entries(self, req):
         entries = Comment.objects.filter(
             parent__created_by=req.user
@@ -409,9 +406,9 @@ class RepliedResource:
     @before(login_required)
     def on_get(self, req, resp):
         entries, pages = self.fetch_entries(req)
-        template = env.get_template('pages/regular.html')
-        resp.body = template.render(
-            user=req.user, entries=entries, pages=pages, view='replied'
+        resp.body = render(
+            page='regular', view='replies',
+            user=req.user, entries=entries, pages=pages
         )
         if req.user.notif_replies:
             self.clear_replies(req.user)
@@ -433,26 +430,29 @@ class ReplyingResource:
     @before(login_required)
     def on_get(self, req, resp):
         entries, pages = self.fetch_entries(req)
-        template = env.get_template('pages/regular.html')
-        resp.body = template.render(
-            user=req.user, entries=entries, pages=pages, view='replying'
+        resp.body = render(
+            page='regular', view='replying',
+            user=req.user, entries=entries, pages=pages
         )
 
 
 class SavedResource:
     def fetch_entries(self, req):
-        entries = Save.objects.filter(
-            created_by=req.user
-        ).order_by('-id').select_related('to_comment__created_by', 'to_comment__parent')
+        saved_ids = Save.objects.filter(created_by=req.user).values('to_comment__id')
+        entries = Comment.objects.filter(
+            id__in=saved_ids
+        ).order_by('-id').select_related(
+            'created_by', 'parent__created_by'
+        ).prefetch_related(PFR)
         return paginate(req, entries, 24)
 
     @before(auth_user)
     @before(login_required)
     def on_get(self, req, resp):
         entries, pages = self.fetch_entries(req)
-        template = env.get_template('pages/regular.html')
-        resp.body = template.render(
-            user=req.user, entries=entries, pages=pages, view='saved'
+        resp.body = render(
+            page='regular', view='saved',
+            user=req.user, entries=entries, pages=pages
         )
 
 
@@ -482,10 +482,9 @@ class PeopleResource:
         q = req.params.get('q', '').strip()
         terms = [t.strip() for t in q.split() if t.strip()]
         entries, pages = self.fetch_entries(req, terms, kind)
-        template = env.get_template('pages/regular.html')
-        resp.body = template.render(
-            user=req.user, entries=entries, pages=pages, q=q, kind=kind,
-            view='people', placeholder="Find people"
+        resp.body = render(
+            page='regular', view='people', placeholder="Find people",
+            user=req.user, entries=entries, pages=pages, q=q, kind=kind
         )
 
     @before(auth_user)
@@ -504,40 +503,28 @@ class DiscoverResource:
             query &= Q(content__icontains=term)
         return query
 
-    def fetch_entries(self, req, terms, is_thread):
+    def fetch_entries(self, req, terms):
         if terms:
-            sq = self.build_query(terms) & Q(parent__isnull=is_thread)
+            sq = self.build_query(terms)
         else:
-            max_id = Max('comments__id', filter=Q(comments__parent__isnull=is_thread))
-            last_ids = User.objects.annotate(last_id=max_id).values('last_id')
+            last_ids = User.objects.annotate(
+                last_id=Max('comments__id')
+            ).values('last_id')
             sq = Q(id__in=last_ids)
-        entries = Comment.objects.filter(sq).order_by('-id')
-        if is_thread:
-            entries = entries.select_related('created_by').prefetch_related(PFR)
-        else:
-            entries = entries.select_related(
-                'created_by', 'parent__created_by', 'parent__parent'
-            )
-        return paginate(req, entries, 16)
+        entries = Comment.objects.filter(sq).order_by('-id').select_related(
+            'created_by', 'parent__created_by'
+        ).prefetch_related(PFR)
+        return paginate(req, entries, 24)
 
-    def get_discover(self, req, resp, is_thread):
-        kind = 'threads' if is_thread else 'replies'
+    @before(auth_user)
+    def on_get(self, req, resp):
         q = req.params.get('q', '').strip()
         terms = [t.strip() for t in q.split() if t.strip()]
-        entries, pages = self.fetch_entries(req, terms, is_thread)
-        template = env.get_template('pages/regular.html')
-        resp.body = template.render(
-            user=req.user, entries=entries, pages=pages, q=q,
-            kind=kind, view='discover', placeholder=f"Search {kind}"
+        entries, pages = self.fetch_entries(req, terms)
+        resp.body = render(
+            page='regular', view='discover', placeholder="Search content",
+            user=req.user, entries=entries, pages=pages, q=q
         )
-
-    @before(auth_user)
-    def on_get_replies(self, req, resp):
-        self.get_discover(req, resp, False)
-
-    @before(auth_user)
-    def on_get_threads(self, req, resp):
-        self.get_discover(req, resp, True)
 
 
 class TrendingResource:
@@ -554,10 +541,9 @@ class TrendingResource:
     def on_get(self, req, resp, sample):
         sample = int(sample) if sample.isdecimal() and int(sample) else 16
         entries, pages = self.fetch_entries(req, sample)
-        template = env.get_template('pages/regular.html')
-        resp.body = template.render(
-            user=req.user, entries=entries, pages=pages,
-            sample=sample, view='trending'
+        resp.body = render(
+            page='regular', view='trending', sample=sample,
+            user=req.user, entries=entries, pages=pages
         )
 
     def on_get_default(self, req, resp):
@@ -600,9 +586,9 @@ class PasswordResource:
     @before(login_required)
     def on_get(self, req, resp):
         form = FieldStorage(fp=req.stream, environ=req.env)
-        template = env.get_template('pages/password.html')
-        resp.body = template.render(
-            user=req.user, errors={}, form=form, view='password'
+        resp.body = render(
+            page='password', view='password',
+            user=req.user, errors={}, form=form
         )
 
     @before(auth_user)
@@ -614,9 +600,9 @@ class PasswordResource:
         password2 = form.getvalue('password2', '')
         errors = changing(req.user, current, password1, password2)
         if errors:
-            template = env.get_template('pages/password.html')
-            resp.body = template.render(
-                user=req.user, errors=errors, form=form, view='password'
+            resp.body = render(
+                page='password', view='password',
+                user=req.user, errors=errors, form=form
             )
         else:
             req.user.password = build_hash(password1)
@@ -630,9 +616,9 @@ class SettingsResource:
     @before(login_required)
     def on_get(self, req, resp):
         form = FieldStorage(fp=req.stream, environ=req.env)
-        template = env.get_template('pages/settings.html')
-        resp.body = template.render(
-            user=req.user, errors={}, form=form, view='settings'
+        resp.body = render(
+            page='settings', view='settings',
+            user=req.user, errors={}, form=form
         )
 
     @before(auth_user)
@@ -651,9 +637,9 @@ class SettingsResource:
         f['website'] = form.getvalue('website', '').strip().lower()
         errors = profiling(f, req.user.id)
         if errors:
-            template = env.get_template('pages/settings.html')
-            resp.body = template.render(
-                user=req.user, errors=errors, form=form, fields=f, view='settings'
+            resp.body = render(
+                page='settings', view='settings',
+                user=req.user, errors=errors, form=form, fields=f
             )
         else:
             for field, value in f.items():
@@ -666,8 +652,7 @@ class SettingsResource:
 class LoginResource:
     def on_get(self, req, resp):
         form = FieldStorage(fp=req.stream, environ=req.env)
-        template = env.get_template('pages/login.html')
-        resp.body = template.render(errors={}, form=form, view='login')
+        resp.body = render(page='login', views='login', errors={}, form=form)
 
     def on_post(self, req, resp):
         form = FieldStorage(fp=req.stream, environ=req.env)
@@ -675,8 +660,9 @@ class LoginResource:
         password = form.getvalue('password', '')
         errors, user = authentication(username, password)
         if errors:
-            template = env.get_template('pages/login.html')
-            resp.body = template.render(errors=errors, form=form, view='login')
+            resp.body = render(
+                page='login', view='login', errors=errors, form=form
+            )
         else:
             token = F.encrypt(str(user.id).encode())
             resp.set_cookie('identity', token.decode(), path="/", max_age=MAX_AGE)
@@ -692,9 +678,9 @@ class LogoutResource:
 class RegisterResource:
     def on_get(self, req, resp):
         form = FieldStorage(fp=req.stream, environ=req.env)
-        template = env.get_template('pages/register.html')
-        resp.body = template.render(
-            errors={}, form=form, fields={}, view='register'
+        resp.body = render(
+            page='register', view='register',
+            errors={}, form=form, fields={}
         )
 
     def on_post(self, req, resp):
@@ -716,9 +702,9 @@ class RegisterResource:
         f['website'] = form.getvalue('website', '').strip().lower()
         errors = registration(f)
         if errors:
-            template = env.get_template('pages/register.html')
-            resp.body = template.render(
-                errors=errors, form=form, fields=f, view='register'
+            resp.body = render(
+                page='register', view='register',
+                errors=errors, form=form, fields=f
             )
         else:
             user, is_new = User.objects.get_or_create(
@@ -757,8 +743,9 @@ class ResetResource:
 
     def on_get(self, req, resp):
         form = FieldStorage(fp=req.stream, environ=req.env)
-        template = env.get_template('pages/reset.html')
-        resp.body = template.render(errors={}, form=form, view='reset')
+        resp.body = render(
+            page='reset', view='reset', errors={}, form=form
+        )
 
     def on_post(self, req, resp):
         form = FieldStorage(fp=req.stream, environ=req.env)
@@ -776,8 +763,9 @@ class ResetResource:
                 remains = reset.created_at + self.hours * 3600 - utc_timestamp()
                 errors['email'] = f"Try again in {timeago(remains)}, reset already sent"
         if errors:
-            template = env.get_template('pages/reset.html')
-            resp.body = template.render(errors=errors, form=form, view='reset')
+            resp.body = render(
+                page='reset', view='reset', errors=errors, form=form
+            )
         else:
             # generate code
             unique = str(utc_timestamp()).encode()
@@ -806,9 +794,8 @@ class ResetResource:
 class ChangeResource:
     def on_get(self, req, resp):
         form = FieldStorage(fp=req.stream, environ=req.env)
-        template = env.get_template('pages/change.html')
-        resp.body = template.render(
-            errors={}, form=form, view='change'
+        resp.body = render(
+            page='change', view='change', errors={}, form=form
         )
 
     def on_post(self, req, resp):
@@ -824,15 +811,16 @@ class ChangeResource:
         errors['password'] = valid_password(password1, password2)
         errors = {k: v for k, v in errors.items() if v}
         if errors:
-            template = env.get_template('pages/change.html')
-            resp.body = template.render(
-                errors=errors, form=form, view='change'
+            resp.body = render(
+                page='change', view='change', errors=errors, form=form
             )
         else:
             user = User.objects.filter(email=email).first()
             user.password = build_hash(password1)
             user.save(update_fields=['password'])
             token = F.encrypt(str(user.id).encode())
-            resp.set_cookie('identity', token.decode(), path="/", max_age=MAX_AGE)
+            resp.set_cookie(
+                'identity', token.decode(), path="/", max_age=MAX_AGE
+            )
             reset.delete()
             raise HTTPFound('/feed')

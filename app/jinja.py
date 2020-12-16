@@ -19,3 +19,9 @@ env.filters['superscript'] = superscript
 
 env.globals['brand'] = "Subreply"
 env.globals['v'] = 23
+
+
+def render(page, **kwargs):
+    print('-----', page, kwargs.get('view', ''))
+    template = env.get_template(f'pages/{page}.html')
+    return template.render(**kwargs)

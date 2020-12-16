@@ -2,18 +2,18 @@
 
 {% block main %}
     {% if view in ['discover', 'people'] %}
-        {% include "common/query.html" %}
+        {% include "input/query.html" %}
     {% endif %}
 
     <div class="list">
-        {% if view in ['discover', 'people', 'trending'] %}
+        {% if view in ['people', 'trending'] %}
             {% include "filters.html" %}
         {% endif %}
 
         {% for entry in entries %}
             {% if view == 'trending' %}
                 {% include "common/threads.html" %}
-            {% elif view in ['replying', 'replied'] %}
+            {% elif view in ['replying', 'replies'] %}
                 {% include "common/replies.html" %}
             {% elif view == 'people' %}
                 {% set member = entry %}
@@ -21,16 +21,16 @@
             {% elif view == 'following' %}
                 {% set member = entry.to_user %}
                 {% include "common/user.html" %}
-            {% elif view == 'followed' %}
+            {% elif view == 'followers' %}
                 {% set member = entry.created_by %}
                 {% include "common/user.html" %}
             {% elif view == 'saved' %}
-                {% set entry = entry.to_comment %}
-                {% include "common/entry.html" %}
+                {# set entry = entry.to_comment #}
+                {% include "common/stream.html" %}
             {% elif view == 'discover' %}
-                {% include "common/" + kind + ".html" %}
-            {% elif view in ['mentioned', 'saved', ] %}
-                {% include "common/entry.html" %}
+                {% include "common/stream.html" %}
+            {% elif view == 'mentions' %}
+                {% include "common/stream.html" %}
             {% endif %}
         {% else %}
             {% include "common/nothing.html" %}
