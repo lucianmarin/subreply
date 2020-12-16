@@ -8,10 +8,10 @@
             {% endfor %}
         {% elif view == 'discover' %}
             <a href="/threads{% if q %}?q={{ q | quote }}{% endif %}" class="{% if kind == 'threads' %}selected{% endif %}">
-                Last threads
+                Latest threads
             </a>
             <a href="/replies{% if q %}?q={{ q | quote }}{% endif %}" class="{% if kind == 'replies' %}selected{% endif %}">
-                Last replies
+                Latest replies
             </a>
         {% elif view == 'people' %}
             <a href="/seen{% if q %}?q={{ q | quote }}{% endif %}" class="{% if kind == 'seen' %}selected{% endif %}">
