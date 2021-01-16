@@ -76,7 +76,9 @@ class User(models.Model):
         self.save(update_fields=['notif_mentions'])
 
     def up_replies(self):
-        self.notif_replies = Comment.objects.filter(parent__created_by=self, reply_seen_at=.0).count()
+        self.notif_replies = Comment.objects.filter(
+            parent__created_by=self, reply_seen_at=.0
+        ).count()
         self.save(update_fields=['notif_replies'])
 
     def up_saves(self):

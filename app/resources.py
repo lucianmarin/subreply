@@ -652,7 +652,7 @@ class SettingsResource:
 class LoginResource:
     def on_get(self, req, resp):
         form = FieldStorage(fp=req.stream, environ=req.env)
-        resp.body = render(page='login', views='login', errors={}, form=form)
+        resp.body = render(page='login', view='login', errors={}, form=form)
 
     def on_post(self, req, resp):
         form = FieldStorage(fp=req.stream, environ=req.env)
