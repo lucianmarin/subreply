@@ -561,16 +561,30 @@ class ActionResource:
         Relation.objects.filter(created_by=user, to_user=member).delete()
         member.up_followers()
 
-    @before(auth_user)
-    @before(login_required)
+    def block(self, user, member):
+        if user.id == 1:
+            member.readonly = True
+            member.save(update_fields=['readonly'])
+
+    def unblock(self, user, member):
+        if user.id == 1:
+            member.readonly = False
+            member.save(update_fields=['readonly'])
+
     def on_get_flw(self, req, resp, username):
         self.get_action(req, resp, username, 'follow')
 
-    @before(auth_user)
-    @before(login_required)
     def on_get_unf(self, req, resp, username):
         self.get_action(req, resp, username, 'unfollow')
 
+    def on_get_blk(self, req, resp, username):
+        self.get_action(req, resp, username, 'block')
+
+    def on_get_unb(self, req, resp, username):
+        self.get_action(req, resp, username, 'unblock')
+
+    @before(auth_user)
+    @before(login_required)
     def get_action(self, req, resp, username, action):
         member = User.objects.filter(username=username.lower()).first()
         if not member:

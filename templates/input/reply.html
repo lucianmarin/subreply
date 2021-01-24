@@ -8,6 +8,8 @@
                     No reply yet
                 {% endif %}
             </div>
+        {% elif user.readonly %}
+            <div class="placeholder">Read-only for now.</div>
         {% elif duplicate %}
             <div class="placeholder">
                 {% if user %}
