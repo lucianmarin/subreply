@@ -4,7 +4,7 @@ html { -ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; --super: 8px;
 
 ::-webkit-input-placeholder { color: var(--gray); }
 
-@media (prefers-color-scheme: dark) { html { --white: #000; --whitesmoke: #181818; --gainsboro: #282828; --silver: #484848; --gray: #808080; --black: #e0e0e0; --aqua: #00d0f0; --ocean: #00f0ff; } ::-moz-placeholder { color: #eeeeee; } }
+@media (prefers-color-scheme: dark) { html { --white: #000; --whitesmoke: #181818; --gainsboro: #282828; --silver: #404040; --gray: #808080; --black: #fff; --aqua: #00d0f0; --ocean: #00f0ff; } ::-moz-placeholder { color: #eeeeee; } }
 
 * { margin: 0; padding: 0; }
 
