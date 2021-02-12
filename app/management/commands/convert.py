@@ -16,9 +16,8 @@ class Command(BaseCommand):
     def get_csv(self):
         r = requests.get(self.url, stream=True)
         c = io.BytesIO(r.content)
-        with zipfile.ZipFile(c) as zip:
-            with zip.open('worldcities.csv') as file:
-                return io.StringIO(file.read().decode())
+        with zipfile.ZipFile(c) as zip, zip.open('worldcities.csv') as file:
+            return io.StringIO(file.read().decode())
 
     def fix_country(self, v):
         replaces = [

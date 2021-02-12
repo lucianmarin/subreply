@@ -7,7 +7,7 @@ from emails.template import JinjaTemplate
 from falcon import status_codes
 from falcon.hooks import before
 from falcon.redirects import HTTPFound
-from project.settings import DEBUG, MAX_AGE, SMTP, F
+from project.settings import DEBUG, F, MAX_AGE, SMTP
 
 from app.const import HTML, TEXT
 from app.filters import timeago

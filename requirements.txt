@@ -6,8 +6,11 @@ emails
 emoji
 falcon
 flake8
+flake8-comprehensions
+flake8-import-order
 flake8-return
 flake8-simplify
+flake8-tidy-imports
 flake8-unused-arguments
 grapheme
 gunicorn
