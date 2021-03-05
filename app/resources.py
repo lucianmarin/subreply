@@ -1,7 +1,7 @@
 import hashlib
 from cgi import FieldStorage
 
-from django.db.models import Max, Prefetch, Q
+from django.db.models import Count, Max, Prefetch, Q
 from emails import Message
 from emails.template import JinjaTemplate
 from falcon import status_codes
@@ -21,7 +21,7 @@ from app.validation import (authentication, changing, profiling, registration,
                             valid_thread)
 
 PFR = Prefetch(
-    'kids', queryset=Comment.objects.order_by('id').select_related('created_by')
+    'kids', queryset=Comment.objects.order_by('id').select_related('created_by').prefetch_related('kids')
 )
 
 
@@ -140,7 +140,7 @@ class ReplyResource:
     def fetch_entries(self, parent):
         return Comment.objects.filter(
             parent=parent
-        ).order_by('-id').select_related('created_by').prefetch_related(PFR)
+        ).order_by('-id').select_related('created_by', 'parent').prefetch_related(PFR)
 
     def fetch_ancestors(self, parent):
         return Comment.objects.filter(
@@ -283,7 +283,7 @@ class ProfileResource:
             created_by=user
         ).exclude(parent=None).order_by('-id').select_related(
             'created_by', 'parent__created_by', 'parent__parent'
-        )
+        ).prefetch_related('parent__kids', 'kids')
 
     def fetch_entries(self, req, member, tab):
         method = getattr(self, f'fetch_{tab}')
@@ -393,7 +393,7 @@ class RepliesResource:
             parent__created_by=req.user
         ).order_by('-id').select_related(
             'created_by', 'parent__created_by', 'parent__parent'
-        )
+        ).prefetch_related('parent__kids', 'kids')
         return paginate(req, entries)
 
     def clear_replies(self, user):
@@ -423,7 +423,7 @@ class ReplyingResource:
             created_by__in=friends
         ).exclude(parent=None).exclude(parent__created_by=req.user).order_by('-id').select_related(
             'created_by', 'parent__created_by', 'parent__parent'
-        )
+        ).prefetch_related('parent__kids', 'kids')
         return paginate(req, entries)
 
     @before(auth_user)
@@ -532,9 +532,9 @@ class TrendingResource:
         sampling = Comment.objects.filter(
             parent=None
         ).exclude(replies=0).order_by('-id').values('id')[:sample]
-        entries = Comment.objects.filter(
+        entries = Comment.objects.annotate(answers=Count('kids')).filter(
             id__in=sampling
-        ).order_by('-replies', '-id').select_related('created_by').prefetch_related(PFR)
+        ).order_by('-answers', '-id').select_related('created_by').prefetch_related(PFR)
         return paginate(req, entries)
 
     @before(auth_user)
