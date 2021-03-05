@@ -21,7 +21,9 @@ from app.validation import (authentication, changing, profiling, registration,
                             valid_thread)
 
 PFR = Prefetch(
-    'kids', queryset=Comment.objects.order_by('id').select_related('created_by').prefetch_related('kids')
+    'kids', queryset=Comment.objects.annotate(
+        replies=Count('kids')
+    ).order_by('id').select_related('created_by')
 )
 
 
@@ -87,7 +89,7 @@ class AboutResource:
 class FeedResource:
     def fetch_entries(self, req):
         friends = Relation.objects.filter(created_by=req.user).values('to_user_id')
-        entries = Comment.objects.filter(
+        entries = Comment.objects.annotate(replies=Count('kids')).filter(
             created_by__in=friends, parent=None
         ).order_by('-id').select_related('created_by').prefetch_related(PFR)
         return paginate(req, entries)
@@ -529,12 +531,14 @@ class DiscoverResource:
 
 class TrendingResource:
     def fetch_entries(self, req, sample):
-        sampling = Comment.objects.filter(
+        sampling = Comment.objects.annotate(replies=Count('kids')).filter(
             parent=None
         ).exclude(replies=0).order_by('-id').values('id')[:sample]
-        entries = Comment.objects.annotate(answers=Count('kids')).filter(
+        entries = Comment.objects.annotate(replies=Count('kids')).filter(
             id__in=sampling
-        ).order_by('-answers', '-id').select_related('created_by').prefetch_related(PFR)
+        ).order_by(
+            '-replies', '-id'
+        ).select_related('created_by').prefetch_related(PFR)
         return paginate(req, entries)
 
     @before(auth_user)

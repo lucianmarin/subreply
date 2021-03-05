@@ -176,9 +176,9 @@ class Comment(models.Model):
         self.ancestors = self.get_ancestors()
         self.save(update_fields=['ancestors'])
 
-    @cached_property
-    def replies(self):
-        return self.kids.count()
+    # @cached_property
+    # def replies(self):
+    #     return self.kids.count()
 
     @cached_property
     def saves(self):
