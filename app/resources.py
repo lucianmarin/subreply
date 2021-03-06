@@ -20,10 +20,12 @@ from app.validation import (authentication, changing, profiling, registration,
                             valid_content, valid_password, valid_reply,
                             valid_thread)
 
+Comments = Comment.objects.annotate(replies=Count('kids')).select_related('created_by')
+PPFR = Prefetch(
+    'parent', Comments.prefetch_related('parent')
+)
 PFR = Prefetch(
-    'kids', queryset=Comment.objects.annotate(
-        replies=Count('kids')
-    ).order_by('id').select_related('created_by')
+    'kids', Comments.order_by('id')
 )
 
 
@@ -89,9 +91,9 @@ class AboutResource:
 class FeedResource:
     def fetch_entries(self, req):
         friends = Relation.objects.filter(created_by=req.user).values('to_user_id')
-        entries = Comment.objects.annotate(replies=Count('kids')).filter(
+        entries = Comments.filter(
             created_by__in=friends, parent=None
-        ).order_by('-id').select_related('created_by').prefetch_related(PFR)
+        ).order_by('-id').prefetch_related(PFR)
         return paginate(req, entries)
 
     @before(auth_user)
@@ -140,20 +142,20 @@ class FeedResource:
 
 class ReplyResource:
     def fetch_entries(self, parent):
-        return Comment.objects.filter(
+        return Comments.filter(
             parent=parent
-        ).order_by('-id').select_related('created_by', 'parent').prefetch_related(PFR)
+        ).order_by('-id').select_related('parent').prefetch_related(PFR)
 
     def fetch_ancestors(self, parent):
-        return Comment.objects.filter(
+        return Comments.filter(
             id__in=parent.ancestors
-        ).order_by('id').select_related('created_by', 'parent')
+        ).order_by('id').select_related('parent')
 
     @before(auth_user)
     def on_get(self, req, resp, username, base):
-        parent = Comment.objects.filter(
+        parent = Comments.filter(
             id=int(base, 36)
-        ).select_related('created_by', 'parent').first()
+        ).select_related('parent').first()
         if not parent or parent.created_by.username != username.lower():
             return not_found(resp, req.user, f'/{username}/{base}')
         duplicate = Comment.objects.filter(
@@ -171,9 +173,9 @@ class ReplyResource:
     @before(auth_user)
     @before(login_required)
     def on_post(self, req, resp, username, base):
-        parent = Comment.objects.filter(
+        parent = Comments.filter(
             id=int(base, 36)
-        ).select_related('created_by', 'parent').first()
+        ).select_related('parent').first()
         form = FieldStorage(fp=req.stream, environ=req.env)
         content = get_content(form)
         mentions, links, hashtags = parse_metadata(content)
@@ -215,9 +217,9 @@ class EditResource:
     @before(auth_user)
     @before(login_required)
     def on_get(self, req, resp, base):
-        entry = Comment.objects.filter(
+        entry = Comments.filter(
             id=int(base, 36)
-        ).select_related('created_by', 'parent').first()
+        ).select_related('parent').first()
         if not entry or entry.created_by != req.user or entry.replies:
             return not_found(resp, req.user, f'/edit/{base}')
         ancestors = [entry.parent] if entry.parent_id else []
@@ -231,9 +233,9 @@ class EditResource:
     @before(auth_user)
     @before(login_required)
     def on_post(self, req, resp, base):
-        entry = Comment.objects.filter(
+        entry = Comments.filter(
             id=int(base, 36)
-        ).select_related('created_by', 'parent').first()
+        ).select_related('parent').first()
         form = FieldStorage(fp=req.stream, environ=req.env)
         content = get_content(form)
         mentions, links, hashtags = parse_metadata(content)
@@ -276,16 +278,16 @@ class EditResource:
 
 class ProfileResource:
     def fetch_threads(self, user):
-        return Comment.objects.filter(
+        return Comments.filter(
             created_by=user, parent=None
         ).order_by('-id').select_related('created_by').prefetch_related(PFR)
 
     def fetch_replies(self, user):
-        return Comment.objects.filter(
+        return Comments.filter(
             created_by=user
         ).exclude(parent=None).order_by('-id').select_related(
-            'created_by', 'parent__created_by', 'parent__parent'
-        ).prefetch_related('parent__kids', 'kids')
+            'created_by'
+        ).prefetch_related(PPFR)
 
     def fetch_entries(self, req, member, tab):
         method = getattr(self, f'fetch_{tab}')
@@ -391,11 +393,9 @@ class MentionsResource:
 
 class RepliesResource:
     def fetch_entries(self, req):
-        entries = Comment.objects.filter(
+        entries = Comments.filter(
             parent__created_by=req.user
-        ).order_by('-id').select_related(
-            'created_by', 'parent__created_by', 'parent__parent'
-        ).prefetch_related('parent__kids', 'kids')
+        ).order_by('-id').prefetch_related(PPFR)
         return paginate(req, entries)
 
     def clear_replies(self, user):
@@ -421,11 +421,11 @@ class ReplyingResource:
         friends = Relation.objects.filter(
             created_by=req.user
         ).exclude(to_user=req.user).values('to_user_id')
-        entries = Comment.objects.filter(
+        entries = Comments.filter(
             created_by__in=friends
-        ).exclude(parent=None).exclude(parent__created_by=req.user).order_by('-id').select_related(
-            'created_by', 'parent__created_by', 'parent__parent'
-        ).prefetch_related('parent__kids', 'kids')
+        ).exclude(parent=None).exclude(
+            parent__created_by=req.user
+        ).order_by('-id').prefetch_related(PPFR)
         return paginate(req, entries)
 
     @before(auth_user)
