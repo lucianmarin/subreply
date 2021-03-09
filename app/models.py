@@ -5,7 +5,6 @@ from django import setup
 from django.conf import settings
 from django.contrib.postgres import fields
 from django.db import models
-from django.db.models import F
 from django.utils.functional import cached_property
 
 
@@ -38,11 +37,6 @@ class User(models.Model):
     bio = models.CharField(max_length=120, default='')
     website = models.CharField(max_length=120, default='')
 
-    # notif_followers = models.PositiveIntegerField(default=0)
-    # notif_mentions = models.PositiveIntegerField(default=0)
-    # notif_replies = models.PositiveIntegerField(default=0)
-    # saves = fields.ArrayField(models.PositiveIntegerField(), default=list)
-
     def __str__(self):
         return self.username
 
@@ -69,24 +63,6 @@ class User(models.Model):
             return "away"
         else:
             return "gone"
-
-    # def up_followers(self):
-    #     self.notif_followers = self.followers.filter(seen_at=.0).count()
-    #     self.save(update_fields=['notif_followers'])
-
-    # def up_mentions(self):
-    #     self.notif_mentions = self.mentions.filter(mention_seen_at=.0).count()
-    #     self.save(update_fields=['notif_mentions'])
-
-    # def up_replies(self):
-    #     self.notif_replies = Comment.objects.filter(
-    #         parent__created_by=self, reply_seen_at=.0
-    #     ).count()
-    #     self.save(update_fields=['notif_replies'])
-
-    # def up_saves(self):
-    #     self.saves = list(self.saved.values_list('to_comment_id', flat=True))
-    #     self.save(update_fields=['saves'])
 
     @cached_property
     def notif_followers(self):
@@ -132,8 +108,6 @@ class Comment(models.Model):
     edited_at = models.FloatField(default=.0)
     mention_seen_at = models.FloatField(default=.0)
     reply_seen_at = models.FloatField(default=.0)
-    # replies = models.IntegerField(default=0, db_index=True)
-    # saves = models.IntegerField(default=0)
 
     class Meta:
         unique_together = ['parent', 'created_by']
@@ -164,25 +138,9 @@ class Comment(models.Model):
             return []
         return [self.parent_id] + self.parent.get_ancestors()
 
-    # def add_replies(self):
-    #     ancestors = Comment.objects.filter(id__in=self.ancestors)
-    #     ancestors.update(replies=F('replies') + 1)
-
-    # def subtract_replies(self):
-    #     ancestors = Comment.objects.filter(id__in=self.ancestors)
-    #     ancestors.update(replies=F('replies') - 1)
-
     def up_ancestors(self):
         self.ancestors = self.get_ancestors()
         self.save(update_fields=['ancestors'])
-
-    # @cached_property
-    # def replies(self):
-    #     return self.kids.count()
-
-    @cached_property
-    def saves(self):
-        return self.saved_by.count()
 
 
 class Save(models.Model):

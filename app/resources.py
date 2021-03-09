@@ -134,8 +134,6 @@ class FeedResource:
                 created_by=req.user,
                 **extra
             )
-            if th.mentioned:
-                th.mentioned.up_mentions()
             raise HTTPFound('/')
 
 
@@ -198,11 +196,7 @@ class ReplyResource:
                 created_by=req.user,
                 **extra
             )
-            if re.mentioned:
-                re.mentioned.up_mentions()
             re.up_ancestors()
-            re.add_replies()
-            parent.created_by.up_replies()
             raise HTTPFound(f'/{username}/{base}')
 
 
@@ -262,10 +256,6 @@ class EditResource:
             if previously_mentioned != entry.mentioned:
                 entry.mention_seen_at = .0
             entry.save(update_fields=fields)
-            if previously_mentioned:
-                previously_mentioned.up_mentions()
-            if entry.mentioned:
-                entry.mentioned.up_mentions()
             raise HTTPFound(f'/{entry.created_by}/{base}')
 
 
@@ -343,7 +333,6 @@ class FollowersResource:
         Relation.objects.filter(
             to_user=user, seen_at=.0
         ).update(seen_at=utc_timestamp())
-        user.up_followers()
 
     @before(auth_user)
     @before(login_required)
@@ -368,7 +357,6 @@ class MentionsResource:
         Comment.objects.filter(
             mentioned=user, mention_seen_at=.0
         ).update(mention_seen_at=utc_timestamp())
-        user.up_mentions()
 
     @before(auth_user)
     @before(login_required)
@@ -393,7 +381,6 @@ class RepliesResource:
         Comment.objects.filter(
             parent__created_by=user, reply_seen_at=.0
         ).update(reply_seen_at=utc_timestamp())
-        user.up_replies()
 
     @before(auth_user)
     @before(login_required)
@@ -546,11 +533,9 @@ class ActionResource:
         Relation.objects.get_or_create(
             created_at=utc_timestamp(), created_by=user, to_user=member
         )
-        member.up_followers()
 
     def unfollow(self, user, member):
         Relation.objects.filter(created_by=user, to_user=member).delete()
-        member.up_followers()
 
     def block(self, user, member):
         if user.id == 1:

@@ -24,11 +24,6 @@ class DeleteEndpoint:
         if req.user.id not in valid_ids:
             resp.media = {'status': 'not valid'}
             return
-        if entry.mentioned and not entry.mention_seen_at:
-            entry.mentioned.up_mentions()
-        if entry.parent and not entry.reply_seen_at:
-            entry.parent.created_by.up_replies()
-        entry.subtract_replies()
         entry.delete()
         resp.media = {'status': 'deleted'}
 
@@ -49,8 +44,6 @@ class SaveEndpoint:
             created_by=req.user,
             to_comment=entry
         )
-        req.user.up_saves()
-        entry.up_saves()
         resp.media = {'status': 'unsave'}
 
 
@@ -66,6 +59,4 @@ class UnsaveEndpoint:
             resp.media = {'status': 'not found'}
             return
         Save.objects.filter(created_by=req.user, to_comment=entry).delete()
-        req.user.up_saves()
-        entry.up_saves()
         resp.media = {'status': 'save'}
