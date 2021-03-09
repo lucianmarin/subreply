@@ -37,7 +37,11 @@ app.add_route('/login', resources.LoginResource())
 app.add_route('/logout', resources.LogoutResource())
 app.add_route('/register', resources.RegisterResource())
 
-app.add_route('/password', resources.PasswordResource())
+app.add_route('/account', resources.AccountResource())
+app.add_route('/account/change', resources.AccountResource(), suffix="chg")
+app.add_route('/account/delete', resources.AccountResource(), suffix="del")
+
+app.add_route('/social', resources.SocialResource())
 app.add_route('/settings', resources.SettingsResource())
 
 app.add_route('/change', resources.ChangeResource())

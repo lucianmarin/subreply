@@ -37,8 +37,17 @@ class User(models.Model):
     bio = models.CharField(max_length=120, default='')
     website = models.CharField(max_length=120, default='')
 
+    # links = fields.ArrayField(
+    #     fields.ArrayField(models.CharField(max_length=15), size=2),
+    #     default=list
+    # )
+
     def __str__(self):
         return self.username
+
+    # @cached_property
+    # def social(self):
+    #     return dict(self.links)
 
     @cached_property
     def full_name(self):

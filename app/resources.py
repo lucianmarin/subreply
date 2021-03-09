@@ -571,19 +571,18 @@ class ActionResource:
         raise HTTPFound(f'/{username}')
 
 
-class PasswordResource:
+class AccountResource:
     @before(auth_user)
     @before(login_required)
     def on_get(self, req, resp):
         form = FieldStorage(fp=req.stream, environ=req.env)
         resp.body = render(
-            page='password', view='password',
-            user=req.user, errors={}, form=form
+            page='account', view='account', user=req.user, form=form
         )
 
     @before(auth_user)
     @before(login_required)
-    def on_post(self, req, resp):
+    def on_post_chg(self, req, resp):
         form = FieldStorage(fp=req.stream, environ=req.env)
         current = form.getvalue('current', '')
         password1 = form.getvalue('password1', '')
@@ -591,14 +590,29 @@ class PasswordResource:
         errors = changing(req.user, current, password1, password2)
         if errors:
             resp.body = render(
-                page='password', view='password',
-                user=req.user, errors=errors, form=form
+                page='account', view='account',
+                user=req.user, change_errors=errors, form=form
             )
         else:
             req.user.password = build_hash(password1)
             req.user.save()
             resp.unset_cookie('identity')
             raise HTTPFound('/login')
+
+    @before(auth_user)
+    @before(login_required)
+    def on_post_del(self, req, resp):
+        pass
+
+
+class SocialResource:
+    @before(auth_user)
+    @before(login_required)
+    def on_get(self, req, resp):
+        form = FieldStorage(fp=req.stream, environ=req.env)
+        resp.body = render(
+            page='social', view='social', user=req.user, form=form
+        )
 
 
 class SettingsResource:
