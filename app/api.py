@@ -19,8 +19,8 @@ class DeleteEndpoint:
             resp.media = {'status': 'not found'}
             return
         valid_ids = [
-            1, entry.created_by_id, entry.parent.created_by_id, 1
-        ] if entry.parent_id else [1, entry.created_by_id]
+            entry.created_by_id, entry.parent.created_by_id
+        ] if entry.parent_id else [entry.created_by_id]
         if req.user.id not in valid_ids:
             resp.media = {'status': 'not valid'}
             return

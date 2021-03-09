@@ -42,7 +42,7 @@
                     <a onclick="postSave(event)" data-id="{{ entry.id }}">save</a>
                 {% endif %}
             {% endif %}
-            {% if user.id in [1, entry.created_by_id, entry.parent.created_by_id] and not entry.replies %}
+            {% if user.id in [entry.created_by_id, entry.parent.created_by_id] and not entry.replies %}
                 <a onclick="postDelete(event)" data-id="{{ entry.id }}">
                     delete
                 </a>

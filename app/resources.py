@@ -20,13 +20,12 @@ from app.validation import (authentication, changing, profiling, registration,
                             valid_content, valid_password, valid_reply,
                             valid_thread)
 
-Comments = Comment.objects.annotate(replies=Count('kids')).select_related('created_by')
-PPFR = Prefetch(
-    'parent', Comments.prefetch_related('parent')
-)
-PFR = Prefetch(
-    'kids', Comments.order_by('id')
-)
+Comments = Comment.objects.annotate(
+    replies=Count('kids')
+).select_related('created_by')
+
+PPFR = Prefetch('parent', Comments.prefetch_related('parent'))
+PFR = Prefetch('kids', Comments.order_by('id'))
 
 
 def paginate(req, qs, limit=16):
@@ -142,20 +141,14 @@ class FeedResource:
 
 class ReplyResource:
     def fetch_entries(self, parent):
-        return Comments.filter(
-            parent=parent
-        ).order_by('-id').select_related('parent').prefetch_related(PFR)
+        return Comments.filter(parent=parent).order_by('-id').prefetch_related(PFR)
 
     def fetch_ancestors(self, parent):
-        return Comments.filter(
-            id__in=parent.ancestors
-        ).order_by('id').select_related('parent')
+        return Comments.filter(id__in=parent.ancestors).order_by('id')
 
     @before(auth_user)
     def on_get(self, req, resp, username, base):
-        parent = Comments.filter(
-            id=int(base, 36)
-        ).select_related('parent').first()
+        parent = Comments.filter(id=int(base, 36)).first()
         if not parent or parent.created_by.username != username.lower():
             return not_found(resp, req.user, f'/{username}/{base}')
         duplicate = Comment.objects.filter(
@@ -366,11 +359,9 @@ class FollowersResource:
 
 class MentionsResource:
     def fetch_entries(self, req):
-        entries = Comment.objects.filter(
+        entries = Comments.filter(
             mentioned=req.user
-        ).order_by('-id').select_related(
-            'created_by', 'parent__created_by'
-        ).prefetch_related(PFR)
+        ).order_by('-id').prefetch_related(PFR, PPFR)
         return paginate(req, entries, 24)
 
     def clear_mentions(self, user):
@@ -440,12 +431,12 @@ class ReplyingResource:
 
 class SavedResource:
     def fetch_entries(self, req):
-        saved_ids = Save.objects.filter(created_by=req.user).values('to_comment__id')
-        entries = Comment.objects.filter(
+        saved_ids = Save.objects.filter(
+            created_by=req.user
+        ).values('to_comment__id')
+        entries = Comments.filter(
             id__in=saved_ids
-        ).order_by('-id').select_related(
-            'created_by', 'parent__created_by'
-        ).prefetch_related(PFR)
+        ).order_by('-id').prefetch_related(PFR, PPFR)
         return paginate(req, entries, 24)
 
     @before(auth_user)
@@ -513,9 +504,7 @@ class DiscoverResource:
                 last_id=Max('comments__id')
             ).values('last_id')
             sq = Q(id__in=last_ids)
-        entries = Comment.objects.filter(sq).order_by('-id').select_related(
-            'created_by', 'parent__created_by'
-        ).prefetch_related(PFR)
+        entries = Comments.filter(sq).order_by('-id').prefetch_related(PFR, PPFR)
         return paginate(req, entries, 24)
 
     @before(auth_user)
@@ -531,14 +520,12 @@ class DiscoverResource:
 
 class TrendingResource:
     def fetch_entries(self, req, sample):
-        sampling = Comment.objects.annotate(replies=Count('kids')).filter(
-            parent=None
+        sampling = Comment.objects.filter(parent=None).annotate(
+            replies=Count('kids')
         ).exclude(replies=0).order_by('-id').values('id')[:sample]
-        entries = Comment.objects.annotate(replies=Count('kids')).filter(
+        entries = Comments.filter(
             id__in=sampling
-        ).order_by(
-            '-replies', '-id'
-        ).select_related('created_by').prefetch_related(PFR)
+        ).order_by('-replies', '-id').prefetch_related(PFR)
         return paginate(req, entries)
 
     @before(auth_user)
