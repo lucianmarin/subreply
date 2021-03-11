@@ -136,7 +136,7 @@ table td a { text-decoration: underline; }
 
 .extra a { color: var(--gray); text-decoration: underline; }
 
-.status { color: var(--silver); font-size: var(--small); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.status { color: var(--silver); font-size: var(--small); }
 
 .status a { color: var(--silver); }
 

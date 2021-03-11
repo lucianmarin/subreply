@@ -35,7 +35,7 @@ class Command(BaseCommand):
         if mentions:
             mentioned = User.objects.filter(username=mentions[0].lower()).first()
         comment, is_new = Comment.objects.get_or_create(
-            ancestors=[],
+            ancestors=None,
             parent=self.comments.get(fields['parent']),
             created_at=parse(fields['created_at']).timestamp(),
             created_by=self.users.get(fields['created_by']),
@@ -44,8 +44,7 @@ class Command(BaseCommand):
         )
         print(comment.id, pk)
         self.comments[pk] = comment
-        comment.up_ancestors()
-        comment.add_replies()
+        comment.set_ancestors()
 
     def fetch_likes(self, fields):
         Save.objects.get_or_create(
@@ -61,13 +60,6 @@ class Command(BaseCommand):
             to_user=self.users.get(fields['to_user'])
         )
 
-    def up_things(self):
-        for user in User.objects.order_by('id'):
-            user.up_followers()
-            user.up_mentions()
-            user.up_replies()
-            user.up_saves()
-
     def handle(self, *args, **options):
         with open('db_clean.json') as db:
             rows = json.load(db)
@@ -80,4 +72,3 @@ class Command(BaseCommand):
                     self.fetch_likes(row['fields'])
                 elif row['model'] == "app.relationship":
                     self.fetch_relations(row['fields'])
-            self.up_things()

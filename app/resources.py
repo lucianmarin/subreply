@@ -1,7 +1,7 @@
 import hashlib
 from cgi import FieldStorage
 
-from django.db.models import Max, Prefetch, Q
+from django.db.models import Count, Max, Prefetch, Q
 from emails import Message
 from emails.template import JinjaTemplate
 from falcon import status_codes
@@ -12,17 +12,20 @@ from project.settings import DEBUG, F, MAX_AGE, SMTP
 from app.const import HTML, TEXT
 from app.filters import timeago
 from app.forms import get_content, get_emoji, get_name
-from app.helpers import build_hash, parse_metadata, utc_timestamp
+from app.helpers import build_hash, parse_metadata, utc_timestamp, verify_hash
 from app.hooks import auth_user, login_required
 from app.jinja import render
 from app.models import Comment, Relation, Reset, Save, User
 from app.validation import (authentication, changing, profiling, registration,
                             valid_content, valid_password, valid_reply,
-                            valid_thread)
+                            valid_thread, valid_handle)
 
-PFR = Prefetch(
-    'kids', queryset=Comment.objects.order_by('id').select_related('created_by')
-)
+Comments = Comment.objects.annotate(
+    replies=Count('descendants')
+).select_related('created_by')
+
+PPFR = Prefetch('parent', Comments.prefetch_related('parent'))
+PFR = Prefetch('kids', Comments.order_by('id'))
 
 
 def paginate(req, qs, limit=16):
@@ -87,9 +90,9 @@ class AboutResource:
 class FeedResource:
     def fetch_entries(self, req):
         friends = Relation.objects.filter(created_by=req.user).values('to_user_id')
-        entries = Comment.objects.filter(
+        entries = Comments.filter(
             created_by__in=friends, parent=None
-        ).order_by('-id').select_related('created_by').prefetch_related(PFR)
+        ).order_by('-id').prefetch_related(PFR)
         return paginate(req, entries)
 
     @before(auth_user)
@@ -131,27 +134,19 @@ class FeedResource:
                 created_by=req.user,
                 **extra
             )
-            if th.mentioned:
-                th.mentioned.up_mentions()
             raise HTTPFound('/')
 
 
 class ReplyResource:
     def fetch_entries(self, parent):
-        return Comment.objects.filter(
-            parent=parent
-        ).order_by('-id').select_related('created_by').prefetch_related(PFR)
+        return Comments.filter(parent=parent).order_by('-id').prefetch_related(PFR)
 
     def fetch_ancestors(self, parent):
-        return Comment.objects.filter(
-            id__in=parent.ancestors
-        ).order_by('id').select_related('created_by', 'parent')
+        return Comments.filter(id__in=parent.ancestors.values('id')).order_by('id')
 
     @before(auth_user)
     def on_get(self, req, resp, username, base):
-        parent = Comment.objects.filter(
-            id=int(base, 36)
-        ).select_related('created_by', 'parent').first()
+        parent = Comments.filter(id=int(base, 36)).first()
         if not parent or parent.created_by.username != username.lower():
             return not_found(resp, req.user, f'/{username}/{base}')
         duplicate = Comment.objects.filter(
@@ -169,9 +164,9 @@ class ReplyResource:
     @before(auth_user)
     @before(login_required)
     def on_post(self, req, resp, username, base):
-        parent = Comment.objects.filter(
+        parent = Comments.filter(
             id=int(base, 36)
-        ).select_related('created_by', 'parent').first()
+        ).select_related('parent').first()
         form = FieldStorage(fp=req.stream, environ=req.env)
         content = get_content(form)
         mentions, links, hashtags = parse_metadata(content)
@@ -201,11 +196,7 @@ class ReplyResource:
                 created_by=req.user,
                 **extra
             )
-            if re.mentioned:
-                re.mentioned.up_mentions()
-            re.up_ancestors()
-            re.add_replies()
-            parent.created_by.up_replies()
+            re.set_ancestors()
             raise HTTPFound(f'/{username}/{base}')
 
 
@@ -213,9 +204,9 @@ class EditResource:
     @before(auth_user)
     @before(login_required)
     def on_get(self, req, resp, base):
-        entry = Comment.objects.filter(
+        entry = Comments.filter(
             id=int(base, 36)
-        ).select_related('created_by', 'parent').first()
+        ).select_related('parent').first()
         if not entry or entry.created_by != req.user or entry.replies:
             return not_found(resp, req.user, f'/edit/{base}')
         ancestors = [entry.parent] if entry.parent_id else []
@@ -229,9 +220,9 @@ class EditResource:
     @before(auth_user)
     @before(login_required)
     def on_post(self, req, resp, base):
-        entry = Comment.objects.filter(
+        entry = Comments.filter(
             id=int(base, 36)
-        ).select_related('created_by', 'parent').first()
+        ).select_related('parent').first()
         form = FieldStorage(fp=req.stream, environ=req.env)
         content = get_content(form)
         mentions, links, hashtags = parse_metadata(content)
@@ -265,25 +256,21 @@ class EditResource:
             if previously_mentioned != entry.mentioned:
                 entry.mention_seen_at = .0
             entry.save(update_fields=fields)
-            if previously_mentioned:
-                previously_mentioned.up_mentions()
-            if entry.mentioned:
-                entry.mentioned.up_mentions()
             raise HTTPFound(f'/{entry.created_by}/{base}')
 
 
 class ProfileResource:
     def fetch_threads(self, user):
-        return Comment.objects.filter(
+        return Comments.filter(
             created_by=user, parent=None
         ).order_by('-id').select_related('created_by').prefetch_related(PFR)
 
     def fetch_replies(self, user):
-        return Comment.objects.filter(
+        return Comments.filter(
             created_by=user
         ).exclude(parent=None).order_by('-id').select_related(
-            'created_by', 'parent__created_by', 'parent__parent'
-        )
+            'created_by'
+        ).prefetch_related(PPFR)
 
     def fetch_entries(self, req, member, tab):
         method = getattr(self, f'fetch_{tab}')
@@ -346,7 +333,6 @@ class FollowersResource:
         Relation.objects.filter(
             to_user=user, seen_at=.0
         ).update(seen_at=utc_timestamp())
-        user.up_followers()
 
     @before(auth_user)
     @before(login_required)
@@ -362,18 +348,15 @@ class FollowersResource:
 
 class MentionsResource:
     def fetch_entries(self, req):
-        entries = Comment.objects.filter(
+        entries = Comments.filter(
             mentioned=req.user
-        ).order_by('-id').select_related(
-            'created_by', 'parent__created_by'
-        ).prefetch_related(PFR)
+        ).order_by('-id').prefetch_related(PFR, PPFR)
         return paginate(req, entries, 24)
 
     def clear_mentions(self, user):
         Comment.objects.filter(
             mentioned=user, mention_seen_at=.0
         ).update(mention_seen_at=utc_timestamp())
-        user.up_mentions()
 
     @before(auth_user)
     @before(login_required)
@@ -389,18 +372,15 @@ class MentionsResource:
 
 class RepliesResource:
     def fetch_entries(self, req):
-        entries = Comment.objects.filter(
+        entries = Comments.filter(
             parent__created_by=req.user
-        ).order_by('-id').select_related(
-            'created_by', 'parent__created_by', 'parent__parent'
-        )
+        ).order_by('-id').prefetch_related(PPFR)
         return paginate(req, entries)
 
     def clear_replies(self, user):
         Comment.objects.filter(
             parent__created_by=user, reply_seen_at=.0
         ).update(reply_seen_at=utc_timestamp())
-        user.up_replies()
 
     @before(auth_user)
     @before(login_required)
@@ -419,11 +399,11 @@ class ReplyingResource:
         friends = Relation.objects.filter(
             created_by=req.user
         ).exclude(to_user=req.user).values('to_user_id')
-        entries = Comment.objects.filter(
+        entries = Comments.filter(
             created_by__in=friends
-        ).exclude(parent=None).exclude(parent__created_by=req.user).order_by('-id').select_related(
-            'created_by', 'parent__created_by', 'parent__parent'
-        )
+        ).exclude(parent=None).exclude(
+            parent__created_by=req.user
+        ).order_by('-id').prefetch_related(PPFR)
         return paginate(req, entries)
 
     @before(auth_user)
@@ -438,12 +418,12 @@ class ReplyingResource:
 
 class SavedResource:
     def fetch_entries(self, req):
-        saved_ids = Save.objects.filter(created_by=req.user).values('to_comment__id')
-        entries = Comment.objects.filter(
+        saved_ids = Save.objects.filter(
+            created_by=req.user
+        ).values('to_comment__id')
+        entries = Comments.filter(
             id__in=saved_ids
-        ).order_by('-id').select_related(
-            'created_by', 'parent__created_by'
-        ).prefetch_related(PFR)
+        ).order_by('-id').prefetch_related(PFR, PPFR)
         return paginate(req, entries, 24)
 
     @before(auth_user)
@@ -511,9 +491,7 @@ class DiscoverResource:
                 last_id=Max('comments__id')
             ).values('last_id')
             sq = Q(id__in=last_ids)
-        entries = Comment.objects.filter(sq).order_by('-id').select_related(
-            'created_by', 'parent__created_by'
-        ).prefetch_related(PFR)
+        entries = Comments.filter(sq).order_by('-id').prefetch_related(PFR, PPFR)
         return paginate(req, entries, 24)
 
     @before(auth_user)
@@ -529,12 +507,12 @@ class DiscoverResource:
 
 class TrendingResource:
     def fetch_entries(self, req, sample):
-        sampling = Comment.objects.filter(
-            parent=None
+        sampling = Comment.objects.filter(parent=None).annotate(
+            replies=Count('kids')
         ).exclude(replies=0).order_by('-id').values('id')[:sample]
-        entries = Comment.objects.filter(
+        entries = Comments.filter(
             id__in=sampling
-        ).order_by('-replies', '-id').select_related('created_by').prefetch_related(PFR)
+        ).order_by('-replies', '-id').prefetch_related(PFR)
         return paginate(req, entries)
 
     @before(auth_user)
@@ -555,11 +533,9 @@ class ActionResource:
         Relation.objects.get_or_create(
             created_at=utc_timestamp(), created_by=user, to_user=member
         )
-        member.up_followers()
 
     def unfollow(self, user, member):
         Relation.objects.filter(created_by=user, to_user=member).delete()
-        member.up_followers()
 
     def block(self, user, member):
         if user.id == 1:
@@ -595,19 +571,18 @@ class ActionResource:
         raise HTTPFound(f'/{username}')
 
 
-class PasswordResource:
+class AccountResource:
     @before(auth_user)
     @before(login_required)
     def on_get(self, req, resp):
         form = FieldStorage(fp=req.stream, environ=req.env)
         resp.body = render(
-            page='password', view='password',
-            user=req.user, errors={}, form=form
+            page='account', view='account', user=req.user, form=form
         )
 
     @before(auth_user)
     @before(login_required)
-    def on_post(self, req, resp):
+    def on_post_chg(self, req, resp):
         form = FieldStorage(fp=req.stream, environ=req.env)
         current = form.getvalue('current', '')
         password1 = form.getvalue('password1', '')
@@ -615,14 +590,70 @@ class PasswordResource:
         errors = changing(req.user, current, password1, password2)
         if errors:
             resp.body = render(
-                page='password', view='password',
-                user=req.user, errors=errors, form=form
+                page='account', view='account',
+                user=req.user, change_errors=errors, form=form
             )
         else:
             req.user.password = build_hash(password1)
             req.user.save()
             resp.unset_cookie('identity')
             raise HTTPFound('/login')
+
+    @before(auth_user)
+    @before(login_required)
+    def on_post_del(self, req, resp):
+        form = FieldStorage(fp=req.stream, environ=req.env)
+        current = form.getvalue('current', '')
+        errors = {}
+        if not verify_hash(current, req.user.password):
+            errors['current'] = "Password doesn't match"
+        if errors:
+            resp.body = render(
+                page='account', view='account',
+                user=req.user, delete_errors=errors, form=form
+            )
+        else:
+            req.user.delete()
+            resp.unset_cookie('identity')
+            raise HTTPFound('/discover')
+
+
+class SocialResource:
+    sites = [
+        'dribbble', 'github', 'instagram', 'linkedin',
+        'pinterest', 'soundcloud', 'telegram', 'twitter'
+    ]
+
+    @before(auth_user)
+    @before(login_required)
+    def on_get(self, req, resp):
+        form = FieldStorage(fp=req.stream, environ=req.env)
+        resp.body = render(
+            page='social', view='social', user=req.user, form=form
+        )
+
+    @before(auth_user)
+    @before(login_required)
+    def on_post(self, req, resp):
+        form = FieldStorage(fp=req.stream, environ=req.env)
+        f = {}
+        for site in self.sites:
+            value = form.getvalue(site, '').strip().lower()
+            if value:
+                f[site] = value
+        errors = {}
+        for field, value in f.items():
+            if valid_handle(value):
+                errors[field] = valid_handle(value)
+        if errors:
+            resp.body = render(
+                page='social', view='social',
+                user=req.user, errors=errors, form=form, fields=f
+            )
+        else:
+            req.user.links = f
+            req.user.save(update_fields=['links'])
+            raise HTTPFound('/{0}'.format(req.user))
 
 
 class SettingsResource:

@@ -3,18 +3,19 @@
 {% block main %}
     <div class="title">
         <a href="/settings">Settings</a>
-        <a href="/password" class="on">Password</a>
+        <a href="/social">Social</a>
+        <a href="/account" class="on">Account</a>
         <a href="/logout">Logout</a>
     </div>
 
     <div class="register">
-        <form enctype="multipart/form-data" method="post" autocomplete="off">
+        <form action="/account/change" enctype="multipart/form-data" method="post" autocomplete="off">
             <div class="line">
                 <label for="id_current">Current password<i>*</i></label>
                 <input type="password" name="current" id="id_current"
                     value="{{ form.getvalue('current', '') }}">
-                {% if 'current' in errors %}
-                    <div class="error">{{ errors['current'] }}</div>
+                {% if 'current' in change_errors %}
+                    <div class="error">{{ change_errors['current'] }}</div>
                 {% endif %}
             </div>
             <div class="line">
@@ -28,12 +29,28 @@
                     <input type="password" name="password2" id="id_password2"
                         value="{{ form.getvalue('password2', '') }}">
                 </div>
-                {% if 'password' in errors %}
-                    <div class="error">{{ errors['password'] }}</div>
+                {% if 'password' in change_errors %}
+                    <div class="error">{{ change_errors['password'] }}</div>
                 {% endif %}
             </div>
             <div class="line">
                 <input type="submit" value="Change">
+            </div>
+        </form>
+    </div>
+
+    <div class="register">
+        <form action="/account/delete" enctype="multipart/form-data" method="post" autocomplete="off">
+            <div class="line">
+                <label for="id_current">Confirm password<i>*</i></label>
+                <input type="password" name="current" id="id_current"
+                    value="{{ form.getvalue('current', '') }}">
+                {% if 'current' in delete_errors %}
+                    <div class="error">{{ delete_errors['current'] }}</div>
+                {% endif %}
+            </div>
+            <div class="line">
+                <input type="submit" value="Delete">
             </div>
         </form>
     </div>
