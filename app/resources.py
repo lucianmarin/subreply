@@ -12,16 +12,16 @@ from project.settings import DEBUG, F, MAX_AGE, SMTP
 from app.const import HTML, TEXT
 from app.filters import timeago
 from app.forms import get_content, get_emoji, get_name
-from app.helpers import build_hash, parse_metadata, utc_timestamp
+from app.helpers import build_hash, parse_metadata, utc_timestamp, verify_hash
 from app.hooks import auth_user, login_required
 from app.jinja import render
 from app.models import Comment, Relation, Reset, Save, User
 from app.validation import (authentication, changing, profiling, registration,
                             valid_content, valid_password, valid_reply,
-                            valid_thread)
+                            valid_thread, valid_handle)
 
 Comments = Comment.objects.annotate(
-    replies=Count('kids')
+    replies=Count('descendants')
 ).select_related('created_by')
 
 PPFR = Prefetch('parent', Comments.prefetch_related('parent'))
@@ -142,7 +142,7 @@ class ReplyResource:
         return Comments.filter(parent=parent).order_by('-id').prefetch_related(PFR)
 
     def fetch_ancestors(self, parent):
-        return Comments.filter(id__in=parent.ancestors).order_by('id')
+        return Comments.filter(id__in=parent.ancestors.values('id')).order_by('id')
 
     @before(auth_user)
     def on_get(self, req, resp, username, base):
@@ -196,7 +196,7 @@ class ReplyResource:
                 created_by=req.user,
                 **extra
             )
-            re.up_ancestors()
+            re.set_ancestors()
             raise HTTPFound(f'/{username}/{base}')
 
 
@@ -602,10 +602,28 @@ class AccountResource:
     @before(auth_user)
     @before(login_required)
     def on_post_del(self, req, resp):
-        pass
+        form = FieldStorage(fp=req.stream, environ=req.env)
+        current = form.getvalue('current', '')
+        errors = {}
+        if not verify_hash(current, req.user.password):
+            errors['current'] = "Password doesn't match"
+        if errors:
+            resp.body = render(
+                page='account', view='account',
+                user=req.user, delete_errors=errors, form=form
+            )
+        else:
+            req.user.delete()
+            resp.unset_cookie('identity')
+            raise HTTPFound('/discover')
 
 
 class SocialResource:
+    sites = [
+        'dribbble', 'github', 'instagram', 'linkedin',
+        'pinterest', 'soundcloud', 'telegram', 'twitter'
+    ]
+
     @before(auth_user)
     @before(login_required)
     def on_get(self, req, resp):
@@ -613,6 +631,29 @@ class SocialResource:
         resp.body = render(
             page='social', view='social', user=req.user, form=form
         )
+
+    @before(auth_user)
+    @before(login_required)
+    def on_post(self, req, resp):
+        form = FieldStorage(fp=req.stream, environ=req.env)
+        f = {}
+        for site in self.sites:
+            value = form.getvalue(site, '').strip().lower()
+            if value:
+                f[site] = value
+        errors = {}
+        for field, value in f.items():
+            if valid_handle(value):
+                errors[field] = valid_handle(value)
+        if errors:
+            resp.body = render(
+                page='social', view='social',
+                user=req.user, errors=errors, form=form, fields=f
+            )
+        else:
+            req.user.links = f
+            req.user.save(update_fields=['links'])
+            raise HTTPFound('/{0}'.format(req.user))
 
 
 class SettingsResource:

@@ -57,9 +57,9 @@ def valid_thread(value):
 
 
 def valid_reply(parent, user, value, mentions):
-    t_id = min(parent.ancestors) if parent.ancestors else parent.id
+    top_id = min(parent.ancestors.values_list('id', flat=True)) if parent.ancestors.exists() else parent.id
     duplicate = Comment.objects.filter(
-        (Q(ancestors__contains=[t_id]) | Q(id=t_id)) & Q(content__iexact=value)
+        (Q(ancestors=top_id) | Q(id=top_id)) & Q(content__iexact=value)
     ).first()
     if duplicate:
         return f'Replied by <a href="/{duplicate.created_by}/{duplicate.base}">@{duplicate.created_by}</a> in thread'
@@ -107,6 +107,14 @@ def valid_username(value, remote_addr='', user_agent='', user_id=0):
         return "Username registered from this IP address"
     elif user_agent and not is_browser:
         return "You aren't using a PC, tablet or mobile phone"
+
+
+def valid_handle(value):
+    limits = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_"
+    if len(value) > 15:
+        return "Handle can't be longer than 15 characters"
+    elif not all(c in limits for c in value):
+        return "Handle can be only alphanumeric"
 
 
 def valid_first_name(value):

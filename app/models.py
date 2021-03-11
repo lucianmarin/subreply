@@ -3,7 +3,6 @@ from os import environ
 
 from django import setup
 from django.conf import settings
-from django.contrib.postgres import fields
 from django.db import models
 from django.utils.functional import cached_property
 
@@ -37,17 +36,10 @@ class User(models.Model):
     bio = models.CharField(max_length=120, default='')
     website = models.CharField(max_length=120, default='')
 
-    # links = fields.ArrayField(
-    #     fields.ArrayField(models.CharField(max_length=15), size=2),
-    #     default=list
-    # )
+    links = models.JSONField(default=dict)
 
     def __str__(self):
         return self.username
-
-    # @cached_property
-    # def social(self):
-    #     return dict(self.links)
 
     @cached_property
     def full_name(self):
@@ -72,6 +64,29 @@ class User(models.Model):
             return "away"
         else:
             return "gone"
+
+    @cached_property
+    def social(self):
+        sites = {
+            'dribbble': '<a href="https://dribbble.com/{0}">Dribbble</a>',
+            'github': '<a href="https://github.com/{0}">GitHub</a>',
+            'instagram': '<a href="https://instagram.com/{0}">Instagram</a>',
+            'linkedin': '<a href="https://linkedin.com/in/{0}">LinkedIn</a>',
+            'pinterest': '<a href="https://pinterest.com/{0}">Pinterest</a>',
+            'soundcloud': '<a href="https://soundcloud.com/{0}">SoundCloud</a>',
+            'telegram': '<a href="htps://telegram.com/{0}">Telegram</a>',
+            'twitter': '<a href="https://twitter.com/{0}">Twitter</a>'
+        }
+        also = "Also on {0}."
+        keys = sorted(self.links)
+        holder = ""
+        for key in keys[:-2]:
+            holder += sites[key].format(self.links[key]) + ", "
+        for index, key in enumerate(keys[-2:]):
+            holder += sites[key].format(self.links[key])
+            if not index and len(keys) > 1:
+                holder += " and "
+        return also.format(holder)
 
     @cached_property
     def notif_followers(self):
@@ -102,7 +117,8 @@ class User(models.Model):
 
 
 class Comment(models.Model):
-    ancestors = fields.ArrayField(models.PositiveIntegerField(), default=list)
+    ancestors = models.ManyToManyField('self', related_name='descendants',
+                                       symmetrical=False)
     parent = models.ForeignKey('self', on_delete=models.CASCADE, null=True,
                                related_name='kids')
     created_at = models.FloatField(default=.0)
@@ -143,13 +159,12 @@ class Comment(models.Model):
         return base36 or alphabet[0]
 
     def get_ancestors(self):
-        if self.parent_id is None:
+        if not self.parent:
             return []
-        return [self.parent_id] + self.parent.get_ancestors()
+        return [self.parent] + self.parent.get_ancestors()
 
-    def up_ancestors(self):
-        self.ancestors = self.get_ancestors()
-        self.save(update_fields=['ancestors'])
+    def set_ancestors(self):
+        self.ancestors.set(self.get_ancestors())
 
 
 class Save(models.Model):

@@ -6,18 +6,11 @@
 
         <div class="entry">
             <div class="status">
-                {% if member.readonly %}
-                    Read-only account. {{ member.saves | length }} saves.
-                    {% if user.id == 1 %}
-                        <a href="/{{ member }}/unblock">Unblock</a>
-                    {% endif %}
-                {% else %}
-                    Joined {{ member.joined_at | shortdate }} ago.
-                    Seen {{ member.seen_at | shortdate }} ago.
-                    {% if is_followed %}Follows you.{% endif %}
-                    {% if user.id == 1 %}
-                        <a href="/{{ member }}/block">Block</a>
-                    {% endif %}
+                Joined {{ member.joined_at | shortdate }} ago.
+                Seen {{ member.seen_at | shortdate }} ago.
+                {% if is_followed %}Follows you.{% endif %}
+                {% if member.links %}
+                    {{ member.social }}
                 {% endif %}
             </div>
         </div>
