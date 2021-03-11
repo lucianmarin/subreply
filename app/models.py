@@ -74,7 +74,7 @@ class User(models.Model):
             'linkedin': '<a href="https://linkedin.com/in/{0}">LinkedIn</a>',
             'pinterest': '<a href="https://pinterest.com/{0}">Pinterest</a>',
             'soundcloud': '<a href="https://soundcloud.com/{0}">SoundCloud</a>',
-            'telegram': '<a href="htps://telegram.com/{0}">Telegram</a>',
+            'telegram': '<a href="https://t.me/{0}">Telegram</a>',
             'twitter': '<a href="https://twitter.com/{0}">Twitter</a>'
         }
         also = "Also on {0}."
