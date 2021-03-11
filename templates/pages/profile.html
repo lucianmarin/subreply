@@ -9,9 +9,7 @@
                 Joined {{ member.joined_at | shortdate }} ago.
                 Seen {{ member.seen_at | shortdate }} ago.
                 {% if is_followed %}Follows you.{% endif %}
-                {% if member.links %}
-                    {{ member.social }}
-                {% endif %}
+                {% if member.links %}{{ member.social }}{% endif %}
             </div>
         </div>
 

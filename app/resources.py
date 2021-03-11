@@ -455,7 +455,7 @@ class PeopleResource:
     def fetch_entries(self, req, terms, kind):
         q = self.build_query(terms)
         sort = '-seen_at' if kind == 'seen' else '-id'
-        entries = User.objects.filter(q).exclude(readonly=True).order_by(sort)
+        entries = User.objects.filter(q).order_by(sort)
         return paginate(req, entries, 32)
 
     def get_people(self, req, resp, kind):
@@ -537,15 +537,9 @@ class ActionResource:
     def unfollow(self, user, member):
         Relation.objects.filter(created_by=user, to_user=member).delete()
 
-    def block(self, user, member):
+    def destroy(self, user, member):
         if user.id == 1:
-            member.readonly = True
-            member.save(update_fields=['readonly'])
-
-    def unblock(self, user, member):
-        if user.id == 1:
-            member.readonly = False
-            member.save(update_fields=['readonly'])
+            member.delete()
 
     def on_get_flw(self, req, resp, username):
         self.get_action(req, resp, username, 'follow')
@@ -553,11 +547,8 @@ class ActionResource:
     def on_get_unf(self, req, resp, username):
         self.get_action(req, resp, username, 'unfollow')
 
-    def on_get_blk(self, req, resp, username):
-        self.get_action(req, resp, username, 'block')
-
-    def on_get_unb(self, req, resp, username):
-        self.get_action(req, resp, username, 'unblock')
+    def on_get_dst(self, req, resp, username):
+        self.get_action(req, resp, username, 'destroy')
 
     @before(auth_user)
     @before(login_required)

@@ -1,14 +1,10 @@
 <div class="reply">
     <form enctype="multipart/form-data" method="post" autocomplete="off">
-        {% if user.readonly %}
-            <div class="placeholder">Read-only for now.</div>
-        {% else %}
-            <textarea name="content" id="id_content"
-                placeholder="Share your thoughts"
-                rows="1" cols="60" maxlength="480"
-                oninput="expand(this)" onkeydown="send(event)"
-                >{{ form.getvalue('content', status) }}</textarea>
-        {% endif %}
+        <textarea name="content" id="id_content"
+            placeholder="Share your thoughts"
+            rows="1" cols="60" maxlength="480"
+            oninput="expand(this)" onkeydown="send(event)"
+            >{{ form.getvalue('content', status) }}</textarea>
         {% for name, error in errors.items() %}
             <div class="error">{{ error | safe }}</div>
         {% endfor %}

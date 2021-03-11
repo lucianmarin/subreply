@@ -25,7 +25,6 @@ class User(models.Model):
     email = models.CharField(max_length=120, unique=True)
     password = models.CharField(max_length=80)
 
-    readonly = models.BooleanField(default=False, db_index=True)
     remote_addr = models.GenericIPAddressField()
     joined_at = models.FloatField(default=.0)
     seen_at = models.FloatField(default=.0, db_index=True)
