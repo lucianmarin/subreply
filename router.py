@@ -41,8 +41,8 @@ app.add_route('/account', resources.AccountResource())
 app.add_route('/account/change', resources.AccountResource(), suffix="chg")
 app.add_route('/account/delete', resources.AccountResource(), suffix="del")
 
+app.add_route('/options', resources.OptionsResource())
 app.add_route('/social', resources.SocialResource())
-app.add_route('/settings', resources.SettingsResource())
 
 app.add_route('/change', resources.ChangeResource())
 app.add_route('/reset', resources.ResetResource())

@@ -647,13 +647,13 @@ class SocialResource:
             raise HTTPFound('/{0}'.format(req.user))
 
 
-class SettingsResource:
+class OptionsResource:
     @before(auth_user)
     @before(login_required)
     def on_get(self, req, resp):
         form = FieldStorage(fp=req.stream, environ=req.env)
         resp.body = render(
-            page='settings', view='settings',
+            page='options', view='options',
             user=req.user, errors={}, form=form
         )
 
@@ -674,7 +674,7 @@ class SettingsResource:
         errors = profiling(f, req.user.id)
         if errors:
             resp.body = render(
-                page='settings', view='settings',
+                page='options', view='options',
                 user=req.user, errors=errors, form=form, fields=f
             )
         else:
