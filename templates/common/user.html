@@ -8,7 +8,7 @@
         <b class="{{ member.status }}">&bull;</b>
         {% if view == 'profile' %}
             {% if member.id == user.id %}
-                <a class="ago" href="/settings">edit</a>
+                <a class="ago" href="/options">edit</a>
             {% else %}
                 {% if is_following %}
                     <a class="ago" href="/{{ member }}/unfollow">unfollow</a>
