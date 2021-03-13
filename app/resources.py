@@ -127,7 +127,7 @@ class FeedResource:
             extra['hashtag'] = hashtags[0].lower() if hashtags else ''
             extra['link'] = links[0].lower() if links else ''
             extra['mention'] = mentions[0].lower() if mentions else ''
-            extra['mentioned'] = User.objects.get(username=mentions[0].lower()) if mentions else None
+            extra['at_user'] = User.objects.get(username=mentions[0].lower()) if mentions else None
             th, is_new = Comment.objects.get_or_create(
                 content=content,
                 created_at=utc_timestamp(),
@@ -188,9 +188,10 @@ class ReplyResource:
             extra['hashtag'] = hashtags[0].lower() if hashtags else ''
             extra['link'] = links[0].lower() if links else ''
             extra['mention'] = mentions[0].lower() if mentions else ''
-            extra['mentioned'] = User.objects.get(username=mentions[0].lower()) if mentions else None
+            extra['at_user'] = User.objects.get(username=mentions[0].lower()) if mentions else None
             re, is_new = Comment.objects.get_or_create(
                 parent=parent,
+                to_user=parent.created_by,
                 content=content,
                 created_at=utc_timestamp(),
                 created_by=req.user,
@@ -244,16 +245,16 @@ class EditResource:
         else:
             fields = [
                 'content', 'edited_at', 'hashtag', 'link',
-                'mention', 'mentioned', 'mention_seen_at'
+                'mention', 'at_user', 'mention_seen_at'
             ]
-            previously_mentioned = entry.mentioned
+            previous_at_user = entry.at_user
             entry.content = content
             entry.edited_at = utc_timestamp()
             entry.hashtag = hashtags[0].lower() if hashtags else ''
             entry.link = links[0].lower() if links else ''
             entry.mention = mentions[0].lower() if mentions else ''
-            entry.mentioned = User.objects.get(username=mentions[0].lower()) if mentions else None
-            if previously_mentioned != entry.mentioned:
+            entry.at_user = User.objects.get(username=mentions[0].lower()) if mentions else None
+            if previous_at_user != entry.at_user:
                 entry.mention_seen_at = .0
             entry.save(update_fields=fields)
             raise HTTPFound(f'/{entry.created_by}/{base}')
@@ -349,13 +350,13 @@ class FollowersResource:
 class MentionsResource:
     def fetch_entries(self, req):
         entries = Comments.filter(
-            mentioned=req.user
+            at_user=req.user
         ).order_by('-id').prefetch_related(PFR, PPFR)
         return paginate(req, entries, 24)
 
     def clear_mentions(self, user):
         Comment.objects.filter(
-            mentioned=user, mention_seen_at=.0
+            at_user=user, mention_seen_at=.0
         ).update(mention_seen_at=utc_timestamp())
 
     @before(auth_user)

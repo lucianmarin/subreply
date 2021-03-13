@@ -97,9 +97,7 @@ class User(models.Model):
 
     @cached_property
     def notif_replies(self):
-        return Comment.objects.filter(
-            parent__created_by=self, reply_seen_at=.0
-        ).count()
+        return self.replies.filter(reply_seen_at=.0).count()
 
     @cached_property
     def saves(self):
@@ -123,8 +121,10 @@ class Comment(models.Model):
     created_at = models.FloatField(default=.0)
     created_by = models.ForeignKey('User', on_delete=models.CASCADE,
                                    related_name='comments')
-    mentioned = models.ForeignKey('User', on_delete=models.SET_NULL,
-                                  null=True, related_name='mentions')
+    at_user = models.ForeignKey('User', on_delete=models.SET_NULL,
+                                null=True, related_name='mentions')
+    to_user = models.ForeignKey('User', on_delete=models.CASCADE, null=True,
+                                related_name='replies')
     content = models.CharField(max_length=480, db_index=True)
     hashtag = models.CharField(max_length=15, default='')
     link = models.CharField(max_length=120, default='')

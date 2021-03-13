@@ -31,15 +31,15 @@ class Command(BaseCommand):
 
     def fetch_comments(self, fields, pk):
         mentions, links, hashtags = parse_metadata(fields['content'])
-        mentioned = None
+        at_user = None
         if mentions:
-            mentioned = User.objects.filter(username=mentions[0].lower()).first()
+            at_user = User.objects.filter(username=mentions[0].lower()).first()
         comment, is_new = Comment.objects.get_or_create(
             ancestors=None,
             parent=self.comments.get(fields['parent']),
             created_at=parse(fields['created_at']).timestamp(),
             created_by=self.users.get(fields['created_by']),
-            mentioned=mentioned,
+            at_user=at_user,
             content=fields['content']
         )
         print(comment.id, pk)
