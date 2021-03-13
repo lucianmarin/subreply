@@ -76,5 +76,5 @@ class Command(BaseCommand):
         with open('static/worldcities.json', 'w') as file:
             json.dump(world, file, sort_keys=True, indent=4)
 
-    def handle(self, *args, **options):
+    def handle(self):
         self.convert()

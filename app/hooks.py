@@ -4,7 +4,7 @@ from app.models import User
 from project.settings import F
 
 
-def auth_user(req, resp, resource, params):
+def auth_user(req, resp, resource, params):  # noqa
     token = req.cookies.get('identity', '')
     try:
         identity = F.decrypt(token.encode()).decode() if token else 0
@@ -17,6 +17,6 @@ def auth_user(req, resp, resource, params):
         req.user.up_seen(remote_addr)
 
 
-def login_required(req, resp, resource, params):
+def login_required(req, resp, resource, params):  # noqa
     if not req.user:
         raise HTTPFound('/login')

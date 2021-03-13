@@ -17,8 +17,8 @@ from app.hooks import auth_user, login_required
 from app.jinja import render
 from app.models import Comment, Relation, Reset, Save, User
 from app.validation import (authentication, changing, profiling, registration,
-                            valid_content, valid_password, valid_reply,
-                            valid_thread, valid_handle)
+                            valid_content, valid_handle, valid_password,
+                            valid_reply, valid_thread)
 
 Comments = Comment.objects.annotate(
     replies=Count('descendants')

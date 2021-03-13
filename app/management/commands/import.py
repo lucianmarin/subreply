@@ -60,7 +60,7 @@ class Command(BaseCommand):
             to_user=self.users.get(fields['to_user'])
         )
 
-    def handle(self, *args, **options):
+    def handle(self):
         with open('db_clean.json') as db:
             rows = json.load(db)
             for row in rows:
