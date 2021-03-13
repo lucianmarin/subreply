@@ -30,7 +30,9 @@ input[type=text], input[type=password], input[type=email], input[type=url], sele
 
 input[type=text]:focus, input[type=password]:focus, input[type=email]:focus, input[type=url]:focus, select:focus, textarea:focus { outline: 0 none; }
 
-input[type=submit] { background-color: var(--black); border: 0 none; border-radius: var(--radius); color: var(--whitesmoke); cursor: pointer; float: right; font-size: var(--small); padding: 5px 15px; }
+input[type=submit] { background-color: var(--black); border: 0 none; border-radius: var(--radius); color: var(--white); cursor: pointer; float: right; font-size: var(--small); padding: 5px 15px; }
+
+input[type=submit]:hover { color: var(--gainsboro); transition: color var(--d); }
 
 svg { fill: none; stroke: var(--black); stroke-linecap: round; stroke-linejoin: round; stroke-width: 2; }
 
@@ -95,6 +97,8 @@ table td a { text-decoration: underline; }
 .title a { color: var(--gray); }
 
 .title a.on { color: var(--black); font-weight: bold; }
+
+.title a:hover { color: var(--black); }
 
 .reply { margin: 10px 0; }
 

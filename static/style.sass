@@ -105,11 +105,14 @@ input[type=submit]
     background-color: var(--black)
     border: 0 none
     border-radius: var(--radius)
-    color: var(--whitesmoke)
+    color: var(--white)
     cursor: pointer
     float: right
     font-size: var(--small)
     padding: 5px 15px
+    &:hover
+        color: var(--gainsboro)
+        transition: color var(--d)
 
 svg
     fill: none
@@ -225,6 +228,8 @@ table
         &.on
             color: var(--black)
             font-weight: bold
+        &:hover
+            color: var(--black)
 
 .reply
     margin: 10px 0
