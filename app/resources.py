@@ -374,13 +374,13 @@ class MentionsResource:
 class RepliesResource:
     def fetch_entries(self, req):
         entries = Comments.filter(
-            parent__created_by=req.user
+            to_user=req.user
         ).order_by('-id').prefetch_related(PPFR)
         return paginate(req, entries)
 
     def clear_replies(self, user):
         Comment.objects.filter(
-            parent__created_by=user, reply_seen_at=.0
+            to_user=user, reply_seen_at=.0
         ).update(reply_seen_at=utc_timestamp())
 
     @before(auth_user)
@@ -403,7 +403,7 @@ class ReplyingResource:
         entries = Comments.filter(
             created_by__in=friends
         ).exclude(parent=None).exclude(
-            parent__created_by=req.user
+            to_user=req.user
         ).order_by('-id').prefetch_related(PPFR)
         return paginate(req, entries)
 
