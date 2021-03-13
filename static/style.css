@@ -64,6 +64,8 @@ table td a { text-decoration: underline; }
 
 .logo a { background-color: var(--black); border-radius: 15px; color: var(--white); display: block; float: right; font-size: var(--tiny); height: 30px; line-height: 30px; text-align: center; width: 30px; }
 
+.logo a:hover { color: var(--gainsboro); }
+
 .links { position: sticky; text-align: right; top: 50px; }
 
 .links a { background-color: var(--whitesmoke); border-bottom: var(--white) 1px solid; color: var(--black); display: block; height: 20px; padding: 5px 15px; transition: background-color var(--d); }
@@ -114,17 +116,23 @@ table td a { text-decoration: underline; }
 
 .content a { text-decoration: underline; }
 
+.content a:hover { color: var(--gray); }
+
 .small { font-size: var(--small); overflow: hidden; }
 
 .small a, .small b { color: var(--gray); float: left; margin-left: 15px; }
 
 .small a:first-child, .small b:first-child { margin-left: 0; }
 
+.small a:hover, .small b:hover { color: var(--black); }
+
 .author { color: var(--gray); font-size: var(--small); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 .author .short, .author .handle, .author b { font-weight: bold; }
 
 .author .handle, .author .ago { color: var(--gray); }
+
+.author .ago:hover { color: var(--black); }
 
 .author .here { color: green; }
 
@@ -136,9 +144,13 @@ table td a { text-decoration: underline; }
 
 .extra a { color: var(--gray); text-decoration: underline; }
 
+.extra a:hover { color: var(--black); }
+
 .status { color: var(--silver); font-size: var(--small); }
 
 .status a { color: var(--silver); }
+
+.status a:hover { color: var(--gray); }
 
 .filters { font-size: var(--small); height: 20px; overflow: hidden; }
 
