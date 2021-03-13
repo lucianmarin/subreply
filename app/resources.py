@@ -24,7 +24,7 @@ Comments = Comment.objects.annotate(
     replies=Count('descendants')
 ).select_related('created_by')
 
-PPFR = Prefetch('parent', Comments.prefetch_related('parent'))
+PPFR = Prefetch('parent', Comments)
 PFR = Prefetch('kids', Comments.order_by('id'))
 
 
@@ -269,9 +269,7 @@ class ProfileResource:
     def fetch_replies(self, user):
         return Comments.filter(
             created_by=user
-        ).exclude(parent=None).order_by('-id').select_related(
-            'created_by'
-        ).prefetch_related(PPFR)
+        ).exclude(parent=None).order_by('-id').prefetch_related(PPFR)
 
     def fetch_entries(self, req, member, tab):
         method = getattr(self, f'fetch_{tab}')
