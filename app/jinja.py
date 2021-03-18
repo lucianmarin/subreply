@@ -1,6 +1,7 @@
+from urllib.parse import quote_plus
+
 from jinja2 import Environment, FileSystemBytecodeCache, FileSystemLoader
 from num2words import num2words
-from urllib.parse import quote_plus
 
 from app.filters import age, parser, shortdate, superscript
 from project.settings import DEBUG

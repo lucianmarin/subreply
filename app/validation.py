@@ -5,13 +5,13 @@ import grapheme
 import requests
 from django.db.models import Q
 from dns.resolver import query as dns_query
-from project.settings import INVALID, SLURS
 from user_agents import parse
 
 from app.const import LATIN, MAX_YEAR, MIN_YEAR, WORLD
 from app.filters import shortdate
 from app.helpers import has_repetions, parse_metadata, verify_hash
 from app.models import Comment, User
+from project.settings import INVALID, SLURS
 
 
 def valid_content(value, user):
@@ -293,7 +293,7 @@ def valid_emoji(value, user_id=0):
     if value:
         duplicate = User.objects.filter(emoji=value).exclude(id=user_id).first()
         emojis = list(grapheme.graphemes(value))
-        if any(emo not in emoji.UNICODE_EMOJI for emo in emojis):
+        if any(emo not in emoji.UNICODE_EMOJI_ENGLISH for emo in emojis):
             return "Emojis only are allowed"
         if len(emojis) > 2:
             return "Emojis are more than two"

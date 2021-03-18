@@ -7,7 +7,6 @@ from emails.template import JinjaTemplate
 from falcon import status_codes
 from falcon.hooks import before
 from falcon.redirects import HTTPFound
-from project.settings import DEBUG, F, MAX_AGE, SMTP
 
 from app.const import HTML, TEXT
 from app.filters import timeago
@@ -16,9 +15,11 @@ from app.helpers import build_hash, parse_metadata, utc_timestamp, verify_hash
 from app.hooks import auth_user, login_required
 from app.jinja import render
 from app.models import Comment, Relation, Reset, Save, User
-from app.validation import (authentication, changing, profiling, registration,
-                            valid_content, valid_handle, valid_password,
-                            valid_reply, valid_thread)
+from app.validation import (
+    authentication, changing, profiling, registration, valid_content,
+    valid_handle, valid_password, valid_reply, valid_thread
+)
+from project.settings import DEBUG, MAX_AGE, SMTP, F
 
 Comments = Comment.objects.annotate(
     replies=Count('descendants')
@@ -486,9 +487,7 @@ class DiscoverResource:
         if terms:
             sq = self.build_query(terms)
         else:
-            last_ids = User.objects.annotate(
-                last_id=Max('comments__id')
-            ).values('last_id')
+            last_ids = User.objects.annotate(lid=Max('comments')).values('lid')
             sq = Q(id__in=last_ids)
         entries = Comments.filter(sq).order_by('-id').prefetch_related(PFR, PPFR)
         return paginate(req, entries, 24)

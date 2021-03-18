@@ -1,6 +1,7 @@
+from datetime import datetime
+
 from django.core.management.base import BaseCommand
 from django.db.models import F
-from datetime import datetime
 
 from app.models import Comment, Relation, Save, User
 

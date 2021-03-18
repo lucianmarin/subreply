@@ -6,7 +6,6 @@ from django.conf import settings
 from django.db import models
 from django.utils.functional import cached_property
 
-
 if not settings.configured:
     environ.setdefault('DJANGO_SETTINGS_MODULE', 'project.settings')
     setup()
