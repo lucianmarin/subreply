@@ -30,7 +30,7 @@ USE_L10N = False
 USE_TZ = False
 
 # cookies
-F = Fernet(SIGNATURE.encode())
+FERNET = Fernet(SIGNATURE.encode())
 MAX_AGE = 3600 * 24 * 365
 
 SLURS = ["nigger", "fuck", "cunt", "stupid", "whore", "hitler"]

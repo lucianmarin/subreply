@@ -19,7 +19,7 @@ from app.validation import (
     authentication, changing, profiling, registration, valid_content,
     valid_handle, valid_password, valid_reply, valid_thread
 )
-from project.settings import DEBUG, MAX_AGE, SMTP, F
+from project.settings import DEBUG, FERNET, MAX_AGE, SMTP
 
 Comments = Comment.objects.annotate(
     replies=Count('descendants')
@@ -698,7 +698,7 @@ class LoginResource:
                 page='login', view='login', errors=errors, form=form
             )
         else:
-            token = F.encrypt(str(user.id).encode())
+            token = FERNET.encrypt(str(user.id).encode())
             resp.set_cookie('identity', token.decode(), path="/", max_age=MAX_AGE)
             raise HTTPFound('/feed')
 
@@ -767,7 +767,7 @@ class RegisterResource:
             # half_year = utc_timestamp() - (3600 * 24 * 183)
             # User.objects.filter(seen_at__lt=half_year).update(emoji='')
             # set id cookie
-            token = F.encrypt(str(user.id).encode())
+            token = FERNET.encrypt(str(user.id).encode())
             resp.set_cookie('identity', token.decode(), path="/", max_age=MAX_AGE)
             raise HTTPFound('/feed')
 
@@ -852,7 +852,7 @@ class ChangeResource:
             user = User.objects.filter(email=email).first()
             user.password = build_hash(password1)
             user.save(update_fields=['password'])
-            token = F.encrypt(str(user.id).encode())
+            token = FERNET.encrypt(str(user.id).encode())
             resp.set_cookie(
                 'identity', token.decode(), path="/", max_age=MAX_AGE
             )
