@@ -21,7 +21,7 @@
         </a>
     </div>
     <div class="content">
-        {{ entry.content | parser | safe }}
+        {{ entry.content | emojize | parser | safe }}
     </div>
     <div class="small">
         <a href="/{{ entry.created_by }}/{{ entry.base }}">
