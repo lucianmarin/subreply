@@ -129,8 +129,8 @@ class Comment(models.Model):
     link = models.CharField(max_length=120, default='')
     mention = models.CharField(max_length=15, default='')
     edited_at = models.FloatField(default=.0)
-    mention_seen_at = models.FloatField(default=.0)
-    reply_seen_at = models.FloatField(default=.0)
+    mention_seen_at = models.FloatField(default=.0, db_index=True)
+    reply_seen_at = models.FloatField(default=.0, db_index=True)
 
     class Meta:
         unique_together = ['parent', 'created_by']
@@ -179,7 +179,7 @@ class Relation(models.Model):
                                    related_name='following')
     to_user = models.ForeignKey('User', on_delete=models.CASCADE,
                                 related_name='followers')
-    seen_at = models.FloatField(default=.0)
+    seen_at = models.FloatField(default=.0, db_index=True)
 
 
 class Reset(models.Model):
