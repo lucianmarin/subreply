@@ -1,9 +1,7 @@
 {% extends "base.html" %}
 
 {% block main %}
-    {% if view == 'feed' %}
-        {% include "input/thread.html" %}
-    {% endif %}
+    {% include "input/thread.html" %}
 
     <div class="list">
         {% for entry in entries %}

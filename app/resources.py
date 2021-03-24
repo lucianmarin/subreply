@@ -77,7 +77,7 @@ class MainResource:
     @before(auth_user)
     def on_get(self, req, resp):
         if req.user:
-            raise HTTPFound('/feed')
+            raise HTTPFound('/stream')
         else:
             raise HTTPFound('/discover')
 
@@ -88,7 +88,7 @@ class AboutResource:
         resp.body = render(page='about', view='about', user=req.user)
 
 
-class FeedResource:
+class StreamResource:
     def fetch_entries(self, req):
         friends = Relation.objects.filter(created_by=req.user).values('to_user_id')
         entries = Comments.filter(
@@ -102,7 +102,7 @@ class FeedResource:
         form = FieldStorage(fp=req.stream, environ=req.env)
         entries, pages = self.fetch_entries(req)
         resp.body = render(
-            page='feed', view='feed', form=form,
+            page='stream', view='stream', form=form,
             user=req.user, entries=entries, pages=pages, errors={}
         )
 
@@ -119,7 +119,7 @@ class FeedResource:
         if errors:
             entries, pages = self.fetch_entries(req)
             resp.body = render(
-                page='feed', view='feed', form=form,
+                page='stream', view='stream', form=form,
                 user=req.user, entries=entries, pages=pages, errors=errors
             )
         else:
@@ -316,9 +316,15 @@ class FollowingResource:
     @before(login_required)
     def on_get(self, req, resp):
         entries, pages = self.fetch_entries(req)
+        following = Relation.objects.filter(
+            created_by=req.user
+        ).exclude(to_user=req.user).count()
+        followers = Relation.objects.filter(
+            to_user=req.user
+        ).exclude(created_by=req.user).count()
         resp.body = render(
-            page='regular', view='following',
-            user=req.user, entries=entries, pages=pages
+            page='regular', view='following', following=following,
+            followers=followers, user=req.user, entries=entries, pages=pages
         )
 
 
@@ -338,9 +344,15 @@ class FollowersResource:
     @before(login_required)
     def on_get(self, req, resp):
         entries, pages = self.fetch_entries(req)
+        following = Relation.objects.filter(
+            created_by=req.user
+        ).exclude(to_user=req.user).count()
+        followers = Relation.objects.filter(
+            to_user=req.user
+        ).exclude(created_by=req.user).count()
         resp.body = render(
-            page='regular', view='followers',
-            user=req.user, entries=entries, pages=pages
+            page='regular', view='followers', following=following,
+            followers=followers, user=req.user, entries=entries, pages=pages
         )
         if req.user.notif_followers:
             self.clear_followers(req.user)
@@ -362,8 +374,9 @@ class MentionsResource:
     @before(login_required)
     def on_get(self, req, resp):
         entries, pages = self.fetch_entries(req)
+        mentions = Comment.objects.filter(at_user=req.user).count()
         resp.body = render(
-            page='regular', view='mentions',
+            page='regular', view='mentions', mentions=mentions,
             user=req.user, entries=entries, pages=pages
         )
         if req.user.notif_mentions:
@@ -386,8 +399,9 @@ class RepliesResource:
     @before(login_required)
     def on_get(self, req, resp):
         entries, pages = self.fetch_entries(req)
+        replies = Comment.objects.filter(to_user=req.user).count()
         resp.body = render(
-            page='regular', view='replies',
+            page='regular', view='replies', replies=replies,
             user=req.user, entries=entries, pages=pages
         )
         if req.user.notif_replies:
@@ -395,6 +409,16 @@ class RepliesResource:
 
 
 class ReplyingResource:
+    def get_count(self, req):
+        friends = Relation.objects.filter(
+            created_by=req.user
+        ).exclude(to_user=req.user).values('to_user_id')
+        return Comments.filter(
+            created_by__in=friends
+        ).exclude(parent=None).exclude(
+            to_user=req.user
+        ).count()
+
     def fetch_entries(self, req):
         friends = Relation.objects.filter(
             created_by=req.user
@@ -410,13 +434,14 @@ class ReplyingResource:
     @before(login_required)
     def on_get(self, req, resp):
         entries, pages = self.fetch_entries(req)
+        replying = self.get_count(req)
         resp.body = render(
-            page='regular', view='replying',
+            page='regular', view='replying', replying=replying,
             user=req.user, entries=entries, pages=pages
         )
 
 
-class SavedResource:
+class SavesResource:
     def fetch_entries(self, req):
         saved_ids = Save.objects.filter(
             created_by=req.user
@@ -430,8 +455,9 @@ class SavedResource:
     @before(login_required)
     def on_get(self, req, resp):
         entries, pages = self.fetch_entries(req)
+        saves = Save.objects.filter(created_by=req.user).count()
         resp.body = render(
-            page='regular', view='saved',
+            page='regular', view='saves', saves=saves,
             user=req.user, entries=entries, pages=pages
         )
 
@@ -515,15 +541,20 @@ class TrendingResource:
 
     @before(auth_user)
     def on_get(self, req, resp, sample):
-        sample = int(sample) if sample.isdecimal() and int(sample) else 16
         entries, pages = self.fetch_entries(req, sample)
         resp.body = render(
             page='regular', view='trending', sample=sample,
             user=req.user, entries=entries, pages=pages
         )
 
-    def on_get_default(self, req, resp):
-        self.on_get(req, resp, '16')
+    def on_get_s(self, req, resp):
+        self.on_get(req, resp, 16)
+
+    def on_get_m(self, req, resp):
+        self.on_get(req, resp, 32)
+
+    def on_get_l(self, req, resp):
+        self.on_get(req, resp, 64)
 
 
 class ActionResource:
@@ -700,7 +731,7 @@ class LoginResource:
         else:
             token = FERNET.encrypt(str(user.id).encode())
             resp.set_cookie('identity', token.decode(), path="/", max_age=MAX_AGE)
-            raise HTTPFound('/feed')
+            raise HTTPFound('/stream')
 
 
 class LogoutResource:
@@ -769,7 +800,7 @@ class RegisterResource:
             # set id cookie
             token = FERNET.encrypt(str(user.id).encode())
             resp.set_cookie('identity', token.decode(), path="/", max_age=MAX_AGE)
-            raise HTTPFound('/feed')
+            raise HTTPFound('/stream')
 
 
 class ResetResource:
@@ -857,4 +888,4 @@ class ChangeResource:
                 'identity', token.decode(), path="/", max_age=MAX_AGE
             )
             reset.delete()
-            raise HTTPFound('/feed')
+            raise HTTPFound('/stream')

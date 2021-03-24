@@ -3,12 +3,31 @@
 {% block main %}
     {% if view in ['discover', 'people'] %}
         {% include "input/query.html" %}
+    {% else %}
+        <div class="title">
+            {% if view == 'replying' %}
+                <a href="/replying" class="on">{{ replying }} replying</a>
+            {% elif view == 'replies' %}
+                <a href="/replies" class="on">{{ replies }} replies</a>
+            {% elif view in ['following', 'followers'] %}
+                <a href="/followers" class="{% if view == 'followers' %}on{% endif %}">{{ followers }} followers</a>
+                <a href="/following" class="{% if view == 'following' %}on{% endif %}">{{ following }} following</a>
+            {% elif view == 'mentions' %}
+                <a href="/mentions" class="on">{{ mentions }} mentions</a>
+            {% elif view == 'saves' %}
+                <a href="/saves" class="on">{{ saves }} saves</a>
+            {% elif view == 'trending' %}
+                <a href="/trending" class="{% if sample == 16 %}on{% endif %}">16 threads</a>
+                <a href="/trending/medium" class="{% if sample == 32 %}on{% endif %}">32 threads</a>
+                <a href="/trending/large" class="{% if sample == 64 %}on{% endif %}">64 threads</a>
+            {% endif %}
+        </div>
     {% endif %}
 
     <div class="list">
-        {% if view in ['people', 'trending'] %}
+        {# if view in ['people', 'trending'] %}
             {% include "filters.html" %}
-        {% endif %}
+        {% endif #}
 
         {% for entry in entries %}
             {% if view == 'trending' %}
@@ -24,7 +43,7 @@
             {% elif view == 'followers' %}
                 {% set member = entry.created_by %}
                 {% include "common/user.html" %}
-            {% elif view == 'saved' %}
+            {% elif view == 'saves' %}
                 {# set entry = entry.to_comment #}
                 {% include "common/stream.html" %}
             {% elif view == 'discover' %}
