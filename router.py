@@ -17,7 +17,7 @@ app.add_route('/api/delete/{id}', api.DeleteEndpoint())
 app.add_route('/api/save/{id}', api.SaveEndpoint())
 app.add_route('/api/unsave/{id}', api.UnsaveEndpoint())
 
-app.add_route('/stream', resources.StreamResource())
+app.add_route('/feed', resources.FeedResource())
 app.add_route('/replying', resources.ReplyingResource())
 app.add_route('/following', resources.FollowingResource())
 app.add_route('/followers', resources.FollowersResource())

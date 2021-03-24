@@ -77,7 +77,7 @@ class MainResource:
     @before(auth_user)
     def on_get(self, req, resp):
         if req.user:
-            raise HTTPFound('/stream')
+            raise HTTPFound('/feed')
         else:
             raise HTTPFound('/discover')
 
@@ -88,7 +88,7 @@ class AboutResource:
         resp.body = render(page='about', view='about', user=req.user)
 
 
-class StreamResource:
+class FeedResource:
     def fetch_entries(self, req):
         friends = Relation.objects.filter(created_by=req.user).values('to_user_id')
         entries = Comments.filter(
@@ -102,7 +102,7 @@ class StreamResource:
         form = FieldStorage(fp=req.stream, environ=req.env)
         entries, pages = self.fetch_entries(req)
         resp.body = render(
-            page='stream', view='stream', form=form,
+            page='feed', view='feed', form=form,
             user=req.user, entries=entries, pages=pages, errors={}
         )
 
@@ -119,7 +119,7 @@ class StreamResource:
         if errors:
             entries, pages = self.fetch_entries(req)
             resp.body = render(
-                page='stream', view='stream', form=form,
+                page='feed', view='feed', form=form,
                 user=req.user, entries=entries, pages=pages, errors=errors
             )
         else:
@@ -731,7 +731,7 @@ class LoginResource:
         else:
             token = FERNET.encrypt(str(user.id).encode())
             resp.set_cookie('identity', token.decode(), path="/", max_age=MAX_AGE)
-            raise HTTPFound('/stream')
+            raise HTTPFound('/feed')
 
 
 class LogoutResource:
@@ -800,7 +800,7 @@ class RegisterResource:
             # set id cookie
             token = FERNET.encrypt(str(user.id).encode())
             resp.set_cookie('identity', token.decode(), path="/", max_age=MAX_AGE)
-            raise HTTPFound('/stream')
+            raise HTTPFound('/feed')
 
 
 class ResetResource:
@@ -888,4 +888,4 @@ class ChangeResource:
                 'identity', token.decode(), path="/", max_age=MAX_AGE
             )
             reset.delete()
-            raise HTTPFound('/stream')
+            raise HTTPFound('/feed')

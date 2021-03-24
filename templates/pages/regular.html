@@ -25,10 +25,6 @@
     {% endif %}
 
     <div class="list">
-        {# if view in ['people', 'trending'] %}
-            {% include "filters.html" %}
-        {% endif #}
-
         {% for entry in entries %}
             {% if view == 'trending' %}
                 {% include "common/threads.html" %}
