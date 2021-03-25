@@ -92,13 +92,13 @@ table td a { text-decoration: underline; }
 
 .links svg { float: right; margin-left: 15px; padding: 2px; }
 
-.title { font-size: 16px; letter-spacing: -0.5px; line-height: 30px; margin: 10px 0; }
+.title { color: var(--silver); font-size: 15px; line-height: 30px; margin: 10px 0; }
 
-.title a { color: var(--gray); }
+.title a { color: var(--silver); }
 
-.title a.on { color: var(--black); font-weight: bold; }
+.title a:hover { color: var(--gray); }
 
-.title a:hover { color: var(--black); }
+.title a.on { color: var(--black); }
 
 .reply { margin: 10px 0; }
 
