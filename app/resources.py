@@ -208,7 +208,7 @@ class EditResource:
     def on_get(self, req, resp, base):
         entry = Comments.filter(
             id=int(base, 36)
-        ).select_related('parent').first()
+        ).prefetch_related(PPFR).first()
         if not entry or entry.created_by != req.user or entry.replies:
             return not_found(resp, req.user, f'/edit/{base}')
         ancestors = [entry.parent] if entry.parent_id else []
@@ -224,7 +224,7 @@ class EditResource:
     def on_post(self, req, resp, base):
         entry = Comments.filter(
             id=int(base, 36)
-        ).select_related('parent').first()
+        ).prefetch_related(PPFR).first()
         form = FieldStorage(fp=req.stream, environ=req.env)
         content = get_content(form)
         mentions, links, hashtags = parse_metadata(content)
