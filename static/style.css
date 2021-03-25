@@ -92,7 +92,7 @@ table td a { text-decoration: underline; }
 
 .links svg { float: right; margin-left: 15px; padding: 2px; }
 
-.title { font-size: 16px; letter-spacing: -1px; line-height: 30px; margin: 10px 0; }
+.title { font-size: 16px; letter-spacing: -0.5px; line-height: 30px; margin: 10px 0; }
 
 .title a { color: var(--gray); }
 
