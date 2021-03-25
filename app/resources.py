@@ -93,10 +93,12 @@ class EmojiResource:
     @before(auth_user)
     def on_get(self, req, resp):
         codes = emoji.UNICODE_EMOJI_ENGLISH.values()
-        shortcodes = [c for c in codes if c.count('_') < 2]
-        shortcodes = sorted(shortcodes, key=str.casefold)
+        shortcodes = [c for c in codes if not c.count('_') and not c.count('-') and c.islower()]
+        shortcodes = sorted(shortcodes)
+        odds = [s for i, s in enumerate(shortcodes) if i % 2 == 0]
+        evens = [s for i, s in enumerate(shortcodes) if i % 2 == 1]
         resp.body = render(
-            page='emoji', view='emoji', user=req.user, shortcodes=shortcodes
+            page='emoji', view='emoji', user=req.user, rows=zip(evens, odds)
         )
 
 

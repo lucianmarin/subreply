@@ -8,13 +8,17 @@
     <div class="about">
         <table>
             <tr>
-                <th>Emoji</th>
+                <th>:)</th>
+                <th>Shortcode</th>
+                <th>;)</th>
                 <th>Shortcode</th>
             </tr>
-            {% for shortcode in shortcodes %}
+            {% for row in rows %}
                 <tr>
-                    <td>{{ shortcode | emojize }}</td>
-                    <td>{{ shortcode }}</td>
+                    {% for shortcode in row %}
+                        <td align="center">{{ shortcode | emojize }}</td>
+                        <td>{{ shortcode }}</td>
+                    {% endfor %}
                 </tr>
             {% endfor %}
         </table>

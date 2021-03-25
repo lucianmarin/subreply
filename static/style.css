@@ -42,11 +42,11 @@ svg circle { fill: var(--white); }
 
 table { margin: 10px 0; width: 100%; }
 
-table .info { color: var(--gray); font-size: var(--small); }
-
-table th { color: var(--silver); font-weight: normal; padding-bottom: 2px; }
+table th { color: var(--silver); font-size: var(--small); font-weight: normal; padding-bottom: 2px; }
 
 table td { border-top: var(--whitesmoke) 1px solid; padding: 2px 0; }
+
+table td:last-child { padding-bottom: 0; }
 
 table td a { text-decoration: underline; }
 
