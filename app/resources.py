@@ -4,6 +4,7 @@ from cgi import FieldStorage
 from django.db.models import Count, Max, Prefetch, Q
 from emails import Message
 from emails.template import JinjaTemplate
+import emoji
 from falcon import status_codes
 from falcon.hooks import before
 from falcon.redirects import HTTPFound
@@ -86,6 +87,17 @@ class AboutResource:
     @before(auth_user)
     def on_get(self, req, resp):
         resp.body = render(page='about', view='about', user=req.user)
+
+
+class EmojiResource:
+    @before(auth_user)
+    def on_get(self, req, resp):
+        codes = emoji.UNICODE_EMOJI_ENGLISH.values()
+        shortcodes = [c for c in codes if c.count('_') < 2]
+        shortcodes = sorted(shortcodes, key=str.casefold)
+        resp.body = render(
+            page='emoji', view='emoji', user=req.user, shortcodes=shortcodes
+        )
 
 
 class FeedResource:

@@ -45,5 +45,5 @@ INVALID = [
     "requests", "invitations", "people", "trends", "trending",
     "links", "mentions", "pins", "saves",
     "linked", "mentioned", "pinned", "saved",
-    "link", "mention", "pin", "save"
+    "link", "mention", "pin", "save", "emoji"
 ]

@@ -33,6 +33,7 @@ app.add_route('/trending/medium', resources.TrendingResource(), suffix='m')
 app.add_route('/trending/large', resources.TrendingResource(), suffix='l')
 
 app.add_route('/about', resources.AboutResource())
+app.add_route('/emoji', resources.EmojiResource())
 app.add_route('/login', resources.LoginResource())
 app.add_route('/logout', resources.LogoutResource())
 app.add_route('/register', resources.RegisterResource())

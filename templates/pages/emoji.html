@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block main %}
+    <div class="title">
+        <a href="/emoji" class="on">Emoji</a> shortcodes
+    </div>
+
+    <div class="about">
+        <table>
+            <tr>
+                <th>Emoji</th>
+                <th>Shortcode</th>
+            </tr>
+            {% for shortcode in shortcodes %}
+                <tr>
+                    <td>{{ shortcode | emojize }}</td>
+                    <td>{{ shortcode }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+{% endblock %}
