@@ -1,4 +1,4 @@
-<div class="logo">
+<div class="logo {% if member == user %}on{% endif %}">
     {% if pages and pages.current != 1 %}
         <a href="?p={{ pages.current }}">{{ pages.current }}</a>
     {% elif user %}

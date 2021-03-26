@@ -68,6 +68,8 @@ table td a { text-decoration: underline; }
 
 .logo a:hover { color: var(--gainsboro); }
 
+.logo.on a { background-color: var(--white); color: var(--black); }
+
 .links { position: sticky; text-align: right; top: 50px; }
 
 .links a { background-color: var(--whitesmoke); border-bottom: var(--white) 1px solid; color: var(--black); display: block; height: 20px; padding: 5px 15px; transition: background-color var(--d); }
