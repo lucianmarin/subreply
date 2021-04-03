@@ -64,11 +64,7 @@ table td a { text-decoration: underline; }
 
 .logo { margin: 10px 15px; overflow: hidden; position: sticky; top: 10px; }
 
-.logo a { background-color: var(--black); border-radius: 15px; color: var(--white); display: block; float: right; font-size: var(--tiny); height: 30px; line-height: 30px; text-align: center; width: 30px; }
-
-.logo a:hover { color: var(--gainsboro); }
-
-.logo.on a { background-color: var(--white); color: var(--black); }
+.logo a { background-color: var(--white); border-radius: 15px; color: var(--black); display: block; float: right; font-size: var(--tiny); height: 30px; line-height: 30px; text-align: center; width: 30px; }
 
 .links { position: sticky; text-align: right; top: 50px; }
 
@@ -79,12 +75,6 @@ table td a { text-decoration: underline; }
 .links a:first-child { border-top: var(--white) 1px solid; }
 
 .links a.on { background-color: var(--white); color: var(--gray); }
-
-.links a.on svg { stroke: var(--gray); }
-
-.links a.on svg path { fill: var(--whitesmoke); }
-
-.links a.on svg circle { fill: var(--whitesmoke); }
 
 .links a.accent svg { stroke: var(--orange); }
 
