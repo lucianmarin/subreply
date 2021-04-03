@@ -30,9 +30,9 @@ input[type=text], input[type=password], input[type=email], input[type=url], sele
 
 input[type=text]:focus, input[type=password]:focus, input[type=email]:focus, input[type=url]:focus, select:focus, textarea:focus { outline: 0 none; }
 
-input[type=submit] { background-color: var(--black); border: 0 none; border-radius: var(--radius); color: var(--white); cursor: pointer; float: right; font-size: var(--small); padding: 5px 15px; }
+input[type=submit] { background-color: var(--whitesmoke); border: 0 none; border-radius: var(--radius); color: var(--black); cursor: pointer; float: right; font-size: var(--small); padding: 5px 15px; transition: background-color var(--d); }
 
-input[type=submit]:hover { color: var(--gainsboro); transition: color var(--d); }
+input[type=submit]:hover { background-color: var(--gainsboro); }
 
 svg { fill: none; stroke: var(--black); stroke-linecap: round; stroke-linejoin: round; stroke-width: 2; }
 
