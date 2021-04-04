@@ -8,7 +8,6 @@ from dns.resolver import query as dns_query
 from user_agents import parse
 
 from app.const import LATIN, MAX_YEAR, MIN_YEAR, WORLD
-from app.filters import shortdate
 from app.helpers import has_repetions, parse_metadata, verify_hash
 from app.models import Comment, User
 from project.settings import INVALID, SLURS
@@ -16,20 +15,12 @@ from project.settings import INVALID, SLURS
 
 def valid_content(value, user):
     mentions, links, hashtags = parse_metadata(value)
-    # duplicate topic against old topics
-    # duplicate reply against replies for topic including topic
-    # duplicate content against all account content
-    duplicate = Comment.objects.filter(
-        content__iexact=value, created_by=user
-    ).first()
     if not value:
         return "Status can't be blank"
     elif len(value) > 480:
         return "Status can't be longer than 480 characters"
     elif len(value) != len(value.encode()):
         return "Only English alphabet allowed"
-    elif duplicate:
-        return f'You wrote this <a href="/{duplicate.created_by}/{duplicate.base}">{shortdate(duplicate.created_at)} ago</a>'
     elif len(mentions) > 1:
         return "Mention a single user"
     elif len(links) > 1:
@@ -49,6 +40,7 @@ def valid_content(value, user):
 
 
 def valid_thread(value):
+    """Duplicate topic against old topics."""
     duplicate = Comment.objects.filter(
         content__iexact=value, parent=None
     ).first()
@@ -57,7 +49,9 @@ def valid_thread(value):
 
 
 def valid_reply(parent, user, value, mentions):
-    top_id = min(parent.ancestors.values_list('id', flat=True)) if parent.ancestors.exists() else parent.id
+    """Duplicate reply against replies for topic including topic."""
+    ancestors = parent.ancestors.values_list('id', flat=True)
+    top_id = min(ancestors) if ancestors else parent.id
     duplicate = Comment.objects.filter(
         (Q(ancestors=top_id) | Q(id=top_id)) & Q(content__iexact=value)
     ).first()
