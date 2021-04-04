@@ -200,9 +200,11 @@ table td a { text-decoration: underline; }
 
 .about ol li:last-child { border-bottom: 0 none; padding-bottom: 0; }
 
-.promo { position: sticky; line-height: 15px; padding: 10px 15px; color: var(--gray); top: 423px; z-index: 0; }
+.promo { color: var(--gray); font-size: 11px; padding: 10px 15px; position: sticky; top: 361px; }
 
-.promo a { color: var(--black); }
+.promo a { color: var(--gray); }
+
+.promo a:hover { color: var(--black); }
 
 .promo h5, .promo h6 { font-weight: normal; }
 
