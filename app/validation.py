@@ -41,7 +41,7 @@ def valid_content(value, user):
 
 def valid_thread(value):
     """Duplicate topic against old topics."""
-    threads = Comment.objects.filter(parent=None).order_by('-id')[:64]
+    threads = Comment.objects.filter(parent=None).order_by('-id')[:40]
     duplicates = [t for t in threads if t.content.lower() == value.lower()]
     if duplicates:
         duplicate = duplicates[0]

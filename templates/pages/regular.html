@@ -17,9 +17,9 @@
             {% elif view == 'saves' %}
                 <a href="/saves" class="on">{{ saves }} saves</a>
             {% elif view == 'trending' %}
-                <a href="/trending" class="{% if sample == 16 %}on{% endif %}">16 threads</a>
-                <a href="/trending/medium" class="{% if sample == 32 %}on{% endif %}">32 threads</a>
-                <a href="/trending/large" class="{% if sample == 64 %}on{% endif %}">64 threads</a>
+                <a href="/trending" class="{% if sample == 10 %}on{% endif %}">10 threads</a>
+                <a href="/trending/medium" class="{% if sample == 20 %}on{% endif %}">20 threads</a>
+                <a href="/trending/large" class="{% if sample == 40 %}on{% endif %}">40 threads</a>
             {% endif %}
         </div>
     {% endif %}
