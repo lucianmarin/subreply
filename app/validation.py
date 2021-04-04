@@ -41,10 +41,10 @@ def valid_content(value, user):
 
 def valid_thread(value):
     """Duplicate topic against old topics."""
-    duplicate = Comment.objects.filter(
-        content__iexact=value, parent=None
-    ).first()
-    if duplicate:
+    threads = Comment.objects.filter(parent=None).order_by('-id')[:64]
+    duplicates = [t for t in threads if t.content.lower() == value.lower()]
+    if duplicates:
+        duplicate = duplicates[0]
         return f'Thread started by <a href="/{duplicate.created_by}/{duplicate.base}">@{duplicate.created_by}</a>'
 
 
