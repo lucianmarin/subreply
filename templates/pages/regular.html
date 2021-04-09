@@ -1,32 +1,17 @@
 {% extends "base.html" %}
 
 {% block main %}
-    {% if view in ['discover', 'people'] %}
+    {% if view  == 'feed' %}
+        {% include "input/thread.html" %}
+    {% elif view in ['discover', 'people'] %}
         {% include "input/query.html" %}
-    {% else %}
-        <div class="title">
-            {% if view == 'replying' %}
-                <a href="/replying" class="on">{{ replying }} replying</a>
-            {% elif view == 'replies' %}
-                <a href="/replies" class="on">{{ replies }} replies</a>
-            {% elif view in ['following', 'followers'] %}
-                <a href="/followers" class="{% if view == 'followers' %}on{% endif %}">{{ followers }} followers</a>
-                <a href="/following" class="{% if view == 'following' %}on{% endif %}">{{ following }} following</a>
-            {% elif view == 'mentions' %}
-                <a href="/mentions" class="on">{{ mentions }} mentions</a>
-            {% elif view == 'saves' %}
-                <a href="/saves" class="on">{{ saves }} saves</a>
-            {% elif view == 'trending' %}
-                <a href="/trending" class="{% if sample == 10 %}on{% endif %}">10 threads</a>
-                <a href="/trending/medium" class="{% if sample == 20 %}on{% endif %}">20 threads</a>
-                <a href="/trending/large" class="{% if sample == 40 %}on{% endif %}">40 threads</a>
-            {% endif %}
-        </div>
     {% endif %}
 
     <div class="list">
         {% for entry in entries %}
-            {% if view == 'trending' %}
+            {% if view == 'feed' %}
+                {% include "common/threads.html" %}
+            {% elif view == 'trending' %}
                 {% include "common/threads.html" %}
             {% elif view in ['replying', 'replies'] %}
                 {% include "common/replies.html" %}
@@ -50,5 +35,10 @@
         {% else %}
             {% include "common/nothing.html" %}
         {% endfor %}
+        {% if view not in ['people', 'discover'] %}
+            <div class="entry">
+                <a onclick="loadPage(event, {{ number + 1 }})">Load more</a>
+            </div>
+        {% endif %}
     </div>
 {% endblock %}

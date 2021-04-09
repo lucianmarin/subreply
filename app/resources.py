@@ -30,20 +30,22 @@ PPFR = Prefetch('parent', Comments)
 PFR = Prefetch('kids', Comments.order_by('id'))
 
 
-def paginate(req, qs, limit=10):
+def get_number(req):
     p = req.params.get('p', '1').strip()
-    page = int(p) if p.isdecimal() and int(p) else 0
-    backward, forward, query, pages = 0, 0, [], {}
-    if page:
-        index = (page - 1) * limit
-        query = qs[index:index + limit + 1]
-        if len(query):
-            backward = page - 1
-        if len(query) == limit + 1:
-            forward = page + 1
-    if backward or forward:
-        pages = {'previous': backward, 'current': page, 'next': forward}
-    return query[:limit], pages
+    return int(p) if p.isdecimal() and int(p) else 0
+
+
+def get_page(req):
+    number = get_number(req)
+    page = 'loader' if number > 1 else 'regular'
+    return page, number
+
+
+def paginate(req, qs, limit=10):
+    page = get_number(req)
+    index = (page - 1) * limit
+    query = qs[index:index + limit + 1]
+    return query[:limit]
 
 
 def not_found(resp, user, url):
@@ -114,10 +116,11 @@ class FeedResource:
     @before(login_required)
     def on_get(self, req, resp):
         form = FieldStorage(fp=req.stream, environ=req.env)
-        entries, pages = self.fetch_entries(req)
+        entries = self.fetch_entries(req)
+        page, number = get_page(req)
         resp.body = render(
-            page='feed', view='feed', form=form,
-            user=req.user, entries=entries, pages=pages, errors={}
+            page=page, view='feed', form=form, number=number,
+            user=req.user, entries=entries, errors={}
         )
 
     @before(auth_user)
@@ -131,10 +134,10 @@ class FeedResource:
             errors['content'] = valid_thread(content)
         errors = {k: v for k, v in errors.items() if v}
         if errors:
-            entries, pages = self.fetch_entries(req)
+            entries = self.fetch_entries(req)
             resp.body = render(
-                page='feed', view='feed', form=form,
-                user=req.user, entries=entries, pages=pages, errors=errors
+                page='regular', view='feed', form=form, number=1,
+                user=req.user, entries=entries, errors=errors
             )
         else:
             mentions, links, hashtags = parse_metadata(content)
@@ -302,7 +305,7 @@ class ProfileResource:
         member = User.objects.filter(username=username.lower()).first()
         if not member:
             return not_found(resp, req.user, f'/{username}')
-        entries, pages = self.fetch_entries(req, member, tab)
+        entries = self.fetch_entries(req, member, tab)
         threads = self.fetch_threads(member).count()
         replies = self.fetch_replies(member).count()
         is_following = Relation.objects.filter(
@@ -312,8 +315,8 @@ class ProfileResource:
             created_by=member, to_user=req.user
         ).exclude(created_by=req.user).exists() if req.user else False
         resp.body = render(
-            page='profile', view='profile',
-            user=req.user, member=member, entries=entries, pages=pages,
+            page='profile', view='profile', number=1,
+            user=req.user, member=member, entries=entries,
             tab=tab, is_following=is_following, is_followed=is_followed,
             threads=threads, replies=replies
         )
@@ -329,16 +332,11 @@ class FollowingResource:
     @before(auth_user)
     @before(login_required)
     def on_get(self, req, resp):
-        entries, pages = self.fetch_entries(req)
-        following = Relation.objects.filter(
-            created_by=req.user
-        ).exclude(to_user=req.user).count()
-        followers = Relation.objects.filter(
-            to_user=req.user
-        ).exclude(created_by=req.user).count()
+        entries = self.fetch_entries(req)
+        page, number = get_page(req)
         resp.body = render(
-            page='regular', view='following', following=following,
-            followers=followers, user=req.user, entries=entries, pages=pages
+            page=page, view='following', number=number,
+            user=req.user, entries=entries
         )
 
 
@@ -357,16 +355,11 @@ class FollowersResource:
     @before(auth_user)
     @before(login_required)
     def on_get(self, req, resp):
-        entries, pages = self.fetch_entries(req)
-        following = Relation.objects.filter(
-            created_by=req.user
-        ).exclude(to_user=req.user).count()
-        followers = Relation.objects.filter(
-            to_user=req.user
-        ).exclude(created_by=req.user).count()
+        entries = self.fetch_entries(req)
+        page, number = get_page(req)
         resp.body = render(
-            page='regular', view='followers', following=following,
-            followers=followers, user=req.user, entries=entries, pages=pages
+            page=page, view='followers', number=number,
+            user=req.user, entries=entries
         )
         if req.user.notif_followers:
             self.clear_followers(req.user)
@@ -387,11 +380,11 @@ class MentionsResource:
     @before(auth_user)
     @before(login_required)
     def on_get(self, req, resp):
-        entries, pages = self.fetch_entries(req)
-        mentions = Comment.objects.filter(at_user=req.user).count()
+        entries = self.fetch_entries(req)
+        page, number = get_page(req)
         resp.body = render(
-            page='regular', view='mentions', mentions=mentions,
-            user=req.user, entries=entries, pages=pages
+            page=page, view='mentions', number=number,
+            user=req.user, entries=entries
         )
         if req.user.notif_mentions:
             self.clear_mentions(req.user)
@@ -412,27 +405,17 @@ class RepliesResource:
     @before(auth_user)
     @before(login_required)
     def on_get(self, req, resp):
-        entries, pages = self.fetch_entries(req)
-        replies = Comment.objects.filter(to_user=req.user).count()
+        entries = self.fetch_entries(req)
+        page, number = get_page(req)
         resp.body = render(
-            page='regular', view='replies', replies=replies,
-            user=req.user, entries=entries, pages=pages
+            page=page, view='replies', number=number,
+            user=req.user, entries=entries
         )
         if req.user.notif_replies:
             self.clear_replies(req.user)
 
 
 class ReplyingResource:
-    def get_count(self, req):
-        friends = Relation.objects.filter(
-            created_by=req.user
-        ).exclude(to_user=req.user).values('to_user_id')
-        return Comments.filter(
-            created_by__in=friends
-        ).exclude(parent=None).exclude(
-            to_user=req.user
-        ).count()
-
     def fetch_entries(self, req):
         friends = Relation.objects.filter(
             created_by=req.user
@@ -447,11 +430,11 @@ class ReplyingResource:
     @before(auth_user)
     @before(login_required)
     def on_get(self, req, resp):
-        entries, pages = self.fetch_entries(req)
-        replying = self.get_count(req)
+        entries = self.fetch_entries(req)
+        page, number = get_page(req)
         resp.body = render(
-            page='regular', view='replying', replying=replying,
-            user=req.user, entries=entries, pages=pages
+            page=page, view='replying', number=number,
+            user=req.user, entries=entries
         )
 
 
@@ -468,11 +451,11 @@ class SavesResource:
     @before(auth_user)
     @before(login_required)
     def on_get(self, req, resp):
-        entries, pages = self.fetch_entries(req)
-        saves = Save.objects.filter(created_by=req.user).count()
+        entries = self.fetch_entries(req)
+        page, number = get_page(req)
         resp.body = render(
-            page='regular', view='saves', saves=saves,
-            user=req.user, entries=entries, pages=pages
+            page=page, view='saves', number=number,
+            user=req.user, entries=entries
         )
 
 
@@ -501,10 +484,10 @@ class PeopleResource:
     def get_people(self, req, resp, kind):
         q = req.params.get('q', '').strip()
         terms = [t.strip() for t in q.split() if t.strip()]
-        entries, pages = self.fetch_entries(req, terms, kind)
+        entries = self.fetch_entries(req, terms, kind)
         resp.body = render(
             page='regular', view='people', placeholder="Find people",
-            user=req.user, entries=entries, pages=pages, q=q, kind=kind
+            user=req.user, entries=entries, q=q, kind=kind
         )
 
     @before(auth_user)
@@ -536,10 +519,10 @@ class DiscoverResource:
     def on_get(self, req, resp):
         q = req.params.get('q', '').strip()
         terms = [t.strip() for t in q.split() if t.strip()]
-        entries, pages = self.fetch_entries(req, terms)
+        entries = self.fetch_entries(req, terms)
         resp.body = render(
             page='regular', view='discover', placeholder="Search content",
-            user=req.user, entries=entries, pages=pages, q=q
+            user=req.user, entries=entries, q=q
         )
 
 
@@ -554,21 +537,14 @@ class TrendingResource:
         return paginate(req, entries)
 
     @before(auth_user)
-    def on_get(self, req, resp, sample):
-        entries, pages = self.fetch_entries(req, sample)
+    def on_get(self, req, resp):
+        sample = 20
+        entries = self.fetch_entries(req, sample)
+        page, number = get_page(req)
         resp.body = render(
-            page='regular', view='trending', sample=sample,
-            user=req.user, entries=entries, pages=pages
+            page=page, view='trending', number=number, sample=sample,
+            user=req.user, entries=entries
         )
-
-    def on_get_s(self, req, resp):
-        self.on_get(req, resp, 10)
-
-    def on_get_m(self, req, resp):
-        self.on_get(req, resp, 20)
-
-    def on_get_l(self, req, resp):
-        self.on_get(req, resp, 40)
 
 
 class ActionResource:

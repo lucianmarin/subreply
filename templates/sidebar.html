@@ -1,7 +1,5 @@
 <div class="logo">
-    {% if pages and pages.current != 1 %}
-        <a href="?p={{ pages.current }}">{{ pages.current }}</a>
-    {% elif user %}
+    {% if user %}
         <a href="/{{ user }}">{{ user.username[:3] }}</a>
     {% else %}
         <a href="/subreply">sub</a>
@@ -22,10 +20,16 @@
                 <path d="M2 4 L30 4 30 22 16 22 8 29 8 22 2 22 Z" />
             </svg>
         </a>
-        <a href="/followers" accesskey="l" class="{% if view in ['following', 'followers'] %}on{% endif %} {% if user.notif_followers %}accent{% endif %}">
-            <i>Followers<sup>{{ user.notif_followers }}</sup></i>
+        <a href="/following" accesskey="l" class="{% if view == 'following' %}on{% endif %} {% if user.notif_followers %}accent{% endif %}">
+            <i>Following</i>
             <svg id="i-export" viewBox="0 0 32 32" width="16" height="16">
                 <path d="M28 22 L28 30 4 30 4 22 M16 4 L16 24 M8 12 L16 4 24 12" />
+            </svg>
+        </a>
+        <a href="/followers" accesskey="l" class="{% if view == 'followers' %}on{% endif %} {% if user.notif_followers %}accent{% endif %}">
+            <i>Followers<sup>{{ user.notif_followers }}</sup></i>
+            <svg id="i-import" viewBox="0 0 32 32" width="16" height="16">
+                <path d="M28 22 L28 30 4 30 4 22 M16 4 L16 24 M8 16 L16 24 24 16" />
             </svg>
         </a>
         <a href="/mentions" accesskey="m" class="{% if view == 'mentions' %}on{% endif %} {% if user.notif_mentions %}accent{% endif %}">

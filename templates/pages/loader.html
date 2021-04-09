@@ -1,0 +1,33 @@
+{% for entry in entries %}
+    {% if view == 'feed' %}
+        {% include "common/threads.html" %}
+    {% elif view == 'trending' %}
+        {% include "common/threads.html" %}
+    {% elif view in ['replying', 'replies'] %}
+        {% include "common/replies.html" %}
+    {% elif view == 'people' %}
+        {% set member = entry %}
+        {% include "common/user.html" %}
+    {% elif view == 'following' %}
+        {% set member = entry.to_user %}
+        {% include "common/user.html" %}
+    {% elif view == 'followers' %}
+        {% set member = entry.created_by %}
+        {% include "common/user.html" %}
+    {% elif view == 'saves' %}
+        {# set entry = entry.to_comment #}
+        {% include "common/stream.html" %}
+    {% elif view == 'discover' %}
+        {% include "common/stream.html" %}
+    {% elif view == 'mentions' %}
+        {% include "common/stream.html" %}
+    {% endif %}
+{% else %}
+    {% include "common/nothing.html" %}
+{% endfor %}
+
+{% if entries %}
+    <div class="entry">
+        <a onclick="loadPage(event, {{ number + 1 }})">Load more</a>
+    </div>
+{% endif %}

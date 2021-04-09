@@ -1,13 +1,26 @@
-function ajax(path, callback) {
+function ajax(path, method='post', type='json', callback) {
     var xhr = new XMLHttpRequest();
-    xhr.open('post', path, true);
-    xhr.responseType = 'json';
+    xhr.open(method, path, true);
+    xhr.responseType = type;
     xhr.onreadystatechange = function () {
         if (this.readyState == 4 && this.status == 200) {
             callback(xhr.response);
         }
     };
     xhr.send();
+}
+
+function loadPage(event, number) {
+    event.preventDefault();
+    var loader = event.currentTarget.parentElement
+    var items = loader.parentElement;
+    var url = window.location.pathname + '?p=' + number;
+    console.log(number);
+    console.log(url);
+    ajax(url, 'get', 'text', function (data) {
+        loader.remove()
+        items.innerHTML = items.innerHTML + data;
+    })
 }
 
 function postDelete(event) {
@@ -21,7 +34,7 @@ function postDelete(event) {
         confirm.innerText = "yes";
         confirm.onclick = function (event) {
             event.preventDefault();
-            ajax('/api/delete/' + id, function (data) {
+            ajax('/api/delete/' + id, 'post', 'json', function (data) {
                 if (data.status == 'deleted') {
                     element.innerText = data.status;
                     element.onclick = function (ev) {
@@ -51,7 +64,7 @@ function postSave(event) {
     event.preventDefault();
     var element = event.currentTarget;
     var id = element.dataset.id;
-    ajax('/api/save/' + id, function (data) {
+    ajax('/api/save/' + id, 'post', 'json', function (data) {
         if (data.status == 'unsave') {
             element.innerText = data.status;
             element.onclick = function (ev) {
@@ -66,7 +79,7 @@ function postUnsave(event) {
     event.preventDefault();
     var element = event.currentTarget;
     var id = element.dataset.id;
-    ajax('/api/unsave/' + id, function (data) {
+    ajax('/api/unsave/' + id, 'post', 'json', function (data) {
         if (data.status == 'save') {
             element.innerText = data.status;
             element.onclick = function (ev) {
