@@ -49,7 +49,7 @@ def paginate(req, qs, limit=10):
 
 
 def not_found(resp, user, url):
-    resp.body = render(page='404', user=user, url=url)
+    resp.text = render(page='404', user=user, url=url)
     resp.status = status_codes.HTTP_404
 
 
@@ -73,7 +73,7 @@ class StaticResource:
         resp.content_type = self.mime_types[ext]
         resp.cache_control = ["max-age=3600000"]
         with open(f'static/{filename}', mode) as f:
-            resp.body = f.read()
+            resp.text = f.read()
 
 
 class MainResource:
@@ -88,7 +88,7 @@ class MainResource:
 class AboutResource:
     @before(auth_user)
     def on_get(self, req, resp):
-        resp.body = render(page='about', view='about', user=req.user)
+        resp.text = render(page='about', view='about', user=req.user)
 
 
 class EmojiResource:
@@ -99,7 +99,7 @@ class EmojiResource:
         shortcodes = sorted(shortcodes)
         odds = [s for i, s in enumerate(shortcodes) if i % 2 == 0]
         evens = [s for i, s in enumerate(shortcodes) if i % 2 == 1]
-        resp.body = render(
+        resp.text = render(
             page='emoji', view='emoji', user=req.user, rows=zip(evens, odds)
         )
 
@@ -118,7 +118,7 @@ class FeedResource:
         form = FieldStorage(fp=req.stream, environ=req.env)
         entries = self.fetch_entries(req)
         page, number = get_page(req)
-        resp.body = render(
+        resp.text = render(
             page=page, view='feed', form=form, number=number,
             user=req.user, entries=entries, errors={}
         )
@@ -135,7 +135,7 @@ class FeedResource:
         errors = {k: v for k, v in errors.items() if v}
         if errors:
             entries = self.fetch_entries(req)
-            resp.body = render(
+            resp.text = render(
                 page='regular', view='feed', form=form, number=1,
                 user=req.user, entries=entries, errors=errors
             )
@@ -173,7 +173,7 @@ class ReplyResource:
         ancestors = self.fetch_ancestors(parent)
         entries = self.fetch_entries(parent)
         form = FieldStorage(fp=req.stream, environ=req.env)
-        resp.body = render(
+        resp.text = render(
             page='reply', view='reply',
             user=req.user, entry=parent, form=form, errors={}, entries=entries,
             ancestors=ancestors, duplicate=duplicate
@@ -196,7 +196,7 @@ class ReplyResource:
         if errors:
             ancestors = self.fetch_ancestors(parent)
             entries = self.fetch_entries(parent)
-            resp.body = render(
+            resp.text = render(
                 page='reply', view='reply',
                 user=req.user, entry=parent, form=form, errors=errors,
                 entries=entries, ancestors=ancestors, duplicate=False
@@ -230,7 +230,7 @@ class EditResource:
             return not_found(resp, req.user, f'/edit/{base}')
         ancestors = [entry.parent] if entry.parent_id else []
         form = FieldStorage(fp=req.stream, environ=req.env)
-        resp.body = render(
+        resp.text = render(
             page='edit', view='edit',
             user=req.user, entry=entry, form=form, errors={},
             ancestors=ancestors
@@ -255,7 +255,7 @@ class EditResource:
         errors = {k: v for k, v in errors.items() if v}
         if errors:
             ancestors = [entry.parent] if entry.parent_id else []
-            resp.body = render(
+            resp.text = render(
                 page='edit', view='edit',
                 user=req.user, entry=entry, form=form, errors=errors,
                 ancestors=ancestors
@@ -314,7 +314,7 @@ class ProfileResource:
         is_followed = Relation.objects.filter(
             created_by=member, to_user=req.user
         ).exclude(created_by=req.user).exists() if req.user else False
-        resp.body = render(
+        resp.text = render(
             page='profile', view='profile', number=1,
             user=req.user, member=member, entries=entries,
             tab=tab, is_following=is_following, is_followed=is_followed,
@@ -334,7 +334,7 @@ class FollowingResource:
     def on_get(self, req, resp):
         entries = self.fetch_entries(req)
         page, number = get_page(req)
-        resp.body = render(
+        resp.text = render(
             page=page, view='following', number=number,
             user=req.user, entries=entries
         )
@@ -357,7 +357,7 @@ class FollowersResource:
     def on_get(self, req, resp):
         entries = self.fetch_entries(req)
         page, number = get_page(req)
-        resp.body = render(
+        resp.text = render(
             page=page, view='followers', number=number,
             user=req.user, entries=entries
         )
@@ -382,7 +382,7 @@ class MentionsResource:
     def on_get(self, req, resp):
         entries = self.fetch_entries(req)
         page, number = get_page(req)
-        resp.body = render(
+        resp.text = render(
             page=page, view='mentions', number=number,
             user=req.user, entries=entries
         )
@@ -407,7 +407,7 @@ class RepliesResource:
     def on_get(self, req, resp):
         entries = self.fetch_entries(req)
         page, number = get_page(req)
-        resp.body = render(
+        resp.text = render(
             page=page, view='replies', number=number,
             user=req.user, entries=entries
         )
@@ -432,7 +432,7 @@ class ReplyingResource:
     def on_get(self, req, resp):
         entries = self.fetch_entries(req)
         page, number = get_page(req)
-        resp.body = render(
+        resp.text = render(
             page=page, view='replying', number=number,
             user=req.user, entries=entries
         )
@@ -453,7 +453,7 @@ class SavesResource:
     def on_get(self, req, resp):
         entries = self.fetch_entries(req)
         page, number = get_page(req)
-        resp.body = render(
+        resp.text = render(
             page=page, view='saves', number=number,
             user=req.user, entries=entries
         )
@@ -485,7 +485,7 @@ class PeopleResource:
         q = req.params.get('q', '').strip()
         terms = [t.strip() for t in q.split() if t.strip()]
         entries = self.fetch_entries(req, terms, kind)
-        resp.body = render(
+        resp.text = render(
             page='regular', view='people', placeholder="Find people",
             user=req.user, entries=entries, q=q, kind=kind
         )
@@ -520,7 +520,7 @@ class DiscoverResource:
         q = req.params.get('q', '').strip()
         terms = [t.strip() for t in q.split() if t.strip()]
         entries = self.fetch_entries(req, terms)
-        resp.body = render(
+        resp.text = render(
             page='regular', view='discover', placeholder="Search content",
             user=req.user, entries=entries, q=q
         )
@@ -541,7 +541,7 @@ class TrendingResource:
         sample = 20
         entries = self.fetch_entries(req, sample)
         page, number = get_page(req)
-        resp.body = render(
+        resp.text = render(
             page=page, view='trending', number=number, sample=sample,
             user=req.user, entries=entries
         )
@@ -586,7 +586,7 @@ class AccountResource:
     @before(login_required)
     def on_get(self, req, resp):
         form = FieldStorage(fp=req.stream, environ=req.env)
-        resp.body = render(
+        resp.text = render(
             page='account', view='account', user=req.user, form=form
         )
 
@@ -599,7 +599,7 @@ class AccountResource:
         password2 = form.getvalue('password2', '')
         errors = changing(req.user, current, password1, password2)
         if errors:
-            resp.body = render(
+            resp.text = render(
                 page='account', view='account',
                 user=req.user, change_errors=errors, form=form
             )
@@ -618,7 +618,7 @@ class AccountResource:
         if not verify_hash(current, req.user.password):
             errors['current'] = "Password doesn't match"
         if errors:
-            resp.body = render(
+            resp.text = render(
                 page='account', view='account',
                 user=req.user, delete_errors=errors, form=form
             )
@@ -638,7 +638,7 @@ class SocialResource:
     @before(login_required)
     def on_get(self, req, resp):
         form = FieldStorage(fp=req.stream, environ=req.env)
-        resp.body = render(
+        resp.text = render(
             page='social', view='social', user=req.user, form=form
         )
 
@@ -656,7 +656,7 @@ class SocialResource:
             if valid_handle(value):
                 errors[field] = valid_handle(value)
         if errors:
-            resp.body = render(
+            resp.text = render(
                 page='social', view='social',
                 user=req.user, errors=errors, form=form, fields=f
             )
@@ -671,7 +671,7 @@ class OptionsResource:
     @before(login_required)
     def on_get(self, req, resp):
         form = FieldStorage(fp=req.stream, environ=req.env)
-        resp.body = render(
+        resp.text = render(
             page='options', view='options',
             user=req.user, errors={}, form=form
         )
@@ -692,7 +692,7 @@ class OptionsResource:
         f['website'] = form.getvalue('website', '').strip().lower()
         errors = profiling(f, req.user.id)
         if errors:
-            resp.body = render(
+            resp.text = render(
                 page='options', view='options',
                 user=req.user, errors=errors, form=form, fields=f
             )
@@ -707,7 +707,7 @@ class OptionsResource:
 class LoginResource:
     def on_get(self, req, resp):
         form = FieldStorage(fp=req.stream, environ=req.env)
-        resp.body = render(page='login', view='login', errors={}, form=form)
+        resp.text = render(page='login', view='login', errors={}, form=form)
 
     def on_post(self, req, resp):
         form = FieldStorage(fp=req.stream, environ=req.env)
@@ -715,7 +715,7 @@ class LoginResource:
         password = form.getvalue('password', '')
         errors, user = authentication(username, password)
         if errors:
-            resp.body = render(
+            resp.text = render(
                 page='login', view='login', errors=errors, form=form
             )
         else:
@@ -733,7 +733,7 @@ class LogoutResource:
 class RegisterResource:
     def on_get(self, req, resp):
         form = FieldStorage(fp=req.stream, environ=req.env)
-        resp.body = render(
+        resp.text = render(
             page='register', view='register',
             errors={}, form=form, fields={}
         )
@@ -757,7 +757,7 @@ class RegisterResource:
         f['website'] = form.getvalue('website', '').strip().lower()
         errors = registration(f)
         if errors:
-            resp.body = render(
+            resp.text = render(
                 page='register', view='register',
                 errors=errors, form=form, fields=f
             )
@@ -798,7 +798,7 @@ class ResetResource:
 
     def on_get(self, req, resp):
         form = FieldStorage(fp=req.stream, environ=req.env)
-        resp.body = render(
+        resp.text = render(
             page='reset', view='reset', errors={}, form=form
         )
 
@@ -818,7 +818,7 @@ class ResetResource:
                 remains = reset.created_at + self.hours * 3600 - utc_timestamp()
                 errors['email'] = f"Try again in {timeago(remains)}, reset already sent"
         if errors:
-            resp.body = render(
+            resp.text = render(
                 page='reset', view='reset', errors=errors, form=form
             )
         else:
@@ -849,7 +849,7 @@ class ResetResource:
 class ChangeResource:
     def on_get(self, req, resp):
         form = FieldStorage(fp=req.stream, environ=req.env)
-        resp.body = render(
+        resp.text = render(
             page='change', view='change', errors={}, form=form
         )
 
@@ -866,7 +866,7 @@ class ChangeResource:
         errors['password'] = valid_password(password1, password2)
         errors = {k: v for k, v in errors.items() if v}
         if errors:
-            resp.body = render(
+            resp.text = render(
                 page='change', view='change', errors=errors, form=form
             )
         else:
