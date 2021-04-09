@@ -1,10 +1,10 @@
 import hashlib
 from cgi import FieldStorage
 
+import emoji
 from django.db.models import Count, Max, Prefetch, Q
 from emails import Message
 from emails.template import JinjaTemplate
-import emoji
 from falcon import status_codes
 from falcon.hooks import before
 from falcon.redirects import HTTPFound
@@ -44,8 +44,7 @@ def get_page(req):
 def paginate(req, qs, limit=10):
     page = get_number(req)
     index = (page - 1) * limit
-    query = qs[index:index + limit + 1]
-    return query[:limit]
+    return qs[index:index + limit]
 
 
 def not_found(resp, user, url):
