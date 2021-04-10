@@ -12,13 +12,13 @@ function ajax(path, method='post', type='json', callback) {
 
 function loadPage(event, number) {
     event.preventDefault();
-    var loader = event.currentTarget.parentElement
+    var link = event.currentTarget;
+    var loader = link.parentElement
     var items = loader.parentElement;
     var url = window.location.pathname + '?p=' + number;
-    console.log(number);
-    console.log(url);
+    link.innerText = "Loading...";
     ajax(url, 'get', 'text', function (data) {
-        loader.remove()
+        loader.remove();
         items.innerHTML = items.innerHTML + data;
     })
 }
