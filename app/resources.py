@@ -10,15 +10,14 @@ from falcon.hooks import before
 from falcon.redirects import HTTPFound
 
 from app.const import HTML, TEXT
-from app.filters import timeago
 from app.forms import get_content, get_emoji, get_name
 from app.helpers import build_hash, parse_metadata, utc_timestamp, verify_hash
 from app.hooks import auth_user, login_required
 from app.jinja import render
-from app.models import Comment, Relation, Reset, Save, User
+from app.models import Comment, Relation, Save, User
 from app.validation import (
     authentication, changing, profiling, registration, valid_content,
-    valid_handle, valid_password, valid_reply, valid_thread
+    valid_handle, valid_reply, valid_thread
 )
 from project.settings import DEBUG, FERNET, MAX_AGE, SMTP
 
@@ -526,10 +525,12 @@ class DiscoverResource:
 
 
 class TrendingResource:
-    def fetch_entries(self, req, sample):
+    sample = 20
+
+    def fetch_entries(self, req):
         sampling = Comment.objects.filter(parent=None).annotate(
             replies=Count('kids')
-        ).exclude(replies=0).order_by('-id').values('id')[:sample]
+        ).exclude(replies=0).order_by('-id').values('id')[:self.sample]
         entries = Comments.filter(
             id__in=sampling
         ).order_by('-replies', '-id').prefetch_related(PFR)
@@ -537,11 +538,10 @@ class TrendingResource:
 
     @before(auth_user)
     def on_get(self, req, resp):
-        sample = 20
-        entries = self.fetch_entries(req, sample)
+        entries = self.fetch_entries(req)
         page, number = get_page(req)
         resp.text = render(
-            page=page, view='trending', number=number, sample=sample,
+            page=page, view='trending', number=number,
             user=req.user, entries=entries
         )
 
@@ -749,11 +749,6 @@ class RegisterResource:
         f['password1'] = form.getvalue('password1', '')
         f['password2'] = form.getvalue('password2', '')
         f['email'] = form.getvalue('email', '').strip().lower()
-        f['bio'] = get_content(form, 'bio')
-        f['emoji'] = get_emoji(form)
-        f['birthday'] = form.getvalue('birthday', '').strip()
-        f['location'] = form.getvalue('location', '')
-        f['website'] = form.getvalue('website', '').strip().lower()
         errors = registration(f)
         if errors:
             resp.text = render(
@@ -787,94 +782,52 @@ class RegisterResource:
             # half_year = utc_timestamp() - (3600 * 24 * 183)
             # User.objects.filter(seen_at__lt=half_year).update(emoji='')
             # set id cookie
-            token = FERNET.encrypt(str(user.id).encode())
-            resp.set_cookie('identity', token.decode(), path="/", max_age=MAX_AGE)
+            token = FERNET.encrypt(str(user.id).encode()).decode()
+            resp.set_cookie('identity', token, path="/", max_age=MAX_AGE)
             raise HTTPFound('/feed')
 
 
-class ResetResource:
-    hours = 8
-
+class UnlockResource:
     def on_get(self, req, resp):
         form = FieldStorage(fp=req.stream, environ=req.env)
         resp.text = render(
-            page='reset', view='reset', errors={}, form=form
+            page='unlock', view='unlock', errors={}, form=form
         )
+
+    def on_get_lnk(self, req, resp, token):
+        email = FERNET.decrypt(token.encode()).decode()
+        user = User.objects.filter(email=email).first()
+        token = FERNET.encrypt(str(user.id).encode()).decode()
+        resp.set_cookie('identity', token, path="/", max_age=MAX_AGE)
+        raise HTTPFound('/feed')
 
     def on_post(self, req, resp):
         form = FieldStorage(fp=req.stream, environ=req.env)
         email = form.getvalue('email', '').strip().lower()
-        # clean up
-        hours_ago = utc_timestamp() - self.hours * 3600
-        Reset.objects.filter(created_at__lt=hours_ago).delete()
         errors = {}
         user = User.objects.filter(email=email).first()
         if not user:
             errors['email'] = "Email doesn't exist"
-        else:
-            reset = Reset.objects.filter(email=user.email).first()
-            if reset:
-                remains = reset.created_at + self.hours * 3600 - utc_timestamp()
-                errors['email'] = f"Try again in {timeago(remains)}, reset already sent"
         if errors:
             resp.text = render(
-                page='reset', view='reset', errors=errors, form=form
+                page='unlock', view='unlock', errors=errors, form=form
             )
         else:
-            # generate code
-            unique = str(utc_timestamp()).encode()
-            code = hashlib.shake_128(unique).hexdigest(3)
+            # generate token
+            token = FERNET.encrypt(str(user.email).encode()).decode()
             # compose email
             m = Message(
                 html=JinjaTemplate(HTML),
                 text=JinjaTemplate(TEXT),
-                subject="Reset password",
+                subject="Unlock account on Subreply",
                 mail_from=("Subreply", "subreply@outlook.com")
             )
             # send email
             response = m.send(
-                render={"username": user, "code": code}, to=user.email, smtp=SMTP
+                render={"username": user, "token": token}, to=user.email, smtp=SMTP
             )
-            # create reset entry
+            # fallback
             if response.status_code == 250:
-                Reset.objects.update_or_create(
-                    created_at=utc_timestamp(), email=user.email, code=code
-                )
-                raise HTTPFound('/change')
+                raise HTTPFound('/login')
             else:
-                raise HTTPFound('/reset')
-
-
-class ChangeResource:
-    def on_get(self, req, resp):
-        form = FieldStorage(fp=req.stream, environ=req.env)
-        resp.text = render(
-            page='change', view='change', errors={}, form=form
-        )
-
-    def on_post(self, req, resp):
-        form = FieldStorage(fp=req.stream, environ=req.env)
-        code = form.getvalue('code', '').strip().lower()
-        email = form.getvalue('email', '').strip().lower()
-        password1 = form.getvalue('password1', '')
-        password2 = form.getvalue('password2', '')
-        errors = {}
-        reset = Reset.objects.filter(email=email, code=code).first()
-        if not reset:
-            errors['email'] = "Email didn't receive this code"
-        errors['password'] = valid_password(password1, password2)
-        errors = {k: v for k, v in errors.items() if v}
-        if errors:
-            resp.text = render(
-                page='change', view='change', errors=errors, form=form
-            )
-        else:
-            user = User.objects.filter(email=email).first()
-            user.password = build_hash(password1)
-            user.save(update_fields=['password'])
-            token = FERNET.encrypt(str(user.id).encode())
-            resp.set_cookie(
-                'identity', token.decode(), path="/", max_age=MAX_AGE
-            )
-            reset.delete()
-            raise HTTPFound('/feed')
+                raise HTTPFound('/unlock')

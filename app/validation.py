@@ -330,9 +330,4 @@ def registration(f):
     errors['full_name'] = valid_full_name(f['first_name'], f['last_name'])
     errors['password'] = valid_password(f['password1'], f['password2'])
     errors['email'] = valid_email(f['email'])
-    errors['website'] = valid_website(f['website'])
-    errors['bio'] = valid_bio(f['bio'], f['username'])
-    errors['birthday'] = valid_birthday(f['birthday'])
-    errors['location'] = valid_location(f['location'])
-    errors['emoji'] = valid_emoji(f['emoji'])
     return {k: v for k, v in errors.items() if v}

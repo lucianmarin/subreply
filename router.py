@@ -1,10 +1,10 @@
-from falcon import API
+from falcon import App
 from falcon.constants import MEDIA_HTML
 
 from app import api, resources
 from project.settings import DEBUG
 
-app = API(media_type=MEDIA_HTML)
+app = App(media_type=MEDIA_HTML)
 
 app.req_options.auto_parse_form_urlencoded = True
 app.req_options.strip_url_path_trailing_slash = True
@@ -32,9 +32,12 @@ app.add_route('/trending', resources.TrendingResource())
 
 app.add_route('/about', resources.AboutResource())
 app.add_route('/emoji', resources.EmojiResource())
+
 app.add_route('/login', resources.LoginResource())
 app.add_route('/logout', resources.LogoutResource())
 app.add_route('/register', resources.RegisterResource())
+app.add_route('/unlock', resources.UnlockResource())
+app.add_route('/unlock/{token}', resources.UnlockResource(), suffix="lnk")
 
 app.add_route('/account', resources.AccountResource())
 app.add_route('/account/change', resources.AccountResource(), suffix="chg")
@@ -42,9 +45,6 @@ app.add_route('/account/delete', resources.AccountResource(), suffix="del")
 
 app.add_route('/options', resources.OptionsResource())
 app.add_route('/social', resources.SocialResource())
-
-app.add_route('/change', resources.ChangeResource())
-app.add_route('/reset', resources.ResetResource())
 
 app.add_route('/edit/{base}', resources.EditResource())
 app.add_route('/{username}/{base}', resources.ReplyResource())
