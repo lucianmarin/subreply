@@ -7,11 +7,20 @@
         {% include "input/query.html" %}
     {% endif %}
 
+    {% if view in ['following', 'followers'] %}
+        {% set limit = 20 %}
+    {% elif view in ['mentions', 'saves'] %}
+        {% set limit = 15 %}
+    {% else %}
+        {% set limit = 10 %}
+    {% endif %}
+
     <div class="list">
         {% if view == 'profile' %}
             {% include "common/user.html" %}
             {% include "common/status.html" %}
         {% endif %}
+
         {% for entry in entries %}
             {% if view == 'feed' %}
                 {% include "common/threads.html" %}
@@ -41,7 +50,8 @@
         {% else %}
             {% include "common/nothing.html" %}
         {% endfor %}
-        {% if view not in ['people', 'discover'] %}
+
+        {% if view not in ['people', 'discover'] and entries | length == limit %}
             <div class="entry load">
                 <a onclick="loadPage(event, {{ number + 1 }})">Load more</a>
             </div>

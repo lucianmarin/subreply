@@ -28,7 +28,15 @@
     {% include "common/nothing.html" %}
 {% endfor %}
 
-{% if entries %}
+{% if view in ['following', 'followers'] %}
+    {% set limit = 20 %}
+{% elif view in ['mentions', 'saves'] %}
+    {% set limit = 15 %}
+{% else %}
+    {% set limit = 10 %}
+{% endif %}
+
+{% if entries | length == limit %}
     <div class="entry load">
         <a onclick="loadPage(event, {{ number + 1 }})">Load more</a>
     </div>
