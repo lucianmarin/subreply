@@ -8,9 +8,15 @@
     {% endif %}
 
     <div class="list">
+        {% if view == 'profile' %}
+            {% include "common/user.html" %}
+            {% include "common/status.html" %}
+        {% endif %}
         {% for entry in entries %}
             {% if view == 'feed' %}
                 {% include "common/threads.html" %}
+            {% elif view == 'profile' %}
+                {% include "common/" + tab + ".html" %}
             {% elif view == 'trending' %}
                 {% include "common/threads.html" %}
             {% elif view in ['replying', 'replies'] %}

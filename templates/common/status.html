@@ -1,0 +1,19 @@
+<div class="entry">
+    <div class="status">
+        Joined {{ member.joined_at | shortdate }} ago.
+        Seen {{ member.seen_at | shortdate }} ago.
+        {% if is_followed %}Follows you.{% endif %}
+        {% if member.links %}{{ member.social }}{% endif %}
+    </div>
+</div>
+
+<div class="entry">
+    <div class="filters">
+        <a href="/{{ member.username }}" class="{% if tab == 'threads' %}selected{% endif %}">
+            {{ threads }} thread{% if threads != 1 %}s{% endif %}
+        </a>
+        <a href="/{{ member.username }}/replies" class="{% if tab == 'replies' %}selected{% endif %}">
+            {{ replies }} repl{% if replies == 1 %}y{% else %}ies{% endif %}
+        </a>
+    </div>
+</div>

@@ -1,4 +1,3 @@
-import hashlib
 from cgi import FieldStorage
 
 import emoji
@@ -304,16 +303,20 @@ class ProfileResource:
         if not member:
             return not_found(resp, req.user, f'/{username}')
         entries = self.fetch_entries(req, member, tab)
-        threads = self.fetch_threads(member).count()
-        replies = self.fetch_replies(member).count()
-        is_following = Relation.objects.filter(
-            created_by=req.user, to_user=member
-        ).exists() if req.user else False
-        is_followed = Relation.objects.filter(
-            created_by=member, to_user=req.user
-        ).exclude(created_by=req.user).exists() if req.user else False
+        page, number = get_page(req)
+        threads, replies = 0, 0
+        is_following, is_followed = None, None
+        if number == 1:
+            threads = self.fetch_threads(member).count()
+            replies = self.fetch_replies(member).count()
+            is_following = Relation.objects.filter(
+                created_by=req.user, to_user=member
+            ).exists() if req.user else False
+            is_followed = Relation.objects.filter(
+                created_by=member, to_user=req.user
+            ).exclude(created_by=req.user).exists() if req.user else False
         resp.text = render(
-            page='profile', view='profile', number=1,
+            page=page, view='profile', number=number,
             user=req.user, member=member, entries=entries,
             tab=tab, is_following=is_following, is_followed=is_followed,
             threads=threads, replies=replies

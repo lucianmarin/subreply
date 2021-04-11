@@ -1,6 +1,8 @@
 {% for entry in entries %}
     {% if view == 'feed' %}
         {% include "common/threads.html" %}
+    {% elif view == 'profile' %}
+        {% include "common/" + tab + ".html" %}
     {% elif view == 'trending' %}
         {% include "common/threads.html" %}
     {% elif view in ['replying', 'replies'] %}
