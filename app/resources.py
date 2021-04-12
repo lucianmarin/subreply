@@ -766,11 +766,6 @@ class RegisterResource:
                     'last_name': f['last_name'],
                     'password': build_hash(f['password1']),
                     'email': f['email'],
-                    'bio': f['bio'],
-                    'birthday': f['birthday'],
-                    'location': f['location'],
-                    'emoji': f['emoji'],
-                    'website': f['website'],
                     'joined_at': utc_timestamp(),
                     'seen_at': utc_timestamp(),
                     'remote_addr': f['remote_addr']
