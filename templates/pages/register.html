@@ -62,6 +62,54 @@
                 {% endif %}
             </div>
             <div class="line">
+                <label for="id_bio">Bio <i>your description or current status</i></label>
+                <input type="text" name="bio" id="id_bio" maxlength="120"
+                    value="{{ fields.bio }}">
+                {% if 'bio' in errors %}
+                    <div class="error">{{ errors['bio'] }}</div>
+                {% endif %}
+            </div>
+            <div class="line">
+                <label for="id_website">Website <i>your blog, resume or social profile</i></label>
+                <input type="url" name="website" id="id_website" maxlength="120"
+                    placeholder="https://"
+                    value="{{ fields.website }}">
+                {% if 'website' in errors %}
+                    <div class="error">{{ errors['website'] }}</div>
+                {% endif %}
+            </div>
+            <div class="line">
+                <div class="left">
+                    <div class="left">
+                        <label for="id_emoji">Emoji</label>
+                        <input type="text" name="emoji" id="id_emoji"
+                            maxlength="15" placeholder=":)"
+                            value="{{ fields.emoji }}">
+                    </div>
+                    <div class="right">
+                        <label for="id_birthday">Birthday</label>
+                        <input type="text" name="birthday" id="id_birthday"
+                            maxlength="10" placeholder="Y-M-D"
+                            value="{{ fields.birthday }}">
+                    </div>
+                </div>
+                <div class="right">
+                    <label for="id_location">Location</label>
+                    <input type="text" name="location" id="id_location"
+                        maxlength="60" placeholder="City, Country"
+                        value="{{ fields.location }}">
+                </div>
+                {% if 'emoji' in errors %}
+                    <div class="error">{{ errors['emoji'] }}</div>
+                {% endif %}
+                {% if 'birthday' in errors %}
+                    <div class="error">{{ errors['birthday'] }}</div>
+                {% endif %}
+                {% if 'location' in errors %}
+                    <div class="error">{{ errors['location'] }}</div>
+                {% endif %}
+            </div>
+            <div class="line">
                 <input type="submit" value="Register">
             </div>
         </form>
