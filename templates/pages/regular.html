@@ -8,11 +8,11 @@
     {% endif %}
 
     {% if view in ['following', 'followers'] %}
-        {% set limit = 20 %}
+        {% set limit = 24 %}
     {% elif view in ['mentions', 'saves'] %}
-        {% set limit = 15 %}
+        {% set limit = 18 %}
     {% else %}
-        {% set limit = 10 %}
+        {% set limit = 12 %}
     {% endif %}
 
     <div class="list">
