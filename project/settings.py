@@ -13,13 +13,13 @@ SECRET_KEY = SECRET_KEY
 SMTP = SMTP
 
 DATABASES = {
-    'default': {
-        'ENGINE': "django.db.backends.postgresql_psycopg2",
-        'NAME': "subreply",
-        'USER': "postgres",
-        'PASSWORD': "postgres",
-        'HOST': "",
-        'PORT': "6432"
+    "default": {
+        "ENGINE": "django.db.backends.postgresql_psycopg2",
+        "NAME": "subreply",
+        "USER": "postgres",
+        "PASSWORD": "postgres",
+        "HOST": "",
+        "PORT": "6432",
     }
 }
 
@@ -37,13 +37,55 @@ SLURS = ["nigger", "fuck", "cunt", "stupid", "whore", "hitler"]
 
 # registration
 INVALID = [
-    "register", "login", "logout", "feed", "following", "followers",
-    "sub", "subcafe", "sublevel", "luc", "lm", "lucianmarin", "set",
-    "re", "reply", "api", "local", "search", "settings", "discover",
-    "profile", "reset", "password", "delete", "timeline", "change",
-    "about", "static", "media", "terms", "privacy", "policy",
-    "requests", "invitations", "people", "trends", "trending",
-    "links", "mentions", "pins", "saves",
-    "linked", "mentioned", "pinned", "saved",
-    "link", "mention", "pin", "save", "emoji"
+    "about",
+    "api",
+    "change",
+    "delete",
+    "discover",
+    "emoji",
+    "feed",
+    "followers",
+    "following",
+    "invitations",
+    "link",
+    "linked",
+    "links",
+    "lm",
+    "local",
+    "login",
+    "logout",
+    "luc",
+    "lucianmarin",
+    "media",
+    "mention",
+    "mentioned",
+    "mentions",
+    "password",
+    "people",
+    "pin",
+    "pinned",
+    "pins",
+    "policy",
+    "privacy",
+    "profile",
+    "re",
+    "register",
+    "reply",
+    "requests",
+    "reset",
+    "save",
+    "saved",
+    "saves",
+    "search",
+    "set",
+    "settings",
+    "static",
+    "sub",
+    "subcafe",
+    "sublevel",
+    "terms",
+    "timeline",
+    "trending",
+    "trends",
+    "unlock"
 ]
