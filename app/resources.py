@@ -589,7 +589,8 @@ class AccountResource:
     def on_get(self, req, resp):
         form = FieldStorage(fp=req.stream, environ=req.env)
         resp.text = render(
-            page='account', view='account', user=req.user, form=form
+            page='account', view='account', user=req.user, form=form,
+            change_errors={}, delete_errors={}
         )
 
     @before(auth_user)
@@ -641,7 +642,7 @@ class SocialResource:
     def on_get(self, req, resp):
         form = FieldStorage(fp=req.stream, environ=req.env)
         resp.text = render(
-            page='social', view='social', user=req.user, form=form
+            page='social', view='social', user=req.user, form=form, errors={}
         )
 
     @before(auth_user)
