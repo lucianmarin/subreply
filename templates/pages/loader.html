@@ -29,11 +29,11 @@
 {% endfor %}
 
 {% if view in ['following', 'followers'] %}
-    {% set limit = 24 %}
+    {% set limit = 20 %}
 {% elif view in ['mentions', 'saves'] %}
-    {% set limit = 18 %}
+    {% set limit = 15 %}
 {% else %}
-    {% set limit = 12 %}
+    {% set limit = 10 %}
 {% endif %}
 
 {% if entries | length == limit %}

@@ -39,7 +39,7 @@ def get_page(req):
     return page, number
 
 
-def paginate(req, qs, limit=12):
+def paginate(req, qs, limit=10):
     page = get_number(req)
     index = (page - 1) * limit
     return qs[index:index + limit]
@@ -328,7 +328,7 @@ class FollowingResource:
         entries = Relation.objects.filter(
             created_by=req.user
         ).exclude(to_user=req.user).order_by('-id').select_related('to_user')
-        return paginate(req, entries, 24)
+        return paginate(req, entries, 20)
 
     @before(auth_user)
     @before(login_required)
@@ -346,7 +346,7 @@ class FollowersResource:
         entries = Relation.objects.filter(
             to_user=req.user
         ).exclude(created_by=req.user).order_by('-id').select_related('created_by')
-        return paginate(req, entries, 24)
+        return paginate(req, entries, 20)
 
     def clear_followers(self, user):
         Relation.objects.filter(
@@ -371,7 +371,7 @@ class MentionsResource:
         entries = Comments.filter(
             at_user=req.user
         ).order_by('-id').prefetch_related(PFR, PPFR)
-        return paginate(req, entries, 18)
+        return paginate(req, entries, 15)
 
     def clear_mentions(self, user):
         Comment.objects.filter(
@@ -447,7 +447,7 @@ class SavesResource:
         entries = Comments.filter(
             id__in=saved_ids
         ).order_by('-id').prefetch_related(PFR, PPFR)
-        return paginate(req, entries, 18)
+        return paginate(req, entries, 15)
 
     @before(auth_user)
     @before(login_required)
@@ -480,7 +480,7 @@ class PeopleResource:
         q = self.build_query(terms)
         sort = '-seen_at' if kind == 'seen' else '-id'
         entries = User.objects.filter(q).order_by(sort)
-        return paginate(req, entries, 24)
+        return paginate(req, entries, 20)
 
     def get_people(self, req, resp, kind):
         q = req.params.get('q', '').strip()
@@ -514,7 +514,7 @@ class DiscoverResource:
             last_ids = User.objects.annotate(lid=Max('comments')).values('lid')
             sq = Q(id__in=last_ids)
         entries = Comments.filter(sq).order_by('-id').prefetch_related(PFR, PPFR)
-        return paginate(req, entries, 18)
+        return paginate(req, entries, 15)
 
     @before(auth_user)
     def on_get(self, req, resp):
@@ -528,7 +528,7 @@ class DiscoverResource:
 
 
 class TrendingResource:
-    sample = 24
+    sample = 20
 
     def fetch_entries(self, req):
         sampling = Comment.objects.filter(parent=None).annotate(
