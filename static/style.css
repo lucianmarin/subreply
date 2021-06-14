@@ -116,15 +116,19 @@ table td a { text-decoration: underline; }
 
 .content { cursor: text; word-break: break-word; }
 
+.content.inline { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; opacity: 0.5; }
+
 .content a { text-decoration: underline; }
+
+.content a.name { font-weight: bold; text-decoration: none; }
 
 .content a:hover { color: var(--gray); }
 
 .small { font-size: var(--small); overflow: hidden; }
 
-.small a, .small b { color: var(--gray); float: left; margin-left: 15px; }
+.small a, .small b { color: var(--gray); float: left; margin-right: 15px; }
 
-.small a:first-child, .small b:first-child { margin-left: 0; }
+.small a:first-child, .small b:first-child { float: right; margin-right: 0; }
 
 .small a:hover, .small b:hover { color: var(--black); }
 

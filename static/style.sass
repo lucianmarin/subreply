@@ -260,8 +260,14 @@ table
 .content
     cursor: text
     word-break: break-word
+    &.inline
+        @include dots
+        opacity: 0.5
     a
         text-decoration: underline
+        &.name
+            font-weight: bold
+            text-decoration: none
         &:hover
             color: var(--gray)
 
@@ -271,9 +277,10 @@ table
     a, b
         color: var(--gray)
         float: left
-        margin-left: 15px
+        margin-right: 15px
         &:first-child
-            margin-left: 0
+            float: right
+            margin-right: 0
         &:hover
             color: var(--black)
 

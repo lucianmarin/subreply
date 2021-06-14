@@ -1,23 +1,8 @@
 <div class="entry">
-    <div class="author">
-        {% if entry.created_by.emoji %}
-            <a class="emoji" href="/{{ entry.created_by }}">
-                {{ entry.created_by.emoji }}
-            </a>
-        {% endif %}
-        <a class="short" href="/{{ entry.created_by }}">
-            {{ entry.created_by.full_name | escape }}
+    <div class="content inline">
+        <a class="name" href="/{{ entry.created_by }}">
+            {{ entry.created_by.emoji }} {{ entry.created_by.full_name | escape }}
         </a>
-        <a class="handle" href="/{{ entry.created_by }}">
-            @{{ entry.created_by }}
-        </a>
-        <b class="{{ entry.created_by.status }}">&bull;</b>
-        <a class="ago" href="/{{ entry.created_by }}/{{ entry.base }}">
-            {% if entry.edited_at %}
-                edited {{ entry.edited_at | shortdate }} ago
-            {% else %}
-                {{ entry.created_at | shortdate }} ago
-            {% endif %}
-        </a>
+        {{ entry.content | emojize | parser | safe }}
     </div>
 </div>
