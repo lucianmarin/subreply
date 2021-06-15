@@ -138,6 +138,8 @@ table td a { text-decoration: underline; }
 
 .author .handle, .author .ago { color: var(--gray); }
 
+.author .ago { float: right; }
+
 .author .ago:hover { color: var(--black); }
 
 .author .here { color: green; }
