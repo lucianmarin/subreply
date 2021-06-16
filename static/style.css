@@ -138,6 +138,8 @@ table td a { text-decoration: underline; }
 
 .author .handle, .author .ago { color: var(--gray); }
 
+.author .ago { float: right; }
+
 .author .ago:hover { color: var(--black); }
 
 .author .here { color: green; }
@@ -152,21 +154,21 @@ table td a { text-decoration: underline; }
 
 .extra a:hover { color: var(--black); }
 
-.status { color: var(--silver); font-size: var(--small); }
+.status { color: var(--gray); font-size: var(--small); }
 
-.status a { color: var(--silver); }
+.status a { color: var(--gray); }
 
-.status a:hover { color: var(--gray); }
+.status a:hover { color: var(--black); }
 
 .filters { font-size: var(--small); height: 20px; overflow: hidden; }
 
-.filters a { color: var(--silver); display: block; float: left; margin-right: 15px; }
+.filters a { color: var(--gray); display: block; float: left; margin-right: 15px; }
 
-.filters a:hover { color: var(--gray); }
+.filters a:hover { color: var(--black); }
 
 .filters a:last-child { margin-right: 0; }
 
-.filters a.selected { color: var(--gray); }
+.filters a.selected { color: var(--black); }
 
 .pages { font-size: var(--small); margin-top: -5px; margin-bottom: 5px; padding: 5px 0; padding-left: 30px; border-top: var(--whitesmoke) 1px solid; overflow: hidden; }
 

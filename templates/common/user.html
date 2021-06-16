@@ -1,11 +1,5 @@
 <div class="entry">
     <div class="author">
-        {% if member.emoji %}
-            <a class="emoji" href="/{{ member }}">{{ member.emoji }}</a>
-        {% endif %}
-        <a class="short" href="/{{ member }}">{{ member.full_name }}</a>
-        <a class="handle" href="/{{ member }}">@{{ member }}</a>
-        <b class="{{ member.status }}">&bull;</b>
         {% if view == 'profile' %}
             {% if member.id == user.id %}
                 <a class="ago" href="/options">edit</a>
@@ -19,16 +13,21 @@
         {% elif view == 'people' %}
             <a class="ago" href="/{{ member }}">
                 {% if kind == 'seen' %}
-                    {{ entry.seen_at | shortdate }} ago
+                    {{ entry.seen_at | shortdate }}
                 {% else %}
-                    {{ entry.joined_at | shortdate }} ago
+                    {{ entry.joined_at | shortdate }}
                 {% endif %}
             </a>
         {% else %}
             <a class="ago" href="/{{ member }}">
-                {{ entry.created_at | shortdate }} ago
+                {{ entry.created_at | shortdate }}
             </a>
         {% endif %}
+        <a class="short" href="/{{ member }}">
+            {{ member.emoji }} {{ member.full_name }}
+        </a>
+        <b class="{{ member.status }}">&bull;</b>
+        <a class="handle" href="/{{ member }}">@{{ member }}</a>
     </div>
     {% if member.bio %}
         <div class="content">
