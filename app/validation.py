@@ -124,6 +124,8 @@ def valid_first_name(value):
         return "First name should use Latin characters"
     elif has_repetions(value):
         return "First name contains repeating characters"
+    elif value.count('-') > 1 or value.startswith('-') or value.endswith('-'):
+        return "Only one double-name is allowed"
 
 
 def valid_last_name(value):
@@ -135,6 +137,8 @@ def valid_last_name(value):
         return "Last name should use Latin characters"
     elif value and has_repetions(value):
         return "Last name contains repeating characters"
+    elif value.count('-') > 1 or value.startswith('-') or value.endswith('-'):
+        return "Only one double-name is allowed"
 
 
 def valid_full_name(first_name, last_name):

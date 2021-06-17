@@ -5,7 +5,8 @@ with open('static/worldcities.json') as file:
 
 MIN_YEAR, MAX_YEAR = 1918, 2018
 
-LATIN = "abcdefghijklmnopqrstuvwxyz"
+LATIN = "-"
+LATIN += "abcdefghijklmnopqrstuvwxyz"
 LATIN += "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 # lat-1
 LATIN += "ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏ"

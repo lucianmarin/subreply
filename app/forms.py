@@ -18,5 +18,5 @@ def get_emoji(form):
 
 def get_name(form, t):
     value = form.getvalue(f'{t}_name', '')
-    chars = [p.strip() for p in value.split()]
-    return "".join(chars).capitalize()
+    words = "".join([p.strip() for p in value.split()])
+    return "-".join([w.capitalize() for w in words.split("-")])
