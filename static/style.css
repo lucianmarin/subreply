@@ -84,7 +84,7 @@ table td a { text-decoration: underline; }
 
 .links svg { float: right; margin-left: 15px; padding: 2px; }
 
-.title { color: var(--silver); font-size: 15px; line-height: 30px; margin: 10px 0; }
+.title { color: var(--silver); font-size: 15px; font-weight: bold; line-height: 30px; margin: 10px 0; }
 
 .title a { color: var(--silver); }
 
