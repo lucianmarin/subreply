@@ -126,7 +126,7 @@ table td a { text-decoration: underline; }
 
 .small { font-size: var(--small); overflow: hidden; }
 
-.small a, .small b { color: var(--gray); float: left; margin-right: 15px; }
+.small a, .small b { color: var(--gray); float: left; margin-right: 10px; }
 
 .small a:first-child, .small b:first-child { float: right; margin-right: 0; }
 
