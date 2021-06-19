@@ -13,9 +13,7 @@ html
     --silver: #c0c0c0
     --gray: #808080
     --black: #000
-    --aqua: #0080f0
-    --ocean: #003080
-    --orange: #FF2600
+    --purple: #6868e8
 
 ::-moz-placeholder
     color: darken(#808080, 38%)
@@ -36,8 +34,6 @@ html
         --silver: #404040
         --gray: #808080
         --black: #fff
-        --aqua: #00d0f0
-        --ocean: #00f0ff
     ::-moz-placeholder
         color: lighten(#808080, 43%)
 
@@ -177,6 +173,8 @@ table
         line-height: 30px
         text-align: center
         width: 30px
+        &.active
+            color: var(--purple)
 
 .links
     position: sticky
@@ -197,9 +195,11 @@ table
         &.on
             background-color: var(--white)
             color: var(--gray)
+            svg
+                stroke: var(--purple)
         &.accent
             svg
-                stroke: var(--orange)
+                stroke: var(--purple)
         sup
             font-size: var(--super)
             font-weight: bold
@@ -265,8 +265,9 @@ table
         @include dots
         opacity: 0.5
     a
-        text-decoration: underline
+        color: var(--purple)
         &.name
+            color: var(--black)
             font-weight: bold
             text-decoration: none
         &:hover
@@ -389,11 +390,11 @@ table
 
 .error
     clear: both
-    color: var(--orange)
+    color: orange
     font-size: var(--small)
     a
-        color: var(--orange)
-        text-decoration: underline
+        color: orange
+        font-weight: bold
 
 .about
     a

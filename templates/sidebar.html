@@ -1,6 +1,8 @@
 <div class="logo">
     {% if user %}
-        <a href="/{{ user }}">{{ user.username[:3] }}</a>
+        <a href="/{{ user }}" class="{% if user == member %}active{% endif %}">
+            {{ user.username[:3] }}
+        </a>
     {% else %}
         <a href="/subreply">sub</a>
     {% endif %}
