@@ -148,7 +148,7 @@ table td a { text-decoration: underline; }
 
 .author .gone { color: var(--gray); }
 
-.extra { color: var(--gray); font-size: var(--small); }
+.extra { color: var(--gray); font-size: var(--small); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 .extra a { color: var(--gray); text-decoration: underline; }
 
