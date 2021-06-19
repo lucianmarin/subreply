@@ -12,11 +12,7 @@
             {% endif %}
         {% elif view == 'people' %}
             <a class="ago" href="/{{ member }}">
-                {% if kind == 'seen' %}
-                    {{ entry.seen_at | shortdate }}
-                {% else %}
-                    {{ entry.joined_at | shortdate }}
-                {% endif %}
+                {{ entry.seen_at | shortdate }}
             </a>
         {% else %}
             <a class="ago" href="/{{ member }}">
