@@ -40,10 +40,13 @@
                 {{ member.website | parser | safe }}
             {% endif %}
             {% if member.birthday %}
-                ~ {{ member.birthday | age }} years old
+                ~ {{ member.birthday | age }}y old
             {% endif %}
             {% if member.location %}
-                in {{ member.location }}
+                in
+                <a href="/people?q={{ member.location | city | quote }}">
+                    {{ member.location | city }}
+                </a>
             {% endif %}
         </div>
     {% endif %}

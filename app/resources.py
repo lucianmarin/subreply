@@ -476,28 +476,20 @@ class PeopleResource:
             query &= subquery
         return query
 
-    def fetch_entries(self, req, terms, kind):
+    def fetch_entries(self, req, terms):
         q = self.build_query(terms)
-        sort = '-seen_at' if kind == 'seen' else '-id'
-        entries = User.objects.filter(q).order_by(sort)
+        entries = User.objects.filter(q).order_by('-seen_at')
         return paginate(req, entries, 20)
 
-    def get_people(self, req, resp, kind):
+    @before(auth_user)
+    def on_get(self, req, resp):
         q = req.params.get('q', '').strip()
         terms = [t.strip() for t in q.split() if t.strip()]
-        entries = self.fetch_entries(req, terms, kind)
+        entries = self.fetch_entries(req, terms)
         resp.text = render(
             page='regular', view='people', placeholder="Find people",
-            user=req.user, entries=entries, q=q, kind=kind
+            user=req.user, entries=entries, q=q
         )
-
-    @before(auth_user)
-    def on_get_seen(self, req, resp):
-        self.get_people(req, resp, 'seen')
-
-    @before(auth_user)
-    def on_get_joined(self, req, resp):
-        self.get_people(req, resp, 'joined')
 
 
 class DiscoverResource:

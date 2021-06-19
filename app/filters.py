@@ -3,6 +3,12 @@ from datetime import date, datetime, timezone
 from app.helpers import utc_timestamp
 
 
+def city(location):
+    if "," in location:
+        return location.split(",")[0]
+    return location
+
+
 def age(birthday, delimiter="-"):
     """Age based on yyyy-mm-dd format."""
     if birthday.count(delimiter):
