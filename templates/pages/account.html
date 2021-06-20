@@ -39,19 +39,21 @@
         </form>
     </div>
 
-    <div class="register">
-        <form action="/account/delete" enctype="multipart/form-data" method="post" autocomplete="off">
-            <div class="line">
-                <label for="id_current">Confirm password<i>*</i></label>
-                <input type="password" name="current" id="id_current"
-                    value="{{ form.getvalue('current', '') }}">
-                {% if 'current' in delete_errors %}
-                    <div class="error">{{ delete_errors['current'] }}</div>
-                {% endif %}
-            </div>
-            <div class="line">
-                <input type="submit" value="Delete">
-            </div>
-        </form>
-    </div>
+    {% if threads < 10 and replies < 10 %}
+        <div class="register">
+            <form action="/account/delete" enctype="multipart/form-data" method="post" autocomplete="off">
+                <div class="line">
+                    <label for="id_current">Confirm password<i>*</i></label>
+                    <input type="password" name="current" id="id_current"
+                        value="{{ form.getvalue('current', '') }}">
+                    {% if 'current' in delete_errors %}
+                        <div class="error">{{ delete_errors['current'] }}</div>
+                    {% endif %}
+                </div>
+                <div class="line">
+                    <input type="submit" value="Delete">
+                </div>
+            </form>
+        </div>
+    {% endif %}
 {% endblock %}

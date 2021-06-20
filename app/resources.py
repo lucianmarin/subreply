@@ -580,9 +580,11 @@ class AccountResource:
     @before(login_required)
     def on_get(self, req, resp):
         form = FieldStorage(fp=req.stream, environ=req.env)
+        threads = Comment.objects.filter(parent=None).count()
+        replies = Comment.objects.exclude(parent=None).count()
         resp.text = render(
             page='account', view='account', user=req.user, form=form,
-            change_errors={}, delete_errors={}
+            threads=threads, replies=replies, change_errors={}, delete_errors={}
         )
 
     @before(auth_user)
