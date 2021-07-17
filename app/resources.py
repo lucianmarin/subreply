@@ -520,12 +520,12 @@ class DiscoverResource:
 
 
 class TrendingResource:
-    sample = 20
+    sample = 19
 
     def fetch_entries(self, req):
         sampling = Comment.objects.filter(parent=None).annotate(
-            replies=Count('kids'), max_id=Max('descendants')
-        ).exclude(replies=0).order_by('-max_id').values('id')[:self.sample]
+            replies=Count('kids')
+        ).exclude(replies=0).order_by('-id').values('id')[:self.sample]
         entries = Comments.filter(
             id__in=sampling
         ).order_by('-replies', '-id').prefetch_related(PFR)
