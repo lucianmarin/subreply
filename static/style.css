@@ -36,10 +36,6 @@ input[type=submit]:hover { background-color: var(--gainsboro); }
 
 svg { fill: none; stroke: var(--black); stroke-linecap: round; stroke-linejoin: round; stroke-width: 2; }
 
-svg path { fill: var(--white); }
-
-svg circle { fill: var(--white); }
-
 table { margin: 10px 0; width: 100%; }
 
 table th { color: var(--silver); font-size: var(--small); font-weight: normal; padding-bottom: 2px; }
@@ -80,7 +76,7 @@ table td a { text-decoration: underline; }
 
 .links a.on svg { stroke: var(--purple); }
 
-.links a.accent svg { stroke: var(--purple); }
+.links a.accent svg { stroke: orangered; }
 
 .links a sup { font-size: var(--super); font-weight: bold; margin-left: 1px; }
 
@@ -130,7 +126,7 @@ table td a { text-decoration: underline; }
 
 .small { font-size: var(--small); overflow: hidden; }
 
-.small a, .small b { color: var(--gray); float: left; margin-right: 10px; }
+.small a, .small b { color: var(--gray); float: left; margin-right: 15px; }
 
 .small a:first-child, .small b:first-child { float: right; margin-right: 0; }
 
