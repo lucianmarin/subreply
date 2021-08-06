@@ -76,7 +76,7 @@ table a:hover { color: var(--gray); }
 
 .links a.on { background-color: var(--white); color: var(--gray); }
 
-.links a.on svg { stroke: var(--black); }
+.links a.on svg { stroke: var(--purple); }
 
 .links a.accent svg { stroke: orangered; }
 
