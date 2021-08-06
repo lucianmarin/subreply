@@ -11,7 +11,7 @@
     <div class="register">
         <form enctype="multipart/form-data" method="post" autocomplete="off">
             <div class="line">
-                <label for="id_email">Email address</label>
+                <label for="id_email">Email invite<i>*</i></label>
                 <input type="email" name="email" id="id_email" maxlength="120"
                     value="{% if form %}{{ fields.email }}{% endif %}">
                 {% if 'email' in errors %}
@@ -23,8 +23,8 @@
 
     <table>
         <tr>
-            <th>Email address</td>
-            <th>Invited user</td>
+            <th align="left">Email address</td>
+            <th align="left">Account invited</td>
             <th align="right">Time</td>
         </tr>
         {% for invite in invites %}
@@ -34,14 +34,14 @@
                     {% if invite.to_user %}
                         <a href="/{{ invite.to_user }}">@{{ invite.to_user }}</a>
                     {% else %}
-                        &mdash;
+                        &middot;&middot;&middot;
                     {% endif %}
                 </td>
                 <td align="right">{{ invite.created_at | shortdate }} ago</td>
             </tr>
         {% else %}
             <tr>
-                <td colspan=3>Uh, nothing here yet.</td>
+                <td colspan=3>No automatic email will be sent.</td>
             </tr>
         {% endfor %}
     </table>
