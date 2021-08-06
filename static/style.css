@@ -34,7 +34,11 @@ input[type=submit] { background-color: var(--whitesmoke); border: 0 none; border
 
 input[type=submit]:hover { background-color: var(--gainsboro); }
 
-svg { fill: var(--white); stroke: var(--gray); stroke-linecap: round; stroke-linejoin: round; stroke-width: 2; }
+svg { stroke-linecap: round; stroke-linejoin: round; stroke-width: 2; }
+
+svg path { fill: var(--white); stroke: var(--black); }
+
+svg circle { fill: var(--white); stroke: var(--black); }
 
 table { margin: 10px 0; width: 100%; }
 
@@ -76,9 +80,9 @@ table a:hover { color: var(--gray); }
 
 .links a.on { background-color: var(--white); color: var(--gray); }
 
-.links a.on svg { stroke: var(--purple); }
+.links a.on svg path, .links a.on svg circle { stroke: var(--purple); }
 
-.links a.accent svg { stroke: orangered; }
+.links a.accent svg path { stroke: orangered; }
 
 .links a sup { font-size: var(--super); font-weight: bold; margin-left: 1px; }
 

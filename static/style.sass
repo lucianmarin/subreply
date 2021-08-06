@@ -111,11 +111,15 @@ input[type=submit]
         background-color: var(--gainsboro)
 
 svg
-    fill: var(--white)
-    stroke: var(--gray)
     stroke-linecap: round
     stroke-linejoin: round
     stroke-width: 2
+    path
+        fill: var(--white)
+        stroke: var(--black)
+    circle
+        fill: var(--white)
+        stroke: var(--black)
 
 table
     margin: 10px 0
@@ -193,10 +197,10 @@ table
         &.on
             background-color: var(--white)
             color: var(--gray)
-            svg
+            svg path, svg circle
                 stroke: var(--purple)
         &.accent
-            svg
+            svg path
                 stroke: orangered
         sup
             font-size: var(--super)
