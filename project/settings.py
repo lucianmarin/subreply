@@ -8,6 +8,8 @@ INSTALLED_APPS = ["app", "django_extensions"]
 MIDDLEWARE = []
 TEMPLATES = []
 
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
+
 DEBUG = DEBUG
 SECRET_KEY = SECRET_KEY
 SMTP = SMTP
