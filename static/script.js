@@ -90,6 +90,36 @@ function postUnsave(event) {
     })
 }
 
+function postFollow(event) {
+    event.preventDefault();
+    var element = event.currentTarget;
+    var username = element.dataset.username;
+    ajax('/api/follow/' + username, 'post', 'json', function (data) {
+        if (data.status == 'unfollow') {
+            element.innerText = data.status;
+            element.onclick = function (ev) {
+                ev.preventDefault();
+                postUnfollow(ev);
+            }
+        }
+    })
+}
+
+function postUnfollow(event) {
+    event.preventDefault();
+    var element = event.currentTarget;
+    var username = element.dataset.username;
+    ajax('/api/unfollow/' + username, 'post', 'json', function (data) {
+        if (data.status == 'follow') {
+            element.innerText = data.status;
+            element.onclick = function (ev) {
+                ev.preventDefault();
+                postSave(ev);
+            }
+        }
+    })
+}
+
 function expand(element, height=10) {
     element.style.height = 'auto';
     element.style.height = (element.scrollHeight - height) + 'px';

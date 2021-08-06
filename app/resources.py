@@ -13,9 +13,9 @@ from app.forms import get_content, get_emoji, get_name
 from app.helpers import build_hash, parse_metadata, utc_timestamp, verify_hash
 from app.hooks import auth_user, login_required
 from app.jinja import render
-from app.models import Comment, Relation, Save, User
+from app.models import Comment, Invite, Relation, Save, User
 from app.validation import (
-    authentication, changing, profiling, registration, valid_content,
+    authentication, changing, profiling, registration, valid_content, valid_email,
     valid_handle, valid_reply, valid_thread
 )
 from project.settings import DEBUG, FERNET, MAX_AGE, SMTP
@@ -541,50 +541,15 @@ class TrendingResource:
         )
 
 
-class ActionResource:
-    def follow(self, user, member):
-        Relation.objects.get_or_create(
-            created_at=utc_timestamp(), created_by=user, to_user=member
-        )
-
-    def unfollow(self, user, member):
-        Relation.objects.filter(created_by=user, to_user=member).delete()
-
-    def destroy(self, user, member):
-        if user.id == 1:
-            member.delete()
-
-    def on_get_flw(self, req, resp, username):
-        self.get_action(req, resp, username, 'follow')
-
-    def on_get_unf(self, req, resp, username):
-        self.get_action(req, resp, username, 'unfollow')
-
-    def on_get_dst(self, req, resp, username):
-        self.get_action(req, resp, username, 'destroy')
-
-    @before(auth_user)
-    @before(login_required)
-    def get_action(self, req, resp, username, action):
-        member = User.objects.filter(username=username.lower()).first()
-        if not member:
-            return not_found(resp, req.user, f'/{username}')
-        if req.user and member.id != req.user.id:
-            fn = getattr(self, action)
-            fn(req.user, member)
-        raise HTTPFound(f'/{username}')
-
-
 class AccountResource:
     @before(auth_user)
     @before(login_required)
     def on_get(self, req, resp):
         form = FieldStorage(fp=req.stream, environ=req.env)
-        threads = Comment.objects.filter(parent=None).count()
-        replies = Comment.objects.exclude(parent=None).count()
+        entries = Comment.objects.filter(created_by=req.user).count()
         resp.text = render(
             page='account', view='account', user=req.user, form=form,
-            threads=threads, replies=replies, change_errors={}, delete_errors={}
+            entries=entries, change_errors={}, delete_errors={}
         )
 
     @before(auth_user)
@@ -596,8 +561,9 @@ class AccountResource:
         password2 = form.getvalue('password2', '')
         errors = changing(req.user, current, password1, password2)
         if errors:
+            entries = Comment.objects.filter(created_by=req.user).count()
             resp.text = render(
-                page='account', view='account',
+                page='account', view='account', entries=entries,
                 user=req.user, change_errors=errors, form=form
             )
         else:
@@ -615,14 +581,48 @@ class AccountResource:
         if not verify_hash(current, req.user.password):
             errors['current'] = "Password doesn't match"
         if errors:
+            entries = Comment.objects.filter(created_by=req.user).count()
             resp.text = render(
-                page='account', view='account',
+                page='account', view='account', entries=entries,
                 user=req.user, delete_errors=errors, form=form
             )
         else:
             req.user.delete()
             resp.unset_cookie('identity')
             raise HTTPFound('/discover')
+
+
+class InvitesResource:
+    @before(auth_user)
+    @before(login_required)
+    def on_get(self, req, resp):
+        form = FieldStorage(fp=req.stream, environ=req.env)
+        invites = Invite.objects.filter(created_by=req.user).order_by('-id')
+        resp.text = render(
+            page='invites', view='invites', invites=invites,
+            user=req.user, errors={}, form=form
+        )
+
+    @before(auth_user)
+    @before(login_required)
+    def on_post(self, req, resp):
+        form = FieldStorage(fp=req.stream, environ=req.env)
+        f = {}
+        f['email'] = form.getvalue('email', '').strip().lower()
+        errors = {}
+        errors['email'] = valid_email(f['email'], user_id=req.user.id)
+        errors = {k: v for k, v in errors.items() if v}
+        if errors:
+            invites = Invite.objects.filter(created_by=req.user).order_by('-id')
+            resp.text = render(
+                page='invites', view='invites', invites=invites,
+                user=req.user, errors=errors, form=form, fields=f
+            )
+        else:
+            Invite.objects.get_or_create(
+                created_at=utc_timestamp(), created_by=req.user, email=f['email']
+            )
+            raise HTTPFound('/invites')
 
 
 class SocialResource:
@@ -738,20 +738,13 @@ class RegisterResource:
     def on_post(self, req, resp):
         form = FieldStorage(fp=req.stream, environ=req.env)
         f = {}
-        user_agent = req.headers.get('USER-AGENT', '').strip()
-        f['user_agent'] = user_agent if user_agent else 'empty'
-        f['remote_addr'] = '127.0.0.5' if DEBUG else req.access_route[0]
+        f['remote_addr'] = '127.0.0.1' if DEBUG else req.access_route[0]
         f['username'] = form.getvalue('username', '').strip().lower()
         f['first_name'] = get_name(form, 'first')
         f['last_name'] = get_name(form, 'last')
         f['password1'] = form.getvalue('password1', '')
         f['password2'] = form.getvalue('password2', '')
         f['email'] = form.getvalue('email', '').strip().lower()
-        f['bio'] = get_content(form, 'bio')
-        f['emoji'] = get_emoji(form)
-        f['birthday'] = form.getvalue('birthday', '').strip()
-        f['location'] = form.getvalue('location', '')
-        f['website'] = form.getvalue('website', '').strip().lower()
         errors = registration(f)
         if errors:
             resp.text = render(
@@ -766,11 +759,6 @@ class RegisterResource:
                     'last_name': f['last_name'],
                     'password': build_hash(f['password1']),
                     'email': f['email'],
-                    'bio': f['bio'],
-                    'birthday': f['birthday'],
-                    'location': f['location'],
-                    'emoji': f['emoji'],
-                    'website': f['website'],
                     'joined_at': utc_timestamp(),
                     'seen_at': utc_timestamp(),
                     'remote_addr': f['remote_addr']
@@ -780,6 +768,22 @@ class RegisterResource:
             Relation.objects.get_or_create(
                 created_at=utc_timestamp(), seen_at=utc_timestamp(),
                 created_by=user, to_user=user
+            )
+            invite = Invite.objects.get(email=f['email'])
+            invite.to_user = user
+            invite.save(update_fields=['to_user'])
+            Relation.objects.get_or_create(
+                created_at=utc_timestamp(),
+                created_by=user, to_user=invite.created_by
+            )
+            Relation.objects.get_or_create(
+                created_at=utc_timestamp(), seen_at=utc_timestamp(),
+                created_by=invite.created_by, to_user=user
+            )
+            subreply = User.objects.get(username='subreply')
+            Relation.objects.get_or_create(
+                created_at=utc_timestamp(), seen_at=utc_timestamp(),
+                created_by=user, to_user=subreply
             )
             # clear emoji statuses for unseen people
             # half_year = utc_timestamp() - (3600 * 24 * 183)

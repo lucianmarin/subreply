@@ -1,10 +1,9 @@
-from datetime import datetime, timezone
-
 from falcon.constants import MEDIA_JSON
 from falcon.hooks import before
 
+from app.helpers import utc_timestamp
 from app.hooks import auth_user
-from app.models import Comment, Save
+from app.models import Comment, Relation, Save, User
 
 
 class DeleteEndpoint:
@@ -40,7 +39,7 @@ class SaveEndpoint:
             resp.media = {'status': 'not found'}
             return
         Save.objects.get_or_create(
-            created_at=datetime.now(timezone.utc).timestamp(),
+            created_at=utc_timestamp(),
             created_by=req.user,
             to_comment=entry
         )
@@ -60,3 +59,35 @@ class UnsaveEndpoint:
             return
         Save.objects.filter(created_by=req.user, to_comment=entry).delete()
         resp.media = {'status': 'save'}
+
+
+class FollowEndpoint:
+    @before(auth_user)
+    def on_post(self, req, resp, username):
+        resp.content_type = MEDIA_JSON
+        if not req.user:
+            resp.media = {'status': 'not auth'}
+            return
+        member = User.objects.filter(username=username.lower()).first()
+        if not member:
+            resp.media = {'status': 'not found'}
+            return
+        Relation.objects.get_or_create(
+            created_at=utc_timestamp(), created_by=req.user, to_user=member
+        )
+        resp.media = {'status': 'unfollow'}
+
+
+class UnfollowEndpoint:
+    @before(auth_user)
+    def on_post(self, req, resp, username):
+        resp.content_type = MEDIA_JSON
+        if not req.user:
+            resp.media = {'status': 'not auth'}
+            return
+        member = User.objects.filter(username=username.lower()).first()
+        if not member:
+            resp.media = {'status': 'not found'}
+            return
+        Relation.objects.filter(created_by=req.user, to_user=member).delete()
+        resp.media = {'status': 'follow'}

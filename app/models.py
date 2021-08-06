@@ -99,6 +99,10 @@ class User(models.Model):
         return self.replies.filter(reply_seen_at=.0).count()
 
     @cached_property
+    def follows(self):
+        return self.following.values_list('to_user_id', flat=True)
+
+    @cached_property
     def saves(self):
         return self.saved.values_list('to_comment_id', flat=True)
 
@@ -182,7 +186,10 @@ class Relation(models.Model):
     seen_at = models.FloatField(default=.0, db_index=True)
 
 
-class Reset(models.Model):
+class Invite(models.Model):
     created_at = models.FloatField(default=.0)
+    created_by = models.ForeignKey('User', on_delete=models.CASCADE,
+                                   related_name='invites')
     email = models.CharField(max_length=120, unique=True)
-    code = models.CharField(max_length=32, default='')
+    to_user = models.ForeignKey('User', on_delete=models.SET_NULL,
+                                related_name='invited', null=True)

@@ -2,8 +2,10 @@
 <html lang="en">
 <head>
     <title>
-        {% if view == 'profile' %}
-            {{ brand }} / {{ member }}
+        {% if view == 'feed' %}
+            {{ brand }}
+        {% elif view == 'profile' %}
+            {{ brand }} / {{ member.full_name }}
         {% else %}
             {{ brand }} / {{ view | capitalize }}
         {% endif %}

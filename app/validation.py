@@ -5,11 +5,10 @@ import grapheme
 import requests
 from django.db.models import Q
 from dns.resolver import query as dns_query
-from user_agents import parse
 
 from app.const import LATIN, MAX_YEAR, MIN_YEAR, WORLD
 from app.helpers import has_repetions, parse_metadata, verify_hash
-from app.models import Comment, User
+from app.models import Comment, Invite, User
 from project.settings import INVALID, SLURS
 
 
@@ -77,10 +76,8 @@ def authentication(username, password):
     return errors, user
 
 
-def valid_username(value, remote_addr='', user_agent='', user_id=0):
+def valid_username(value, user_id=0):
     limits = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_"
-    ua = parse(user_agent)
-    is_browser = ua.is_pc or ua.is_tablet or ua.is_mobile
     if not value:
         return "Username can't be blank"
     elif len(value) > 15:
@@ -97,10 +94,6 @@ def valid_username(value, remote_addr='', user_agent='', user_id=0):
         return "Username isn't valid"
     elif User.objects.filter(username=value).exclude(id=user_id).exists():
         return "Username is already taken"
-    elif remote_addr and User.objects.filter(remote_addr=remote_addr).exists():
-        return "Username registered from this IP address"
-    elif user_agent and not is_browser:
-        return "You aren't using a PC, tablet or mobile phone"
 
 
 def valid_handle(value):
@@ -149,7 +142,7 @@ def valid_full_name(first_name, last_name):
             return "Full name is prohibited"
 
 
-def valid_email(value, user_id=0):
+def valid_email(value, user_id=0, invite=False):
     if not value:
         return "Email can't be blank"
     elif len(value) > 120:
@@ -160,6 +153,10 @@ def valid_email(value, user_id=0):
         return "Email isn't a valid address"
     elif User.objects.filter(email=value).exclude(id=user_id).exists():
         return "Email is used by someone else"
+    elif not user_id and not Invite.objects.filter(email=value).exists():
+        return "Email is not invited by someone"
+    elif invite and Invite.objects.filter(email=value).exists():
+        return "Email is invited by someone else"
     else:
         handle, domain = value.split('@', 1)
         try:
@@ -326,17 +323,10 @@ def profiling(f, user_id):
 
 def registration(f):
     errors = {}
-    errors['username'] = valid_username(
-        f['username'], remote_addr=f['remote_addr'], user_agent=f['user_agent']
-    )
+    errors['username'] = valid_username(f['username'])
     errors['first_name'] = valid_first_name(f['first_name'])
     errors['last_name'] = valid_last_name(f['last_name'])
     errors['full_name'] = valid_full_name(f['first_name'], f['last_name'])
     errors['password'] = valid_password(f['password1'], f['password2'])
     errors['email'] = valid_email(f['email'])
-    errors['website'] = valid_website(f['website'])
-    errors['bio'] = valid_bio(f['bio'], f['username'])
-    errors['birthday'] = valid_birthday(f['birthday'])
-    errors['location'] = valid_location(f['location'])
-    errors['emoji'] = valid_emoji(f['emoji'])
     return {k: v for k, v in errors.items() if v}

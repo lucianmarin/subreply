@@ -4,8 +4,8 @@
     <div class="title">
         <a href="/options">Options</a>
         <a href="/social">Social</a>
+        <a href="/invites">Invites</a>
         <a href="/account" class="on">Account</a>
-        <a href="/logout">Logout</a>
     </div>
 
     <div class="register">
@@ -39,7 +39,7 @@
         </form>
     </div>
 
-    {% if threads < 10 and replies < 10 %}
+    {% if entries < 20 %}
         <div class="register">
             <form action="/account/delete" enctype="multipart/form-data" method="post" autocomplete="off">
                 <div class="line">

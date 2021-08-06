@@ -16,6 +16,8 @@ app.add_route('/', resources.MainResource())
 app.add_route('/api/delete/{id}', api.DeleteEndpoint())
 app.add_route('/api/save/{id}', api.SaveEndpoint())
 app.add_route('/api/unsave/{id}', api.UnsaveEndpoint())
+app.add_route('/api/follow/{username}', api.FollowEndpoint())
+app.add_route('/api/unfollow/{username}', api.UnfollowEndpoint())
 
 app.add_route('/feed', resources.FeedResource())
 app.add_route('/replying', resources.ReplyingResource())
@@ -44,12 +46,10 @@ app.add_route('/account/delete', resources.AccountResource(), suffix="del")
 
 app.add_route('/options', resources.OptionsResource())
 app.add_route('/social', resources.SocialResource())
+app.add_route('/invites', resources.InvitesResource())
 
 app.add_route('/edit/{base}', resources.EditResource())
 app.add_route('/{username}/{base}', resources.ReplyResource())
-app.add_route('/{username}/destroy', resources.ActionResource(), suffix="dst")
-app.add_route('/{username}/unfollow', resources.ActionResource(), suffix="unf")
-app.add_route('/{username}/follow', resources.ActionResource(), suffix="flw")
 app.add_route('/{username}/replies', resources.ProfileResource(), suffix="re")
 app.add_route('/{username}', resources.ProfileResource(), suffix="th")
 
