@@ -1,3 +1,9 @@
+{% if member.links %}
+    <div class="entry">
+        <div class="status">{{ member.social }}</div>
+    </div>
+{% endif %}
+
 <div class="entry">
     <div class="status">
         Joined {{ member.joined_at | shortdate }} ago.
@@ -6,12 +12,6 @@
         {% if user.id == member.id %}<a href="/logout">Logout</a>.{% endif %}
     </div>
 </div>
-
-{% if member.links %}
-    <div class="entry">
-        <div class="status">{{ member.social }}</div>
-    </div>
-{% endif %}
 
 <div class="entry">
     <div class="filters">
