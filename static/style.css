@@ -34,7 +34,7 @@ input[type=submit] { background-color: var(--whitesmoke); border: 0 none; border
 
 input[type=submit]:hover { background-color: var(--gainsboro); }
 
-svg { fill: none; stroke: var(--black); stroke-linecap: round; stroke-linejoin: round; stroke-width: 2; }
+svg { fill: none; stroke: var(--gray); stroke-linecap: round; stroke-linejoin: round; stroke-width: 2; }
 
 table { margin: 10px 0; width: 100%; }
 
