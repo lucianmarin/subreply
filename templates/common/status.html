@@ -3,10 +3,15 @@
         Joined {{ member.joined_at | shortdate }} ago.
         Seen {{ member.seen_at | shortdate }} ago.
         {% if is_followed %}Follows you.{% endif %}
-        {% if member.links %}{{ member.social }}{% endif %}
         {% if user.id == member.id %}<a href="/logout">Logout</a>.{% endif %}
     </div>
 </div>
+
+{% if member.links %}
+    <div class="entry">
+        <div class="status">{{ member.social }}</div>
+    </div>
+{% endif %}
 
 <div class="entry">
     <div class="filters">
