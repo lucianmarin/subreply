@@ -114,12 +114,9 @@ svg
     stroke-linecap: round
     stroke-linejoin: round
     stroke-width: 2
-    path
-        fill: var(--white)
-        stroke: var(--black)
-    circle
-        fill: var(--white)
-        stroke: var(--black)
+    path, circle
+        fill: none
+        stroke: var(--gray)
 
 table
     margin: 10px 0
@@ -200,7 +197,7 @@ table
             svg path, svg circle
                 stroke: var(--purple)
         &.accent
-            svg path
+            svg path, svg circle
                 stroke: orangered
         sup
             font-size: var(--super)
