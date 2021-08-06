@@ -60,7 +60,7 @@
             </svg>
         </a>
     {% else %}
-        <a href="/about" accesskey="a" class="{% if view == 'about' %}on{% endif %}">
+        <a href="/about" accesskey="a" class="{% if view in ['about', 'emoji'] %}on{% endif %}">
             <i>About</i>
             <svg id="i-info" viewBox="0 0 32 32" width="16" height="16">
                 <circle cx="16" cy="16" r="14" />
