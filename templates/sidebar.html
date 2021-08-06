@@ -4,7 +4,9 @@
             {{ user.username[:3] }}
         </a>
     {% else %}
-        <a href="/subreply">sub</a>
+        <a href="/subreply" class="{% if member and member.username == 'subreply' %}active{% endif %}">
+            sub
+        </a>
     {% endif %}
 </div>
 
