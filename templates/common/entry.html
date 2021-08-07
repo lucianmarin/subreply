@@ -16,21 +16,24 @@
         <a href="/{{ entry.created_by }}/{{ entry.base }}">
             {{ entry.replied }} {% if not entry.parent_id %}&not;{% endif %}
         </a>
+        {% if entry.agent %}
+            <b>{{ entry.ua.device.model }}</b>
+        {% endif %}
         {% if user %}
             {% if entry.created_by_id == user.id %}
                 {% if not entry.replies %}
-                    <a href="/edit/{{ entry.base }}">edit</a>
+                    <a href="/edit/{{ entry.base }}">Edit</a>
                 {% endif %}
             {% else %}
                 {% if entry.id in user.saves %}
-                    <a onclick="postUnsave(event)" data-id="{{ entry.id }}">unsave</a>
+                    <a onclick="postUnsave(event)" data-id="{{ entry.id }}">Unsave</a>
                 {% else %}
-                    <a onclick="postSave(event)" data-id="{{ entry.id }}">save</a>
+                    <a onclick="postSave(event)" data-id="{{ entry.id }}">Save</a>
                 {% endif %}
             {% endif %}
             {% if user.id in [entry.created_by_id, entry.to_user_id] and not entry.replies %}
                 <a onclick="postDelete(event)" data-id="{{ entry.id }}">
-                    delete
+                    Delete
                 </a>
             {% endif %}
         {% endif %}

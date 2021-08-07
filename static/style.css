@@ -130,11 +130,13 @@ table a:hover { color: var(--gray); }
 
 .small { font-size: var(--small); overflow: hidden; }
 
-.small a, .small b { color: var(--gray); float: left; margin-right: 15px; }
+.small a { color: var(--gray); float: left; margin-right: 15px; }
 
-.small a:first-child, .small b:first-child { float: right; margin-right: 0; }
+.small a:first-child { float: right; margin-right: 0; }
 
-.small a:hover, .small b:hover { color: var(--black); }
+.small a:hover { color: var(--black); }
+
+.small b { color: var(--silver); float: left; margin-right: 15px; }
 
 .author { color: var(--gray); font-size: var(--small); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 

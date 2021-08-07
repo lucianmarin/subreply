@@ -30,20 +30,20 @@ function postDelete(event) {
     var id = element.dataset.id;
     if (id != "0") {
         var confirm = document.createElement('a');
-        element.innerText = "undo";
-        confirm.innerText = "yes";
+        element.innerText = "Undo";
+        confirm.innerText = "Yes";
         confirm.onclick = function (event) {
             event.preventDefault();
             ajax('/api/delete/' + id, 'post', 'json', function (data) {
                 if (data.status == 'deleted') {
-                    element.innerText = data.status;
+                    element.innerText = "Deleted";
                     element.onclick = function (ev) {
                         ev.preventDefault();
                     }
                     element.style.cursor = "default";
                     confirm.remove();
                 } else {
-                    confirm.innerText = "error";
+                    confirm.innerText = "Error";
                     confirm.style.cursor = "default";
                 }
             })
@@ -52,7 +52,7 @@ function postDelete(event) {
         element.dataset.id = "0";
         element.dataset.oldId = id;
     } else {
-        element.innerText = "delete";
+        element.innerText = "Delete";
         var confirm = element.nextElementSibling;
         confirm.remove();
         element.dataset.id = element.dataset.oldId;
@@ -66,7 +66,7 @@ function postSave(event) {
     var id = element.dataset.id;
     ajax('/api/save/' + id, 'post', 'json', function (data) {
         if (data.status == 'unsave') {
-            element.innerText = data.status;
+            element.innerText = "Unsave";
             element.onclick = function (ev) {
                 ev.preventDefault();
                 postUnsave(ev);
@@ -81,7 +81,7 @@ function postUnsave(event) {
     var id = element.dataset.id;
     ajax('/api/unsave/' + id, 'post', 'json', function (data) {
         if (data.status == 'save') {
-            element.innerText = data.status;
+            element.innerText = "Save";
             element.onclick = function (ev) {
                 ev.preventDefault();
                 postSave(ev);

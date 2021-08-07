@@ -18,7 +18,7 @@ from app.validation import (
     authentication, changing, profiling, registration, valid_content, valid_email,
     valid_handle, valid_reply, valid_thread
 )
-from project.settings import DEBUG, FERNET, MAX_AGE, SMTP
+from project.settings import FERNET, MAX_AGE, SMTP
 
 Comments = Comment.objects.annotate(
     replies=Count('descendants')
@@ -143,6 +143,7 @@ class FeedResource:
             extra['link'] = links[0].lower() if links else ''
             extra['mention'] = mentions[0].lower() if mentions else ''
             extra['at_user'] = User.objects.get(username=mentions[0].lower()) if mentions else None
+            extra['agent'] = req.user_agent if req.user_agent else ''
             th, is_new = Comment.objects.get_or_create(
                 content=content,
                 created_at=utc_timestamp(),
@@ -204,6 +205,7 @@ class ReplyResource:
             extra['link'] = links[0].lower() if links else ''
             extra['mention'] = mentions[0].lower() if mentions else ''
             extra['at_user'] = User.objects.get(username=mentions[0].lower()) if mentions else None
+            extra['agent'] = req.user_agent if req.user_agent else ''
             re, is_new = Comment.objects.get_or_create(
                 parent=parent,
                 to_user=parent.created_by,
@@ -259,7 +261,7 @@ class EditResource:
             )
         else:
             fields = [
-                'content', 'edited_at', 'hashtag', 'link',
+                'content', 'edited_at', 'hashtag', 'link', 'agent',
                 'mention', 'at_user', 'mention_seen_at'
             ]
             previous_at_user = entry.at_user
@@ -269,6 +271,7 @@ class EditResource:
             entry.link = links[0].lower() if links else ''
             entry.mention = mentions[0].lower() if mentions else ''
             entry.at_user = User.objects.get(username=mentions[0].lower()) if mentions else None
+            entry.agent = req.user_agent if req.user_agent else ''
             if previous_at_user != entry.at_user:
                 entry.mention_seen_at = .0
             entry.save(update_fields=fields)
@@ -738,7 +741,6 @@ class RegisterResource:
     def on_post(self, req, resp):
         form = FieldStorage(fp=req.stream, environ=req.env)
         f = {}
-        f['remote_addr'] = '127.0.0.1' if DEBUG else req.access_route[0]
         f['username'] = form.getvalue('username', '').strip().lower()
         f['first_name'] = get_name(form, 'first')
         f['last_name'] = get_name(form, 'last')
@@ -760,8 +762,7 @@ class RegisterResource:
                     'password': build_hash(f['password1']),
                     'email': f['email'],
                     'joined_at': utc_timestamp(),
-                    'seen_at': utc_timestamp(),
-                    'remote_addr': f['remote_addr']
+                    'seen_at': utc_timestamp()
                 }
             )
             # create self relation

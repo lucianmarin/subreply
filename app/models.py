@@ -5,6 +5,7 @@ from django import setup
 from django.conf import settings
 from django.db import models
 from django.utils.functional import cached_property
+from user_agents import parse
 
 from app.const import SITES
 from app.helpers import utc_timestamp
@@ -27,7 +28,6 @@ class User(models.Model):
     email = models.CharField(max_length=120, unique=True)
     password = models.CharField(max_length=80)
 
-    remote_addr = models.GenericIPAddressField()
     joined_at = models.FloatField(default=.0)
     seen_at = models.FloatField(default=.0, db_index=True)
 
@@ -99,14 +99,13 @@ class User(models.Model):
     def saves(self):
         return self.saved.values_list('to_comment_id', flat=True)
 
-    def up_seen(self, remote_addr):
+    def up_seen(self):
         fmt = "%Y-%m-%d-%H-%M"
         last_day = datetime.now(timezone.utc).strftime(fmt)
         last_seen = datetime.fromtimestamp(self.seen_at).strftime(fmt)
         if last_day != last_seen:
-            self.remote_addr = remote_addr
             self.seen_at = utc_timestamp()
-            self.save(update_fields=['remote_addr', 'seen_at'])
+            self.save(update_fields=['seen_at'])
 
 
 class Comment(models.Model):
@@ -122,6 +121,7 @@ class Comment(models.Model):
     to_user = models.ForeignKey('User', on_delete=models.CASCADE, null=True,
                                 related_name='replies')
     content = models.CharField(max_length=480, db_index=True)
+    agent = models.CharField(max_length=480, default='')
     hashtag = models.CharField(max_length=15, default='')
     link = models.CharField(max_length=120, default='')
     mention = models.CharField(max_length=15, default='')
@@ -138,11 +138,15 @@ class Comment(models.Model):
     @cached_property
     def replied(self):
         if not self.replies:
-            return 'reply'
+            return 'Reply'
         elif self.replies == 1:
             return '1 reply'
         else:
             return '{0} replies'.format(self.replies)
+
+    @cached_property
+    def ua(self):
+        return parse(self.agent)
 
     @cached_property
     def base(self):
