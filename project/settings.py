@@ -25,14 +25,6 @@ DATABASES = {
     }
 }
 
-# if DEBUG:
-#     DATABASES = {
-#         'default': {
-#             'ENGINE': 'django.db.backends.sqlite3',
-#             'NAME': 'local.db',
-#         }
-#     }
-
 LANGUAGE_CODE = "en-us"
 TIME_ZONE = "UTC"
 USE_I18N = False
@@ -50,7 +42,6 @@ INVALID = [
     "about",
     "account",
     "api",
-    "change",
     "delete",
     "discover",
     "edit",
@@ -58,13 +49,8 @@ INVALID = [
     "feed",
     "followers",
     "following",
-    "invitations",
-    "joined",
-    "link",
-    "linked",
-    "links",
+    "invites",
     "lm",
-    "local",
     "login",
     "logout",
     "luc",
@@ -76,9 +62,6 @@ INVALID = [
     "options",
     "password",
     "people",
-    "pin",
-    "pinned",
-    "pins",
     "policy",
     "privacy",
     "profile",
@@ -86,14 +69,11 @@ INVALID = [
     "register",
     "reply",
     "replying",
-    "requests",
     "reset",
     "save",
     "saved",
     "saves",
     "search",
-    "seen",
-    "set",
     "settings",
     "social",
     "static",
@@ -103,6 +83,5 @@ INVALID = [
     "terms",
     "timeline",
     "trending",
-    "trends",
     "unlock"
 ]
