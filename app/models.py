@@ -6,6 +6,9 @@ from django.conf import settings
 from django.db import models
 from django.utils.functional import cached_property
 
+from app.const import SITES
+from app.helpers import utc_timestamp
+
 if not settings.configured:
     environ.setdefault('DJANGO_SETTINGS_MODULE', 'project.settings')
     setup()
@@ -53,7 +56,7 @@ class User(models.Model):
 
     @cached_property
     def status(self):
-        now = datetime.now(timezone.utc).timestamp()
+        now = utc_timestamp()
         away = now - 7 * 24 * 3600
         gone = now - 28 * 24 * 3600
         if self.seen_at > away:
@@ -65,23 +68,13 @@ class User(models.Model):
 
     @cached_property
     def social(self):
-        sites = {
-            'dribbble': '<a href="https://dribbble.com/{0}">Dribbble</a>',
-            'github': '<a href="https://github.com/{0}">GitHub</a>',
-            'instagram': '<a href="https://instagram.com/{0}">Instagram</a>',
-            'linkedin': '<a href="https://linkedin.com/in/{0}">LinkedIn</a>',
-            'pinterest': '<a href="https://pinterest.com/{0}">Pinterest</a>',
-            'soundcloud': '<a href="https://soundcloud.com/{0}">SoundCloud</a>',
-            'telegram': '<a href="https://t.me/{0}">Telegram</a>',
-            'twitter': '<a href="https://twitter.com/{0}">Twitter</a>'
-        }
         also = "Also on {0}."
         keys = sorted(self.links)
         holder = ""
         for key in keys[:-2]:
-            holder += sites[key].format(self.links[key]) + ", "
+            holder += SITES[key].format(self.links[key]) + ", "
         for index, key in enumerate(keys[-2:]):
-            holder += sites[key].format(self.links[key])
+            holder += SITES[key].format(self.links[key])
             if not index and len(keys) > 1:
                 holder += " and "
         return also.format(holder)
@@ -112,7 +105,7 @@ class User(models.Model):
         last_seen = datetime.fromtimestamp(self.seen_at).strftime(fmt)
         if last_day != last_seen:
             self.remote_addr = remote_addr
-            self.seen_at = datetime.now(timezone.utc).timestamp()
+            self.seen_at = utc_timestamp()
             self.save(update_fields=['remote_addr', 'seen_at'])
 
 

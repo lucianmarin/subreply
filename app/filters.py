@@ -57,37 +57,6 @@ def timeago(seconds):
             return "%dy, %dw" % (years, weeks)
 
 
-def atimeago(seconds):
-    """Convert seconds to m, h, d, w, y."""
-    milliseconds = round(seconds * 1000)
-    seconds = round(seconds)
-    days = seconds // (3600 * 24)
-    years = days // 365.25
-    weeks = (days - 365.25 * years) // 7
-    days = days - 365.25 * years
-    if not years and not days:
-        if not seconds:
-            return "%dms" % milliseconds
-        elif seconds < 60:
-            return "%d secs" % seconds
-        elif seconds < 3600:
-            return "%d mins" % (seconds // 60)
-        else:
-            return "%d hrs" % (seconds // 3600)
-    elif not years:
-        if not weeks:
-            return "%d days" % days
-        else:
-            return "%d wks" % weeks
-    else:
-        if not weeks and not days:
-            return "%d yrs" % years
-        elif not weeks:
-            return "%d yrs, %d days" % (years, days)
-        else:
-            return "%d yrs, %d wks" % (years, weeks)
-
-
 def superscript(number):
     """Convert 1 to sup(1)."""
     text = str(number)
