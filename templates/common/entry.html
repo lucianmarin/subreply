@@ -4,6 +4,9 @@
             {{ entry.created_by.emoji }} {{ entry.created_by.full_name | escape }}
         </a>
         {{ entry.content | emojize | parser | safe }}
+        {% if entry.ua.device.model %}
+            <b>from {{ entry.ua.device.model }}</b>
+        {% endif %}
     </div>
     <div class="small">
         <a href="/{{ entry.created_by }}/{{ entry.base }}">
@@ -16,24 +19,21 @@
         <a href="/{{ entry.created_by }}/{{ entry.base }}">
             {{ entry.replied }} {% if not entry.parent_id %}&not;{% endif %}
         </a>
-        {% if entry.ua.device.model %}
-            <b>{{ entry.ua.device.model }}</b>
-        {% endif %}
         {% if user %}
             {% if entry.created_by_id == user.id %}
                 {% if not entry.replies %}
-                    <a href="/edit/{{ entry.base }}">Edit</a>
+                    <a href="/edit/{{ entry.base }}">edit</a>
                 {% endif %}
             {% else %}
                 {% if entry.id in user.saves %}
-                    <a onclick="postUnsave(event)" data-id="{{ entry.id }}">Unsave</a>
+                    <a onclick="postUnsave(event)" data-id="{{ entry.id }}">unsave</a>
                 {% else %}
-                    <a onclick="postSave(event)" data-id="{{ entry.id }}">Save</a>
+                    <a onclick="postSave(event)" data-id="{{ entry.id }}">save</a>
                 {% endif %}
             {% endif %}
             {% if user.id in [entry.created_by_id, entry.to_user_id] and not entry.replies %}
                 <a onclick="postDelete(event)" data-id="{{ entry.id }}">
-                    Delete
+                    delete
                 </a>
             {% endif %}
         {% endif %}

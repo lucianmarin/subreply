@@ -138,7 +138,7 @@ class Comment(models.Model):
     @cached_property
     def replied(self):
         if not self.replies:
-            return 'Reply'
+            return 'reply'
         elif self.replies == 1:
             return '1 reply'
         else:

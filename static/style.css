@@ -128,6 +128,8 @@ table a:hover { color: var(--gray); }
 
 .content a:hover { color: var(--gray); }
 
+.content b { color: var(--silver); }
+
 .small { font-size: var(--small); overflow: hidden; }
 
 .small a { color: var(--gray); float: left; margin-right: 15px; }
@@ -135,8 +137,6 @@ table a:hover { color: var(--gray); }
 .small a:first-child { float: right; margin-right: 0; }
 
 .small a:hover { color: var(--black); }
-
-.small b { color: var(--silver); float: left; margin-right: 15px; }
 
 .author { color: var(--gray); font-size: var(--small); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
