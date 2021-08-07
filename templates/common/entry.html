@@ -16,7 +16,7 @@
         <a href="/{{ entry.created_by }}/{{ entry.base }}">
             {{ entry.replied }} {% if not entry.parent_id %}&not;{% endif %}
         </a>
-        {% if entry.agent %}
+        {% if entry.ua.device.model %}
             <b>{{ entry.ua.device.model }}</b>
         {% endif %}
         {% if user %}
