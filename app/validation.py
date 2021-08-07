@@ -154,7 +154,7 @@ def valid_email(value, user_id=0, invite=False):
     elif User.objects.filter(email=value).exclude(id=user_id).exists():
         return "Email is used by someone else"
     elif not user_id and not Invite.objects.filter(email=value).exists():
-        return "Email is not invited by someone"
+        return "Email isn't invited by anyone"
     elif invite and Invite.objects.filter(email=value).exists():
         return "Email is invited by someone else"
     else:
