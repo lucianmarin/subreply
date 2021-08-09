@@ -8,7 +8,7 @@ from dns.resolver import query as dns_query
 
 from app.const import LATIN, MAX_YEAR, MIN_YEAR, WORLD
 from app.helpers import has_repetions, parse_metadata, verify_hash
-from app.models import Comment, Invite, User
+from app.models import Comment, User
 from project.settings import INVALID, SLURS
 
 
@@ -142,7 +142,7 @@ def valid_full_name(first_name, last_name):
             return "Full name is prohibited"
 
 
-def valid_email(value, user_id=0, invite=False):
+def valid_email(value, user_id=0):
     if not value:
         return "Email can't be blank"
     elif len(value) > 120:
@@ -153,10 +153,6 @@ def valid_email(value, user_id=0, invite=False):
         return "Email isn't a valid address"
     elif User.objects.filter(email=value).exclude(id=user_id).exists():
         return "Email is used by someone else"
-    elif not user_id and not Invite.objects.filter(email=value).exists():
-        return "Email isn't invited by anyone"
-    elif invite and Invite.objects.filter(email=value).exists():
-        return "Email is invited by someone else"
     else:
         handle, domain = value.split('@', 1)
         try:

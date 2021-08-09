@@ -30,6 +30,7 @@ class User(models.Model):
 
     joined_at = models.FloatField(default=.0)
     seen_at = models.FloatField(default=.0, db_index=True)
+    is_approved = models.BooleanField(default=False)
 
     emoji = models.CharField(max_length=15, default='')
     location = models.CharField(max_length=60, default='')
@@ -181,12 +182,3 @@ class Relation(models.Model):
     to_user = models.ForeignKey('User', on_delete=models.CASCADE,
                                 related_name='followers')
     seen_at = models.FloatField(default=.0, db_index=True)
-
-
-class Invite(models.Model):
-    created_at = models.FloatField(default=.0)
-    created_by = models.ForeignKey('User', on_delete=models.CASCADE,
-                                   related_name='invites')
-    email = models.CharField(max_length=120, unique=True)
-    to_user = models.ForeignKey('User', on_delete=models.SET_NULL,
-                                related_name='invited', null=True)

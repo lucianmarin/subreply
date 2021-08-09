@@ -8,6 +8,10 @@
                     No reply yet
                 {% endif %}
             </div>
+        {% elif not user.is_approved %}
+            <div class="placeholder">
+                Improve <a href="/options">profile</a> to get approved
+            </div>
         {% elif duplicate %}
             <div class="placeholder">
                 {% if user %}

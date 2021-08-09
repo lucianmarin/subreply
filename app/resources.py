@@ -13,9 +13,9 @@ from app.forms import get_content, get_emoji, get_name
 from app.helpers import build_hash, parse_metadata, utc_timestamp, verify_hash
 from app.hooks import auth_user, login_required
 from app.jinja import render
-from app.models import Comment, Invite, Relation, Save, User
+from app.models import Comment, Relation, Save, User
 from app.validation import (
-    authentication, changing, profiling, registration, valid_content, valid_email,
+    authentication, changing, profiling, registration, valid_content,
     valid_handle, valid_reply, valid_thread
 )
 from project.settings import FERNET, MAX_AGE, SMTP
@@ -463,6 +463,29 @@ class SavesResource:
         )
 
 
+class LobbyResource:
+    @before(auth_user)
+    def on_get_apv(self, req, resp, username):
+        if not req.user.id == 1:
+            raise HTTPFound(f'/{username}')
+        User.objects.filter(username=username.lower()).update(is_approved=True)
+        raise HTTPFound(f'/{username}')
+
+    @before(auth_user)
+    def on_get_dst(self, req, resp, username):
+        if not req.user.id == 1:
+            raise HTTPFound(f'/{username}')
+        User.objects.filter(username=username.lower()).delete()
+        raise HTTPFound('/lobby')
+
+    @before(auth_user)
+    def on_get(self, req, resp):
+        entries = User.objects.filter(is_approved=False).order_by('-id')
+        resp.text = render(
+            page='regular', view='lobby', user=req.user, entries=entries
+        )
+
+
 class PeopleResource:
     fields = [
         "username", "first_name", "last_name", "email",
@@ -481,7 +504,9 @@ class PeopleResource:
 
     def fetch_entries(self, req, terms):
         q = self.build_query(terms)
-        entries = User.objects.filter(q).order_by('-seen_at')
+        entries = User.objects.filter(q).exclude(
+            is_approved=False
+        ).order_by('-seen_at')
         return paginate(req, entries, 20)
 
     @before(auth_user)
@@ -489,9 +514,11 @@ class PeopleResource:
         q = req.params.get('q', '').strip()
         terms = [t.strip() for t in q.split() if t.strip()]
         entries = self.fetch_entries(req, terms)
+        page, number = get_page(req)
         resp.text = render(
-            page='regular', view='people', placeholder="Find people",
-            user=req.user, entries=entries, q=q
+            page=page, view='people', number=number,
+            q=q, placeholder="Find people",
+            user=req.user, entries=entries
         )
 
 
@@ -516,9 +543,11 @@ class DiscoverResource:
         q = req.params.get('q', '').strip()
         terms = [t.strip() for t in q.split() if t.strip()]
         entries = self.fetch_entries(req, terms)
+        page, number = get_page(req)
         resp.text = render(
-            page='regular', view='discover', placeholder="Search content",
-            user=req.user, entries=entries, q=q
+            page=page, view='discover', number=number,
+            q=q, placeholder="Search content",
+            user=req.user, entries=entries
         )
 
 
@@ -593,39 +622,6 @@ class AccountResource:
             req.user.delete()
             resp.unset_cookie('identity')
             raise HTTPFound('/discover')
-
-
-class InvitesResource:
-    @before(auth_user)
-    @before(login_required)
-    def on_get(self, req, resp):
-        form = FieldStorage(fp=req.stream, environ=req.env)
-        invites = Invite.objects.filter(created_by=req.user).order_by('-id')
-        resp.text = render(
-            page='invites', view='invites', invites=invites,
-            user=req.user, errors={}, form=form
-        )
-
-    @before(auth_user)
-    @before(login_required)
-    def on_post(self, req, resp):
-        form = FieldStorage(fp=req.stream, environ=req.env)
-        f = {}
-        f['email'] = form.getvalue('email', '').strip().lower()
-        errors = {}
-        errors['email'] = valid_email(f['email'], user_id=req.user.id)
-        errors = {k: v for k, v in errors.items() if v}
-        if errors:
-            invites = Invite.objects.filter(created_by=req.user).order_by('-id')
-            resp.text = render(
-                page='invites', view='invites', invites=invites,
-                user=req.user, errors=errors, form=form, fields=f
-            )
-        else:
-            Invite.objects.get_or_create(
-                created_at=utc_timestamp(), created_by=req.user, email=f['email']
-            )
-            raise HTTPFound('/invites')
 
 
 class SocialResource:
@@ -770,22 +766,11 @@ class RegisterResource:
                 created_at=utc_timestamp(), seen_at=utc_timestamp(),
                 created_by=user, to_user=user
             )
-            invite = Invite.objects.get(email=f['email'])
-            invite.to_user = user
-            invite.save(update_fields=['to_user'])
-            Relation.objects.get_or_create(
-                created_at=utc_timestamp(),
-                created_by=user, to_user=invite.created_by
-            )
-            Relation.objects.get_or_create(
-                created_at=utc_timestamp(), seen_at=utc_timestamp(),
-                created_by=invite.created_by, to_user=user
-            )
-            subreply = User.objects.get(username='subreply')
-            Relation.objects.get_or_create(
-                created_at=utc_timestamp(), seen_at=utc_timestamp(),
-                created_by=user, to_user=subreply
-            )
+            # subreply = User.objects.get(username='subreply')
+            # Relation.objects.get_or_create(
+            #     created_at=utc_timestamp(), seen_at=utc_timestamp(),
+            #     created_by=user, to_user=subreply
+            # )
             # clear emoji statuses for unseen people
             # half_year = utc_timestamp() - (3600 * 24 * 183)
             # User.objects.filter(seen_at__lt=half_year).update(emoji='')

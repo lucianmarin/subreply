@@ -46,10 +46,12 @@ app.add_route('/account/delete', resources.AccountResource(), suffix="del")
 
 app.add_route('/options', resources.OptionsResource())
 app.add_route('/social', resources.SocialResource())
-app.add_route('/invites', resources.InvitesResource())
+app.add_route('/lobby', resources.LobbyResource())
 
 app.add_route('/edit/{base}', resources.EditResource())
 app.add_route('/{username}/{base}', resources.ReplyResource())
+app.add_route('/{username}/destroy', resources.LobbyResource(), suffix="dst")
+app.add_route('/{username}/approve', resources.LobbyResource(), suffix="apv")
 app.add_route('/{username}/replies', resources.ProfileResource(), suffix="re")
 app.add_route('/{username}', resources.ProfileResource(), suffix="th")
 

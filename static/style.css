@@ -100,6 +100,8 @@ table a:hover { color: var(--gray); }
 
 .reply .placeholder { background: var(--whitesmoke); background: linear-gradient(90deg, var(--white) 0%, var(--whitesmoke) 100%); border-radius: var(--radius); color: var(--silver); padding: 5px 10px; }
 
+.reply .placeholder a { color: var(--gray); }
+
 .list { margin: 10px 0; }
 
 .list > .entry:first-child { border-top: 0 none; padding-top: 0; }
@@ -187,8 +189,6 @@ table a:hover { color: var(--gray); }
 .pages a.selected { color: var(--gray); }
 
 .line { margin-bottom: 10px; overflow: hidden; }
-
-.line a { color: var(--gray); display: block; float: left; font-size: var(--small); margin: 5px 0; }
 
 .line .cell { display: table-cell; padding: 0 5px; height: 20px; vertical-align: middle; }
 

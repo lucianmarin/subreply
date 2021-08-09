@@ -9,7 +9,13 @@
         Joined {{ member.joined_at | shortdate }} ago.
         Seen {{ member.seen_at | shortdate }} ago.
         {% if is_followed %}Follows you.{% endif %}
-        {% if user.id == member.id %}<a href="/logout">Logout</a>.{% endif %}
+        {% if user.id == 1 and not member.is_approved %}
+            <a href="/{{ member }}/approve">Approve</a>
+            or <a href="/{{ member }}/destroy">Destroy</a>.
+        {% endif %}
+        {% if user.id == member.id %}
+            <a href="/logout">Logout</a>.
+        {% endif %}
     </div>
 </div>
 
