@@ -93,6 +93,10 @@ class User(models.Model):
         return self.replies.filter(reply_seen_at=.0).count()
 
     @cached_property
+    def lobbies(self):
+        return User.objects.filter(is_approved=False).count()
+
+    @cached_property
     def follows(self):
         return self.following.values_list('to_user_id', flat=True)
 
