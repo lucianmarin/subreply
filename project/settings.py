@@ -51,6 +51,7 @@ INVALID = [
     "following",
     "invites",
     "lm",
+    "lobby",
     "login",
     "logout",
     "luc",
