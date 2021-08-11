@@ -578,10 +578,9 @@ class AccountResource:
     @before(login_required)
     def on_get(self, req, resp):
         form = FieldStorage(fp=req.stream, environ=req.env)
-        entries = Comment.objects.filter(created_by=req.user).count()
         resp.text = render(
             page='account', view='account', user=req.user, form=form,
-            entries=entries, change_errors={}, delete_errors={}
+            change_errors={}, delete_errors={}
         )
 
     @before(auth_user)
@@ -593,9 +592,8 @@ class AccountResource:
         password2 = form.getvalue('password2', '')
         errors = changing(req.user, current, password1, password2)
         if errors:
-            entries = Comment.objects.filter(created_by=req.user).count()
             resp.text = render(
-                page='account', view='account', entries=entries,
+                page='account', view='account',
                 user=req.user, change_errors=errors, form=form
             )
         else:
@@ -613,9 +611,8 @@ class AccountResource:
         if not verify_hash(current, req.user.password):
             errors['current'] = "Password doesn't match"
         if errors:
-            entries = Comment.objects.filter(created_by=req.user).count()
             resp.text = render(
-                page='account', view='account', entries=entries,
+                page='account', view='account',
                 user=req.user, delete_errors=errors, form=form
             )
         else:

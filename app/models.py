@@ -94,7 +94,9 @@ class User(models.Model):
 
     @cached_property
     def lobbies(self):
-        return User.objects.filter(is_approved=False).count()
+        if self.id == 1:
+            return User.objects.filter(is_approved=False).count()
+        return 0
 
     @cached_property
     def follows(self):
