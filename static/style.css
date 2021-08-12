@@ -26,7 +26,7 @@ sup { line-height: 0; }
 
 input[type=file] { display: none; }
 
-input[type=text], input[type=password], input[type=email], input[type=url], select, textarea { appearance: none; -webkit-appearance: none; background-color: var(--whitesmoke); border: 0 none; border-radius: var(--radius); color: var(--black); display: block; padding: 5px 10px; overflow: hidden; resize: none; width: calc(100% - 20px); }
+input[type=text], input[type=password], input[type=email], input[type=url], select, textarea { appearance: none; background-color: var(--whitesmoke); border: 0 none; border-radius: var(--radius); color: var(--black); display: block; padding: 5px 10px; overflow: hidden; resize: none; width: calc(100% - 20px); }
 
 input[type=text]:focus, input[type=password]:focus, input[type=email]:focus, input[type=url]:focus, select:focus, textarea:focus { outline: 0 none; }
 
@@ -146,9 +146,9 @@ table a:hover { color: var(--gray); }
 
 .author .handle, .author .ago { color: var(--gray); }
 
-.author .ago { float: right; }
+.author .handle:hover, .author .ago:hover { color: var(--black); }
 
-.author .ago:hover { color: var(--black); }
+.author .ago { float: right; }
 
 .author .here { color: green; }
 

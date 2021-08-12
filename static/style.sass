@@ -82,7 +82,6 @@ input[type=url],
 select,
 textarea
     appearance: none
-    -webkit-appearance: none
     background-color: var(--whitesmoke)
     border: 0 none
     border-radius: var(--radius)
@@ -295,10 +294,10 @@ table
         font-weight: bold
     .handle, .ago
         color: var(--gray)
+        &:hover
+            color: var(--black)
     .ago
         float: right
-    .ago:hover
-        color: var(--black)
     .here
         color: green
     .away
