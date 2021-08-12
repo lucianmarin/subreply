@@ -552,7 +552,7 @@ class DiscoverResource:
 
 
 class TrendingResource:
-    sample = 19
+    sample = 20
 
     def fetch_entries(self, req):
         sampling = Comment.objects.filter(parent=None).annotate(
@@ -763,11 +763,6 @@ class RegisterResource:
                 created_at=utc_timestamp(), seen_at=utc_timestamp(),
                 created_by=user, to_user=user
             )
-            # subreply = User.objects.get(username='subreply')
-            # Relation.objects.get_or_create(
-            #     created_at=utc_timestamp(), seen_at=utc_timestamp(),
-            #     created_by=user, to_user=subreply
-            # )
             # clear emoji statuses for unseen people
             # half_year = utc_timestamp() - (3600 * 24 * 183)
             # User.objects.filter(seen_at__lt=half_year).update(emoji='')
