@@ -1,10 +1,10 @@
-html { -ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; --super: 8px; --tiny: 11px; --small: 13px; --regular: 14px; --radius: 5px; --d: 0.18333s; --white: white; --whitesmoke: #f0f0f0; --gainsboro: #e0e0e0; --silver: #c0c0c0; --gray: #808080; --black: black; --purple: #696dd0; }
+:root { --super: 8px; --tiny: 11px; --small: 13px; --regular: 14px; --radius: 5px; --d: 0.18333s; --white: white; --whitesmoke: #f0f0f0; --gainsboro: #e0e0e0; --silver: #c0c0c0; --gray: #808080; --black: black; --purple: #696dd0; }
 
 ::-moz-placeholder { color: #1f1f1f; }
 
 ::-webkit-input-placeholder { color: var(--gray); }
 
-@media (prefers-color-scheme: dark) { html { --white: black; --whitesmoke: #181818; --gainsboro: #282828; --silver: #404040; --gray: #808080; --black: white; } ::-moz-placeholder { color: #eeeeee; } }
+@media (prefers-color-scheme: dark) { :root { --white: black; --whitesmoke: #181818; --gainsboro: #282828; --silver: #404040; --gray: #808080; --black: white; } ::-moz-placeholder { color: #eeeeee; } }
 
 * { margin: 0; padding: 0; }
 
@@ -36,7 +36,7 @@ input[type=submit]:hover { background-color: var(--gainsboro); }
 
 svg { stroke-linecap: round; stroke-linejoin: round; stroke-width: 2; }
 
-svg path, svg circle { fill: none; stroke: var(--gray); }
+svg path, svg circle { fill: none; stroke: var(--black); }
 
 table { margin: 10px 0; width: 100%; }
 

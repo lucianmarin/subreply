@@ -22,7 +22,7 @@ env.filters['shortdate'] = shortdate
 env.filters['superscript'] = superscript
 
 env.globals['brand'] = "Subreply"
-env.globals['v'] = 57
+env.globals['v'] = 58
 
 
 def render(page, **kwargs):
