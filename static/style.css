@@ -26,11 +26,11 @@ sup { line-height: 0; }
 
 input[type=file] { display: none; }
 
-input[type=text], input[type=password], input[type=email], input[type=url], select, textarea { appearance: none; background-color: var(--whitesmoke); border: 0 none; border-radius: var(--radius); color: var(--black); display: block; padding: 5px 10px; overflow: hidden; resize: none; width: calc(100% - 20px); }
+input[type=text], input[type=password], input[type=email], input[type=url], select, textarea { appearance: none; background-color: var(--whitesmoke); border-radius: var(--radius); border: 0 none; color: var(--black); display: block; overflow: hidden; padding: 5px 10px; resize: none; width: calc(100% - 20px); }
 
 input[type=text]:focus, input[type=password]:focus, input[type=email]:focus, input[type=url]:focus, select:focus, textarea:focus { outline: 0 none; }
 
-input[type=submit] { background-color: var(--whitesmoke); border: 0 none; border-radius: var(--radius); color: var(--black); cursor: pointer; float: right; font-size: var(--small); padding: 5px 15px; transition: background-color var(--d); }
+input[type=submit] { background-color: var(--whitesmoke); border-radius: var(--radius); border: 0 none; color: var(--black); cursor: pointer; float: right; font-size: var(--small); padding: 5px 15px; transition: background-color var(--d); }
 
 input[type=submit]:hover { background-color: var(--gainsboro); }
 
@@ -166,23 +166,13 @@ table a:hover { color: var(--gray); }
 
 .filters { font-size: var(--small); height: 20px; }
 
-.filters a { border-bottom: var(--whitesmoke) 1px solid; color: var(--gray); height: 20px; display: block; float: left; padding-bottom: 5px; margin-right: 15px; }
+.filters a { border-bottom: var(--whitesmoke) 1px solid; color: var(--gray); height: 20px; display: block; float: left; margin-right: 15px; padding-bottom: 5px; }
 
 .filters a:hover { color: var(--silver); }
 
 .filters a:last-child { margin-right: 0; }
 
-.filters a.selected { border-bottom: var(--purple) 1px solid; color: var(--purple); }
-
-.pages { font-size: var(--small); margin-top: -5px; margin-bottom: 5px; padding: 5px 0; padding-left: 30px; border-top: var(--whitesmoke) 1px solid; overflow: hidden; }
-
-.pages a { color: var(--silver); display: block; float: left; margin-right: 15px; }
-
-.pages a:hover { color: var(--gray); }
-
-.pages a:last-child { margin-right: 0; }
-
-.pages a.selected { color: var(--gray); }
+.filters a.selected { border-bottom: var(--silver) 1px solid; color: var(--black); }
 
 .line { margin-bottom: 10px; overflow: hidden; }
 
@@ -194,7 +184,7 @@ table a:hover { color: var(--gray); }
 
 .line .right { float: right; width: calc(50% - 1px); }
 
-.line .right select { width: 100%; border-right: var(--silver) var(--radius) solid; }
+.line .right select { border-right: var(--silver) var(--radius) solid; width: 100%; }
 
 .line .right input, .line .right select { border-bottom-left-radius: 0; border-top-left-radius: 0; }
 

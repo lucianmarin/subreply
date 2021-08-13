@@ -83,12 +83,12 @@ select,
 textarea
     appearance: none
     background-color: var(--whitesmoke)
-    border: 0 none
     border-radius: var(--radius)
+    border: 0 none
     color: var(--black)
     display: block
-    padding: 5px 10px
     overflow: hidden
+    padding: 5px 10px
     resize: none
     width: calc(100% - 20px)
     &:focus
@@ -96,8 +96,8 @@ textarea
 
 input[type=submit]
     background-color: var(--whitesmoke)
-    border: 0 none
     border-radius: var(--radius)
+    border: 0 none
     color: var(--black)
     cursor: pointer
     float: right
@@ -325,45 +325,19 @@ table
         height: 20px
         display: block
         float: left
-        padding-bottom: 5px
         margin-right: 15px
+        padding-bottom: 5px
         &:hover
             color: var(--silver)
         &:last-child
             margin-right: 0
         &.selected
-            border-bottom: var(--purple) 1px solid
-            color: var(--purple)
-
-.pages
-    font-size: var(--small)
-    margin-top: -5px
-    margin-bottom: 5px
-    padding: 5px 0
-    padding-left: 30px
-    border-top: var(--whitesmoke) 1px solid
-    overflow: hidden
-    a
-        color: var(--silver)
-        display: block
-        float: left
-        margin-right: 15px
-        &:hover
-            color: var(--gray)
-        &:last-child
-            margin-right: 0
-        &.selected
-            color: var(--gray)
+            border-bottom: var(--silver) 1px solid
+            color: var(--black)
 
 .line
     margin-bottom: 10px
     overflow: hidden
-    // a
-    //     color: var(--gray)
-    //     display: block
-    //     float: left
-    //     font-size: var(--small)
-    //     margin: 5px 0
     .cell
         display: table-cell
         padding: 0 5px
@@ -379,8 +353,8 @@ table
         float: right
         width: calc(50% - 1px)
         select
-            width: 100%
             border-right: var(--silver) var(--radius) solid
+            width: 100%
         input, select
             border-bottom-left-radius: 0
             border-top-left-radius: 0
