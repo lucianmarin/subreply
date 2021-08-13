@@ -168,15 +168,15 @@ table a:hover { color: var(--gray); }
 
 .status a:hover { color: var(--black); }
 
-.filters { font-size: var(--small); height: 20px; overflow: hidden; }
+.filters { font-size: var(--small); height: 20px; }
 
-.filters a { color: var(--gray); display: block; float: left; margin-right: 15px; }
+.filters a { border-bottom: var(--whitesmoke) 1px solid; color: var(--gray); height: 20px; display: block; float: left; padding-bottom: 5px; margin-right: 15px; }
 
-.filters a:hover { color: var(--black); }
+.filters a:hover { color: var(--silver); }
 
 .filters a:last-child { margin-right: 0; }
 
-.filters a.selected { color: var(--black); }
+.filters a.selected { border-bottom: var(--purple) 1px solid; color: var(--purple); }
 
 .pages { font-size: var(--small); margin-top: -5px; margin-bottom: 5px; padding: 5px 0; padding-left: 30px; border-top: var(--whitesmoke) 1px solid; overflow: hidden; }
 

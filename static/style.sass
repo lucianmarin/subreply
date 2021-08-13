@@ -325,18 +325,21 @@ table
 .filters
     font-size: var(--small)
     height: 20px
-    overflow: hidden
     a
+        border-bottom: var(--whitesmoke) 1px solid
         color: var(--gray)
+        height: 20px
         display: block
         float: left
+        padding-bottom: 5px
         margin-right: 15px
         &:hover
-            color: var(--black)
+            color: var(--silver)
         &:last-child
             margin-right: 0
         &.selected
-            color: var(--black)
+            border-bottom: var(--purple) 1px solid
+            color: var(--purple)
 
 .pages
     font-size: var(--small)
