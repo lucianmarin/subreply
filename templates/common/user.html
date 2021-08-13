@@ -31,7 +31,7 @@
         </div>
     {% endif %}
     {% if member.website or member.birthday or member.country %}
-        <div class="extra">
+        <div class="status">
             {% if member.website %}
                 {{ member.website | parser | safe }}
             {% endif %}

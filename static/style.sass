@@ -254,7 +254,7 @@ table
     a
         color: var(--gray)
         &:hover
-            color: var(--black)
+            color: var(--silver)
 
 .content
     cursor: text
@@ -284,7 +284,7 @@ table
             float: right
             margin-right: 0
         &:hover
-            color: var(--black)
+            color: var(--silver)
 
 .author
     color: var(--gray)
@@ -292,10 +292,12 @@ table
     @include dots
     .short, .handle, b
         font-weight: bold
+    .short:hover
+        color: var(--gray)
     .handle, .ago
         color: var(--gray)
         &:hover
-            color: var(--black)
+            color: var(--silver)
     .ago
         float: right
     .here
@@ -305,22 +307,14 @@ table
     .gone
         color: var(--gray)
 
-.extra
+.status
     color: var(--gray)
     font-size: var(--small)
     @include dots
     a
         color: var(--gray)
         &:hover
-            color: var(--black)
-
-.status
-    color: var(--gray)
-    font-size: var(--small)
-    a
-        color: var(--gray)
-        &:hover
-            color: var(--black)
+            color: var(--silver)
 
 .filters
     font-size: var(--small)
