@@ -723,11 +723,11 @@ class LogoutResource:
         raise HTTPFound('/discover')
 
 
-class RegisterResource:
+class RequestResource:
     def on_get(self, req, resp):
         form = FieldStorage(fp=req.stream, environ=req.env)
         resp.text = render(
-            page='register', view='register',
+            page='request', view='request',
             errors={}, form=form, fields={}
         )
 
@@ -743,7 +743,7 @@ class RegisterResource:
         errors = registration(f)
         if errors:
             resp.text = render(
-                page='register', view='register',
+                page='request', view='request',
                 errors=errors, form=form, fields=f
             )
         else:

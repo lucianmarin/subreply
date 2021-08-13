@@ -67,7 +67,7 @@ INVALID = [
     "privacy",
     "profile",
     "re",
-    "register",
+    "request",
     "reply",
     "replying",
     "reset",
