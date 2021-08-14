@@ -530,12 +530,8 @@ class DiscoverResource:
         return query
 
     def fetch_entries(self, req, terms):
-        if terms:
-            sq = self.build_query(terms)
-        else:
-            last_ids = User.objects.annotate(lid=Max('comments')).values('lid')
-            sq = Q(id__in=last_ids)
-        entries = Comments.filter(sq).order_by('-id').prefetch_related(PFR, PPFR)
+        f = self.build_query(terms)
+        entries = Comments.filter(f).order_by('-id').prefetch_related(PFR, PPFR)
         return paginate(req, entries, 15)
 
     @before(auth_user)
