@@ -1,7 +1,7 @@
 from cgi import FieldStorage
 
 import emoji
-from django.db.models import Count, Max, Prefetch, Q
+from django.db.models import Count, Prefetch, Q
 from emails import Message
 from emails.template import JinjaTemplate
 from falcon import status_codes
