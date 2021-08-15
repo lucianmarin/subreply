@@ -1,10 +1,10 @@
-html { --super: 8px; --tiny: 11px; --small: 13px; --regular: 14px; --radius: 5px; --d: 0.2s; --white: white; --whitesmoke: #f0f0f0; --gainsboro: #e0e0e0; --silver: #c0c0c0; --gray: #808080; --black: black; --purple: #696dd0; }
+html { --super: 8px; --tiny: 11px; --small: 13px; --regular: 14px; --radius: 5px; --d: 0.2s; --white: white; --whitesmoke: #f0f0f0; --gainsboro: #e0e0e0; --silver: #c0c0c0; --gray: #808080; --black: black; --accent: #5070e0; }
 
 ::-moz-placeholder { color: #1f1f1f; }
 
 ::-webkit-input-placeholder { color: var(--gray); }
 
-@media (prefers-color-scheme: dark) { html { --white: black; --whitesmoke: #181818; --gainsboro: #282828; --silver: #404040; --gray: #808080; --black: white; } ::-moz-placeholder { color: #eeeeee; } }
+@media (prefers-color-scheme: dark) { html { --white: black; --whitesmoke: #181818; --gainsboro: #282828; --silver: #404040; --gray: #808080; --black: white; --accent: #6080e0; } ::-moz-placeholder { color: #eeeeee; } }
 
 * { margin: 0; padding: 0; }
 
@@ -46,7 +46,7 @@ table td { border-top: var(--whitesmoke) 1px solid; padding: 2px 0; }
 
 table td:last-child { padding-bottom: 0; }
 
-table a { color: var(--purple); }
+table a { color: var(--accent); }
 
 table a:hover { color: var(--gray); }
 
@@ -66,7 +66,7 @@ table a:hover { color: var(--gray); }
 
 .logo a { background-color: var(--white); border-radius: 15px; color: var(--black); display: block; float: right; font-size: var(--tiny); height: 30px; line-height: 30px; text-align: center; width: 30px; }
 
-.logo a.active { color: var(--purple); }
+.logo a.active { color: var(--accent); }
 
 .links { position: sticky; text-align: right; top: 50px; }
 
@@ -78,7 +78,7 @@ table a:hover { color: var(--gray); }
 
 .links a.on { background-color: var(--white); color: var(--gray); }
 
-.links a.on svg path, .links a.on svg circle { stroke: var(--purple); }
+.links a.on svg path, .links a.on svg circle { stroke: var(--accent); }
 
 .links a.accent svg path, .links a.accent svg circle { stroke: orangered; }
 
@@ -124,7 +124,7 @@ table a:hover { color: var(--gray); }
 
 .content.inline { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; opacity: 0.5; }
 
-.content a { color: var(--purple); }
+.content a { color: var(--accent); }
 
 .content a.name { color: var(--black); font-weight: bold; text-decoration: none; }
 

@@ -11,7 +11,7 @@ html
     --silver: #c0c0c0
     --gray: #808080
     --black: black
-    --purple: #696dd0
+    --accent: #5070e0
 
 ::-moz-placeholder
     color: darken(#808080, 38%)
@@ -32,6 +32,7 @@ html
         --silver: #404040
         --gray: #808080
         --black: white
+        --accent: #6080e0
     ::-moz-placeholder
         color: lighten(#808080, 43%)
 
@@ -129,7 +130,7 @@ table
         &:last-child
             padding-bottom: 0
     a
-        color: var(--purple)
+        color: var(--accent)
         &:hover
             color: var(--gray)
 
@@ -170,7 +171,7 @@ table
         text-align: center
         width: 30px
         &.active
-            color: var(--purple)
+            color: var(--accent)
 
 .links
     position: sticky
@@ -192,7 +193,7 @@ table
             background-color: var(--white)
             color: var(--gray)
             svg path, svg circle
-                stroke: var(--purple)
+                stroke: var(--accent)
         &.accent
             svg path, svg circle
                 stroke: orangered
@@ -263,7 +264,7 @@ table
         @include dots
         opacity: 0.5
     a
-        color: var(--purple)
+        color: var(--accent)
         &.name
             color: var(--black)
             font-weight: bold
