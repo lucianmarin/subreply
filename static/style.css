@@ -66,7 +66,7 @@ table a:hover { color: var(--gray); }
 
 .logo a { background-color: var(--white); border-radius: 15px; color: var(--black); display: block; float: right; font-size: var(--tiny); height: 30px; line-height: 30px; text-align: center; width: 30px; }
 
-.logo a.active { color: var(--accent); }
+.logo a.active { background-color: var(--accent); color: var(--white); }
 
 .links { position: sticky; text-align: right; top: 50px; }
 
