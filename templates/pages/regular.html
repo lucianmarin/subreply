@@ -9,7 +9,7 @@
 
     {% if view in ['following', 'followers', 'lobby', 'people'] %}
         {% set limit = 20 %}
-    {% elif view in ['mentions', 'saves', 'discover'] %}
+    {% elif view in ['discover', 'engaging', 'mentions', 'saves'] %}
         {% set limit = 15 %}
     {% else %}
         {% set limit = 10 %}
@@ -42,9 +42,7 @@
             {% elif view == 'saves' %}
                 {# set entry = entry.to_comment #}
                 {% include "common/stream.html" %}
-            {% elif view == 'discover' %}
-                {% include "common/stream.html" %}
-            {% elif view == 'mentions' %}
+            {% elif view in ['discover', 'mentions', 'engaging'] %}
                 {% include "common/stream.html" %}
             {% endif %}
         {% else %}

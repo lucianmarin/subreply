@@ -547,6 +547,23 @@ class DiscoverResource:
         )
 
 
+class EngagingResource:
+    def fetch_entries(self, req):
+        entries = Comments.exclude(
+            saved_by=None
+        ).order_by('-id').prefetch_related(PFR, PPFR)
+        return paginate(req, entries, 15)
+
+    @before(auth_user)
+    def on_get(self, req, resp):
+        entries = self.fetch_entries(req)
+        page, number = get_page(req)
+        resp.text = render(
+            page=page, view='engaging', number=number,
+            user=req.user, entries=entries
+        )
+
+
 class TrendingResource:
     sample = 20
 
