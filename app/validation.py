@@ -207,7 +207,7 @@ def valid_website(value, user_id=0):
             return f'Website is used by <a href="/{duplicate}">@{duplicate}</a>'
         else:
             try:
-                headers = requests.get(
+                headers = requests.head(
                     value, allow_redirects=True, timeout=5
                 ).headers
             except Exception as e:
