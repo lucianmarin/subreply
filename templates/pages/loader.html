@@ -28,7 +28,7 @@
 
 {% if view in ['following', 'followers', 'people', 'lobby'] %}
     {% set limit = 20 %}
-{% elif view in ['discover', 'engaging', 'mentions', 'saves'] %}
+{% elif view in ['discover', 'mentions', 'saves'] %}
     {% set limit = 15 %}
 {% else %}
     {% set limit = 10 %}

@@ -29,7 +29,6 @@ app.add_route('/saves', resources.SavesResource())
 
 app.add_route('/discover', resources.DiscoverResource())
 app.add_route('/people', resources.PeopleResource())
-app.add_route('/engaging', resources.EngagingResource())
 app.add_route('/trending', resources.TrendingResource())
 
 app.add_route('/about', resources.AboutResource())
