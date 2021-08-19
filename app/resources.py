@@ -479,6 +479,7 @@ class LobbyResource:
         raise HTTPFound('/lobby')
 
     @before(auth_user)
+    @before(login_required)
     def on_get(self, req, resp):
         entries = User.objects.filter(is_approved=False).order_by('-id')
         resp.text = render(
@@ -510,6 +511,7 @@ class PeopleResource:
         return paginate(req, entries, 20)
 
     @before(auth_user)
+    @before(login_required)
     def on_get(self, req, resp):
         q = req.params.get('q', '').strip()
         terms = [t.strip() for t in q.split() if t.strip()]
@@ -535,6 +537,7 @@ class DiscoverResource:
         return paginate(req, entries, 15)
 
     @before(auth_user)
+    @before(login_required)
     def on_get(self, req, resp):
         q = req.params.get('q', '').strip()
         terms = [t.strip() for t in q.split() if t.strip()]
