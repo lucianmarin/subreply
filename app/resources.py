@@ -1,7 +1,8 @@
 from cgi import FieldStorage
+from django.db.models.aggregates import Max
 
 import emoji
-from django.db.models import Count, Prefetch, Q
+from django.db.models import Count, Max, Prefetch, Q
 from emails import Message
 from emails.template import JinjaTemplate
 from falcon import status_codes
@@ -532,8 +533,19 @@ class DiscoverResource:
         return query
 
     def fetch_entries(self, req, terms):
-        f = self.build_query(terms)
-        entries = Comments.filter(f).order_by('-id').prefetch_related(PFR, PPFR)
+        if terms:
+            f = self.build_query(terms)
+            entries = Comments.filter(f).order_by('-id').prefetch_related(PFR, PPFR)
+        else:
+            last_threads = User.objects.annotate(
+                last_id=Max('comments__id', filter=Q(comments__parent__isnull=True))
+            ).values('last_id')
+            last_replies = User.objects.annotate(
+                last_id=Max('comments__id', filter=Q(comments__parent__isnull=False))
+            ).values('last_id')
+            entries = Comments.filter(
+                id__in=last_threads.union(last_replies)
+            ).order_by('-id').prefetch_related(PFR, PPFR)
         return paginate(req, entries, 15)
 
     @before(auth_user)
