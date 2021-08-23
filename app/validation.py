@@ -26,14 +26,24 @@ def valid_content(value, user):
         return "Link a single address"
     elif len(hashtags) > 1:
         return "Hashtag a single channel"
-    elif hashtags and len(hashtags[0]) > 15:
-        return "Hashtag can't be longer than 15 characters"
-    elif links and len(links[0]) > 120:
-        return "Link can't be longer than 120 characters"
+    elif hashtags:
+        hashtag = hashtags[0].lower()
+        if len(hashtag) > 15:
+            return "Hashtag can't be longer than 15 characters"
+        elif hashtag == value.lower()[1:]:
+            return "Status can't be only a hashtag"
+    elif links:
+        link = links[0].lower()
+        if len(link) > 120:
+            return "Link can't be longer than 120 characters"
+        elif link == value.lower():
+            return "Status can't be only a link"
     elif mentions:
         mention = mentions[0].lower()
         if mention == user.username:
             return "Can't mention yourself"
+        elif mention == value.lower()[1:]:
+            return "Status can't be only a mention"
         elif not User.objects.filter(username=mention).exists():
             return "@{0} isn't an user".format(mention)
 

@@ -1,5 +1,4 @@
 from cgi import FieldStorage
-from django.db.models.aggregates import Max
 
 import emoji
 from django.db.models import Count, Max, Prefetch, Q
@@ -40,7 +39,7 @@ def get_page(req):
     return page, number
 
 
-def paginate(req, qs, limit=10):
+def paginate(req, qs, limit=15):
     page = get_number(req)
     index = (page - 1) * limit
     return qs[index:index + limit]
@@ -332,7 +331,7 @@ class FollowingResource:
         entries = Relation.objects.filter(
             created_by=req.user
         ).exclude(to_user=req.user).order_by('-id').select_related('to_user')
-        return paginate(req, entries, 20)
+        return paginate(req, entries, 25)
 
     @before(auth_user)
     @before(login_required)
@@ -350,7 +349,7 @@ class FollowersResource:
         entries = Relation.objects.filter(
             to_user=req.user
         ).exclude(created_by=req.user).order_by('-id').select_related('created_by')
-        return paginate(req, entries, 20)
+        return paginate(req, entries, 25)
 
     def clear_followers(self, user):
         Relation.objects.filter(
@@ -375,7 +374,7 @@ class MentionsResource:
         entries = Comments.filter(
             at_user=req.user
         ).order_by('-id').prefetch_related(PFR, PPFR)
-        return paginate(req, entries, 15)
+        return paginate(req, entries, 20)
 
     def clear_mentions(self, user):
         Comment.objects.filter(
@@ -451,7 +450,7 @@ class SavesResource:
         entries = Comments.filter(
             id__in=saved_ids
         ).order_by('-id').prefetch_related(PFR, PPFR)
-        return paginate(req, entries, 15)
+        return paginate(req, entries, 20)
 
     @before(auth_user)
     @before(login_required)
@@ -479,12 +478,18 @@ class LobbyResource:
         User.objects.filter(username=username.lower()).delete()
         raise HTTPFound('/lobby')
 
+    def fetch_entries(self, req):
+        entries = User.objects.filter(is_approved=False).order_by('-id')
+        return paginate(req, entries, 25)
+
     @before(auth_user)
     @before(login_required)
     def on_get(self, req, resp):
-        entries = User.objects.filter(is_approved=False).order_by('-id')
+        entries = self.fetch_entries(req)
+        page, number = get_page(req)
         resp.text = render(
-            page='regular', view='lobby', user=req.user, entries=entries
+            page=page, view='lobby', number=number,
+            user=req.user, entries=entries
         )
 
 
@@ -509,7 +514,7 @@ class PeopleResource:
         entries = User.objects.filter(q).exclude(
             is_approved=False
         ).order_by('-seen_at')
-        return paginate(req, entries, 20)
+        return paginate(req, entries, 25)
 
     @before(auth_user)
     @before(login_required)
@@ -546,7 +551,7 @@ class DiscoverResource:
             entries = Comments.filter(
                 id__in=last_threads.union(last_replies)
             ).order_by('-id').prefetch_related(PFR, PPFR)
-        return paginate(req, entries, 15)
+        return paginate(req, entries, 20)
 
     @before(auth_user)
     @before(login_required)
