@@ -400,31 +400,7 @@ class RepliesResource:
             self.clear_replies(req.user)
 
 
-class SavingResource:
-    def fetch_entries(self, req):
-        friends = Relation.objects.filter(
-            created_by=req.user
-        ).exclude(to_user=req.user).values('to_user_id')
-        saved_ids = Save.objects.filter(
-            created_by__in=friends
-        ).values('to_comment__id')
-        entries = Comments.filter(
-            id__in=saved_ids
-        ).order_by('-id').prefetch_related(PFR, PPFR)
-        return paginate(req, entries)
-
-    @before(auth_user)
-    @before(login_required)
-    def on_get(self, req, resp):
-        entries = self.fetch_entries(req)
-        page, number = get_page(req)
-        resp.text = render(
-            page=page, view='saving', number=number,
-            user=req.user, entries=entries
-        )
-
-
-class SavesResource:
+class SavedResource:
     def fetch_entries(self, req):
         saved_ids = Save.objects.filter(
             created_by=req.user
@@ -440,7 +416,7 @@ class SavesResource:
         entries = self.fetch_entries(req)
         page, number = get_page(req)
         resp.text = render(
-            page=page, view='saves', number=number,
+            page=page, view='saved', number=number,
             user=req.user, entries=entries
         )
 

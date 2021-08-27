@@ -20,12 +20,11 @@ app.add_route('/api/follow/{username}', api.FollowEndpoint())
 app.add_route('/api/unfollow/{username}', api.UnfollowEndpoint())
 
 app.add_route('/feed', resources.FeedResource())
-app.add_route('/saving', resources.SavingResource())
 app.add_route('/following', resources.FollowingResource())
 app.add_route('/followers', resources.FollowersResource())
 app.add_route('/mentions', resources.MentionsResource())
 app.add_route('/replies', resources.RepliesResource())
-app.add_route('/saves', resources.SavesResource())
+app.add_route('/saved', resources.SavedResource())
 
 app.add_route('/discover', resources.DiscoverResource())
 app.add_route('/people', resources.PeopleResource())
