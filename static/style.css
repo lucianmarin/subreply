@@ -58,15 +58,15 @@ table a:hover { color: var(--gray); }
 
 .sidebar { background-color: var(--whitesmoke); text-align: right; }
 
-.main { background-color: var(--white); padding: 0 15px; }
+.main { background-color: var(--white); padding: 0 10px; }
 
 .rightside { background-color: var(--white); }
 
-.logo { margin: 10px 15px; overflow: hidden; position: sticky; top: 10px; }
+.logo { margin: 10px; overflow: hidden; position: sticky; top: 10px; }
 
-.logo a { background-color: var(--white); border-radius: 15px; color: var(--black); display: block; float: right; font-size: var(--tiny); height: 30px; line-height: 30px; text-align: center; width: 30px; }
+.logo a { background-color: var(--white); border-radius: 15px; color: var(--gray); display: block; float: right; font-size: var(--tiny); height: 30px; line-height: 30px; text-align: center; width: 30px; }
 
-.logo a.active { background-color: var(--accent); color: var(--white); }
+.logo a.active { color: var(--accent); }
 
 .links { position: sticky; text-align: right; top: 50px; }
 
@@ -212,7 +212,7 @@ table a:hover { color: var(--gray); }
 
 .promo h5, .promo h6 { font-weight: normal; }
 
-@media (max-width: 680px) { .container { display: grid; grid-template-columns: 0 50px calc(100% - 50px) 0; } .main { padding: 0 10px; } .logo { margin: 10px; } .promo, .links i { display: none; } .links svg { margin-left: 0; } }
+@media (max-width: 680px) { .container { display: grid; grid-template-columns: 0 50px calc(100% - 50px) 0; } .promo, .links i { display: none; } .links svg { margin-left: 0; } }
 
 @font-face { font-family: "Route 159"; font-style: normal; font-weight: normal; src: url(/static/route159-regular.woff2) format("woff2"); }
 
