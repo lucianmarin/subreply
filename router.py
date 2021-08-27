@@ -20,7 +20,7 @@ app.add_route('/api/follow/{username}', api.FollowEndpoint())
 app.add_route('/api/unfollow/{username}', api.UnfollowEndpoint())
 
 app.add_route('/feed', resources.FeedResource())
-app.add_route('/replying', resources.ReplyingResource())
+app.add_route('/saving', resources.SavingResource())
 app.add_route('/following', resources.FollowingResource())
 app.add_route('/followers', resources.FollowersResource())
 app.add_route('/mentions', resources.MentionsResource())
@@ -52,8 +52,7 @@ app.add_route('/edit/{base}', resources.EditResource())
 app.add_route('/{username}/{base}', resources.ReplyResource())
 app.add_route('/{username}/destroy', resources.LobbyResource(), suffix="dst")
 app.add_route('/{username}/approve', resources.LobbyResource(), suffix="apv")
-app.add_route('/{username}/replies', resources.ProfileResource(), suffix="re")
-app.add_route('/{username}', resources.ProfileResource(), suffix="th")
+app.add_route('/{username}', resources.ProfileResource())
 
 if DEBUG:
     app.add_route('/static/{filename}', resources.StaticResource())

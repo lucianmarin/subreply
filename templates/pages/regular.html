@@ -1,18 +1,16 @@
 {% extends "base.html" %}
 
 {% block main %}
-    {% if view  == 'feed' %}
+    {% if view == 'feed' %}
         {% include "input/thread.html" %}
     {% elif view in ['discover', 'people'] %}
         {% include "input/query.html" %}
     {% endif %}
 
     {% if view in ['following', 'followers', 'lobby', 'people', 'trending'] %}
-        {% set limit = 25 %}
-    {% elif view in ['discover', 'mentions', 'saves'] %}
-        {% set limit = 20 %}
+        {% set limit = 24 %}
     {% else %}
-        {% set limit = 15 %}
+        {% set limit = 16 %}
     {% endif %}
 
     <div class="list">
@@ -22,11 +20,7 @@
         {% endif %}
 
         {% for entry in entries %}
-            {% if view == 'feed' %}
-                {% include "common/threads.html" %}
-            {% elif view == 'profile' %}
-                {% include "common/" + tab + ".html" %}
-            {% elif view == 'trending' %}
+            {% if view == 'trending' %}
                 {% include "common/threads.html" %}
             {% elif view in ['replying', 'replies'] %}
                 {% include "common/replies.html" %}
@@ -39,7 +33,7 @@
             {% elif view == 'followers' %}
                 {% set member = entry.created_by %}
                 {% include "common/user.html" %}
-            {% elif view in ['discover', 'mentions', 'saves'] %}
+            {% else %}
                 {% include "common/stream.html" %}
             {% endif %}
         {% else %}

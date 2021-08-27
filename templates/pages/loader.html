@@ -1,9 +1,5 @@
 {% for entry in entries %}
-    {% if view == 'feed' %}
-        {% include "common/threads.html" %}
-    {% elif view == 'profile' %}
-        {% include "common/" + tab + ".html" %}
-    {% elif view == 'trending' %}
+    {% if view == 'trending' %}
         {% include "common/threads.html" %}
     {% elif view in ['replying', 'replies'] %}
         {% include "common/replies.html" %}
@@ -16,10 +12,7 @@
     {% elif view == 'followers' %}
         {% set member = entry.created_by %}
         {% include "common/user.html" %}
-    {% elif view == 'saves' %}
-        {# set entry = entry.to_comment #}
-        {% include "common/stream.html" %}
-    {% elif view in ['discover', 'engaging', 'mentions'] %}
+    {% else %}
         {% include "common/stream.html" %}
     {% endif %}
 {% else %}
@@ -27,11 +20,9 @@
 {% endfor %}
 
 {% if view in ['following', 'followers', 'people', 'lobby'] %}
-    {% set limit = 25 %}
-{% elif view in ['discover', 'mentions', 'saves'] %}
-    {% set limit = 20 %}
+    {% set limit = 24 %}
 {% else %}
-    {% set limit = 15 %}
+    {% set limit = 16 %}
 {% endif %}
 
 {% if entries | length == limit %}
