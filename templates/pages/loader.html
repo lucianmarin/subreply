@@ -15,7 +15,7 @@
     {% include "common/nothing.html" %}
 {% endfor %}
 
-{% if view in ['following', 'followers', 'lobby'. 'people'] %}
+{% if view in ['following', 'followers', 'lobby', 'people'] %}
     {% set limit = 24 %}
 {% else %}
     {% set limit = 16 %}

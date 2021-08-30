@@ -108,7 +108,7 @@ table a:hover { color: var(--gray); }
 
 .list > .entry:last-child { padding-bottom: 0; }
 
-.sublist { margin-left: 30px; }
+.sublist { margin-left: 25px; }
 
 .sublist:last-child .entry:last-child { padding-bottom: 0; }
 
@@ -134,7 +134,7 @@ table a:hover { color: var(--gray); }
 
 .small { font-size: var(--small); overflow: hidden; }
 
-.small a { color: var(--gray); float: left; margin-right: 15px; }
+.small a { color: var(--gray); float: left; margin-right: 10px; }
 
 .small a:first-child { float: right; margin-right: 0; }
 
