@@ -20,11 +20,7 @@
         {% endif %}
 
         {% for entry in entries %}
-            {% if view == 'trending' %}
-                {% include "common/threads.html" %}
-            {% elif view in ['replying', 'replies'] %}
-                {% include "common/replies.html" %}
-            {% elif view in ['lobby', 'people'] %}
+            {% if view in ['lobby', 'people'] %}
                 {% set member = entry %}
                 {% include "common/user.html" %}
             {% elif view == 'following' %}
