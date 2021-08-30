@@ -79,7 +79,7 @@ class MainResource:
         if req.user:
             raise HTTPFound('/feed')
         else:
-            raise HTTPFound('/trending')
+            raise HTTPFound('/discover')
 
 
 class AboutResource:
@@ -512,7 +512,6 @@ class DiscoverResource:
         return paginate(req, entries)
 
     @before(auth_user)
-    @before(login_required)
     def on_get(self, req, resp):
         q = req.params.get('q', '').strip()
         terms = [t.strip() for t in q.split() if t.strip()]
@@ -538,6 +537,7 @@ class TrendingResource:
         return paginate(req, entries, self.sample)
 
     @before(auth_user)
+    @before(login_required)
     def on_get(self, req, resp):
         entries = self.fetch_entries(req)
         page, number = get_page(req)
@@ -592,7 +592,7 @@ class AccountResource:
         else:
             req.user.delete()
             resp.unset_cookie('identity')
-            raise HTTPFound('/trending')
+            raise HTTPFound('/discover')
 
 
 class SocialResource:
@@ -694,7 +694,7 @@ class LoginResource:
 class LogoutResource:
     def on_get(self, req, resp):
         resp.unset_cookie('identity')
-        raise HTTPFound('/trending')
+        raise HTTPFound('/discover')
 
 
 class RequestResource:
