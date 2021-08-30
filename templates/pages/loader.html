@@ -1,5 +1,5 @@
 {% for entry in entries %}
-    {% if view == 'people' %}
+    {% if view in ['lobby', 'people'] %}
         {% set member = entry %}
         {% include "common/user.html" %}
     {% elif view == 'following' %}
@@ -15,7 +15,7 @@
     {% include "common/nothing.html" %}
 {% endfor %}
 
-{% if view in ['following', 'followers', 'people', 'lobby'] %}
+{% if view in ['following', 'followers', 'lobby'. 'people'] %}
     {% set limit = 24 %}
 {% else %}
     {% set limit = 16 %}
