@@ -62,7 +62,7 @@ class StaticResource:
         'jpg': "image/jpeg"
     }
 
-    def on_get(self, req, resp, filename):
+    def on_get(self, req, resp, filename):  # noqa
         print("load", filename)
         name, ext = filename.split('.')
         mode = 'rb' if ext in self.binary else 'r'
@@ -75,7 +75,7 @@ class StaticResource:
 
 class MainResource:
     @before(auth_user)
-    def on_get(self, req, resp):
+    def on_get(self, req, resp):  # noqa
         if req.user:
             raise HTTPFound('/feed')
         else:
@@ -423,14 +423,14 @@ class SavedResource:
 
 class LobbyResource:
     @before(auth_user)
-    def on_get_apv(self, req, resp, username):
+    def on_get_apv(self, req, resp, username):  # noqa
         if not req.user.id == 1:
             raise HTTPFound(f'/{username}')
         User.objects.filter(username=username.lower()).update(is_approved=True)
         raise HTTPFound(f'/{username}')
 
     @before(auth_user)
-    def on_get_dst(self, req, resp, username):
+    def on_get_dst(self, req, resp, username):  # noqa
         if not req.user.id == 1:
             raise HTTPFound(f'/{username}')
         User.objects.filter(username=username.lower()).delete()
@@ -692,7 +692,7 @@ class LoginResource:
 
 
 class LogoutResource:
-    def on_get(self, req, resp):
+    def on_get(self, req, resp):  # noqa
         resp.unset_cookie('identity')
         raise HTTPFound('/discover')
 
@@ -753,7 +753,7 @@ class UnlockResource:
             page='unlock', view='unlock', errors={}, form=form
         )
 
-    def on_get_lnk(self, req, resp, token):
+    def on_get_lnk(self, req, resp, token):  # noqa
         email = FERNET.decrypt(token.encode()).decode()
         user = User.objects.filter(email=email).first()
         token = FERNET.encrypt(str(user.id).encode()).decode()
