@@ -7,35 +7,25 @@
     </div>
 
     <div class="about">
-        <p><a href="/subreply">@subreply</a> was created by <a href="/lucian">@lucian</a> from the desire of a having a simple to use, English-only, public forum that has nothing in common with ancient and untrustworthy social networks.</p>
+        <p>Subreply was created by <a href="/lucian">@lucian</a> from the desire of a having a simple to use, English-only, public forum that has nothing in common with ancient and untrustworthy social networks.</p>
         <p>Request your account, improve your profile, wait for approval then see for yourself if it's worthy of your time. You can change your mind at any time.</p>
+
+        <h4>Technology</h4>
+        <p>Subreply is power by a high frequency Ubuntu LTS server from <a href="https://www.vultr.com/?ref=8538483-6G">Vultr</a>. It's written in Python using Falcon web framework and Django ORM. On front of PostgreSQL there's PgBouncer to smooth things out. Nginx along with Gunicorn is serving requests as fast as possible.</p>
+
+        <h4>Principles</h4>
+        <p>Since launched in April 2014, Subreply has always stuck to its core principles: balance, exchange and betweeness. The best example of this is that there are no popularity counters for content or profiles.</p>
+
         <h4>Features</h4>
-        <ol>
-            <li>easy to reply to anyone</li>
-            <li>save content posted by anyone</li>
-            <li>🧠💪 one or two emojis instead of avatars</li>
-            <li>mentions, links and hashtags support</li>
-            <li>reverse-chronological order for all feeds</li>
-            <li>easy to find find and follow people</li>
-            <li>light and dark themes based on OS preference</li>
-        </ol>
+        <p>It's easy to reply and save content post by anyone. Avatars are replaced by one or two emojis 🧠💪 &mdash; smart right? Reverse-chronological order is used for all feeds, no need for tricks. We got mentions, links and hashtags support too.</p>
+        <p>Light and dark themes are supported based on your OS preference.</p>
+
         <h4>Limitations</h4>
-        <ol>
-            <li>480 characters per reply</li>
-            <li>Unicode and emoji to ASCII transliteration to display everywhere</li>
-            <li>unique global topics, replies per thread, content per account</li>
-            <li>only one mention, link or hashtag per reply</li>
-            <li>no support for paragraphs, keeps conversation tidy</li>
-            <li>no popularity counters for replies or profiles</li>
-        </ol>
+        <p>Unicode and emoji are transliterated to ASCII to be able to display content everywhere possible. Content is limited to 480 characters, 3 times the SMS length.</p>
+        <p>There is no support for paragraphs to keep conversation tidy. Only one mention, link or hashtag is allowed per reply.</p>
+
         <h4>Privacy</h4>
-        <ol>
-            <li>edit or delete your replies before they are replied to</li>
-            <li>delete received replies before they are replied to</li>
-            <li>private following, followers and saved lists</li>
-            <li>no redistribution of data, private or public based on GDPR</li>
-            <li>email address needed for password reset, no spam</li>
-            <li>straightforward and complete account deletion</li>
-        </ol>
+        <p>Subreply is the only social network that has a privacy ensuring edit mode. While delete is no brainer unlike other places.</p>
+        <p>There's no redistribution of data, private or public, stricter than GDPR.</p>
     </div>
 {% endblock %}
