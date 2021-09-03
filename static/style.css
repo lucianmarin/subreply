@@ -108,7 +108,7 @@ table a:hover { color: var(--gray); }
 
 .list > .entry:last-child { padding-bottom: 0; }
 
-.sublist { margin-left: 25px; }
+.sublist { margin-left: 30px; }
 
 .sublist:last-child .entry:last-child { padding-bottom: 0; }
 
