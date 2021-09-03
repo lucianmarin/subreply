@@ -58,11 +58,11 @@ table a:hover { color: var(--gray); }
 
 .sidebar { background-color: var(--whitesmoke); text-align: right; }
 
-.main { background-color: var(--white); padding-left: 10px; }
+.main { background-color: var(--white); padding-left: 15px; }
 
 .rightside { background-color: var(--white); }
 
-.logo { margin: 10px; overflow: hidden; position: sticky; top: 10px; }
+.logo { margin: 10px 15px; overflow: hidden; position: sticky; top: 10px; }
 
 .logo a { background-color: var(--white); border-radius: 15px; color: var(--gray); display: block; float: right; font-size: var(--tiny); height: 30px; line-height: 30px; text-align: center; width: 30px; }
 
@@ -70,7 +70,7 @@ table a:hover { color: var(--gray); }
 
 .links { position: sticky; text-align: right; top: 50px; }
 
-.links a { background-color: var(--whitesmoke); border-bottom: var(--white) 1px solid; color: var(--black); display: block; height: 20px; padding: 5px 15px; transition: background-color var(--d); }
+.links a { background-color: var(--whitesmoke); border-bottom: var(--white) 1px solid; color: var(--black); display: block; height: 20px; padding: 5px 0; transition: background-color var(--d); }
 
 .links a:hover { background-color: var(--gainsboro); }
 
@@ -86,7 +86,7 @@ table a:hover { color: var(--gray); }
 
 .links img { float: right; }
 
-.links svg { float: right; margin-left: 15px; padding: 2px; }
+.links svg { float: right; margin-left: 15px; margin-right: 20px; padding: 2px; }
 
 .title { color: var(--silver); font-size: 15px; font-weight: bold; line-height: 30px; margin: 10px 0; }
 
@@ -214,7 +214,7 @@ table a:hover { color: var(--gray); }
 
 .promo h5, .promo h6 { font-weight: normal; }
 
-@media (max-width: 680px) { .container { display: grid; grid-template-columns: 0 50px calc(100% - 50px) 0; } .main { padding: 0 10px; } .promo, .links i { display: none; } .links svg { margin-left: 0; } }
+@media (max-width: 680px) { .container { display: grid; grid-template-columns: 0 50px calc(100% - 50px) 0; } .main { padding: 0 10px; } .logo { margin: 10px; } .promo, .links i { display: none; } .links svg { margin-right: 15px; } }
 
 @font-face { font-family: "Route 159"; font-style: normal; font-weight: normal; src: url(/static/route159-regular.woff2) format("woff2"); }
 

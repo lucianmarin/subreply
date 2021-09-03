@@ -149,13 +149,13 @@ table
 
 .main
     background-color: var(--white)
-    padding-left: 10px
+    padding-left: 15px
 
 .rightside
     background-color: var(--white)
 
 .logo
-    margin: 10px
+    margin: 10px 15px
     overflow: hidden
     position: sticky
     top: 10px
@@ -183,7 +183,7 @@ table
         color: var(--black)
         display: block
         height: 20px
-        padding: 5px 15px
+        padding: 5px 0
         transition: background-color var(--d)
         &:hover
             background-color: var(--gainsboro)
@@ -206,6 +206,7 @@ table
     svg
         float: right
         margin-left: 15px
+        margin-right: 20px
         padding: 2px
 
 .title
@@ -406,10 +407,12 @@ table
         grid-template-columns: 0 50px calc(100% - 50px) 0
     .main
         padding: 0 10px
+    .logo
+        margin: 10px
     .promo, .links i
         display: none
     .links svg
-        margin-left: 0
+        margin-right: 15px
 
 @font-face
     font-family: "Route 159"
