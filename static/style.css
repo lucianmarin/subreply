@@ -194,7 +194,7 @@ table a:hover { color: var(--gray); }
 
 .about a:hover { color: var(--gray); }
 
-.about p { margin-bottom: 10px; }
+.about p:last-child { margin-bottom: 10px; text-indent: 30px; }
 
 .about ul { margin-bottom: 10px; margin-left: 30px; }
 
