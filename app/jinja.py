@@ -26,6 +26,6 @@ env.globals['v'] = 6
 
 
 def render(page, **kwargs):
-    print('-----', page, kwargs.get('view', ''))
+    print('\n---', page, kwargs.get('view', ''))
     template = env.get_template(f'pages/{page}.html')
     return template.render(**kwargs)
