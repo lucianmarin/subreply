@@ -475,7 +475,6 @@ class PeopleResource:
         return paginate(req, entries, 24)
 
     @before(auth_user)
-    @before(login_required)
     def on_get(self, req, resp):
         q = req.params.get('q', '').strip()
         terms = [t.strip() for t in q.split() if t.strip()]
@@ -537,7 +536,6 @@ class TrendingResource:
         return paginate(req, entries, self.sample)
 
     @before(auth_user)
-    @before(login_required)
     def on_get(self, req, resp):
         entries = self.fetch_entries(req)
         page, number = get_page(req)
