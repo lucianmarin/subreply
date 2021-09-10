@@ -35,7 +35,7 @@ app.add_route('/emoji', resources.EmojiResource())
 
 app.add_route('/login', resources.LoginResource())
 app.add_route('/logout', resources.LogoutResource())
-app.add_route('/request', resources.RequestResource())
+app.add_route('/register', resources.RegisterResource())
 app.add_route('/unlock', resources.UnlockResource())
 app.add_route('/unlock/{token}', resources.UnlockResource(), suffix="lnk")
 

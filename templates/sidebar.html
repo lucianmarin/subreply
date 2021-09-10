@@ -68,6 +68,13 @@
                 <path d="M16 14 L16 23 M16 8 L16 10" />
             </svg>
         </a>
+        <a href="/unlock" accesskey="u" class="{% if view == 'unlock' %}on{% endif %}">
+            <i>Unlock</i>
+            <svg id="i-unlock" viewBox="0 0 32 32" width="16" height="16">
+                <path d="M5 15 L5 30 27 30 27 15 Z M9 15 C9 7 9 3 16 3 23 3 23 8 23 9 M16 20 L16 23" />
+                <circle cx="16" cy="24" r="1" />
+            </svg>
+        </a>
         <a href="/login" accesskey="l" class="{% if view == 'login' %}on{% endif %}">
             <i>Login</i>
             <svg id="i-lock" viewBox="0 0 32 32" width="16" height="16">
@@ -75,18 +82,11 @@
                 <circle cx="16" cy="24" r="1" />
             </svg>
         </a>
-        <a href="/request" accesskey="r" class="{% if view == 'request' %}on{% endif %}">
-            <i>Request</i>
+        <a href="/register" accesskey="r" class="{% if view == 'register' %}on{% endif %}">
+            <i>Register</i>
             <svg id="i-creditcard" viewBox="0 0 32 32" width="16" height="16">
                 <path d="M2 7 L2 25 30 25 30 7 Z M5 18 L9 18 M5 21 L11 21" />
                 <path d="M2 11 L2 13 30 13 30 11 Z" />
-            </svg>
-        </a>
-        <a href="/unlock" accesskey="u" class="{% if view == 'unlock' %}on{% endif %}">
-            <i>Unlock</i>
-            <svg id="i-unlock" viewBox="0 0 32 32" width="16" height="16">
-                <path d="M5 15 L5 30 27 30 27 15 Z M9 15 C9 7 9 3 16 3 23 3 23 8 23 9 M16 20 L16 23" />
-                <circle cx="16" cy="24" r="1" />
             </svg>
         </a>
     {% endif %}
