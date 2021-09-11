@@ -4,6 +4,10 @@ from hashlib import pbkdf2_hmac
 from random import choice
 
 
+def cleaner(value):
+    return " ".join([w.strip() for w in value.split()])
+
+
 def has_repetions(word, n=3):
     return any(char * n in word for char in word)
 
