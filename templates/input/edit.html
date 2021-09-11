@@ -1,10 +1,9 @@
 <div class="reply">
     <form enctype="multipart/form-data" method="post" autocomplete="off">
-        <textarea name="content" id="id_content"
+        <textarea name="content" id="id_content" rows="1" cols="60"
             placeholder="Edit content"
-            rows="1" cols="60" maxlength="480"
             oninput="expand(this)" onkeydown="send(event)"
-            >{{ form.getvalue('content', entry.content) }}</textarea>
+            >{{ content }}</textarea>
         {% for name, error in errors.items() %}
             <div class="error">{{ error | safe }}</div>
         {% endfor %}

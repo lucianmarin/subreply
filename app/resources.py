@@ -112,11 +112,10 @@ class FeedResource:
     @before(auth_user)
     @before(login_required)
     def on_get(self, req, resp):
-        form = FieldStorage(fp=req.stream, environ=req.env)
         entries = self.fetch_entries(req)
         page, number = get_page(req)
         resp.text = render(
-            page=page, view='feed', form=form, number=number,
+            page=page, view='feed', number=number,
             user=req.user, entries=entries, errors={}
         )
 
@@ -170,10 +169,9 @@ class ReplyResource:
         ).exists() if req.user else True
         ancestors = self.fetch_ancestors(parent)
         entries = self.fetch_entries(parent)
-        form = FieldStorage(fp=req.stream, environ=req.env)
         resp.text = render(
             page='reply', view='reply',
-            user=req.user, entry=parent, form=form, errors={}, entries=entries,
+            user=req.user, entry=parent, errors={}, entries=entries,
             ancestors=ancestors, duplicate=duplicate
         )
 
@@ -228,10 +226,9 @@ class EditResource:
         if not entry or entry.created_by != req.user or entry.replies:
             return not_found(resp, req.user, f'/edit/{base}')
         ancestors = [entry.parent] if entry.parent_id else []
-        form = FieldStorage(fp=req.stream, environ=req.env)
         resp.text = render(
             page='edit', view='edit',
-            user=req.user, entry=entry, form=form, errors={},
+            user=req.user, entry=entry, content=entry.content, errors={},
             ancestors=ancestors
         )
 
@@ -256,7 +253,7 @@ class EditResource:
             ancestors = [entry.parent] if entry.parent_id else []
             resp.text = render(
                 page='edit', view='edit',
-                user=req.user, entry=entry, form=form, errors=errors,
+                user=req.user, entry=entry, content=content, errors=errors,
                 ancestors=ancestors
             )
         else:
