@@ -21,11 +21,10 @@
                 Improve <a href="/options">profile</a> to get approved
             </div>
         {% else %}
-            <textarea name="content" id="id_content"
+            <textarea name="content" id="id_content" rows="1" cols="60"
                 placeholder="Reply to @{{ entry.created_by }}"
-                rows="1" cols="60" maxlength="480"
                 oninput="expand(this)" onkeydown="send(event)"
-                >{{ form.getvalue('content', status) }}</textarea>
+                >{{ content }}</textarea>
         {% endif %}
         {% for name, error in errors.items() %}
             <div class="error">{{ error | safe }}</div>

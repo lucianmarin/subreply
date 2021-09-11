@@ -120,9 +120,14 @@ function postUnfollow(event) {
     })
 }
 
-function expand(element, height=10) {
+function expand(element, padding=10, limit=480) {
     element.style.height = 'auto';
-    element.style.height = (element.scrollHeight - height) + 'px';
+    element.style.height = (element.scrollHeight - padding) + 'px';
+    if (element.value.length > limit) {
+        element.style.backgroundColor = 'var(--redsmoke)';
+    } else {
+        element.style.backgroundColor = 'var(--whitesmoke)';
+    }
 }
 
 function send(event) {

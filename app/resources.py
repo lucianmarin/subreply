@@ -133,7 +133,7 @@ class FeedResource:
         if errors:
             entries = self.fetch_entries(req)
             resp.text = render(
-                page='regular', view='feed', form=form, number=1,
+                page='regular', view='feed', content=content, number=1,
                 user=req.user, entries=entries, errors=errors
             )
         else:
@@ -196,7 +196,7 @@ class ReplyResource:
             entries = self.fetch_entries(parent)
             resp.text = render(
                 page='reply', view='reply',
-                user=req.user, entry=parent, form=form, errors=errors,
+                user=req.user, entry=parent, content=content, errors=errors,
                 entries=entries, ancestors=ancestors, duplicate=False
             )
         else:
