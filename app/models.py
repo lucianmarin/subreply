@@ -127,8 +127,8 @@ class Comment(models.Model):
                                 null=True, related_name='mentions')
     to_user = models.ForeignKey('User', on_delete=models.CASCADE, null=True,
                                 related_name='replies')
-    content = models.CharField(max_length=480, db_index=True)
-    agent = models.CharField(max_length=480, default='')
+    content = models.CharField(max_length=640, db_index=True)
+    agent = models.CharField(max_length=320, default='')
     hashtag = models.CharField(max_length=15, default='')
     link = models.CharField(max_length=120, default='')
     mention = models.CharField(max_length=15, default='')
