@@ -27,7 +27,7 @@
     </div>
     {% if member.bio %}
         <div class="content">
-            {{ member.bio | emojize | parser | safe }}
+            {{ member.bio | parser | safe }}
         </div>
     {% endif %}
     {% if member.website or member.birthday or member.country %}

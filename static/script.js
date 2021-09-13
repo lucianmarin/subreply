@@ -121,13 +121,21 @@ function postUnfollow(event) {
 }
 
 function expand(element, padding=10, limit=480) {
-    element.style.height = 'auto';
-    element.style.height = (element.scrollHeight - padding) + 'px';
+    var logo = document.getElementsByClassName('logo')[0];
+    var link = logo.children[0];
+    if (element.value) {
+        link.innerText = limit - element.value.length;
+    } else {
+        link.innerText = link.dataset.value;
+    }
     if (element.value.length > limit) {
         element.style.backgroundColor = 'var(--redsmoke)';
     } else {
         element.style.backgroundColor = 'var(--whitesmoke)';
     }
+    element.style.height = 'auto';
+    element.style.height = (element.scrollHeight - padding) + 'px';
+    element.value = element.value.normalize('NFD').replace(/[^\x00-\x7F]/g, "");
 }
 
 function send(event) {

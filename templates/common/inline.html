@@ -3,6 +3,6 @@
         <a class="name" href="/{{ entry.created_by }}">
             {{ entry.created_by.emoji }} {{ entry.created_by.full_name | escape }}
         </a>
-        {{ entry.content | emojize | parser | safe }}
+        {{ entry.content | parser | safe }}
     </div>
 </div>

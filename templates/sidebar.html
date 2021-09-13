@@ -1,11 +1,15 @@
 <div class="logo">
     {% if user %}
         {% if user.lobbies %}
-            <a href="/lobby" class="{% if view == 'lobby' %}active{% endif %}">
+            <a href="/lobby"
+                class="{% if view == 'lobby' %}active{% endif %}"
+                data-value="{{ user.lobbies }}">
                 {{ user.lobbies }}
             </a>
         {% else %}
-            <a href="/{{ user }}" class="{% if user == member %}active{% endif %}">
+            <a href="/{{ user }}"
+                class="{% if user == member %}active{% endif %}"
+                data-value="{{ user.username[:3] }}">
                 {{ user.username[:3] }}
             </a>
         {% endif %}

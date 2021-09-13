@@ -4,8 +4,7 @@ from unidecode import unidecode
 
 def get_content(form, t="content"):
     value = form.getvalue(t, '')
-    demojized = demojize(value)
-    decoded = unidecode(demojized)
+    decoded = unidecode(value)
     words = [w.strip() for w in decoded.split()]
     return " ".join(words)
 
