@@ -1,22 +1,16 @@
 <div class="logo">
     {% if user %}
         {% if user.lobbies %}
-            <a href="/lobby"
-                class="{% if view == 'lobby' %}active{% endif %}"
-                data-value="{{ user.lobbies }}">
+            <a href="/lobby" data-value="{{ user.lobbies }}">
                 {{ user.lobbies }}
             </a>
         {% else %}
-            <a href="/{{ user }}"
-                class="{% if user == member %}active{% endif %}"
-                data-value="{{ user.username[:3] }}">
+            <a href="/{{ user }}" data-value="{{ user.username[:3] }}">
                 {{ user.username[:3] }}
             </a>
         {% endif %}
     {% else %}
-        <a href="/subreply" class="{% if member and member.username == 'subreply' %}active{% endif %}">
-            sub
-        </a>
+        <a href="/subreply">sub</a>
     {% endif %}
 </div>
 

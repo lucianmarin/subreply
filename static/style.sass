@@ -7,12 +7,12 @@ html
     --d: 0.2s
     --white: white
     --whitesmoke: #f0f0f0
-    --redsmoke: #fff0f0
     --gainsboro: #e0e0e0
     --silver: #c0c0c0
     --gray: #808080
     --black: black
-    --accent: #5070e0
+    --accent: #4060e0
+    --orange: #FF4000
 
 ::-moz-placeholder
     color: darken(#808080, 38%)
@@ -28,9 +28,8 @@ html
 @media (prefers-color-scheme: dark)
     html
         --white: black
-        --whitesmoke: #141414
-        --redsmoke: #241414
-        --gainsboro: #242424
+        --whitesmoke: #181818
+        --gainsboro: #282828
         --silver: #404040
         --gray: #808080
         --black: white
@@ -162,9 +161,9 @@ table
     position: sticky
     top: 10px
     a
-        background-color: var(--white)
+        background-color: var(--black)
         border-radius: 15px
-        color: var(--gray)
+        color: var(--white)
         display: block
         float: right
         font-size: var(--tiny)
@@ -172,8 +171,6 @@ table
         line-height: 30px
         text-align: center
         width: 30px
-        &.active
-            color: var(--accent)
 
 .links
     position: sticky
@@ -198,7 +195,7 @@ table
                 stroke: var(--accent)
         &.accent
             svg path, svg circle
-                stroke: orangered
+                stroke: var(--orange)
         sup
             font-size: var(--super)
             font-weight: bold
@@ -304,7 +301,7 @@ table
     .here
         color: green
     .away
-        color: orangered
+        color: var(--orange)
     .gone
         color: var(--gray)
 
@@ -362,10 +359,10 @@ table
 
 .error
     clear: both
-    color: orangered
+    color: var(--orange)
     font-size: var(--small)
     a
-        color: orangered
+        color: var(--orange)
         font-weight: bold
 
 .about

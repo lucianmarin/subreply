@@ -129,9 +129,9 @@ function expand(element, padding=10, limit=480) {
         link.innerText = link.dataset.value;
     }
     if (element.value.length > limit) {
-        element.style.backgroundColor = 'var(--redsmoke)';
+        link.style.backgroundColor = 'var(--orange)';
     } else {
-        element.style.backgroundColor = 'var(--whitesmoke)';
+        link.style.backgroundColor = 'var(--black)';
     }
     element.style.height = 'auto';
     element.style.height = (element.scrollHeight - padding) + 'px';
