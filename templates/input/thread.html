@@ -5,7 +5,8 @@
                 Improve <a href="/options">profile</a> to get approved
             </div>
         {% else %}
-            <textarea name="content" id="id_content" rows="1" cols="60"
+            <textarea name="content" id="id_content"
+                rows="1" cols="60" maxlength="560"
                 placeholder="Share your thoughts"
                 oninput="expand(this)" onkeydown="send(event)"
                 >{{ content }}</textarea>
