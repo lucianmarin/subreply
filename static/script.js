@@ -131,7 +131,7 @@ function expand(element, padding=10, limit=480) {
     if (element.value.length > limit) {
         link.style.color = 'var(--orange)';
     } else {
-        link.style.color = 'var(--black)';
+        link.style.color = 'var(--gray)';
     }
     element.style.height = 'auto';
     element.style.height = (element.scrollHeight - padding) + 'px';
