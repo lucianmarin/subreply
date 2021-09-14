@@ -118,7 +118,7 @@ table a:hover { color: var(--gray); }
 
 .content { cursor: text; word-break: break-word; }
 
-.content.inline { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; opacity: 0.5; }
+.content.inline { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 .content a { color: var(--accent); }
 
