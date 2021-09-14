@@ -1,13 +1,5 @@
 .DS_Store
 __pycache__
 .pytest_cache
-*.so
-*.c
-build/
-emails/
-media/
 local.py
 sub.pid
-db_*.json
-*.csv
-local.db

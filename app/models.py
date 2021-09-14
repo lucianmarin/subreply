@@ -107,7 +107,7 @@ class User(models.Model):
         return self.saved.values_list('to_comment_id', flat=True)
 
     def up_seen(self):
-        fmt = "%Y-%m-%d-%H-%M"
+        fmt = "%Y-%m-%d-%H"
         last_day = datetime.now(timezone.utc).strftime(fmt)
         last_seen = datetime.fromtimestamp(self.seen_at).strftime(fmt)
         if last_day != last_seen:
