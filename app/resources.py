@@ -46,7 +46,7 @@ def paginate(req, qs, limit=16):
 
 
 def not_found(resp, user, url):
-    resp.text = render(page='404', user=user, url=url)
+    resp.text = render(page="404", view="404", user=user, url=url)
     resp.status = status_codes.HTTP_404
 
 
