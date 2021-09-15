@@ -54,7 +54,7 @@ def valid_thread(value):
     duplicates = [t for t in threads if t.content.lower() == value.lower()]
     if duplicates:
         duplicate = duplicates[0]
-        return f'Thread started by <a href="/{duplicate.created_by}/{duplicate.base}">@{duplicate.created_by}</a>'
+        return f'Thread started by <a href="/reply/{duplicate.base}">@{duplicate.created_by}</a>'
 
 
 def valid_reply(parent, user, value, mentions):
@@ -65,7 +65,7 @@ def valid_reply(parent, user, value, mentions):
         (Q(ancestors=top_id) | Q(id=top_id)) & Q(content__iexact=value)
     ).first()
     if duplicate:
-        return f'Replied by <a href="/{duplicate.created_by}/{duplicate.base}">@{duplicate.created_by}</a> in thread'
+        return f'Replied by <a href="/reply/{duplicate.base}">@{duplicate.created_by}</a> in thread'
     elif parent.created_by_id == user.id:
         return "Can't reply to yourself"
     elif len(mentions) == 1 and mentions[0].lower() == parent.created_by.username:

@@ -161,10 +161,10 @@ class ReplyResource:
         return Comments.filter(id__in=parent.ancestors.values('id')).order_by('id')
 
     @before(auth_user)
-    def on_get(self, req, resp, username, base):
+    def on_get(self, req, resp, base):
         parent = Comments.filter(id=int(base, 36)).first()
-        if not parent or parent.created_by.username != username.lower():
-            return not_found(resp, req.user, f'/{username}/{base}')
+        if not parent:
+            return not_found(resp, req.user, f'/reply/{base}')
         duplicate = Comment.objects.filter(
             parent=parent, created_by=req.user
         ).exists() if req.user else True
@@ -178,7 +178,7 @@ class ReplyResource:
 
     @before(auth_user)
     @before(login_required)
-    def on_post(self, req, resp, username, base):
+    def on_post(self, req, resp, base):
         parent = Comments.filter(
             id=int(base, 36)
         ).select_related('parent').first()
@@ -214,7 +214,7 @@ class ReplyResource:
                 **extra
             )
             re.set_ancestors()
-            raise HTTPFound(f'/{username}/{base}')
+            raise HTTPFound(f'/reply/{base}')
 
 
 class EditResource:
@@ -273,7 +273,7 @@ class EditResource:
             if previous_at_user != entry.at_user:
                 entry.mention_seen_at = .0
             entry.save(update_fields=fields)
-            raise HTTPFound(f'/{entry.created_by}/{base}')
+            raise HTTPFound(f'/reply/{base}')
 
 
 class ProfileResource:

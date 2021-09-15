@@ -6,14 +6,14 @@
         {{ entry.content | parser | safe }}
     </div>
     <div class="small">
-        <a href="/{{ entry.created_by }}/{{ entry.base }}">
+        <a href="/reply/{{ entry.base }}">
             {% if entry.edited_at %}
                 &middot;&middot;&middot; {{ entry.edited_at | shortdate }}
             {% else %}
                 {{ entry.created_at | shortdate }}
             {% endif %}
         </a>
-        <a href="/{{ entry.created_by }}/{{ entry.base }}">
+        <a href="/reply/{{ entry.base }}">
             {{ entry.replied }} {% if not entry.parent_id %}&not;{% endif %}
         </a>
         {% if user %}
