@@ -10,7 +10,7 @@ function ajax(path, method='post', type='json', callback) {
     xhr.send();
 }
 
-function loadPage(event, number) {
+function getPage(event, number) {
     event.preventDefault();
     var link = event.currentTarget;
     var loader = link.parentElement

@@ -38,7 +38,7 @@
 
         {% if not q and entries | length == limit %}
             <div class="entry load">
-                <a onclick="loadPage(event, {{ number + 1 }})">Load more</a>
+                <a onclick="getPage(event, {{ number + 1 }})">Load more</a>
             </div>
         {% endif %}
     </div>
