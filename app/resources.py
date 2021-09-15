@@ -522,7 +522,7 @@ class DiscoverResource:
 
 
 class TrendingResource:
-    sample = 160
+    sample = 16
 
     def fetch_entries(self, req):
         sampling = Comment.objects.filter(parent=None).annotate(
