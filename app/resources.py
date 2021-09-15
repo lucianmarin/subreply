@@ -26,6 +26,7 @@ Comments = Comment.objects.annotate(
 
 PPFR = Prefetch('parent', Comments)
 PFR = Prefetch('kids', Comments.order_by('id'))
+RPFR = Prefetch('kids', Comments.prefetch_related(PFR))
 
 
 def get_number(req):
@@ -154,7 +155,7 @@ class FeedResource:
 
 class ReplyResource:
     def fetch_entries(self, parent):
-        return Comments.filter(parent=parent).order_by('-id').prefetch_related(PFR)
+        return Comments.filter(parent=parent).order_by('-id').prefetch_related(RPFR)
 
     def fetch_ancestors(self, parent):
         return Comments.filter(id__in=parent.ancestors.values('id')).order_by('id')
@@ -521,7 +522,7 @@ class DiscoverResource:
 
 
 class TrendingResource:
-    sample = 16
+    sample = 160
 
     def fetch_entries(self, req):
         sampling = Comment.objects.filter(parent=None).annotate(

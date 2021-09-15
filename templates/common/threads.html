@@ -4,6 +4,14 @@
     <div class="sublist">
         {% for entry in entry.kids.all() %}
             {% include "common/entry.html" %}
+
+            {% if entry.kids.all() %}
+                <div class="sublist">
+                    {% for entry in entry.kids.all() %}
+                        {% include "common/inline.html" %}
+                    {% endfor %}
+                </div>
+            {% endif %}
         {% endfor %}
     </div>
 {% endif %}
