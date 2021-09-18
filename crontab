@@ -4,5 +4,5 @@
 # user
 */20 * * * * python3 ~/newscafe/manage.py fetch
 30 12 * * * pg_dump -U postgres subreply | xz > ~/db/subreply.sql.xz
-15 * * * * zcat -f ~/logs/news.log.gz | goaccess --ignore-crawlers --output ~/newscafe/static/logs.html -
-45 * * * * zcat -f ~/logs/sub.log.gz | goaccess --ignore-crawlers --output ~/subreply/static/logs.html -
+15 * * * * zcat -f ~/logs/news.log.gz | goaccess --output ~/newscafe/static/logs.html -
+45 * * * * zcat -f ~/logs/sub.log.gz | goaccess --output ~/subreply/static/logs.html -
