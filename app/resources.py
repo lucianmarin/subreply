@@ -29,10 +29,12 @@ PFR = Prefetch('kids', Comments.order_by('id'))
 RPFR = Prefetch('kids', Comments.prefetch_related(PFR))
 
 
-def get_at_user(bangs, mentions):
+def get_at_user(bangs, mentions, user):
     if bangs:
         bang = bangs[0].lower()
-        return Comment.objects.get(id=int(bang, 36)).created_by
+        comment = Comment.objects.get(id=int(bang, 36))
+        if comment.created_by_id != user.id:
+            return comment.created_by
     elif mentions:
         mention = mentions[0].lower()
         return User.objects.get(username=mention)
@@ -150,7 +152,7 @@ class FeedResource:
             extra = {}
             extra['hashtag'] = hashtags[0].lower() if hashtags else ''
             extra['link'] = links[0].lower() if links else ''
-            extra['at_user'] = get_at_user(bangs, mentions)
+            extra['at_user'] = get_at_user(bangs, mentions, req.user)
             th, is_new = Comment.objects.get_or_create(
                 content=content,
                 created_at=utc_timestamp(),
@@ -209,7 +211,7 @@ class ReplyResource:
             extra = {}
             extra['hashtag'] = hashtags[0].lower() if hashtags else ''
             extra['link'] = links[0].lower() if links else ''
-            extra['at_user'] = get_at_user(bangs, mentions)
+            extra['at_user'] = get_at_user(bangs, mentions, req.user)
             re, is_new = Comment.objects.get_or_create(
                 parent=parent,
                 to_user=parent.created_by,
@@ -272,7 +274,7 @@ class EditResource:
             entry.edited_at = utc_timestamp()
             entry.hashtag = hashtags[0].lower() if hashtags else ''
             entry.link = links[0].lower() if links else ''
-            entry.at_user = get_at_user(bangs, mentions)
+            entry.at_user = get_at_user(bangs, mentions, req.user)
             if previous_at_user != entry.at_user:
                 entry.mention_seen_at = .0
             entry.save(update_fields=fields)
