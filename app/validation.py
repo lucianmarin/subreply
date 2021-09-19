@@ -12,12 +12,12 @@ from app.models import Comment, User
 from project.settings import INVALID, SLURS
 
 
-def valid_content(value, user):
-    mentions, links, hashtags = parse_metadata(value)
+def valid_content(value, user, limit=480):
+    bangs, hashtags, links, mentions = parse_metadata(value)
     if not value:
-        return "Status can't be blank"
-    elif len(value) > 480:
-        return "Status can't be longer than 480 characters"
+        return "It can't be blank"
+    elif len(value) > limit:
+        return f"It can't be longer than {limit} characters"
     elif len(value) != len(value.encode()):
         return "Only English alphabet allowed"
     elif len(mentions) > 1:
@@ -26,6 +26,16 @@ def valid_content(value, user):
         return "Link a single address"
     elif len(hashtags) > 1:
         return "Hashtag a single channel"
+    elif len(bangs) > 1:
+        return "Bang a single reply"
+    elif bangs and mentions:
+        return "Only a bang or a mention"
+    elif bangs:
+        bang = bangs[0].lower()
+        if bang == value.lower()[1:]:
+            return "Status can't be only a bang"
+        elif not Comment.objects.filter(id=int(bang, 36)).exists():
+            return "!{0} doesn't exists".format(bang)
     elif hashtags:
         hashtag = hashtags[0].lower()
         if len(hashtag) > 15:
@@ -45,7 +55,7 @@ def valid_content(value, user):
         elif mention == value.lower()[1:]:
             return "Status can't be only a mention"
         elif not User.objects.filter(username=mention).exists():
-            return "@{0} isn't an user".format(mention)
+            return "@{0} doesn't exists".format(mention)
 
 
 def valid_thread(value):
@@ -174,34 +184,10 @@ def valid_email(value, user_id=0):
             return "Email can't be sent to this address"
 
 
-def valid_bio(value, username, user_id=0):
+def valid_bio(value, user_id):
     if value:
-        mentions, links, hashtags = parse_metadata(value)
-        duplicate = User.objects.filter(bio=value).exclude(id=user_id).first()
-        if len(value) > 120:
-            return "Bio can't be longer than 120 characters"
-        elif len(value) != len(value.encode()):
-            return "Only English alphabet allowed"
-        elif any(slur in value.lower() for slur in SLURS):
-            return "Bio contains prohibited words"
-        elif duplicate:
-            return f'Bio is used by <a href="/{duplicate}">@{duplicate}</a>'
-        elif has_repetions(value):
-            return "Bio contains repeating characters"
-        elif len(mentions) > 1:
-            return "Mention a single user"
-        elif len(links) > 1:
-            return "Link a single address"
-        elif len(hashtags) > 1:
-            return "Hashtag a single channel"
-        elif hashtags and len(hashtags[0]) > 120:
-            return "Hashtag can't be longer than 15 characters"
-        elif mentions:
-            mention = mentions[0].lower()
-            if mention == username:
-                return "Can't mention yourself"
-            elif not User.objects.filter(username=mention).exists():
-                return "@{0} isn't an user".format(mention)
+        user = User.objects.filter(id=user_id).first()
+        return valid_content(value, user, limit=120)
 
 
 def valid_website(value, user_id=0):
@@ -320,7 +306,7 @@ def profiling(f, user_id):
     errors['full_name'] = valid_full_name(f['first_name'], f['last_name'])
     errors['email'] = valid_email(f['email'], user_id=user_id)
     errors['website'] = valid_website(f['website'], user_id=user_id)
-    errors['bio'] = valid_bio(f['bio'], f['username'], user_id=user_id)
+    errors['bio'] = valid_bio(f['bio'], user_id=user_id)
     errors['birthday'] = valid_birthday(f['birthday'])
     errors['location'] = valid_location(f['location'])
     errors['emoji'] = valid_emoji(f['emoji'], user_id=user_id)

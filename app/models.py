@@ -5,7 +5,6 @@ from django import setup
 from django.conf import settings
 from django.db import models
 from django.utils.functional import cached_property
-from user_agents import parse
 
 from app.const import SITES
 from app.helpers import utc_timestamp
@@ -128,10 +127,8 @@ class Comment(models.Model):
     to_user = models.ForeignKey('User', on_delete=models.CASCADE, null=True,
                                 related_name='replies')
     content = models.CharField(max_length=640, db_index=True)
-    agent = models.CharField(max_length=320, default='')
     hashtag = models.CharField(max_length=15, default='')
     link = models.CharField(max_length=120, default='')
-    mention = models.CharField(max_length=15, default='')
     edited_at = models.FloatField(default=.0)
     mention_seen_at = models.FloatField(default=.0, db_index=True)
     reply_seen_at = models.FloatField(default=.0, db_index=True)
@@ -150,10 +147,6 @@ class Comment(models.Model):
             return '1 reply'
         else:
             return '{0} replies'.format(self.replies)
-
-    @cached_property
-    def ua(self):
-        return parse(self.agent)
 
     @cached_property
     def base(self):

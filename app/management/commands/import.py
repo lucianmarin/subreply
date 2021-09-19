@@ -30,7 +30,7 @@ class Command(BaseCommand):
         self.users[pk] = user
 
     def fetch_comments(self, fields, pk):
-        mentions, links, hashtags = parse_metadata(fields['content'])
+        bangs, hashtags, links, mentions = parse_metadata(fields['content'])
         at_user = None
         if mentions:
             at_user = User.objects.filter(username=mentions[0].lower()).first()
