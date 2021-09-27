@@ -19,7 +19,7 @@ def valid_content(value, user, limit=480):
     elif len(value) > limit:
         return f"It can't be longer than {limit} characters"
     elif len(value) != len(value.encode()):
-        return "Only English alphabet allowed"
+        return "Only ASCII characters are allowed"
     elif len(mentions) > 1:
         return "Mention a single user"
     elif len(links) > 1:
@@ -29,11 +29,11 @@ def valid_content(value, user, limit=480):
     elif len(bangs) > 1:
         return "Bang a single reply"
     elif bangs and mentions:
-        return "Only a bang or a mention"
+        return "Only a !bang or a @mention"
     elif bangs:
         bang = bangs[0].lower()
         if bang == value.lower()[1:]:
-            return "Status can't be only a bang"
+            return "It can't be only a bang"
         elif not Comment.objects.filter(id=int(bang, 36)).exists():
             return "!{0} doesn't exists".format(bang)
     elif hashtags:
@@ -41,19 +41,21 @@ def valid_content(value, user, limit=480):
         if len(hashtag) > 15:
             return "Hashtag can't be longer than 15 characters"
         elif hashtag == value.lower()[1:]:
-            return "Status can't be only a hashtag"
+            return "It can't be only a hashtag"
     elif links:
         link = links[0].lower()
         if len(link) > 120:
             return "Link can't be longer than 120 characters"
         elif link == value.lower():
-            return "Status can't be only a link"
+            return "It can't be only a link"
+        elif 'subreply.com' in link:
+            return "Use a mention or a bang instead"
     elif mentions:
         mention = mentions[0].lower()
         if mention == user.username:
             return "Can't mention yourself"
         elif mention == value.lower()[1:]:
-            return "Status can't be only a mention"
+            return "It can't be only a mention"
         elif not User.objects.filter(username=mention).exists():
             return "@{0} doesn't exists".format(mention)
 
@@ -168,7 +170,7 @@ def valid_email(value, user_id=0):
     elif len(value) > 120:
         return "Email can't be longer than 120 characters"
     elif len(value) != len(value.encode()):
-        return "Email should use English alphabet"
+        return "Email should use ASCII characters"
     elif "@" not in value:
         return "Email isn't a valid address"
     elif User.objects.filter(email=value).exclude(id=user_id).exists():
@@ -196,7 +198,7 @@ def valid_website(value, user_id=0):
         if len(value) > 120:
             return "Website can't be longer than 120 characters"
         elif len(value) != len(value.encode()):
-            return "Website should use English alphabet"
+            return "Website should use ASCII characters"
         elif not value.startswith(('http://', 'https://')):
             return "Website hasn't a valid http(s) address"
         elif duplicate:

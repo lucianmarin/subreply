@@ -19,10 +19,7 @@ def utc_timestamp():
 def parse_metadata(text):
     base36 = "0123456789abcdefghijklmnopqrstuvwxyz"
     limits = base36 + "ABCDEFGHIJKLMNOPQRSTUVWXYZ_"
-    bangs = []
-    hashtags = []
-    links = []
-    mentions = []
+    bangs, hashtags, links, mentions = [], [], [], []
     for word in text.split():
         if word.endswith(('.', ',', '!', '?', ':', ';')):
             word = word[:-1]
