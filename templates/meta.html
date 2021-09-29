@@ -9,7 +9,7 @@
 
 <script type="text/javascript" src="/static/script.js?v={{v}}" async defer></script>
 
-{% if view in ['feed', 'reply'] and errors %}
+{% if (view in ['feed', 'reply'] and errors) or (view == 'edit') %}
     <script type="text/javascript">
         window.onload = function() {
             var content = document.getElementById('id_content');
