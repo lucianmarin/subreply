@@ -1,15 +1,6 @@
 <!doctype html>
 <html lang="en">
 <head>
-    <title>
-        {% if view == 'feed' %}
-            {{ brand }}
-        {% elif view == 'profile' %}
-            {{ brand }} / {{ member.full_name }}
-        {% else %}
-            {{ brand }} / {{ view | capitalize }}
-        {% endif %}
-    </title>
     {% include "meta.html" %}
     {% block meta %}{% endblock %}
 </head>
