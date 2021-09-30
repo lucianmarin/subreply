@@ -19,7 +19,7 @@
             {% if member.id in user.follows %}
                 <a class="handle" onclick="postUnfollow(event)" data-username="{{ member }}">unfollow</a>
             {% else %}
-                <a class="handle" onclick="postFollow(event)" data-username="{{ member }}">follow</a>
+                <a class="accent" onclick="postFollow(event)" data-username="{{ member }}">follow</a>
             {% endif %}
         {% else %}
             <a class="handle" href="/{{ member }}">@{{ member }}</a>

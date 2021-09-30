@@ -286,14 +286,17 @@ table
     color: var(--gray)
     font-size: var(--small)
     @include dots
-    .short, .handle, b
+    .accent, .short, .handle, b
         font-weight: bold
-    .short:hover
-        color: var(--gray)
     .handle, .ago
         color: var(--gray)
         &:hover
             color: var(--silver)
+    .accent
+        color: var(--accent)
+    .accent, .short
+        &:hover
+            color: var(--gray)
     .ago
         float: right
     .here

@@ -97,6 +97,7 @@ function postFollow(event) {
     ajax('/api/follow/' + username, 'post', 'json', function (data) {
         if (data.status == 'unfollow') {
             element.innerText = data.status;
+            element.className = "handle";
             element.onclick = function (ev) {
                 ev.preventDefault();
                 postUnfollow(ev);
@@ -112,9 +113,10 @@ function postUnfollow(event) {
     ajax('/api/unfollow/' + username, 'post', 'json', function (data) {
         if (data.status == 'follow') {
             element.innerText = data.status;
+            element.className = "accent";
             element.onclick = function (ev) {
                 ev.preventDefault();
-                postSave(ev);
+                postFollow(ev);
             }
         }
     })

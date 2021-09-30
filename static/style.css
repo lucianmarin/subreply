@@ -136,13 +136,15 @@ table a:hover { color: var(--gray); }
 
 .author { color: var(--gray); font-size: var(--small); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
-.author .short, .author .handle, .author b { font-weight: bold; }
-
-.author .short:hover { color: var(--gray); }
+.author .accent, .author .short, .author .handle, .author b { font-weight: bold; }
 
 .author .handle, .author .ago { color: var(--gray); }
 
 .author .handle:hover, .author .ago:hover { color: var(--silver); }
+
+.author .accent { color: var(--accent); }
+
+.author .accent:hover, .author .short:hover { color: var(--gray); }
 
 .author .ago { float: right; }
 
