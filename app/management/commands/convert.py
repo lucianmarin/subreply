@@ -11,7 +11,7 @@ from django.core.management.base import BaseCommand
 
 class Command(BaseCommand):
     help = "Fetch users, comments from db.json."
-    url = "https://simplemaps.com/static/data/world-cities/basic/simplemaps_worldcities_basicv1.73.zip"
+    url = "https://simplemaps.com/static/data/world-cities/basic/simplemaps_worldcities_basicv1.74.zip"
 
     def get_csv(self):
         r = requests.get(self.url, stream=True)
@@ -76,5 +76,5 @@ class Command(BaseCommand):
         with open('static/worldcities.json', 'w') as file:
             json.dump(world, file, sort_keys=True, indent=4)
 
-    def handle(self):
+    def handle(self, *args, **options):
         self.convert()
