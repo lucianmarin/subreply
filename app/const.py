@@ -5,15 +5,17 @@ with open('static/worldcities.json') as file:
 
 MIN_YEAR, MAX_YEAR = 1918, 2018
 
-SITES = {
+SOCIAL = {
     'dribbble': '<a href="https://dribbble.com/{0}">Dribbble</a>',
     'github': '<a href="https://github.com/{0}">GitHub</a>',
     'instagram': '<a href="https://instagram.com/{0}">Instagram</a>',
     'linkedin': '<a href="https://linkedin.com/in/{0}">LinkedIn</a>',
     'pinterest': '<a href="https://pinterest.com/{0}">Pinterest</a>',
     'soundcloud': '<a href="https://soundcloud.com/{0}">SoundCloud</a>',
+    'spotify': '<a href="https://open.spotify.com/user/{0}">Spotify</a>',
     'telegram': '<a href="https://t.me/{0}">Telegram</a>',
-    'twitter': '<a href="https://twitter.com/{0}">Twitter</a>'
+    'twitter': '<a href="https://twitter.com/{0}">Twitter</a>',
+    'youtube': '<a href="https://www.youtube.com/c/{0}">YouTube</a>'
 }
 
 LATIN = "-"

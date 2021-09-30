@@ -6,7 +6,7 @@ from django.conf import settings
 from django.db import models
 from django.utils.functional import cached_property
 
-from app.const import SITES
+from app.const import SOCIAL
 from app.helpers import utc_timestamp
 
 if not settings.configured:
@@ -72,9 +72,9 @@ class User(models.Model):
         keys = sorted(self.links)
         holder = ""
         for key in keys[:-2]:
-            holder += SITES[key].format(self.links[key]) + ", "
+            holder += SOCIAL[key].format(self.links[key]) + ", "
         for index, key in enumerate(keys[-2:]):
-            holder += SITES[key].format(self.links[key])
+            holder += SOCIAL[key].format(self.links[key])
             if not index and len(keys) > 1:
                 holder += " and "
         return also.format(holder)
