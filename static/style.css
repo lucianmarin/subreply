@@ -64,9 +64,7 @@ table a:hover { color: var(--gray); }
 
 .logo { margin: 10px; overflow: hidden; position: sticky; top: 10px; }
 
-.logo a { background-color: var(--white); border-radius: 15px; color: var(--gray); display: block; float: right; height: 30px; line-height: 30px; text-align: center; width: 30px; }
-
-.logo a.tiny { font-size: var(--tiny); }
+.logo a { background-color: var(--white); border-radius: 15px; color: var(--gray); display: block; float: right; font-size: var(--tiny); height: 30px; line-height: 30px; text-align: center; width: 30px; }
 
 .links { position: sticky; text-align: right; top: 50px; }
 
