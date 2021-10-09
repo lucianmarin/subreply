@@ -1,7 +1,7 @@
 <div class="logo">
     {% if user %}
         {% if user.lobbies %}
-            <a href="/lobby" data-value="{{ user.lobbies }}">
+            <a href="/lobby" class="tiny" data-value="{{ user.lobbies }}">
                 {{ user.lobbies }}
             </a>
         {% else %}
@@ -11,7 +11,7 @@
             </a>
         {% endif %}
     {% else %}
-        <a href="/subreply">sub</a>
+        <a href="/subreply" class="tiny">sub</a>
     {% endif %}
 </div>
 

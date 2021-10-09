@@ -212,13 +212,13 @@ table a:hover { color: var(--gray); }
 
 .about p:last-child { margin-bottom: 10px; }
 
-.about ul { margin-bottom: 10px; margin-left: 30px; }
+.about ol, .about ul { margin-bottom: 10px; margin-left: 30px; }
 
-.about ul li { border-bottom: var(--gainsboro) 1px dotted; padding: 2px 0; }
+.about ol li, .about ul li { border-bottom: var(--gainsboro) 1px dotted; padding: 2px 0; }
 
-.about ul li:first-child { padding-top: 0; }
+.about ol li:first-child, .about ul li:first-child { padding-top: 0; }
 
-.about ul li:last-child { border-bottom: 0 none; padding-bottom: 0; }
+.about ol li:last-child, .about ul li:last-child { border-bottom: 0 none; padding-bottom: 0; }
 
 .promo { color: var(--gray); font-size: 11px; padding: 10px 15px; position: sticky; top: 361px; }
 
