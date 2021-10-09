@@ -337,24 +337,38 @@ table
 .line
     margin-bottom: 10px
     overflow: hidden
-    .cell
-        display: table-cell
-        padding: 0 5px
-        height: 20px
-        vertical-align: middle
+    .emoji
+        float: left
+        margin-right: 1px
+        width: calc(20% - 1px)
+        input
+            border-bottom-right-radius: 0
+            border-top-right-radius: 0
+    .first
+        float: left
+        margin: 0 1px
+        width: calc(40% - 2px)
+        input
+            border-radius: 0
+    .last
+        float: left
+        margin-left: 1px
+        width: calc(40% - 1px)
+        input
+            border-bottom-left-radius: 0
+            border-top-left-radius: 0
     .left
         float: left
+        margin-right: 1px
         width: calc(50% - 1px)
         input
             border-bottom-right-radius: 0
             border-top-right-radius: 0
     .right
-        float: right
+        float: left
+        margin-left: 1px
         width: calc(50% - 1px)
-        select
-            border-right: var(--silver) var(--radius) solid
-            width: 100%
-        input, select
+        input
             border-bottom-left-radius: 0
             border-top-left-radius: 0
 

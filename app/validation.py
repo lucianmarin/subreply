@@ -1,7 +1,6 @@
 from datetime import date
 
 import emoji
-import grapheme
 import requests
 from django.db.models import Q
 from dns.resolver import query as dns_query
@@ -156,9 +155,13 @@ def valid_last_name(value):
         return "Only one double-name is allowed"
 
 
-def valid_full_name(first_name, last_name):
-    if first_name and last_name:
-        if first_name.lower() == last_name.lower():
+def valid_full_name(emoji, first_name, last_name):
+    if User.objects.filter(
+        emoji=emoji, first_name=first_name, last_name=last_name
+    ).exists():
+        return "Emoji and names combination is taken"
+    elif first_name and last_name:
+        if first_name == last_name:
             return "First and last names should be different"
         elif any(slur in f"{first_name}{last_name}".lower() for slur in SLURS):
             return "Full name is prohibited"
@@ -278,18 +281,9 @@ def valid_location(value, delimiter=", "):
             return "Country is invalid"
 
 
-def valid_emoji(value, user_id=0):
-    if value:
-        duplicate = User.objects.filter(emoji=value).exclude(id=user_id).first()
-        emojis = list(grapheme.graphemes(value))
-        if any(emo not in emoji.UNICODE_EMOJI_ENGLISH for emo in emojis):
-            return "Emojis only are allowed"
-        if len(emojis) > 2:
-            return "Emojis are more than two"
-        elif len(emojis) == 2 and emojis[0] == emojis[1]:
-            return "Emojis are identical"
-        elif duplicate:
-            return f'Emoji status of <a href="/{duplicate}">@{duplicate}</a>'
+def valid_emoji(value):
+    if value and value not in emoji.UNICODE_EMOJI_ENGLISH:
+        return "Emoji isn't valid"
 
 
 def changing(user, current, password1, password2):
@@ -305,13 +299,15 @@ def profiling(f, user_id):
     errors['username'] = valid_username(f['username'], user_id=user_id)
     errors['first_name'] = valid_first_name(f['first_name'])
     errors['last_name'] = valid_last_name(f['last_name'])
-    errors['full_name'] = valid_full_name(f['first_name'], f['last_name'])
+    errors['full_name'] = valid_full_name(
+        f['emoji'], f['first_name'], f['last_name']
+    )
     errors['email'] = valid_email(f['email'], user_id=user_id)
     errors['website'] = valid_website(f['website'], user_id=user_id)
     errors['bio'] = valid_bio(f['bio'], user_id=user_id)
     errors['birthday'] = valid_birthday(f['birthday'])
     errors['location'] = valid_location(f['location'])
-    errors['emoji'] = valid_emoji(f['emoji'], user_id=user_id)
+    errors['emoji'] = valid_emoji(f['emoji'])
     return {k: v for k, v in errors.items() if v}
 
 
@@ -320,7 +316,10 @@ def registration(f):
     errors['username'] = valid_username(f['username'])
     errors['first_name'] = valid_first_name(f['first_name'])
     errors['last_name'] = valid_last_name(f['last_name'])
-    errors['full_name'] = valid_full_name(f['first_name'], f['last_name'])
+    errors['full_name'] = valid_full_name(
+        f['emoji'], f['first_name'], f['last_name']
+    )
     errors['password'] = valid_password(f['password1'], f['password2'])
     errors['email'] = valid_email(f['email'])
+    errors['emoji'] = valid_emoji(f['emoji'])
     return {k: v for k, v in errors.items() if v}

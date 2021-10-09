@@ -650,14 +650,14 @@ class OptionsResource:
         form = FieldStorage(fp=req.stream, environ=req.env)
         f = {}
         f['username'] = form.getvalue('username', '').strip().lower()
+        f['email'] = form.getvalue('email', '').strip().lower()
+        f['emoji'] = get_emoji(form)
         f['first_name'] = get_name(form, 'first')
         f['last_name'] = get_name(form, 'last')
-        f['email'] = form.getvalue('email', '').strip().lower()
         f['bio'] = get_content(form, 'bio')
-        f['emoji'] = get_emoji(form)
+        f['website'] = form.getvalue('website', '').strip().lower()
         f['birthday'] = form.getvalue('birthday', '').strip()
         f['location'] = form.getvalue('location', '')
-        f['website'] = form.getvalue('website', '').strip().lower()
         errors = profiling(f, req.user.id)
         if errors:
             resp.text = render(
@@ -710,6 +710,7 @@ class RegisterResource:
         form = FieldStorage(fp=req.stream, environ=req.env)
         f = {}
         f['username'] = form.getvalue('username', '').strip().lower()
+        f['emoji'] = get_emoji(form)
         f['first_name'] = get_name(form, 'first')
         f['last_name'] = get_name(form, 'last')
         f['password1'] = form.getvalue('password1', '')
@@ -725,10 +726,11 @@ class RegisterResource:
             user, is_new = User.objects.get_or_create(
                 username=f['username'],
                 defaults={
+                    'email': f['email'],
+                    'emoji': f['emoji'],
                     'first_name': f['first_name'],
                     'last_name': f['last_name'],
                     'password': build_hash(f['password1']),
-                    'email': f['email'],
                     'joined_at': utc_timestamp(),
                     'seen_at': utc_timestamp()
                 }

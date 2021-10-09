@@ -39,20 +39,25 @@ class User(models.Model):
 
     links = models.JSONField(default=dict)
 
+    class Meta:
+        unique_together = ['emoji', 'first_name', 'last_name']
+
     def __str__(self):
         return self.username
 
     @cached_property
     def full_name(self):
         if len(self.last_name) == 1:
-            return "{0} {1}.".format(self.first_name, self.last_name)
-        return "{0} {1}".format(self.first_name, self.last_name).strip()
+            self.last_name += "."
+        return "{0} {1} {2}".format(
+            self.emoji, self.first_name, self.last_name
+        ).strip()
 
     @cached_property
     def short_name(self):
-        if self.last_name:
-            return "{0} {1}.".format(self.first_name, self.last_name[0])
-        return self.first_name
+        if self.emoji:
+            return self.emoji
+        return self.username[:3]
 
     @cached_property
     def status(self):

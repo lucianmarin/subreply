@@ -1,7 +1,7 @@
 <div class="entry">
     <div class="content inline">
         <a class="name" href="/{{ entry.created_by }}">
-            {{ entry.created_by.emoji }} {{ entry.created_by.full_name | escape }}
+            {{ entry.created_by.full_name | escape }}
         </a>
         {{ entry.content | parser | safe }}
     </div>

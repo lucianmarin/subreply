@@ -5,8 +5,8 @@
                 {{ user.lobbies }}
             </a>
         {% else %}
-            <a href="/{{ user }}" data-value="{{ user.username[:3] }}">
-                {{ user.username[:3] }}
+            <a href="/{{ user }}" data-value="{{ user.short_name }}">
+                {{ user.short_name }}
             </a>
         {% endif %}
     {% else %}

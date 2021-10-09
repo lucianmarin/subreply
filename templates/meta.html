@@ -4,7 +4,7 @@
 
 <title>
     {% if view == 'profile' %}
-        {{ brand }} / {{ member.full_name }}
+        {{ member.full_name }}
     {% else %}
         {{ brand }} / {{ view | capitalize }}
     {% endif %}

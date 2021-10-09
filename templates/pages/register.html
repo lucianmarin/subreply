@@ -26,16 +26,24 @@
                 {% endif %}
             </div>
             <div class="line">
-                <div class="left">
+                <div class="emoji">
+                    <label for="id_emoji">Emoji</label>
+                    <input type="text" name="emoji" id="id_emoji"
+                        maxlength="15" value="{{ fields.emoji }}">
+                </div>
+                <div class="first">
                     <label for="id_first_name">First name<i>*</i></label>
                     <input type="text" name="first_name" id="id_first_name"
                         maxlength="15" value="{{ fields.first_name }}">
                 </div>
-                <div class="right">
+                <div class="last">
                     <label for="id_last_name">Last name</label>
                     <input type="text" name="last_name" id="id_last_name"
                         maxlength="15" value="{{ fields.last_name }}">
                 </div>
+                {% if 'emoji' in errors %}
+                    <div class="error">{{ errors['emoji'] }}</div>
+                {% endif %}
                 {% if 'first_name' in errors %}
                     <div class="error">{{ errors['first_name'] }}</div>
                 {% endif %}

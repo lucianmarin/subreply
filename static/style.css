@@ -172,17 +172,25 @@ table a:hover { color: var(--gray); }
 
 .line { margin-bottom: 10px; overflow: hidden; }
 
-.line .cell { display: table-cell; padding: 0 5px; height: 20px; vertical-align: middle; }
+.line .emoji { float: left; margin-right: 1px; width: calc(20% - 1px); }
 
-.line .left { float: left; width: calc(50% - 1px); }
+.line .emoji input { border-bottom-right-radius: 0; border-top-right-radius: 0; }
+
+.line .first { float: left; margin: 0 1px; width: calc(40% - 2px); }
+
+.line .first input { border-radius: 0; }
+
+.line .last { float: left; margin-left: 1px; width: calc(40% - 1px); }
+
+.line .last input { border-bottom-left-radius: 0; border-top-left-radius: 0; }
+
+.line .left { float: left; margin-right: 1px; width: calc(50% - 1px); }
 
 .line .left input { border-bottom-right-radius: 0; border-top-right-radius: 0; }
 
-.line .right { float: right; width: calc(50% - 1px); }
+.line .right { float: left; margin-left: 1px; width: calc(50% - 1px); }
 
-.line .right select { border-right: var(--silver) var(--radius) solid; width: 100%; }
-
-.line .right input, .line .right select { border-bottom-left-radius: 0; border-top-left-radius: 0; }
+.line .right input { border-bottom-left-radius: 0; border-top-left-radius: 0; }
 
 .error { clear: both; color: var(--orange); font-size: var(--small); }
 
