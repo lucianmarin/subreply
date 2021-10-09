@@ -5,7 +5,8 @@
                 {{ user.lobbies }}
             </a>
         {% else %}
-            <a href="/{{ user }}" data-value="{{ user.short_name }}">
+            <a href="/{{ user }}" class="{% if not user.emoji %}tiny{% endif %}"
+                data-value="{{ user.short_name }}">
                 {{ user.short_name }}
             </a>
         {% endif %}
