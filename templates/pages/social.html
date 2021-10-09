@@ -46,12 +46,12 @@
                 {% endif %}
             </div>
             <div class="line">
-                <div class="right">
+                <div class="left">
                     <label for="id_pinterest">Pinterest</label>
                     <input type="text" name="pinterest" id="id_pinterest" maxlength="15"
                         value="{% if form %}{{ fields.pinterest }}{% else %}{{ user.links.pinterest }}{% endif %}">
                 </div>
-                <div class="left">
+                <div class="right">
                     <label for="id_soundcloud">SoundCloud</label>
                     <input type="text" name="soundcloud" id="id_soundcloud" maxlength="15"
                         value="{% if form %}{{ fields.soundcloud }}{% else %}{{ user.links.soundcloud }}{% endif %}">
