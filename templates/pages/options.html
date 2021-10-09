@@ -11,14 +11,14 @@
         <form enctype="multipart/form-data" method="post" autocomplete="off">
             <div class="line">
                 <div class="left">
-                    <label for="id_username">Username<i>*</i></label>
-                    <input type="text" name="username" id="id_username" maxlength="15"
-                        value="{% if form %}{{ fields.username }}{% else %}{{ user.username }}{% endif %}">
-                </div>
-                <div class="right">
                     <label for="id_email">Email address<i>*</i></label>
                     <input type="email" name="email" id="id_email" maxlength="120"
                         value="{% if form %}{{ fields.email }}{% else %}{{ user.email }}{% endif %}">
+                </div>
+                <div class="right">
+                    <label for="id_username">Username<i>*</i></label>
+                    <input type="text" name="username" id="id_username" maxlength="15"
+                        value="{% if form %}{{ fields.username }}{% else %}{{ user.username }}{% endif %}">
                 </div>
                 {% if 'username' in errors %}
                     <div class="error">{{ errors['username'] }}</div>
@@ -75,16 +75,16 @@
             </div>
             <div class="line">
                 <div class="left">
-                    <label for="id_year">Birthday</label>
-                    <input type="text" name="birthday" id="id_birthday"
-                        maxlength="10" placeholder="Y-M-D"
-                        value="{% if form %}{{ fields.birthday }}{% else %}{{ user.birthday }}{% endif %}">
-                </div>
-                <div class="right">
                     <label for="id_location">Location</label>
                     <input type="text" name="location" id="id_location"
                         maxlength="60" placeholder="City, Country"
                         value="{% if form %}{{ fields.location }}{% else %}{{ user.location }}{% endif %}">
+                </div>
+                <div class="right">
+                    <label for="id_year">Birthday</label>
+                    <input type="text" name="birthday" id="id_birthday"
+                        maxlength="10" placeholder="Y-M-D"
+                        value="{% if form %}{{ fields.birthday }}{% else %}{{ user.birthday }}{% endif %}">
                 </div>
                 {% if 'birthday' in errors %}
                     <div class="error">{{ errors['birthday'] }}</div>

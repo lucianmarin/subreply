@@ -26,7 +26,7 @@ sup { line-height: 0; }
 
 input[type=file] { display: none; }
 
-input[type=text], input[type=password], input[type=email], input[type=url], select, textarea { appearance: none; background-color: var(--whitesmoke); border-radius: var(--radius); border: 0 none; color: var(--black); display: block; overflow: hidden; padding: 5px 10px; resize: none; width: calc(100% - 20px); }
+input[type=text], input[type=password], input[type=email], input[type=url], select, textarea { appearance: none; background-color: var(--whitesmoke); border-radius: var(--radius); border: 0 none; color: var(--black); display: block; overflow: hidden; padding: 5px 10px; padding-right: 5px; resize: none; width: calc(100% - 15px); }
 
 input[type=text]:focus, input[type=password]:focus, input[type=email]:focus, input[type=url]:focus, select:focus, textarea:focus { outline: 0 none; }
 
@@ -172,25 +172,37 @@ table a:hover { color: var(--gray); }
 
 .line { margin-bottom: 10px; overflow: hidden; }
 
-.line .emoji { float: left; margin-right: 1px; width: calc(20% - 1px); }
+.line .emoji { float: left; margin-right: 1px; width: calc(15% - 1px); }
 
 .line .emoji input { border-bottom-right-radius: 0; border-top-right-radius: 0; }
 
-.line .first { float: left; margin: 0 1px; width: calc(40% - 2px); }
+.line .first { float: left; margin: 0 1px; width: calc(42.5% - 2px); }
 
 .line .first input { border-radius: 0; }
 
-.line .last { float: left; margin-left: 1px; width: calc(40% - 1px); }
+.line .last { float: left; margin-left: 1px; width: calc(42.5% - 1px); }
 
 .line .last input { border-bottom-left-radius: 0; border-top-left-radius: 0; }
 
-.line .left { float: left; margin-right: 1px; width: calc(50% - 1px); }
+.line .left { float: left; margin-right: 1px; width: calc(57.5% - 1px); }
 
 .line .left input { border-bottom-right-radius: 0; border-top-right-radius: 0; }
 
-.line .right { float: left; margin-left: 1px; width: calc(50% - 1px); }
+.line .right { float: left; margin-left: 1px; width: calc(42.5% - 1px); }
 
 .line .right input { border-bottom-left-radius: 0; border-top-left-radius: 0; }
+
+.line .third { float: left; margin: 0 1px; width: calc(33.333% - 2px); }
+
+.line .third input { border-radius: 0; }
+
+.line .third:first-child { margin-right: 1px; }
+
+.line .third:first-child input { border-bottom-left-radius: var(--radius); border-top-left-radius: var(--radius); }
+
+.line .third:last-child { margin-left: 1px; }
+
+.line .third:last-child input { border-bottom-right-radius: var(--radius); border-top-right-radius: var(--radius); }
 
 .error { clear: both; color: var(--orange); font-size: var(--small); }
 

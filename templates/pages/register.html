@@ -9,14 +9,14 @@
         <form enctype="multipart/form-data" method="post" autocomplete="off">
             <div class="line">
                 <div class="left">
-                    <label for="id_username">Username<i>*</i></label>
-                    <input type="text" name="username" id="id_username"
-                        maxlength="15" value="{{ fields.username }}">
-                </div>
-                <div class="right">
                     <label for="id_email">Email address<i>*</i></label>
                     <input type="email" name="email" id="id_email"
                         maxlength="120" value="{{ fields.email }}">
+                </div>
+                <div class="right">
+                    <label for="id_username">Username<i>*</i></label>
+                    <input type="text" name="username" id="id_username"
+                        maxlength="15" value="{{ fields.username }}">
                 </div>
                 {% if 'username' in errors %}
                     <div class="error">{{ errors['username'] }}</div>
