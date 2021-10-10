@@ -23,9 +23,9 @@
                 {% endif %}
             {% else %}
                 {% if entry.id in user.saves %}
-                    <a onclick="postUnsave(event)" data-id="{{ entry.id }}">unsave</a>
+                    <a onclick="postSave(event, 'unsave')" data-id="{{ entry.id }}">unsave</a>
                 {% else %}
-                    <a onclick="postSave(event)" data-id="{{ entry.id }}">save</a>
+                    <a onclick="postSave(event, 'save')" data-id="{{ entry.id }}">save</a>
                 {% endif %}
             {% endif %}
             {% if user.id in [entry.created_by_id, entry.to_user_id] and not entry.replies %}

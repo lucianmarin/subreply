@@ -60,63 +60,34 @@ function postDelete(event) {
     }
 }
 
-function postSave(event) {
+function postSave(event, call) {
     event.preventDefault();
+    var reverse = call == 'save' ? 'unsave' : 'save';
     var element = event.currentTarget;
     var id = element.dataset.id;
-    ajax('/api/save/' + id, 'post', 'json', function (data) {
-        if (data.status == 'unsave') {
+    ajax('/api/' + call + '/' + id, 'post', 'json', function (data) {
+        if (data.status == reverse) {
             element.innerText = data.status;
             element.onclick = function (ev) {
                 ev.preventDefault();
-                postUnsave(ev);
+                postSave(ev, reverse);
             }
         }
     })
 }
 
-function postUnsave(event) {
+function postFollow(event, call) {
     event.preventDefault();
-    var element = event.currentTarget;
-    var id = element.dataset.id;
-    ajax('/api/unsave/' + id, 'post', 'json', function (data) {
-        if (data.status == 'save') {
-            element.innerText = data.status;
-            element.onclick = function (ev) {
-                ev.preventDefault();
-                postSave(ev);
-            }
-        }
-    })
-}
-
-function postFollow(event) {
-    event.preventDefault();
+    var reverse = call == 'follow' ? 'unfollow' : 'follow';
     var element = event.currentTarget;
     var username = element.dataset.username;
-    ajax('/api/follow/' + username, 'post', 'json', function (data) {
-        if (data.status == 'unfollow') {
+    ajax('/api/' + follow + '/' + username, 'post', 'json', function (data) {
+        if (data.status == reverse) {
             element.innerText = data.status;
             element.className = "handle";
             element.onclick = function (ev) {
                 ev.preventDefault();
-                postUnfollow(ev);
-            }
-        }
-    })
-}
-
-function postUnfollow(event) {
-    event.preventDefault();
-    var element = event.currentTarget;
-    var username = element.dataset.username;
-    ajax('/api/unfollow/' + username, 'post', 'json', function (data) {
-        if (data.status == 'follow') {
-            element.innerText = data.status;
-            element.className = "accent";
-            element.onclick = function (ev) {
-                ev.preventDefault();
-                postFollow(ev);
+                postFollow(ev, reverse);
             }
         }
     })

@@ -9,20 +9,20 @@
                 {{ entry.created_at | shortdate }}
             </a>
         {% endif %}
-        <a class="short" href="/{{ member }}">
+        <a class="handle" href="/{{ member }}">
             {{ member.full_name }}
         </a>
         <b class="{{ member.status }}">&bull;</b>
         {% if member.id == user.id %}
-            <a class="handle" href="/options">edit</a>
+            <a class="action" href="/options">edit</a>
         {% elif user %}
             {% if member.id in user.follows %}
-                <a class="handle" onclick="postUnfollow(event)" data-username="{{ member }}">unfollow</a>
+                <a class="action" onclick="postFollow(event, 'unfollow')" data-username="{{ member }}">unfollow</a>
             {% else %}
-                <a class="accent" onclick="postFollow(event)" data-username="{{ member }}">follow</a>
+                <a class="accent" onclick="postFollow(event, 'follow')" data-username="{{ member }}">follow</a>
             {% endif %}
         {% else %}
-            <a class="handle" href="/{{ member }}">@{{ member }}</a>
+            <a class="action" href="/{{ member }}">@{{ member }}</a>
         {% endif %}
     </div>
     {% if member.bio %}
