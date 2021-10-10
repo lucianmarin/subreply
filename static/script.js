@@ -81,7 +81,7 @@ function postFollow(event, call) {
     var reverse = call == 'follow' ? 'unfollow' : 'follow';
     var element = event.currentTarget;
     var username = element.dataset.username;
-    ajax('/api/' + follow + '/' + username, 'post', 'json', function (data) {
+    ajax('/api/' + call + '/' + username, 'post', 'json', function (data) {
         if (data.status == reverse) {
             element.innerText = data.status;
             element.className = "handle";
