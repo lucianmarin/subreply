@@ -84,7 +84,7 @@ function postFollow(event, call) {
     ajax('/api/' + call + '/' + username, 'post', 'json', function (data) {
         if (data.status == reverse) {
             element.innerText = data.status;
-            element.className = "action";
+            element.className = data.status == 'unfollow' ? 'action' : 'accent';
             element.onclick = function (ev) {
                 ev.preventDefault();
                 postFollow(ev, reverse);
