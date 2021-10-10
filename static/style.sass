@@ -340,27 +340,25 @@ table
     overflow: hidden
     .emoji
         float: left
-        margin-right: 1px
-        width: calc(14% - 1px)
+        width: calc(13.333% - 2px)
         input
             border-bottom-right-radius: 0
             border-top-right-radius: 0
     .first
         float: left
-        margin: 0 1px
-        width: calc(43% - 2px)
+        margin-left: 1px
+        width: 43.333%
         input
             border-radius: 0
     .last
         float: left
         margin-left: 1px
-        width: calc(43% - 1px)
+        width: 43.333%
         input
             border-bottom-left-radius: 0
             border-top-left-radius: 0
     .left
         float: left
-        margin-right: 1px
         width: calc(50% - 1px)
         input
             border-bottom-right-radius: 0
@@ -368,7 +366,7 @@ table
     .right
         float: left
         margin-left: 1px
-        width: calc(50% - 1px)
+        width: 50%
         input
             border-bottom-left-radius: 0
             border-top-left-radius: 0
@@ -378,17 +376,14 @@ table
         width: calc(33.333% - 2px)
         input
             border-radius: 0
+        &:first-child, &:last-child
+            margin: 0
+            width: 33.333%
         &:first-child
-            margin-left: 0
-            margin-right: 1px
-            width: calc(33.333% - 1px)
             input
                 border-bottom-left-radius: var(--radius)
                 border-top-left-radius: var(--radius)
         &:last-child
-            margin-left: 1px
-            margin-right: 0
-            width: calc(33.333% - 1px)
             input
                 border-bottom-right-radius: var(--radius)
                 border-top-right-radius: var(--radius)
