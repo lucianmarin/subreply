@@ -5,6 +5,8 @@
 <title>
     {% if view == 'profile' %}
         {{ member.full_name }}
+    {% if view == 'feed' %}
+        {{ brand }}
     {% else %}
         {{ brand }} / {{ view | capitalize }}
     {% endif %}
