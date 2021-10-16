@@ -7,7 +7,7 @@
         {% include "input/query.html" %}
     {% endif %}
 
-    {% if view in ['following', 'followers', 'lobby', 'people', 'trending'] %}
+    {% if view in ['following', 'followers', 'lobby', 'people'] %}
         {% set limit = 24 %}
     {% else %}
         {% set limit = 16 %}
