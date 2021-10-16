@@ -1,6 +1,6 @@
 {% if member.links %}
     <div class="entry">
-        <div class="status">{{ member.social }}</div>
+        <div class="status">{{ member.social | safe }}</div>
     </div>
 {% endif %}
 
@@ -19,8 +19,8 @@
     <div class="entry">
         <div class="status">
             {{ member.email }} &mdash;
-            <a href="/{{ member }}/approve">approve</a> &bull;
-            <a href="/{{ member }}/destroy">destroy</a>
+            <a href="/{{ member }}/approve">Approve</a> &bull;
+            <a href="/{{ member }}/destroy">Destroy</a>
         </div>
     </div>
 {% endif %}
