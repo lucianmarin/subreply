@@ -25,9 +25,9 @@
             <a class="action" href="/{{ member }}">@{{ member }}</a>
         {% endif %}
     </div>
-    {% if member.bio %}
+    {% if member.description %}
         <div class="content">
-            {{ member.bio | parser | safe }}
+            {{ member.description | parser | safe }}
         </div>
     {% endif %}
     {% if member.website or member.birthday or member.country %}

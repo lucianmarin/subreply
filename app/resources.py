@@ -457,7 +457,7 @@ class LobbyResource:
 class PeopleResource:
     fields = [
         "username", "first_name", "last_name", "email",
-        "bio", "birthday", "location", "emoji", "website"
+        "description", "birthday", "location", "emoji", "website"
     ]
 
     def build_query(self, terms):
@@ -656,7 +656,7 @@ class OptionsResource:
         f['emoji'] = get_emoji(form)
         f['birthday'] = form.getvalue('birthday', '').strip()
         f['location'] = form.getvalue('location', '')
-        f['bio'] = get_content(form, 'bio')
+        f['description'] = get_content(form, 'description')
         f['website'] = form.getvalue('website', '').strip().lower()
         errors = profiling(f, req.user.id)
         if errors:

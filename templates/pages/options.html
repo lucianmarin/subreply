@@ -80,15 +80,15 @@
                 {% endif %}
             </div>
             <div class="line">
-                <label for="id_bio">Bio <i>your description or current status</i></label>
-                <input type="text" name="bio" id="id_bio" maxlength="120"
-                    value="{% if form %}{{ fields.bio }}{% else %}{{ user.bio }}{% endif %}">
-                {% if 'bio' in errors %}
-                    <div class="error">{{ errors['bio'] }}</div>
+                <label for="id_description">Description</label>
+                <input type="text" name="description" id="id_description" maxlength="120"
+                    value="{% if form %}{{ fields.description }}{% else %}{{ user.description }}{% endif %}">
+                {% if 'description' in errors %}
+                    <div class="error">{{ errors['description'] }}</div>
                 {% endif %}
             </div>
             <div class="line">
-                <label for="id_website">Website <i>your blog, resume or social profile</i></label>
+                <label for="id_website">Website</label>
                 <input type="text" name="website" id="id_website" maxlength="120"
                     placeholder="https://"
                     value="{% if form %}{{ fields.website }}{% else %}{{ user.website }}{% endif %}">

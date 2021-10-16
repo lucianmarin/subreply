@@ -189,7 +189,7 @@ def valid_email(value, user_id=0):
             return "Email can't be sent to this address"
 
 
-def valid_bio(value, user_id=0):
+def valid_description(value, user_id=0):
     if value:
         user = User.objects.filter(id=user_id).first()
         return valid_content(value, user, limit=120)
@@ -306,7 +306,9 @@ def profiling(f, user_id):
     errors['emoji'] = valid_emoji(f['emoji'])
     errors['birthday'] = valid_birthday(f['birthday'])
     errors['location'] = valid_location(f['location'])
-    errors['bio'] = valid_bio(f['bio'], user_id=user_id)
+    errors['description'] = valid_description(
+        f['description'], user_id=user_id
+    )
     errors['website'] = valid_website(f['website'], user_id=user_id)
     return {k: v for k, v in errors.items() if v}
 
