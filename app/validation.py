@@ -20,7 +20,7 @@ def valid_content(value, user, limit=480):
     elif len(value) != len(value.encode()):
         return "Only ASCII characters are allowed"
     elif len(mentions) > 1:
-        return "Mention a single user"
+        return "Mention a single member"
     elif len(links) > 1:
         return "Link a single address"
     elif len(hashtags) > 1:
@@ -51,7 +51,7 @@ def valid_content(value, user, limit=480):
             return "Use a mention or a bang instead"
     elif mentions:
         mention = mentions[0].lower()
-        if mention == user.username:
+        if user and mention == user.username:
             return "Can't mention yourself"
         elif mention == value.lower()[1:]:
             return "It can't be only a mention"
@@ -112,7 +112,7 @@ def valid_username(value, user_id=0):
     elif "__" in value:
         return "Username contains consecutive underscores"
     elif value in INVALID:
-        return "Username isn't valid"
+        return "Username is invalid"
     elif User.objects.filter(username=value).exclude(id=user_id).exists():
         return "Username is already taken"
 
@@ -189,7 +189,7 @@ def valid_email(value, user_id=0):
             return "Email can't be sent to this address"
 
 
-def valid_bio(value, user_id):
+def valid_bio(value, user_id=0):
     if value:
         user = User.objects.filter(id=user_id).first()
         return valid_content(value, user, limit=120)
@@ -283,7 +283,7 @@ def valid_location(value, delimiter=", "):
 
 def valid_emoji(value):
     if value and value not in emoji.UNICODE_EMOJI_ENGLISH:
-        return "Emoji isn't valid"
+        return "Emoji is invalid"
 
 
 def changing(user, current, password1, password2):
@@ -297,29 +297,31 @@ def changing(user, current, password1, password2):
 def profiling(f, user_id):
     errors = {}
     errors['username'] = valid_username(f['username'], user_id=user_id)
+    errors['email'] = valid_email(f['email'], user_id=user_id)
     errors['first_name'] = valid_first_name(f['first_name'])
     errors['last_name'] = valid_last_name(f['last_name'])
     errors['full_name'] = valid_full_name(
         f['emoji'], f['first_name'], f['last_name']
     )
-    errors['email'] = valid_email(f['email'], user_id=user_id)
-    errors['website'] = valid_website(f['website'], user_id=user_id)
-    errors['bio'] = valid_bio(f['bio'], user_id=user_id)
+    errors['emoji'] = valid_emoji(f['emoji'])
     errors['birthday'] = valid_birthday(f['birthday'])
     errors['location'] = valid_location(f['location'])
-    errors['emoji'] = valid_emoji(f['emoji'])
+    errors['bio'] = valid_bio(f['bio'], user_id=user_id)
+    errors['website'] = valid_website(f['website'], user_id=user_id)
     return {k: v for k, v in errors.items() if v}
 
 
 def registration(f):
     errors = {}
     errors['username'] = valid_username(f['username'])
+    errors['email'] = valid_email(f['email'])
+    errors['password'] = valid_password(f['password1'], f['password2'])
     errors['first_name'] = valid_first_name(f['first_name'])
     errors['last_name'] = valid_last_name(f['last_name'])
     errors['full_name'] = valid_full_name(
         f['emoji'], f['first_name'], f['last_name']
     )
-    errors['password'] = valid_password(f['password1'], f['password2'])
-    errors['email'] = valid_email(f['email'])
     errors['emoji'] = valid_emoji(f['emoji'])
+    errors['birthday'] = valid_birthday(f['birthday'])
+    errors['location'] = valid_location(f['location'])
     return {k: v for k, v in errors.items() if v}

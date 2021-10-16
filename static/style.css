@@ -176,14 +176,6 @@ table a:hover { color: var(--gray); }
 
 .line .emoji input { border-bottom-right-radius: 0; border-top-right-radius: 0; }
 
-.line .first { float: left; margin-left: 1px; width: 43.333%; }
-
-.line .first input { border-radius: 0; }
-
-.line .last { float: left; margin-left: 1px; width: 43.333%; }
-
-.line .last input { border-bottom-left-radius: 0; border-top-left-radius: 0; }
-
 .line .left { float: left; width: calc(50% - 1px); }
 
 .line .left input { border-bottom-right-radius: 0; border-top-right-radius: 0; }
