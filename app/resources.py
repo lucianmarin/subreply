@@ -536,7 +536,7 @@ class TrendingResource:
         entries = Comments.filter(
             id__in=sampling
         ).order_by('-replies', '-id').prefetch_related(PFR)
-        return paginate(req, entries, self.sample)
+        return paginate(req, entries)
 
     @before(auth_user)
     def on_get(self, req, resp):
