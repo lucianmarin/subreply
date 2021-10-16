@@ -6,10 +6,11 @@ from emoji import emojize
 from app.filters import age, city, parser, shortdate, superscript
 from project.settings import DEBUG
 
-env = Environment()
+env = Environment(autoescape=True)
+
+env.auto_reload = DEBUG
 env.bytecode_cache = FileSystemBytecodeCache()
 env.loader = FileSystemLoader('templates')
-env.auto_reload = DEBUG
 
 env.filters['age'] = age
 env.filters['city'] = city

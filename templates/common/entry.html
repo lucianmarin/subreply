@@ -1,7 +1,7 @@
 <div class="entry">
     <div class="content">
         <a class="name" href="/{{ entry.created_by }}">
-            {{ entry.created_by.full_name | escape }}
+            {{ entry.created_by.full_name }}
         </a>
         {{ entry.content | parser | safe }}
     </div>
