@@ -1,16 +1,12 @@
 <div class="logo">
     {% if user %}
         {% if user.lobbies %}
-            <a href="/lobby" data-value="{{ user.lobbies }}">
-                {{ user.lobbies }}
-            </a>
+            <a href="/lobby">{{ user.lobbies }}</a>
         {% else %}
-            <a href="/{{ user }}" data-value="{{ user.short_name }}">
-                {{ user.short_name }}
-            </a>
+            <a href="/{{ user }}">{{ user.short_name }}</a>
         {% endif %}
     {% else %}
-        <a href="/subreply">sub</a>
+        <a href="/subreply">+</a>
     {% endif %}
 </div>
 

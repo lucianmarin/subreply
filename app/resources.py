@@ -104,7 +104,9 @@ class EmojiResource:
     @before(auth_user)
     def on_get(self, req, resp):
         codes = emoji.UNICODE_EMOJI_ENGLISH.values()
-        shortcodes = [c for c in codes if not c.count('_') and not c.count('-') and c.islower()]
+        shortcodes = [
+            c for c in codes if not c.count('_') and not c.count('-') and c.islower()
+        ]
         shortcodes = sorted(shortcodes)
         odds = [s for i, s in enumerate(shortcodes) if i % 2 == 0]
         evens = [s for i, s in enumerate(shortcodes) if i % 2 == 1]
@@ -253,7 +255,9 @@ class EditResource:
         errors['content'] = valid_content(content, req.user)
         if not errors['content']:
             if entry.parent_id:
-                errors['content'] = valid_reply(entry.parent, req.user, content, mentions)
+                errors['content'] = valid_reply(
+                    entry.parent, req.user, content, mentions
+                )
             else:
                 errors['content'] = valid_thread(content)
         errors = {k: v for k, v in errors.items() if v}

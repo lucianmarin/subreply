@@ -93,19 +93,7 @@ function postFollow(event, call) {
     })
 }
 
-function expand(element, padding=10, limit=480) {
-    var logo = document.getElementsByClassName('logo')[0];
-    var link = logo.children[0];
-    if (element.value) {
-        link.innerText = limit - element.value.length;
-    } else {
-        link.innerText = link.dataset.value;
-    }
-    if (element.value.length > limit) {
-        link.style.color = 'var(--orange)';
-    } else {
-        link.style.color = 'var(--gray)';
-    }
+function expand(element, padding=10) {
     element.style.height = 'auto';
     element.style.height = (element.scrollHeight - padding) + 'px';
     element.value = element.value.normalize('NFD').replace(/[^\x00-\x7F]/g, "");

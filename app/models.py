@@ -56,7 +56,9 @@ class User(models.Model):
     def short_name(self):
         if self.emoji:
             return self.emoji
-        return self.username[:3]
+        elif self.username[:1] == self.first_name[:1].lower():
+            return self.username[:1].upper()
+        return "+"
 
     @cached_property
     def status(self):
@@ -130,7 +132,7 @@ class Comment(models.Model):
                                 null=True, related_name='mentions')
     to_user = models.ForeignKey('User', on_delete=models.CASCADE, null=True,
                                 related_name='replies')
-    content = models.CharField(max_length=640, db_index=True)
+    content = models.CharField(max_length=800, db_index=True)
     hashtag = models.CharField(max_length=15, default='')
     link = models.CharField(max_length=120, default='')
     edited_at = models.FloatField(default=.0)

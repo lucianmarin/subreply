@@ -11,7 +11,7 @@ from app.models import Comment, User
 from project.settings import INVALID, SLURS
 
 
-def valid_content(value, user, limit=480):
+def valid_content(value, user, limit=800):
     bangs, hashtags, links, mentions = parse_metadata(value)
     if not value:
         return "It can't be blank"
