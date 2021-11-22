@@ -22,7 +22,7 @@
             </div>
         {% else %}
             <textarea name="content" id="id_content"
-                rows="1" cols="60" maxlength="720"
+                rows="1" cols="60" maxlength="640"
                 placeholder="Reply to @{{ entry.created_by }}"
                 oninput="expand(this)" onkeydown="send(event)"
                 >{{ content }}</textarea>

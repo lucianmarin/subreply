@@ -132,7 +132,7 @@ class Comment(models.Model):
                                 null=True, related_name='mentions')
     to_user = models.ForeignKey('User', on_delete=models.CASCADE, null=True,
                                 related_name='replies')
-    content = models.CharField(max_length=720, db_index=True)
+    content = models.CharField(max_length=640, db_index=True)
     hashtag = models.CharField(max_length=15, default='')
     link = models.CharField(max_length=120, default='')
     edited_at = models.FloatField(default=.0)
