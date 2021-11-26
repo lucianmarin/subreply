@@ -155,10 +155,10 @@ def valid_last_name(value):
         return "Only one double-name is allowed"
 
 
-def valid_full_name(emoji, first_name, last_name):
+def valid_full_name(emoji, first_name, last_name, user_id=0):
     if User.objects.filter(
         emoji=emoji, first_name=first_name, last_name=last_name
-    ).exists():
+    ).exclude(id=user_id).exists():
         return "Emoji and names combination is taken"
     elif first_name and last_name:
         if first_name == last_name:
@@ -301,7 +301,7 @@ def profiling(f, user_id):
     errors['first_name'] = valid_first_name(f['first_name'])
     errors['last_name'] = valid_last_name(f['last_name'])
     errors['full_name'] = valid_full_name(
-        f['emoji'], f['first_name'], f['last_name']
+        f['emoji'], f['first_name'], f['last_name'], user_id=user_id
     )
     errors['emoji'] = valid_emoji(f['emoji'])
     errors['birthday'] = valid_birthday(f['birthday'])
