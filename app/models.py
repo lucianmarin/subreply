@@ -58,7 +58,7 @@ class User(models.Model):
             return self.emoji
         elif self.username[:1] == self.first_name[:1].lower():
             return self.username[:1].upper()
-        return "+"
+        return "S"
 
     @cached_property
     def status(self):
