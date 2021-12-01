@@ -42,6 +42,7 @@ app.add_route('/unlock/{token}', resources.UnlockResource(), suffix="lnk")
 app.add_route('/account', resources.AccountResource())
 app.add_route('/account/change', resources.AccountResource(), suffix="chg")
 app.add_route('/account/delete', resources.AccountResource(), suffix="del")
+app.add_route('/account/export', resources.AccountResource(), suffix="exp")
 
 app.add_route('/options', resources.OptionsResource())
 app.add_route('/social', resources.SocialResource())

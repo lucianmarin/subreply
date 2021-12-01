@@ -9,4 +9,5 @@ gunicorn
 jinja2
 psycopg2-binary
 requests
+strictyaml
 unidecode

@@ -7,6 +7,7 @@ from emails.template import JinjaTemplate
 from falcon import status_codes
 from falcon.hooks import before
 from falcon.redirects import HTTPFound
+from strictyaml import as_document
 
 from app.const import HTML, TEXT
 from app.forms import get_content, get_emoji, get_name
@@ -580,6 +581,40 @@ class AccountResource:
             req.user.save()
             resp.unset_cookie('identity')
             raise HTTPFound('/login')
+
+    @before(auth_user)
+    @before(login_required)
+    def on_post_exp(self, req, resp):
+        form = FieldStorage(fp=req.stream, environ=req.env)
+        username = form.getvalue('username', '').strip().lower()
+        errors = {}
+        if not req.user.username == username:
+            errors['username'] = "Username doesn't match"
+        if errors:
+            resp.text = render(
+                page='account', view='account',
+                user=req.user, delete_errors=errors, form=form
+            )
+        else:
+            comments = Comment.objects.filter(
+                created_by=req.user
+            ).order_by('-id').prefetch_related('parent__created_by')
+            data = []
+            for comment in comments:
+                d = {}
+                if comment.parent:
+                    p = {}
+                    p['username'] = comment.parent.created_by.username
+                    p['content'] = comment.parent.content
+                    d['parent'] = p
+                d['content'] = comment.content
+                d['created'] = comment.created_at
+                if comment.edited_at:
+                    d['edited'] = comment.edited_at
+                data.append(d)
+            resp.content_type = "application/x-yaml"
+            resp.downloadable_as = f"subreply-{username}.yaml"
+            resp.text = as_document(data).as_yaml()
 
     @before(auth_user)
     @before(login_required)

@@ -39,6 +39,22 @@
     </div>
 
     <div class="request">
+        <form action="/account/export" enctype="multipart/form-data" method="post" autocomplete="off">
+            <div class="line">
+                <label for="id_username">Username<i>*</i></label>
+                <input type="text" name="username" id="id_username"
+                    value="{{ form.getvalue('username', '') }}">
+                {% if 'username' in delete_errors %}
+                    <div class="error">{{ delete_errors['username'] }}</div>
+                {% endif %}
+            </div>
+            <div class="line">
+                <input type="submit" value="Export">
+            </div>
+        </form>
+    </div>
+
+    <div class="request">
         <form action="/account/delete" enctype="multipart/form-data" method="post" autocomplete="off">
             <div class="line">
                 <label for="id_current">Confirm password<i>*</i></label>
