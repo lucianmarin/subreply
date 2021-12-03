@@ -1,4 +1,4 @@
-function ajax(path, method='post', type='json', callback) {
+function ajax(path, method = "post", type = "json", callback) {
     var xhr = new XMLHttpRequest();
     xhr.open(method, path, true);
     xhr.responseType = type;
@@ -13,14 +13,14 @@ function ajax(path, method='post', type='json', callback) {
 function getPage(event, number) {
     event.preventDefault();
     var link = event.currentTarget;
-    var loader = link.parentElement
+    var loader = link.parentElement;
     var items = loader.parentElement;
-    var url = window.location.pathname + '?p=' + number;
+    var url = window.location.pathname + "?p=" + number;
     link.innerText = "Loading...";
-    ajax(url, 'get', 'text', function (data) {
+    ajax(url, "get", "text", function (data) {
         loader.remove();
         items.innerHTML = items.innerHTML + data;
-    })
+    });
 }
 
 function postDelete(event) {
@@ -29,25 +29,25 @@ function postDelete(event) {
     var small = element.parentElement;
     var id = element.dataset.id;
     if (id != "0") {
-        var confirm = document.createElement('a');
+        var confirm = document.createElement("a");
         element.innerText = "undo";
         confirm.innerText = "yes";
         confirm.onclick = function (event) {
             event.preventDefault();
-            ajax('/api/delete/' + id, 'post', 'json', function (data) {
-                if (data.status == 'deleted') {
+            ajax("/api/delete/" + id, "post", "json", function (data) {
+                if (data.status == "deleted") {
                     element.innerText = data.status;
                     element.onclick = function (ev) {
                         ev.preventDefault();
-                    }
+                    };
                     element.style.cursor = "default";
                     confirm.remove();
                 } else {
                     confirm.innerText = "error";
                     confirm.style.cursor = "default";
                 }
-            })
-        }
+            });
+        };
         small.appendChild(confirm);
         element.dataset.id = "0";
         element.dataset.oldId = id;
@@ -62,41 +62,41 @@ function postDelete(event) {
 
 function postSave(event, call) {
     event.preventDefault();
-    var reverse = call == 'save' ? 'unsave' : 'save';
+    var reverse = call == "save" ? "unsave" : "save";
     var element = event.currentTarget;
     var id = element.dataset.id;
-    ajax('/api/' + call + '/' + id, 'post', 'json', function (data) {
+    ajax("/api/" + call + "/" + id, "post", "json", function (data) {
         if (data.status == reverse) {
             element.innerText = data.status;
             element.onclick = function (ev) {
                 ev.preventDefault();
                 postSave(ev, reverse);
-            }
+            };
         }
-    })
+    });
 }
 
 function postFollow(event, call) {
     event.preventDefault();
-    var reverse = call == 'follow' ? 'unfollow' : 'follow';
+    var reverse = call == "follow" ? "unfollow" : "follow";
     var element = event.currentTarget;
     var username = element.dataset.username;
-    ajax('/api/' + call + '/' + username, 'post', 'json', function (data) {
+    ajax("/api/" + call + "/" + username, "post", "json", function (data) {
         if (data.status == reverse) {
             element.innerText = data.status;
-            element.className = data.status == 'unfollow' ? 'action' : 'accent';
+            element.className = data.status == "unfollow" ? "action" : "accent";
             element.onclick = function (ev) {
                 ev.preventDefault();
                 postFollow(ev, reverse);
-            }
+            };
         }
-    })
+    });
 }
 
-function expand(element, padding=10) {
-    element.style.height = 'auto';
-    element.style.height = (element.scrollHeight - padding) + 'px';
-    element.value = element.value.normalize('NFD').replace(/[^\x00-\x7F]/g, "");
+function expand(element, padding = 10) {
+    element.style.height = "auto";
+    element.style.height = element.scrollHeight - padding + "px";
+    element.value = element.value.normalize("NFD").replace(/[^\x00-\x7F]/g, "");
 }
 
 function send(event) {
