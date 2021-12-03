@@ -56,7 +56,9 @@ class User(models.Model):
     def short_name(self):
         if self.emoji:
             return self.emoji
-        return self.first_name[:1]
+        elif self.last_name:
+            return (self.first_name[:1] + self.last_name[:1]).lower()
+        return self.first_name[:2].lower()
 
     @cached_property
     def status(self):
