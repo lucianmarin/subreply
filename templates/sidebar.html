@@ -6,7 +6,7 @@
             <a href="/{{ user }}">{{ user.short_name }}</a>
         {% endif %}
     {% else %}
-        <a href="/subreply">💬</a>
+        <a href="/subreply">{{ ":speech_balloon:" | emojize }}</a>
     {% endif %}
 </div>
 
