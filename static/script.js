@@ -93,10 +93,10 @@ function postFollow(event, call) {
     });
 }
 
-function expand(element, padding = 10) {
+function expand(element, limit = 640, padding = 10) {
     element.style.height = "auto";
     element.style.height = element.scrollHeight - padding + "px";
-    element.value = element.value.normalize("NFD").replace(/[^\x00-\x7F]/g, "");
+    element.className = element.value.length > limit ? "red" : "";
 }
 
 function send(event) {
