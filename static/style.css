@@ -94,8 +94,6 @@ table a:hover { color: var(--gray); }
 
 .reply { margin: 10px 0; }
 
-.reply .red { background-color: var(--redsmoke); }
-
 .reply .placeholder { background: var(--whitesmoke); background: linear-gradient(90deg, var(--white) 0%, var(--whitesmoke) 100%); border-radius: var(--radius); color: var(--silver); padding: 5px 10px; }
 
 .reply .placeholder a { color: var(--gray); }

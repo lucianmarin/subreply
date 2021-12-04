@@ -96,7 +96,8 @@ function postFollow(event, call) {
 function expand(element, limit = 640, padding = 10) {
     element.style.height = "auto";
     element.style.height = element.scrollHeight - padding + "px";
-    element.className = element.value.length > limit ? "red" : "";
+    element.style.backgroundColor =
+        element.value.length > limit ? "var(--redsmoke)" : "var(--whitesmoke)";
 }
 
 function send(event) {
