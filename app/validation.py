@@ -118,7 +118,7 @@ def valid_username(value, user_id=0):
 
 
 def valid_handle(value):
-    limits = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_"
+    limits = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-"
     if len(value) > 15:
         return "Handle can't be longer than 15 characters"
     elif not all(c in limits for c in value):
