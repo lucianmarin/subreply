@@ -153,7 +153,7 @@ table
 
 .main
     background-color: var(--white)
-    padding-left: 10px
+    padding: 0 10px
 
 .rightside
     background-color: var(--white)
@@ -169,7 +169,6 @@ table
         color: var(--gray)
         display: block
         float: right
-        // font-size: var(--tiny)
         height: 30px
         line-height: 30px
         text-align: center
@@ -425,12 +424,10 @@ table
     h5, h6
         font-weight: normal
 
-@media (max-width: 720px)
+@media (max-width: 699px)
     .container
         display: grid
         grid-template-columns: 0 50px calc(100% - 50px) 0
-    .main
-        padding: 0 10px
     .promo, .links i
         display: none
 

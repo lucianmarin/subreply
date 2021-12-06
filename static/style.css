@@ -58,7 +58,7 @@ table a:hover { color: var(--gray); }
 
 .sidebar { background-color: var(--whitesmoke); text-align: right; }
 
-.main { background-color: var(--white); padding-left: 10px; }
+.main { background-color: var(--white); padding: 0 10px; }
 
 .rightside { background-color: var(--white); }
 
@@ -228,7 +228,7 @@ table a:hover { color: var(--gray); }
 
 .promo h5, .promo h6 { font-weight: normal; }
 
-@media (max-width: 720px) { .container { display: grid; grid-template-columns: 0 50px calc(100% - 50px) 0; } .main { padding: 0 10px; } .promo, .links i { display: none; } }
+@media (max-width: 699px) { .container { display: grid; grid-template-columns: 0 50px calc(100% - 50px) 0; } .promo, .links i { display: none; } }
 
 @font-face { font-family: "Route 159"; font-style: normal; font-weight: normal; src: url(/static/route159-regular.woff2) format("woff2"); }
 
