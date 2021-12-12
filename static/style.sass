@@ -337,6 +337,10 @@ table
             border-bottom: var(--silver) 1px solid
             color: var(--black)
 
+.request
+    &.upper
+        margin-top: -10px
+
 .line
     margin-bottom: 10px
     overflow: hidden
@@ -346,36 +350,19 @@ table
         input
             border-bottom-right-radius: 0
             border-top-right-radius: 0
-    .left
+    .left, .right
         float: left
         width: calc(50% - 1px)
+    .left
+        margin-right: 1px
         input
             border-bottom-right-radius: 0
             border-top-right-radius: 0
     .right
-        float: left
         margin-left: 1px
-        width: 50%
         input
             border-bottom-left-radius: 0
             border-top-left-radius: 0
-    .third
-        float: left
-        margin: 0 1px
-        width: calc(33.333% - 2px)
-        input
-            border-radius: 0
-        &:first-child, &:last-child
-            margin: 0
-            width: 33.333%
-        &:first-child
-            input
-                border-bottom-left-radius: var(--radius)
-                border-top-left-radius: var(--radius)
-        &:last-child
-            input
-                border-bottom-right-radius: var(--radius)
-                border-top-right-radius: var(--radius)
 
 .error
     clear: both

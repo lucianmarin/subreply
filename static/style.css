@@ -170,29 +170,23 @@ table a:hover { color: var(--gray); }
 
 .filters a.selected { border-bottom: var(--silver) 1px solid; color: var(--black); }
 
+.request.upper { margin-top: -10px; }
+
 .line { margin-bottom: 10px; overflow: hidden; }
 
 .line .emoji { float: left; width: calc(13.333% - 2px); }
 
 .line .emoji input { border-bottom-right-radius: 0; border-top-right-radius: 0; }
 
-.line .left { float: left; width: calc(50% - 1px); }
+.line .left, .line .right { float: left; width: calc(50% - 1px); }
+
+.line .left { margin-right: 1px; }
 
 .line .left input { border-bottom-right-radius: 0; border-top-right-radius: 0; }
 
-.line .right { float: left; margin-left: 1px; width: 50%; }
+.line .right { margin-left: 1px; }
 
 .line .right input { border-bottom-left-radius: 0; border-top-left-radius: 0; }
-
-.line .third { float: left; margin: 0 1px; width: calc(33.333% - 2px); }
-
-.line .third input { border-radius: 0; }
-
-.line .third:first-child, .line .third:last-child { margin: 0; width: 33.333%; }
-
-.line .third:first-child input { border-bottom-left-radius: var(--radius); border-top-left-radius: var(--radius); }
-
-.line .third:last-child input { border-bottom-right-radius: var(--radius); border-top-right-radius: var(--radius); }
 
 .error { clear: both; color: var(--orange); font-size: var(--small); }
 
