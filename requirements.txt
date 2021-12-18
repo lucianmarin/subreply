@@ -1,4 +1,4 @@
-cryptography
+cryptography==35.0.0
 django
 django-extensions
 dnspython
