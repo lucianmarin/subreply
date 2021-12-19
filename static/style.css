@@ -114,13 +114,21 @@ table a:hover { color: var(--gray); }
 
 .load a:hover { color: var(--silver); }
 
-.content { cursor: text; word-break: break-word; }
+.inline { display: flex; flex-wrap: nowrap; opacity: 0.5; }
 
-.content.inline { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; opacity: 0.5; }
+.inline .summary { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 100%; }
+
+.inline .summary .name { color: var(--black); font-weight: bold; }
+
+.inline .replies { color: var(--black); flex-shrink: 0; font-size: var(--small); margin-left: 10px; }
+
+.inline .replies:hover { color: var(--gray); }
+
+.content { cursor: text; word-break: break-word; }
 
 .content a { color: var(--accent); }
 
-.content a.name { color: var(--black); font-weight: bold; text-decoration: none; }
+.content a.name { color: var(--black); font-weight: bold; }
 
 .content a:hover { color: var(--gray); }
 

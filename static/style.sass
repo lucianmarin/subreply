@@ -255,18 +255,32 @@ table
         &:hover
             color: var(--silver)
 
+.inline
+    display: flex
+    flex-wrap: nowrap
+    opacity: 0.5
+    .summary
+        @include dots
+        width: 100%
+        .name
+            color: var(--black)
+            font-weight: bold
+    .replies
+        color: var(--black)
+        flex-shrink: 0
+        font-size: var(--small)
+        margin-left: 10px
+        &:hover
+            color: var(--gray)
+
 .content
     cursor: text
     word-break: break-word
-    &.inline
-        @include dots
-        opacity: 0.5
     a
         color: var(--accent)
         &.name
             color: var(--black)
             font-weight: bold
-            text-decoration: none
         &:hover
             color: var(--gray)
     b
