@@ -120,6 +120,8 @@ table a:hover { color: var(--gray); }
 
 .inline .summary .name { color: var(--black); font-weight: bold; }
 
+.inline .summary a:hover { color: var(--gray); }
+
 .inline .replies { color: var(--black); flex-shrink: 0; font-size: var(--small); margin-left: 10px; }
 
 .inline .replies:hover { color: var(--gray); }
@@ -134,13 +136,13 @@ table a:hover { color: var(--gray); }
 
 .content b { color: var(--silver); }
 
-.small { font-size: var(--small); overflow: hidden; }
+.small { font-size: var(--small); overflow: hidden; opacity: 0.5; }
 
-.small a { color: var(--gray); float: left; margin-right: 10px; }
+.small a { color: var(--black); float: left; margin-right: 10px; }
 
 .small a:first-child { float: right; margin-right: 0; }
 
-.small a:hover { color: var(--silver); }
+.small a:hover { color: var(--gray); }
 
 .author { color: var(--gray); font-size: var(--small); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 

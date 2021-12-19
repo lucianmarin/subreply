@@ -265,6 +265,8 @@ table
         .name
             color: var(--black)
             font-weight: bold
+        a:hover
+            color: var(--gray)
     .replies
         color: var(--black)
         flex-shrink: 0
@@ -289,15 +291,16 @@ table
 .small
     font-size: var(--small)
     overflow: hidden
+    opacity: 0.5
     a
-        color: var(--gray)
+        color: var(--black)
         float: left
         margin-right: 10px
         &:first-child
             float: right
             margin-right: 0
         &:hover
-            color: var(--silver)
+            color: var(--gray)
 
 .author
     color: var(--gray)
