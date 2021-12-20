@@ -184,19 +184,21 @@ table a:hover { color: var(--gray); }
 
 .line { margin-bottom: 10px; overflow: hidden; }
 
-.line .emoji { float: left; width: calc(13.333% - 2px); }
+.line .one, .line .two, .line .left, .line .right { float: left; }
 
-.line .emoji input { border-bottom-right-radius: 0; border-top-right-radius: 0; }
+.line .one { width: calc(100% / 3 - 1px); }
 
-.line .left, .line .right { float: left; width: calc(50% - 1px); }
+.line .two { width: calc(100% / 3 * 2 - 1px); }
 
-.line .left { margin-right: 1px; }
+.line .left, .line .right { width: calc(50% - 1px); }
 
-.line .left input { border-bottom-right-radius: 0; border-top-right-radius: 0; }
+.line .left, .line .one { margin-right: 1px; }
 
-.line .right { margin-left: 1px; }
+.line .left input, .line .one input { border-bottom-right-radius: 0; border-top-right-radius: 0; }
 
-.line .right input { border-bottom-left-radius: 0; border-top-left-radius: 0; }
+.line .right, .line .two { margin-left: 1px; }
+
+.line .right input, .line .two input { border-bottom-left-radius: 0; border-top-left-radius: 0; }
 
 .error { clear: both; color: var(--orange); font-size: var(--small); }
 

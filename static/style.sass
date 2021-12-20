@@ -361,21 +361,20 @@ table
 .line
     margin-bottom: 10px
     overflow: hidden
-    .emoji
+    .one, .two, .left, .right
         float: left
-        width: calc(13.333% - 2px)
-        input
-            border-bottom-right-radius: 0
-            border-top-right-radius: 0
+    .one
+        width: calc(100% / 3 - 1px)
+    .two
+        width: calc(100% / 3 * 2 - 1px)
     .left, .right
-        float: left
         width: calc(50% - 1px)
-    .left
+    .left, .one
         margin-right: 1px
         input
             border-bottom-right-radius: 0
             border-top-right-radius: 0
-    .right
+    .right, .two
         margin-left: 1px
         input
             border-bottom-left-radius: 0
