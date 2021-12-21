@@ -1,7 +1,14 @@
 {% extends "base.html" %}
 
 {% block main %}
-    {% if view == 'feed' %}
+    {% if view == 'profile' %}
+        <div class="list">
+            {% include "common/user.html" %}
+            {% include "common/status.html" %}
+        </div>
+    {% endif %}
+
+    {% if view in ['feed', 'profile'] %}
         {% include "input/thread.html" %}
     {% elif view in ['discover', 'people'] %}
         {% include "input/query.html" %}
@@ -14,11 +21,6 @@
     {% endif %}
 
     <div class="list">
-        {% if view == 'profile' %}
-            {% include "common/user.html" %}
-            {% include "common/status.html" %}
-        {% endif %}
-
         {% for entry in entries %}
             {% if view in ['lobby', 'people'] %}
                 {% set member = entry %}

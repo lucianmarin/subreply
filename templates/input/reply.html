@@ -13,7 +13,7 @@
                 {% if user %}
                     Already replied to <a href="/{{ entry.created_by }}">@{{ entry.created_by }}</a>
                 {% else %}
-                    <a href="/login">Login</a> or <a href="/request">request</a> your account to reply
+                    <a href="/login">Login</a> or <a href="/register">register</a> your account to reply
                 {% endif %}
             </div>
         {% elif not user.is_approved %}

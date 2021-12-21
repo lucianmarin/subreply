@@ -309,10 +309,50 @@ class ProfileResource:
                 created_by=member, to_user=req.user
             ).exclude(created_by=req.user).exists() if req.user else False
         resp.text = render(
-            page=page, view='profile', number=number,
+            page=page, view='profile', number=number, errors={},
             user=req.user, member=member, entries=entries,
-            is_following=is_following, is_followed=is_followed,
+            is_following=is_following, is_followed=is_followed
         )
+
+    @before(auth_user)
+    @before(login_required)
+    def on_post(self, req, resp, username):
+        member = User.objects.filter(username=username.lower()).first()
+        form = FieldStorage(fp=req.stream, environ=req.env)
+        content = get_content(form)
+        errors = {}
+        errors['content'] = valid_content(content, req.user)
+        if not errors['content']:
+            errors['content'] = valid_thread(content)
+        if username != req.user.username and '@' + username not in content:
+            errors['mention'] = "Mention only current member"
+        errors = {k: v for k, v in errors.items() if v}
+        is_following = Relation.objects.filter(
+            created_by=req.user, to_user=member
+        ).exists() if req.user else False
+        is_followed = Relation.objects.filter(
+            created_by=member, to_user=req.user
+        ).exclude(created_by=req.user).exists() if req.user else False
+        if errors:
+            entries = self.fetch_entries(req, member)
+            resp.text = render(
+                page='regular', view='profile', number=1, errors=errors,
+                user=req.user, member=member, entries=entries, content=content,
+                is_following=is_following, is_followed=is_followed
+            )
+        else:
+            bangs, hashtags, links, mentions = parse_metadata(content)
+            extra = {}
+            extra['hashtag'] = hashtags[0].lower() if hashtags else ''
+            extra['link'] = links[0].lower() if links else ''
+            extra['at_user'] = get_at_user(bangs, mentions, req.user)
+            th, is_new = Comment.objects.get_or_create(
+                content=content,
+                created_at=utc_timestamp(),
+                created_by=req.user,
+                **extra
+            )
+            raise HTTPFound('/' + req.user.username)
 
 
 class FollowingResource:

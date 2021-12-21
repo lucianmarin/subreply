@@ -1,6 +1,10 @@
 <div class="reply">
     <form enctype="multipart/form-data" method="post" autocomplete="off">
-        {% if not user.is_approved %}
+        {% if not user %}
+            <div class="placeholder">
+                <a href="/login">Login</a> or <a href="/register">register</a> your account to share
+            </div>
+        {% elif not user.is_approved %}
             <div class="placeholder">
                 Improve <a href="/options">profile</a> to get approved
             </div>
@@ -9,7 +13,7 @@
                 rows="1" cols="60" maxlength="720"
                 placeholder="Share your thoughts"
                 oninput="expand(this)" onkeydown="send(event)"
-                >{{ content }}</textarea>
+                >{% if content %}{{ content }}{% elif member and user != member %}@{{ member }} {% endif %}</textarea>
         {% endif %}
         {% for name, error in errors.items() %}
             <div class="error">{{ error | safe }}</div>

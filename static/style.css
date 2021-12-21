@@ -94,9 +94,11 @@ table a:hover { color: var(--gray); }
 
 .reply { margin: 10px 0; }
 
-.reply .placeholder { background: var(--whitesmoke); background: linear-gradient(90deg, var(--white) 0%, var(--whitesmoke) 100%); border-radius: var(--radius); color: var(--silver); padding: 5px 10px; }
+.reply .placeholder { background: var(--whitesmoke); background: linear-gradient(90deg, var(--whitesmoke) 0%, var(--white) 100%); border-radius: var(--radius); color: var(--gray); padding: 5px 10px; }
 
-.reply .placeholder a { color: var(--gray); }
+.reply .placeholder a { color: var(--black); }
+
+.reply .placeholder a:hover { color: var(--gray); }
 
 .list { margin: 10px 0; }
 
