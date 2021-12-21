@@ -224,7 +224,7 @@ class ReplyResource:
                 **extra
             )
             re.set_ancestors()
-            raise HTTPFound(f'/reply/{base}')
+            raise HTTPFound(f"/reply/{base}")
 
 
 class EditResource:
@@ -283,7 +283,7 @@ class EditResource:
             if previous_at_user != entry.at_user:
                 entry.mention_seen_at = .0
             entry.save(update_fields=fields)
-            raise HTTPFound(f'/reply/{base}')
+            raise HTTPFound(f"/reply/{base}")
 
 
 class ProfileResource:
@@ -320,11 +320,12 @@ class ProfileResource:
         member = User.objects.filter(username=username.lower()).first()
         form = FieldStorage(fp=req.stream, environ=req.env)
         content = get_content(form)
+        bangs, hashtags, links, mentions = parse_metadata(content)
         errors = {}
         errors['content'] = valid_content(content, req.user)
         if not errors['content']:
             errors['content'] = valid_thread(content)
-        if username != req.user.username and '@' + username not in content:
+        if username != req.user.username and mentions and mentions[0] != username:
             errors['mention'] = "Mention only current member"
         errors = {k: v for k, v in errors.items() if v}
         is_following = Relation.objects.filter(
@@ -341,7 +342,6 @@ class ProfileResource:
                 is_following=is_following, is_followed=is_followed
             )
         else:
-            bangs, hashtags, links, mentions = parse_metadata(content)
             extra = {}
             extra['hashtag'] = hashtags[0].lower() if hashtags else ''
             extra['link'] = links[0].lower() if links else ''
@@ -352,7 +352,7 @@ class ProfileResource:
                 created_by=req.user,
                 **extra
             )
-            raise HTTPFound('/' + req.user.username)
+            raise HTTPFound(f"/{req.user.username}")
 
 
 class FollowingResource:
@@ -710,7 +710,7 @@ class SocialResource:
         else:
             req.user.links = f
             req.user.save(update_fields=['links'])
-            raise HTTPFound('/{0}'.format(req.user))
+            raise HTTPFound(f"/{req.user.username}")
 
 
 class OptionsResource:
