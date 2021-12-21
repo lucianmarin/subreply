@@ -660,10 +660,10 @@ class AccountResource:
     @before(login_required)
     def on_post_del(self, req, resp):
         form = FieldStorage(fp=req.stream, environ=req.env)
-        current = form.getvalue('current', '')
+        confirm = form.getvalue('confirm', '')
         errors = {}
-        if not verify_hash(current, req.user.password):
-            errors['current'] = "Password doesn't match"
+        if not verify_hash(confirm, req.user.password):
+            errors['confirm'] = "Password doesn't match"
         if errors:
             resp.text = render(
                 page='account', view='account',
