@@ -1,4 +1,4 @@
-<div class="logo">
+<div class="logo {% if view in ['lobby', 'profile'] %}on{% endif %}">
     {% if user %}
         {% if user.lobbies %}
             <a href="/lobby">{{ user.lobbies }}</a>
