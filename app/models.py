@@ -152,15 +152,6 @@ class Comment(models.Model):
         else:
             return '{0} replies'.format(self.replies)
 
-    @cached_property
-    def base(self):
-        number = self.id
-        alphabet, base36 = "0123456789abcdefghijklmnopqrstuvwxyz", ""
-        while number:
-            number, i = divmod(number, 36)
-            base36 = alphabet[i] + base36
-        return base36 or alphabet[0]
-
     def get_ancestors(self):
         if not self.parent:
             return []

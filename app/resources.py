@@ -30,10 +30,10 @@ PFR = Prefetch('kids', Comments.order_by('id'))
 RPFR = Prefetch('kids', Comments.prefetch_related(PFR))
 
 
-def get_at_user(bangs, mentions, user):
-    if bangs:
-        bang = bangs[0].lower()
-        comment = Comment.objects.get(id=int(bang, 36))
+def get_at_user(hahrefs, mentions, user):
+    if hahrefs:
+        hashref = hahrefs[0]
+        comment = Comment.objects.get(id=hashref)
         if comment.created_by_id != user.id:
             return comment.created_by
     elif mentions:
@@ -151,11 +151,11 @@ class FeedResource:
                 user=req.user, entries=entries, errors=errors
             )
         else:
-            bangs, hashtags, links, mentions = parse_metadata(content)
+            hashrefs, hashtags, links, mentions = parse_metadata(content)
             extra = {}
             extra['hashtag'] = hashtags[0].lower() if hashtags else ''
             extra['link'] = links[0].lower() if links else ''
-            extra['at_user'] = get_at_user(bangs, mentions, req.user)
+            extra['at_user'] = get_at_user(hashrefs, mentions, req.user)
             th, is_new = Comment.objects.get_or_create(
                 content=content,
                 created_at=utc_timestamp(),
@@ -173,10 +173,10 @@ class ReplyResource:
         return Comments.filter(id__in=parent.ancestors.values('id')).order_by('id')
 
     @before(auth_user)
-    def on_get(self, req, resp, base):
-        parent = Comments.filter(id=int(base, 36)).first()
+    def on_get(self, req, resp, id):
+        parent = Comments.filter(id=id).first()
         if not parent:
-            return not_found(resp, req.user, f'/reply/{base}')
+            return not_found(resp, req.user, f'/reply/{id}')
         duplicate = Comment.objects.filter(
             parent=parent, created_by=req.user
         ).exists() if req.user else True
@@ -190,13 +190,11 @@ class ReplyResource:
 
     @before(auth_user)
     @before(login_required)
-    def on_post(self, req, resp, base):
-        parent = Comments.filter(
-            id=int(base, 36)
-        ).select_related('parent').first()
+    def on_post(self, req, resp, id):
+        parent = Comments.filter(id=id).select_related('parent').first()
         form = FieldStorage(fp=req.stream, environ=req.env)
         content = get_content(form)
-        bangs, hashtags, links, mentions = parse_metadata(content)
+        hashrefs, hashtags, links, mentions = parse_metadata(content)
         errors = {}
         errors['content'] = valid_content(content, req.user)
         if not errors['content']:
@@ -214,7 +212,7 @@ class ReplyResource:
             extra = {}
             extra['hashtag'] = hashtags[0].lower() if hashtags else ''
             extra['link'] = links[0].lower() if links else ''
-            extra['at_user'] = get_at_user(bangs, mentions, req.user)
+            extra['at_user'] = get_at_user(hashrefs, mentions, req.user)
             re, is_new = Comment.objects.get_or_create(
                 parent=parent,
                 to_user=parent.created_by,
@@ -224,18 +222,16 @@ class ReplyResource:
                 **extra
             )
             re.set_ancestors()
-            raise HTTPFound(f"/reply/{base}")
+            raise HTTPFound(f"/reply/{id}")
 
 
 class EditResource:
     @before(auth_user)
     @before(login_required)
-    def on_get(self, req, resp, base):
-        entry = Comments.filter(
-            id=int(base, 36)
-        ).prefetch_related(PPFR).first()
+    def on_get(self, req, resp, id):
+        entry = Comments.filter(id=id).prefetch_related(PPFR).first()
         if not entry or entry.created_by != req.user or entry.replies:
-            return not_found(resp, req.user, f'/edit/{base}')
+            return not_found(resp, req.user, f'/edit/{id}')
         ancestors = [entry.parent] if entry.parent_id else []
         resp.text = render(
             page='edit', view='edit',
@@ -245,13 +241,11 @@ class EditResource:
 
     @before(auth_user)
     @before(login_required)
-    def on_post(self, req, resp, base):
-        entry = Comments.filter(
-            id=int(base, 36)
-        ).prefetch_related(PPFR).first()
+    def on_post(self, req, resp, id):
+        entry = Comments.filter(id=id).prefetch_related(PPFR).first()
         form = FieldStorage(fp=req.stream, environ=req.env)
         content = get_content(form)
-        bangs, hashtags, links, mentions = parse_metadata(content)
+        hashrefs, hashtags, links, mentions = parse_metadata(content)
         errors = {}
         errors['content'] = valid_content(content, req.user)
         if not errors['content']:
@@ -270,20 +264,18 @@ class EditResource:
                 ancestors=ancestors
             )
         else:
-            fields = [
-                'content', 'edited_at', 'hashtag', 'link',
-                'at_user', 'mention_seen_at'
-            ]
+            fields = ['content', 'edited_at', 'hashtag', 'link',
+                      'at_user', 'mention_seen_at']
             previous_at_user = entry.at_user
             entry.content = content
             entry.edited_at = utc_timestamp()
             entry.hashtag = hashtags[0].lower() if hashtags else ''
             entry.link = links[0].lower() if links else ''
-            entry.at_user = get_at_user(bangs, mentions, req.user)
+            entry.at_user = get_at_user(hashrefs, mentions, req.user)
             if previous_at_user != entry.at_user:
                 entry.mention_seen_at = .0
             entry.save(update_fields=fields)
-            raise HTTPFound(f"/reply/{base}")
+            raise HTTPFound(f"/reply/{id}")
 
 
 class ProfileResource:
@@ -313,46 +305,6 @@ class ProfileResource:
             user=req.user, member=member, entries=entries,
             is_following=is_following, is_followed=is_followed
         )
-
-    @before(auth_user)
-    @before(login_required)
-    def on_post(self, req, resp, username):
-        member = User.objects.filter(username=username.lower()).first()
-        form = FieldStorage(fp=req.stream, environ=req.env)
-        content = get_content(form)
-        bangs, hashtags, links, mentions = parse_metadata(content)
-        errors = {}
-        errors['content'] = valid_content(content, req.user)
-        if not errors['content']:
-            errors['content'] = valid_thread(content)
-        if username != req.user.username and mentions and mentions[0] != username:
-            errors['mention'] = "Mention only current member"
-        errors = {k: v for k, v in errors.items() if v}
-        is_following = Relation.objects.filter(
-            created_by=req.user, to_user=member
-        ).exists() if req.user else False
-        is_followed = Relation.objects.filter(
-            created_by=member, to_user=req.user
-        ).exclude(created_by=req.user).exists() if req.user else False
-        if errors:
-            entries = self.fetch_entries(req, member)
-            resp.text = render(
-                page='regular', view='profile', number=1, errors=errors,
-                user=req.user, member=member, entries=entries, content=content,
-                is_following=is_following, is_followed=is_followed
-            )
-        else:
-            extra = {}
-            extra['hashtag'] = hashtags[0].lower() if hashtags else ''
-            extra['link'] = links[0].lower() if links else ''
-            extra['at_user'] = get_at_user(bangs, mentions, req.user)
-            th, is_new = Comment.objects.get_or_create(
-                content=content,
-                created_at=utc_timestamp(),
-                created_by=req.user,
-                **extra
-            )
-            raise HTTPFound(f"/{req.user.username}")
 
 
 class FollowingResource:
@@ -572,7 +524,7 @@ class DiscoverResource:
 
 
 class TrendingResource:
-    sample = 24
+    sample = 16
 
     def fetch_entries(self, req):
         sampling = Comment.objects.filter(parent=None).annotate(
@@ -628,7 +580,7 @@ class AccountResource:
         form = FieldStorage(fp=req.stream, environ=req.env)
         username = form.getvalue('username', '').strip().lower()
         errors = {}
-        if not req.user.username == username:
+        if req.user.username != username:
             errors['username'] = "Username doesn't match"
         if errors:
             resp.text = render(

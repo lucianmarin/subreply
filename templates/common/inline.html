@@ -1,15 +1,8 @@
 <div class="entry">
     <div class="inline">
-        <span class="summary">
-            <a class="name" href="/{{ entry.created_by }}">
-                {{ entry.created_by.full_name }}
-            </a>
-            {{ entry.content | parser | safe }}
-        </span>
-        {% if entry.replies %}
-            <a class="replies" href="/reply/{{ entry.base }}">
-                {{ entry.replies }}&not;
-            </a>
-        {% endif %}
+        <a class="name" href="/{{ entry.created_by }}">
+            {{ entry.created_by.full_name }}
+        </a>
+        {{ entry.content | parser | safe }}
     </div>
 </div>

@@ -17,9 +17,10 @@ def utc_timestamp():
 
 
 def parse_metadata(text):
-    base36 = "0123456789abcdefghijklmnopqrstuvwxyz"
+    numbers = "0123456789"
+    base36 = numbers + "abcdefghijklmnopqrstuvwxyz"
     limits = base36 + "ABCDEFGHIJKLMNOPQRSTUVWXYZ_"
-    bangs, hashtags, links, mentions = [], [], [], []
+    hashrefs, hashtags, links, mentions = [], [], [], []
     for word in text.split():
         if word.endswith(('.', ',', '!', '?', ':', ';')):
             word = word[:-1]
@@ -39,13 +40,11 @@ def parse_metadata(text):
                 mentions.append(handle)
         if word.startswith('#'):
             handle = word[1:]
-            if handle and all(c in limits for c in handle):
+            if handle and all(c in numbers for c in handle):
+                hashrefs.append(handle)
+            elif handle and all(c in limits for c in handle):
                 hashtags.append(handle)
-        if word.startswith('!'):
-            handle = word[1:]
-            if handle and all(c in base36 for c in handle):
-                bangs.append(handle)
-    return bangs, hashtags, links, mentions
+    return hashrefs, hashtags, links, mentions
 
 
 def generate_salt(length=12):

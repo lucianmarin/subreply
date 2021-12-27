@@ -118,17 +118,11 @@ table a:hover { color: var(--gray); }
 
 .load a:hover { color: var(--silver); }
 
-.inline { display: flex; flex-wrap: nowrap; opacity: 0.5; }
+.inline { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; opacity: 0.5; }
 
-.inline .summary { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 100%; }
+.inline .name { color: var(--black); font-weight: bold; }
 
-.inline .summary .name { color: var(--black); font-weight: bold; }
-
-.inline .summary a:hover { color: var(--gray); }
-
-.inline .replies { color: var(--black); flex-shrink: 0; font-size: var(--small); margin-left: 10px; }
-
-.inline .replies:hover { color: var(--gray); }
+.inline a:hover { color: var(--gray); }
 
 .content { cursor: text; word-break: break-word; }
 

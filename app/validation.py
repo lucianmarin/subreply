@@ -12,7 +12,7 @@ from project.settings import INVALID, SLURS
 
 
 def valid_content(value, user, limit=640):
-    bangs, hashtags, links, mentions = parse_metadata(value)
+    hashrefs, hashtags, links, mentions = parse_metadata(value)
     if not value:
         return "It can't be blank"
     elif len(value) > limit:
@@ -25,16 +25,16 @@ def valid_content(value, user, limit=640):
         return "Link a single address"
     elif len(hashtags) > 1:
         return "Hashtag a single channel"
-    elif len(bangs) > 1:
-        return "Bang a single reply"
-    elif bangs and mentions:
-        return "Only a !bang or a @mention"
-    elif bangs:
-        bang = bangs[0].lower()
-        if bang == value.lower()[1:]:
-            return "It can't be only a bang"
-        elif not Comment.objects.filter(id=int(bang, 36)).exists():
-            return "!{0} doesn't exists".format(bang)
+    elif len(hashrefs) > 1:
+        return "Hashref a single reply"
+    elif hashrefs and mentions:
+        return "Only a #ref or a @mention"
+    elif hashrefs:
+        hashref = hashrefs[0].lower()
+        if hashref == value.lower()[1:]:
+            return "It can't be only a #ref"
+        elif not Comment.objects.filter(id=hashref).exists():
+            return "#{0} doesn't exists".format(hashref)
     elif hashtags:
         hashtag = hashtags[0].lower()
         if len(hashtag) > 15:
@@ -65,7 +65,7 @@ def valid_thread(value):
     duplicates = [t for t in threads if t.content.lower() == value.lower()]
     if duplicates:
         duplicate = duplicates[0]
-        return f'Thread started by <a href="/reply/{duplicate.base}">@{duplicate.created_by}</a>'
+        return f'Thread started by <a href="/reply/{duplicate.id}">@{duplicate.created_by}</a>'
 
 
 def valid_reply(parent, user, value, mentions):
@@ -76,7 +76,7 @@ def valid_reply(parent, user, value, mentions):
         (Q(ancestors=top_id) | Q(id=top_id)) & Q(content__iexact=value)
     ).first()
     if duplicate:
-        return f'Replied by <a href="/reply/{duplicate.base}">@{duplicate.created_by}</a> in thread'
+        return f'Replied by <a href="/reply/{duplicate.id}">@{duplicate.created_by}</a> in thread'
     elif parent.created_by_id == user.id:
         return "Can't reply to yourself"
     elif len(mentions) == 1 and mentions[0].lower() == parent.created_by.username:

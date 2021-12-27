@@ -10,6 +10,6 @@ DATA = [
 IDS = ["Tags", "Link"]
 
 
-@pytest.mark.parametrize("content,bangs,hashtags,links,mentions", DATA, ids=IDS)
-def test_parse(content, bangs, hashtags, links, mentions):
-    assert (bangs, hashtags, links, mentions) == parse_metadata(content)
+@pytest.mark.parametrize("content,hashrefs,hashtags,links,mentions", DATA, ids=IDS)
+def test_parse(content, hashrefs, hashtags, links, mentions):
+    assert (hashrefs, hashtags, links, mentions) == parse_metadata(content)

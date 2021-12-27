@@ -260,24 +260,13 @@ table
             color: var(--silver)
 
 .inline
-    display: flex
-    flex-wrap: nowrap
+    @include dots
     opacity: 0.5
-    .summary
-        @include dots
-        width: 100%
-        .name
-            color: var(--black)
-            font-weight: bold
-        a:hover
-            color: var(--gray)
-    .replies
+    .name
         color: var(--black)
-        flex-shrink: 0
-        font-size: var(--small)
-        margin-left: 10px
-        &:hover
-            color: var(--gray)
+        font-weight: bold
+    a:hover
+        color: var(--gray)
 
 .content
     cursor: text
