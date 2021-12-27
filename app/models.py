@@ -56,7 +56,7 @@ class User(models.Model):
     def short_name(self):
         if self.last_name:
             return self.first_name[:1] + self.last_name[:1]
-        return self.first_name[:1]
+        return self.first_name[:3]
 
     @cached_property
     def status(self):
