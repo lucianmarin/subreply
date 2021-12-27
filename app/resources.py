@@ -127,10 +127,11 @@ class FeedResource:
     @before(auth_user)
     @before(login_required)
     def on_get(self, req, resp):
+        s = req.params.get('s', '').strip()
         entries = self.fetch_entries(req)
         page, number = get_page(req)
         resp.text = render(
-            page=page, view='feed', number=number,
+            page=page, view='feed', number=number, content=s,
             user=req.user, entries=entries, errors={}
         )
 

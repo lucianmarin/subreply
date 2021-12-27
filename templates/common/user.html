@@ -12,6 +12,11 @@
         <a class="handle" href="/{{ member }}">
             {{ member.full_name }}
         </a>
+        {% if view == 'profile' %}
+            <a class="done" href="/feed?s=%40{{ member }}">
+                @{{ member }}
+            </a>
+        {% endif %}
         <b class="{{ member.status }}">&bull;</b>
         {% if member.id == user.id %}
             <a class="action" href="/options">edit</a>

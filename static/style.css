@@ -144,11 +144,11 @@ table a:hover { color: var(--gray); }
 
 .author { color: var(--gray); font-size: var(--small); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
-.author .handle, .author b { font-weight: bold; }
+.author .done, .author .handle, .author b { font-weight: bold; }
 
-.author .action, .author .ago { color: var(--gray); }
+.author .action, .author .ago, .author .done { color: var(--gray); }
 
-.author .action:hover, .author .ago:hover { color: var(--silver); }
+.author .action:hover, .author .ago:hover, .author .done:hover { color: var(--silver); }
 
 .author .accent { color: var(--accent); }
 
