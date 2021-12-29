@@ -294,6 +294,7 @@ class ProfileResource:
         entries = self.fetch_entries(req, member)
         page, number = get_page(req)
         is_following, is_followed = None, None
+        sent, received = 0, 0
         if number == 1:
             is_following = Relation.objects.filter(
                 created_by=req.user, to_user=member
@@ -301,9 +302,12 @@ class ProfileResource:
             is_followed = Relation.objects.filter(
                 created_by=member, to_user=req.user
             ).exclude(created_by=req.user).exists() if req.user else False
+            sent = Comment.objects.filter(parent=None, created_by=member).count()
+            received = Comment.objects.filter(to_user=member).count()
         resp.text = render(
             page=page, view='profile', number=number, errors={},
             user=req.user, member=member, entries=entries,
+            sent=sent, received=received,
             is_following=is_following, is_followed=is_followed
         )
 
