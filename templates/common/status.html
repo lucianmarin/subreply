@@ -4,10 +4,12 @@
     </div>
 {% endif %}
 
-{% if sent or received %}
+{% if received %}
     <div class="entry">
         <div class="status">
-            {{ sent }} replies sent. {{ received }} replies received. {{ (sent / received * 100) | round(1) }}% profile ratio.
+            {{ sent }} replies sent.
+            {{ received }} replies received.
+            {{ (sent / received * 100) | round(1) }}% share ratio.
         </div>
     </div>
 {% endif %}
