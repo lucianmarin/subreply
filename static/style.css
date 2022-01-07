@@ -90,13 +90,11 @@ svg path, svg circle { fill: none; stroke: var(--gray); }
 
 .list { margin: 10px 0; }
 
-.list > .entry:first-child { padding-top: 0; }
-
 .list > .entry:last-child { padding-bottom: 0; }
 
 .sublist { margin-left: 30px; }
 
-.entry { padding: 5px 0; }
+.entry { padding-bottom: 5px; }
 
 .load { text-align: center; }
 
@@ -148,9 +146,7 @@ svg path, svg circle { fill: none; stroke: var(--gray); }
 
 .author .gone { color: var(--gray); }
 
-.status { color: var(--gray); font-size: var(--small); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding-bottom: 5px; }
-
-.status:last-child { padding-bottom: 0; }
+.status { color: var(--gray); font-size: var(--small); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 .status a { color: var(--gray); }
 

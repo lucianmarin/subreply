@@ -218,8 +218,6 @@ svg
 .list
     margin: 10px 0
     &> .entry
-        &:first-child
-            padding-top: 0
         &:last-child
             padding-bottom: 0
 
@@ -227,7 +225,7 @@ svg
     margin-left: 30px
 
 .entry
-    padding: 5px 0
+    padding-bottom: 5px
 
 .load
     text-align: center
@@ -300,9 +298,6 @@ svg
     color: var(--gray)
     font-size: var(--small)
     @include dots
-    padding-bottom: 5px
-    &:last-child
-        padding-bottom: 0
     a
         color: var(--gray)
         &:hover
