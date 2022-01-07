@@ -38,18 +38,6 @@ svg { stroke-linecap: round; stroke-linejoin: round; stroke-width: 2; }
 
 svg path, svg circle { fill: none; stroke: var(--gray); }
 
-table { margin: 10px 0; width: 100%; }
-
-table th { color: var(--silver); font-size: var(--small); font-weight: normal; padding-bottom: 2px; }
-
-table td { border-top: var(--whitesmoke) 1px solid; padding: 2px 0; }
-
-table td:last-child { padding-bottom: 0; }
-
-table a { color: var(--accent); }
-
-table a:hover { color: var(--gray); }
-
 .container { display: grid; grid-template-columns: calc(50% - 350px) 175px 525px calc(50% - 350px); }
 
 .container > div { min-height: 100vh; }
@@ -70,11 +58,9 @@ table a:hover { color: var(--gray); }
 
 .links { position: sticky; text-align: right; top: 50px; }
 
-.links a { background-color: var(--whitesmoke); border-bottom: var(--white) 1px solid; color: var(--black); display: block; height: 20px; padding: 5px 0; transition: background-color var(--d); }
+.links a { background-color: var(--whitesmoke); color: var(--black); display: block; height: 20px; padding: 5px 0; transition: background-color var(--d); }
 
 .links a:hover { background-color: var(--gainsboro); }
-
-.links a:first-child { border-top: var(--white) 1px solid; }
 
 .links a.on { background-color: var(--white); color: var(--gray); }
 
@@ -104,13 +90,13 @@ table a:hover { color: var(--gray); }
 
 .list { margin: 10px 0; }
 
-.list > .entry:first-child { border-top: 0 none; padding-top: 0; }
+.list > .entry:first-child { padding-top: 0; }
 
 .list > .entry:last-child { padding-bottom: 0; }
 
 .sublist { margin-left: 30px; }
 
-.entry { border-top: var(--whitesmoke) 1px solid; padding: 5px 0; }
+.entry { padding: 5px 0; }
 
 .load { text-align: center; }
 
@@ -162,21 +148,13 @@ table a:hover { color: var(--gray); }
 
 .author .gone { color: var(--gray); }
 
-.status { color: var(--gray); font-size: var(--small); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.status { color: var(--gray); font-size: var(--small); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding-bottom: 5px; }
+
+.status:last-child { padding-bottom: 0; }
 
 .status a { color: var(--gray); }
 
 .status a:hover { color: var(--silver); }
-
-.filters { font-size: var(--small); height: 20px; }
-
-.filters a { border-bottom: var(--whitesmoke) 1px solid; color: var(--gray); height: 20px; display: block; float: left; margin-right: 15px; padding-bottom: 5px; }
-
-.filters a:hover { color: var(--silver); }
-
-.filters a:last-child { margin-right: 0; }
-
-.filters a.selected { border-bottom: var(--silver) 1px solid; color: var(--black); }
 
 .request.upper { margin-top: -10px; }
 
@@ -217,12 +195,6 @@ table a:hover { color: var(--gray); }
 .about p:last-child { margin-bottom: 10px; }
 
 .about ol, .about ul { margin-bottom: 10px; margin-left: 30px; }
-
-.about ol li, .about ul li { border-bottom: var(--gainsboro) 1px dotted; padding: 2px 0; }
-
-.about ol li:first-child, .about ul li:first-child { padding-top: 0; }
-
-.about ol li:last-child, .about ul li:last-child { border-bottom: 0 none; padding-bottom: 0; }
 
 .promo { color: var(--gray); font-size: 11px; padding: 10px 15px; position: sticky; top: 361px; }
 

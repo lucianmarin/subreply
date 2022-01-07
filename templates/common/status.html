@@ -1,20 +1,16 @@
-{% if member.links %}
-    <div class="entry">
+<div class="entry">
+    {% if member.links %}
         <div class="status">{{ member.social | safe }}</div>
-    </div>
-{% endif %}
+    {% endif %}
 
-{% if received %}
-    <div class="entry">
+    {% if received %}
         <div class="status">
             {{ sent }} replies sent.
             {{ received }} replies received.
             {{ (sent / received * 100) | round(1) }}% share ratio.
         </div>
-    </div>
-{% endif %}
+    {% endif %}
 
-<div class="entry">
     <div class="status">
         Joined {{ member.joined_at | shortdate }} ago.
         Seen {{ member.seen_at | shortdate }} ago.
@@ -23,14 +19,12 @@
             <a href="/logout">Logout</a>.
         {% endif %}
     </div>
-</div>
 
-{% if user.id == 1 and not member.is_approved %}
-    <div class="entry">
+    {% if user.id == 1 and not member.is_approved %}
         <div class="status">
             {{ member.email }} &mdash;
             <a href="/{{ member }}/approve">Approve</a> &bull;
             <a href="/{{ member }}/destroy">Destroy</a>
         </div>
-    </div>
-{% endif %}
+    {% endif %}
+</div>
