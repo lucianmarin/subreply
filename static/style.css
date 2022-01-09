@@ -96,7 +96,7 @@ svg path, svg circle { fill: none; stroke: var(--gray); }
 
 .entry { padding-bottom: 5px; }
 
-.summary { background-color: var(--whitesmoke); border-radius: var(--radius); margin-bottom: 5px; padding: 5px; padding-left: 10px; }
+.summary { background: var(--whitesmoke); background: linear-gradient(90deg, var(--whitesmoke) 0%, var(--white) 100%); border-radius: var(--radius); margin-bottom: 5px; padding: 5px; padding-left: 10px; }
 
 .load { text-align: center; }
 
