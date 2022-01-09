@@ -84,9 +84,9 @@ svg path, svg circle { fill: none; stroke: var(--gray); }
 
 .reply .placeholder { background: var(--whitesmoke); background: linear-gradient(90deg, var(--whitesmoke) 0%, var(--white) 100%); border-radius: var(--radius); color: var(--gray); padding: 5px 10px; }
 
-.reply .placeholder a { color: var(--black); }
+.reply .placeholder a { color: var(--gray); }
 
-.reply .placeholder a:hover { color: var(--gray); }
+.reply .placeholder a:hover { color: var(--silver); }
 
 .list { margin: 10px 0; }
 
@@ -95,6 +95,8 @@ svg path, svg circle { fill: none; stroke: var(--gray); }
 .sublist { margin-left: 30px; }
 
 .entry { padding-bottom: 5px; }
+
+.summary { background-color: var(--whitesmoke); border-radius: var(--radius); margin-bottom: 5px; padding: 5px; padding-left: 10px; }
 
 .load { text-align: center; }
 
