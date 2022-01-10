@@ -72,9 +72,11 @@ svg path, svg circle { fill: none; stroke: var(--gray); }
 
 .links svg { float: right; margin: 0 15px; padding: 2px; }
 
-.title { color: var(--silver); font-size: 15px; font-weight: bold; line-height: 30px; margin: 10px 0; }
+.title { color: var(--silver); font-size: 15px; font-weight: bold; line-height: 30px; margin: 10px 0; overflow: hidden; }
 
-.title a { color: var(--silver); }
+.title a { color: var(--silver); float: left; margin-right: 5px; }
+
+.title a:last-child { margin-right: 0; }
 
 .title a:hover { color: var(--gray); }
 

@@ -195,8 +195,13 @@ svg
     font-weight: bold
     line-height: 30px
     margin: 10px 0
+    overflow: hidden
     a
         color: var(--silver)
+        float: left
+        margin-right: 5px
+        &:last-child
+            margin-right: 0
         &:hover
             color: var(--gray)
         &.on
