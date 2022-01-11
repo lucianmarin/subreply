@@ -48,7 +48,7 @@ class User(models.Model):
     def full_name(self):
         if len(self.last_name) == 1:
             self.last_name += "."
-        return "{0} {1} {2}".format(
+        return "{1} {2}".format(
             self.emoji, self.first_name, self.last_name
         ).strip()
 

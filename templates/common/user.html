@@ -10,6 +10,9 @@
             </a>
         {% endif %}
         <a class="handle" href="/{{ member }}">
+            {% if member.emoji %}
+                <b>{{ member.emoji }}</b>
+            {% endif %}
             {{ member.full_name }}
         </a>
         {% if view == 'profile' %}

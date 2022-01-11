@@ -22,7 +22,9 @@
 {% endif %}
 
 {% if entries | length == limit %}
-    <div class="entry load">
-        <a onclick="getPage(event, {{ number + 1 }})">Load more</a>
+    <div class="entry">
+        <div class="load">
+            <a onclick="getPage(event, {{ number + 1 }})">Load more</a>
+        </div>
     </div>
 {% endif %}

@@ -39,8 +39,10 @@
         {% endfor %}
 
         {% if not q and entries | length == limit and view != 'trending' %}
-            <div class="entry load">
-                <a onclick="getPage(event, {{ number + 1 }})">Load more</a>
+            <div class="entry">
+                <div class="load">
+                    <a onclick="getPage(event, {{ number + 1 }})">Load more</a>
+                </div>
             </div>
         {% endif %}
     </div>

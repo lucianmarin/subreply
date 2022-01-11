@@ -249,13 +249,16 @@ svg
             color: var(--silver)
 
 .inline
+    color: var(--gray)
     @include dots
-    opacity: 0.5
     .name
-        color: var(--black)
         font-weight: bold
-    a:hover
+        b
+            opacity: 0.5
+    a
         color: var(--gray)
+        &:hover
+            color: var(--silver)
 
 .content
     cursor: text
@@ -273,16 +276,15 @@ svg
 .small
     font-size: var(--small)
     overflow: hidden
-    opacity: 0.5
     a
-        color: var(--black)
+        color: var(--gray)
         float: left
         margin-right: 10px
         &:first-child
             float: right
             margin-right: 0
         &:hover
-            color: var(--gray)
+            color: var(--silver)
 
 .author
     color: var(--gray)

@@ -1,6 +1,9 @@
 <div class="entry">
     <div class="inline">
         <a class="name" href="/{{ entry.created_by }}">
+            {% if entry.created_by.emoji %}
+                <b>{{ entry.created_by.emoji }}</b>
+            {% endif %}
             {{ entry.created_by.full_name }}
         </a>
         {{ entry.content | parser | safe }}

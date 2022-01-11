@@ -4,7 +4,7 @@
 
 <title>
     {% if view == 'profile' %}
-        {{ member.full_name }}
+        {{ member.full_name }} @{{ member}}
     {% elif view == 'feed' %}
         {{ brand }}
     {% else %}

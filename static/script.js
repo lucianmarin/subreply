@@ -13,7 +13,7 @@ function ajax(path, method = "post", type = "json", callback) {
 function getPage(event, number) {
     event.preventDefault();
     var link = event.currentTarget;
-    var loader = link.parentElement;
+    var loader = link.parentElement.parentElement;
     var items = loader.parentElement;
     var url = window.location.pathname + "?p=" + number;
     link.innerText = "Loading...";

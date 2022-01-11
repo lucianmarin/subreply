@@ -108,11 +108,15 @@ svg path, svg circle { fill: none; stroke: var(--gray); }
 
 .load a:hover { color: var(--silver); }
 
-.inline { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; opacity: 0.5; }
+.inline { color: var(--gray); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
-.inline .name { color: var(--black); font-weight: bold; }
+.inline .name { font-weight: bold; }
 
-.inline a:hover { color: var(--gray); }
+.inline .name b { opacity: 0.5; }
+
+.inline a { color: var(--gray); }
+
+.inline a:hover { color: var(--silver); }
 
 .content { cursor: text; word-break: break-word; }
 
@@ -124,13 +128,13 @@ svg path, svg circle { fill: none; stroke: var(--gray); }
 
 .content b { color: var(--silver); }
 
-.small { font-size: var(--small); overflow: hidden; opacity: 0.5; }
+.small { font-size: var(--small); overflow: hidden; }
 
-.small a { color: var(--black); float: left; margin-right: 10px; }
+.small a { color: var(--gray); float: left; margin-right: 10px; }
 
 .small a:first-child { float: right; margin-right: 0; }
 
-.small a:hover { color: var(--gray); }
+.small a:hover { color: var(--silver); }
 
 .author { color: var(--gray); font-size: var(--small); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
