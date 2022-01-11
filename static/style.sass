@@ -384,15 +384,16 @@ svg
     h5, h6
         font-weight: normal
 
-@media (max-width: 709px)
+@media (max-width: 700px)
+    .container
+        grid-template-columns: 0 25% 75% 0
     .links a
         border-radius: 0
 
-@media (max-width: 699px)
+@media (max-width: 540px)
     .container
-        display: grid
         grid-template-columns: 0 50px calc(100% - 50px) 0
-    .promo, .links i
+    .links i
         display: none
 
 @font-face

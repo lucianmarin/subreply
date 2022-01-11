@@ -204,9 +204,9 @@ svg path, svg circle { fill: none; stroke: var(--gray); }
 
 .promo h5, .promo h6 { font-weight: normal; }
 
-@media (max-width: 709px) { .links a { border-radius: 0; } }
+@media (max-width: 700px) { .container { grid-template-columns: 0 25% 75% 0; } .links a { border-radius: 0; } }
 
-@media (max-width: 699px) { .container { display: grid; grid-template-columns: 0 50px calc(100% - 50px) 0; } .promo, .links i { display: none; } }
+@media (max-width: 540px) { .container { grid-template-columns: 0 50px calc(100% - 50px) 0; } .links i { display: none; } }
 
 @font-face { font-family: "Route 159"; font-style: normal; font-weight: normal; src: url(/static/route159-regular.woff2) format("woff2"); }
 
