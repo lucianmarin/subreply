@@ -96,7 +96,7 @@ svg path, svg circle { fill: none; stroke: var(--gray); }
 
 .list > .entry:last-child { padding-bottom: 0; }
 
-.entry { border-top: var(--gainsboro) 0.5px solid; padding: 5px 0; }
+.entry { border-top: var(--whitesmoke) 1px solid; padding: 5px 0; }
 
 .sublist { margin-left: 30px; }
 
