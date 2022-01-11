@@ -165,6 +165,8 @@ svg
     top: 50px
     a
         background-color: var(--whitesmoke)
+        border-bottom-left-radius: var(--radius)
+        border-top-left-radius: var(--radius)
         color: var(--black)
         display: block
         height: 20px
@@ -381,6 +383,10 @@ svg
             color: var(--black)
     h5, h6
         font-weight: normal
+
+@media (max-width: 709px)
+    .links a
+        border-radius: 0
 
 @media (max-width: 699px)
     .container
