@@ -90,9 +90,9 @@ svg path, svg circle { fill: none; stroke: var(--gray); }
 
 .reply .placeholder a:hover { color: var(--silver); }
 
-.reply label { background-color: var(--whitesmoke); border-bottom-right-radius: var(--radius); border-top-right-radius: var(--radius); float: right; padding: 7px; padding-right: 12px; height: 16px; width: 16px; }
+.reply label { background-color: var(--whitesmoke); border-bottom-right-radius: var(--radius); border-top-right-radius: var(--radius); float: right; padding: 7px 10px; padding-left: 5px; height: 16px; width: 16px; }
 
-.reply input[type="text"] { border-bottom-right-radius: 0; border-top-right-radius: 0; float: left; width: calc(100% - 50px); }
+.reply input[type="text"] { border-bottom-right-radius: 0; border-top-right-radius: 0; float: left; width: calc(100% - 46px); }
 
 .list { margin: 10px 0; }
 
