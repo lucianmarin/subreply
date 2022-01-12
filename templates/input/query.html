@@ -1,6 +1,12 @@
 <div class="reply">
     <form action="" method="get" autocomplete="off">
-        <input type="text" name="q" value="{{ q }}" maxlength="120"
+        <label for="id_query">
+            <svg id="i-search" viewBox="0 0 32 32" width="16" height="16">
+                <circle cx="14" cy="14" r="12" />
+                <path d="M23 23 L30 30" />
+            </svg>
+        </label>
+        <input type="text" id="id_query" name="q" value="{{ q }}" maxlength="120"
             placeholder="{{ placeholder }}">
     </form>
 </div>

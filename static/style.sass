@@ -211,6 +211,7 @@ svg
 
 .reply
     margin: 10px 0
+    overflow: hidden
     .placeholder
         background: var(--whitesmoke)
         background: linear-gradient(90deg, var(--whitesmoke) 0%, var(--white) 100%)
@@ -221,6 +222,20 @@ svg
             color: var(--gray)
             &:hover
                 color: var(--silver)
+    label
+        background-color: var(--whitesmoke)
+        border-bottom-right-radius: var(--radius)
+        border-top-right-radius: var(--radius)
+        float: right
+        padding: 7px
+        padding-right: 12px
+        height: 16px
+        width: 16px
+    input[type="text"]
+        border-bottom-right-radius: 0
+        border-top-right-radius: 0
+        float: left
+        width: calc(100% - 50px)
 
 .list
     margin: 10px 0

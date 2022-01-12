@@ -82,13 +82,17 @@ svg path, svg circle { fill: none; stroke: var(--gray); }
 
 .title a.on { color: var(--black); }
 
-.reply { margin: 10px 0; }
+.reply { margin: 10px 0; overflow: hidden; }
 
 .reply .placeholder { background: var(--whitesmoke); background: linear-gradient(90deg, var(--whitesmoke) 0%, var(--white) 100%); border-radius: var(--radius); color: var(--gray); padding: 5px 10px; }
 
 .reply .placeholder a { color: var(--gray); }
 
 .reply .placeholder a:hover { color: var(--silver); }
+
+.reply label { background-color: var(--whitesmoke); border-bottom-right-radius: var(--radius); border-top-right-radius: var(--radius); float: right; padding: 7px; padding-right: 12px; height: 16px; width: 16px; }
+
+.reply input[type="text"] { border-bottom-right-radius: 0; border-top-right-radius: 0; float: left; width: calc(100% - 50px); }
 
 .list { margin: 10px 0; }
 
