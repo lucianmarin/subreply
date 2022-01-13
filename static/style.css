@@ -116,7 +116,7 @@ svg path, svg circle { fill: none; stroke: var(--gray); }
 
 .inline .name { font-weight: bold; }
 
-.inline .name b { opacity: 0.5; }
+.inline .name b { opacity: 0.536; }
 
 .inline a { color: var(--gray); }
 
