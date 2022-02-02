@@ -74,7 +74,8 @@ def superscript(number):
 
 def parser(text):
     """Convert plain text to HTML."""
-    base36 = "0123456789abcdefghijklmnopqrstuvwxyz"
+    numbers = "0123456789"
+    base36 = numbers + "abcdefghijklmnopqrstuvwxyz"
     limits = base36 + "ABCDEFGHIJKLMNOPQRSTUVWXYZ_"
     # unicode xml safe
     text = text.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
@@ -116,12 +117,10 @@ def parser(text):
                 word = f'<a href="/{handle}" rel="author">@{handle}</a>'
         elif word.startswith('#'):
             handle = word[1:]
-            if handle and all(c in limits for c in handle):
+            if handle and all(c in numbers for c in handle):
+                word = f'<a href="/reply/{handle}" rel="bookmark">#{handle}</a>'
+            elif handle and all(c in limits for c in handle):
                 word = f'<a href="/discover/?q=%23{handle}" rel="tag">#{handle}</a>'
-        elif word.startswith('!'):
-            handle = word[1:]
-            if handle and all(c in base36 for c in handle):
-                word = f'<a href="/reply/{handle}" rel="bookmark">!{handle}</a>'
         # wrap word
         words[index] = startswith + word + endswith
     return " ".join(words)
