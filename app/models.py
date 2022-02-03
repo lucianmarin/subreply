@@ -59,8 +59,8 @@ class User(models.Model):
     @cached_property
     def status(self):
         now = utc_timestamp()
-        away = now - 14 * 24 * 3600
-        gone = now - 98 * 24 * 3600
+        away = now - 12 * 7 * 24 * 3600
+        gone = now - 96 * 7 * 24 * 3600
         if self.seen_at > away:
             return "here"
         elif gone <= self.seen_at <= away:
