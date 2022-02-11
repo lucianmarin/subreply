@@ -18,16 +18,19 @@
                 <path d="M18 13 L26 2 8 13 14 19 6 30 24 19 Z" />
             </svg>
         </a>
-        <a href="/following" accesskey="i" class="{% if view == 'following' %}on{% endif %}">
-            <i>Following</i>
-            <svg id="i-signin" viewBox="0 0 32 32" width="16" height="16">
-                <path d="M3 16 L23 16 M15 8 L23 16 15 24 M21 4 L29 4 29 28 21 28" />
+        {#
+        <a href="/news" accesskey="f" class="{% if view == 'news' %}on{% endif %}">
+            <i>News</i>
+            <svg id="i-feed" viewBox="0 0 32 32" width="16" height="16">
+                <circle cx="6" cy="26" r="2" />
+                <path d="M4 15 C11 15 17 21 17 28 M4 6 C17 6 26 15 26 28" />
             </svg>
         </a>
-        <a href="/followers" accesskey="l" class="{% if view == 'followers' %}on{% endif %} {% if user.notif_followers %}accent{% endif %}">
-            <i>Followers{% if user.notif_followers %}<sup>{{ user.notif_followers }}</sup>{% endif %}</i>
-            <svg id="i-signout" viewBox="0 0 32 32" width="16" height="16">
-                <path d="M28 16 L8 16 M20 8 L28 16 20 24 M11 28 L3 28 3 4 11 4" />
+        #}
+        <a href="/followers" accesskey="l" class="{% if view in ['followers', 'following'] %}on{% endif %} {% if user.notif_followers %}accent{% endif %}">
+            <i>Friends{% if user.notif_followers %}<sup>{{ user.notif_followers }}</sup>{% endif %}</i>
+            <svg id="i-heart" viewBox="0 0 32 32" width="16" height="16">
+                <path d="M4 16 C1 12 2 6 7 4 12 2 15 6 16 8 17 6 21 2 26 4 31 6 31 12 28 16 25 20 16 28 16 28 16 28 7 20 4 16 Z" />
             </svg>
         </a>
         <a href="/mentions" accesskey="m" class="{% if view == 'mentions' %}on{% endif %} {% if user.notif_mentions %}accent{% endif %}">
