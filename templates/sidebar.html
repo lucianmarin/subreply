@@ -1,4 +1,4 @@
-<div class="links">
+<div class="links {% if not user %}out{% endif %}">
     {% if user %}
         <a href="/feed" class="{% if view == 'feed' %}on{% endif %}">
             <i>Feed</i>

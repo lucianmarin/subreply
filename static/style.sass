@@ -374,13 +374,16 @@ svg
 @media (max-width: 670px)
     .container
         grid-template-columns: auto 50px 525px auto
-    .links
-        i
-            display: none
+    .links i
+        display: none
 
 @media (max-width: 575px)
     .container
         grid-template-columns: 0 50px calc(100% - 50px) 0
+    .links
+        top: calc(100% - 310px)
+    .links.out
+        top: calc(100% - 220px)
 
 @font-face
     font-family: "Route 159"
