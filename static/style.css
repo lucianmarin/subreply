@@ -48,6 +48,8 @@ svg path, svg circle { fill: none; stroke: var(--gray); }
 
 .links { margin-left: 10px; position: sticky; text-align: right; top: calc(50% - 150px); }
 
+.links.out { top: calc(50% - 105px); }
+
 .links a { background-color: var(--white); border-radius: var(--radius); color: var(--black); display: block; height: 20px; padding: 5px 0; transition: background-color var(--d); }
 
 .links a:hover { background-color: var(--whitesmoke); }
@@ -62,7 +64,7 @@ svg path, svg circle { fill: none; stroke: var(--gray); }
 
 .links svg { float: right; margin: 0 10px; padding: 2px; }
 
-.title { color: var(--silver); font-size: 15px; font-weight: bold; line-height: 30px; margin: 10px 0; overflow: hidden; }
+.title { color: var(--silver); font-weight: bold; margin: 10px 0; overflow: hidden; }
 
 .title a { color: var(--silver); float: left; margin-right: 5px; }
 
