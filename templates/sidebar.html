@@ -30,6 +30,7 @@
                 <path d="M6 2 L26 2 26 30 16 20 6 30 Z" />
             </svg>
         </a>
+        <div class="sep"></div>
         {% if user.lobbies %}
             <a href="/lobby" class="{% if view == 'lobby' %}on{% endif %}">
                 <i>Lobby<sup>{{ user.lobbies }}</sup></i>
@@ -80,6 +81,7 @@
                 <circle cx="16" cy="24" r="1" />
             </svg>
         </a>
+        <div class="sep"></div>
     {% endif %}
     <a href="/people" class="{% if view == 'people' %}on{% endif %}">
         <i>People</i>
