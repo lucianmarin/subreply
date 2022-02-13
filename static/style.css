@@ -36,7 +36,7 @@ input[type=submit]:hover { background-color: var(--gainsboro); }
 
 svg { stroke-linecap: round; stroke-linejoin: round; stroke-width: 2; }
 
-svg path, svg circle { fill: none; stroke: var(--gray); }
+svg path, svg circle { fill: none; stroke: var(--black); }
 
 .container { display: grid; grid-template-columns: auto 145px 525px auto; }
 
