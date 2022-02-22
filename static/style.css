@@ -48,7 +48,7 @@ svg path, svg circle { fill: none; stroke: var(--black); }
 
 .links { position: sticky; text-align: right; top: 10px; }
 
-.links .sep { background-color: var(--whitesmoke); height: 1px; margin: 5px 0; }
+.links .sep { background-color: var(--whitesmoke); height: 1px; margin: 7px 0; }
 
 .links a { background-color: var(--white); border-radius: var(--radius); color: var(--black); display: block; height: 20px; padding: 5px 0; transition: background-color var(--d); }
 
@@ -75,6 +75,8 @@ svg path, svg circle { fill: none; stroke: var(--black); }
 .title a:hover { color: var(--gray); }
 
 .title a.on { color: var(--black); }
+
+.title a.on::first-letter { border-bottom: 2px solid var(--black); }
 
 .reply { margin: 10px 0; overflow: hidden; }
 
