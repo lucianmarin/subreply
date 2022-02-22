@@ -48,8 +48,6 @@ svg path, svg circle { fill: none; stroke: var(--black); }
 
 .links { position: sticky; text-align: right; top: 10px; }
 
-.links .sep { background-color: var(--whitesmoke); height: 1px; margin: 7px 0; }
-
 .links a { background-color: var(--white); border-radius: var(--radius); color: var(--black); display: block; height: 20px; padding: 5px 0; transition: background-color var(--d); }
 
 .links a:hover { background-color: var(--whitesmoke); }
