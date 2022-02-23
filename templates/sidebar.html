@@ -6,10 +6,10 @@
                 <path d="M18 13 L26 2 8 13 14 19 6 30 24 19 Z" />
             </svg>
         </a>
-        <a href="/following" class="{% if view == 'following' %}on{% endif %}">
-            <i>Following</i>
-            <svg id="i-signin" viewBox="0 0 32 32" width="16" height="16">
-                <path d="M3 16 L23 16 M15 8 L23 16 15 24 M21 4 L29 4 29 28 21 28" />
+        <a href="/replying" class="{% if view == 'replying' %}on{% endif %}">
+            <i>Replying</i>
+            <svg id="i-msg" viewBox="0 0 32 32" width="16" height="16">
+                <path d="M2 4 L30 4 30 22 16 22 8 29 8 22 2 22 Z" />
             </svg>
         </a>
         <a href="/followers" class="{% if view == 'followers' %}on{% endif %} {% if user.notif_followers %}accent{% endif %}">
@@ -28,12 +28,6 @@
             <i>Replies{% if user.notif_replies %}<sup>{{ user.notif_replies }}</sup>{% endif %}</i>
             <svg id="i-reply" viewBox="0 0 32 32" width="16" height="16">
                 <path d="M10 6 L3 14 10 22 M3 14 L18 14 C26 14 30 18 30 26" />
-            </svg>
-        </a>
-        <a href="/saved" class="{% if view == 'saved' %}on{% endif %}">
-            <i>Saved</i>
-            <svg id="i-bookmark" viewBox="0 0 32 32" width="16" height="16">
-                <path d="M6 2 L26 2 26 30 16 20 6 30 Z" />
             </svg>
         </a>
         {% if user.lobbies %}

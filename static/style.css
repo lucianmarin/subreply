@@ -160,6 +160,16 @@ svg path, svg circle { fill: none; stroke: var(--black); }
 
 .status a:hover { color: var(--silver); }
 
+.filters { color: var(--gray); font-size: var(--small); height: 20px; }
+
+.filters a { border-top: var(--whitesmoke) 1px solid; color: var(--gray); float: left; margin-right: 10px; margin-top: -6px; padding: 5px 0; }
+
+.filters a:last-child { margin-right: 0; }
+
+.filters a:hover { color: var(--silver); }
+
+.filters a.selected { border-top: var(--accent) 1px solid; color: var(--accent); }
+
 .request.upper { margin-top: -10px; }
 
 .line { margin-bottom: 10px; overflow: hidden; }

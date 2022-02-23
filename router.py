@@ -20,11 +20,11 @@ app.add_route('/api/follow/{username}', api.FollowEndpoint())
 app.add_route('/api/unfollow/{username}', api.UnfollowEndpoint())
 
 app.add_route('/feed', resources.FeedResource())
-app.add_route('/following', resources.FollowingResource())
+app.add_route('/replying', resources.ReplyingResource())
+# app.add_route('/following', resources.FollowingResource())
 app.add_route('/followers', resources.FollowersResource())
 app.add_route('/mentions', resources.MentionsResource())
 app.add_route('/replies', resources.RepliesResource())
-app.add_route('/saved', resources.SavedResource())
 
 app.add_route('/discover', resources.DiscoverResource())
 app.add_route('/people', resources.PeopleResource())
@@ -52,6 +52,8 @@ app.add_route('/edit/{id}', resources.EditResource())
 app.add_route('/reply/{id}', resources.ReplyResource())
 app.add_route('/{username}/destroy', resources.LobbyResource(), suffix="dst")
 app.add_route('/{username}/approve', resources.LobbyResource(), suffix="apv")
+app.add_route('/{username}/saved', resources.ProfileResource(), suffix="svd")
+app.add_route('/{username}/replies', resources.ProfileResource(), suffix="re")
 app.add_route('/{username}', resources.ProfileResource())
 
 if DEBUG:
