@@ -324,11 +324,8 @@ class FollowingResource:
     def on_get(self, req, resp):
         entries = self.fetch_entries(req)
         page, number = get_page(req)
-        followers = Relation.objects.filter(to_user=req.user).exclude(created_by=req.user).count()
-        following = Relation.objects.filter(created_by=req.user).exclude(to_user=req.user).count()
         resp.text = render(
-            page=page, view='following', number=number, user=req.user,
-            entries=entries, followers=followers, following=following
+            page=page, view='following', number=number, user=req.user, entries=entries
         )
 
 
@@ -349,11 +346,8 @@ class FollowersResource:
     def on_get(self, req, resp):
         entries = self.fetch_entries(req)
         page, number = get_page(req)
-        followers = Relation.objects.filter(to_user=req.user).exclude(created_by=req.user).count()
-        following = Relation.objects.filter(created_by=req.user).exclude(to_user=req.user).count()
         resp.text = render(
-            page=page, view='followers', number=number, user=req.user,
-            entries=entries, followers=followers, following=following
+            page=page, view='followers', number=number, user=req.user, entries=entries
         )
         if req.user.notif_followers:
             self.clear_followers(req.user)
