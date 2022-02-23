@@ -8,7 +8,7 @@ from dns.resolver import query as dns_query
 from app.const import LATIN, MAX_YEAR, MIN_YEAR, WORLD
 from app.helpers import has_repetions, parse_metadata, verify_hash
 from app.models import Comment, User
-from project.settings import INVALID, SLURS
+from project.settings import INVALID
 
 
 def valid_content(value, user, limit=640):
@@ -105,8 +105,6 @@ def valid_username(value, user_id=0):
         return "Username can't be longer than 15 characters"
     elif not all(c in limits for c in value):
         return "Username can be only alphanumeric"
-    elif any(slur in value for slur in SLURS):
-        return "Username is prohibited"
     elif has_repetions(value):
         return "Username contains repeating characters"
     elif "__" in value:
@@ -132,8 +130,6 @@ def valid_first_name(value):
         return "First name can't be longer than 15 characters"
     elif len(value) == 1:
         return "First name is just too short"
-    elif any(slur in value.lower() for slur in SLURS):
-        return "First name is prohibited"
     elif not all(c in LATIN for c in value):
         return "First name should use Latin characters"
     elif has_repetions(value):
@@ -145,8 +141,6 @@ def valid_first_name(value):
 def valid_last_name(value):
     if len(value) > 15:
         return "Last name can't be longer than 15 characters"
-    elif any(slur in value.lower() for slur in SLURS):
-        return "Last name is prohibited"
     elif not all(c in LATIN for c in value):
         return "Last name should use Latin characters"
     elif value and has_repetions(value):
@@ -160,11 +154,8 @@ def valid_full_name(emoji, first_name, last_name, user_id=0):
         emoji=emoji, first_name=first_name, last_name=last_name
     ).exclude(id=user_id).exists():
         return "Emoji and names combination is taken"
-    elif first_name and last_name:
-        if first_name == last_name:
-            return "First and last names should be different"
-        elif any(slur in f"{first_name}{last_name}".lower() for slur in SLURS):
-            return "Full name is prohibited"
+    elif first_name == last_name:
+        return "First and last names should be different"
 
 
 def valid_email(value, user_id=0):

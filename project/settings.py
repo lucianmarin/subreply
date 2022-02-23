@@ -35,8 +35,6 @@ USE_TZ = False
 FERNET = Fernet(SIGNATURE.encode())
 MAX_AGE = 3600 * 24 * 365
 
-SLURS = ["nigger", "fuck", "cunt", "stupid", "whore", "hitler"]
-
 # registration
 INVALID = [
     "about",
