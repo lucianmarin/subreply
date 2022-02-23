@@ -8,6 +8,8 @@
     {% elif view == 'followers' %}
         {% set member = entry.created_by %}
         {% include "common/user.html" %}
+    {% elif view in ['feed', 'trending'] %}
+        {% include "common/threads.html" %}
     {% else %}
         {% include "common/stream.html" %}
     {% endif %}
