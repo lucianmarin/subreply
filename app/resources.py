@@ -168,10 +168,12 @@ class FeedResource:
 
 class ReplyingResource:
     def fetch_entries(self, req):
-        friends = Relation.objects.filter(created_by=req.user).values('to_user_id')
+        friends = Relation.objects.filter(created_by=req.user).exclude(to_user=req.user).values('to_user_id')
         entries = Comments.filter(
             created_by__in=friends
-        ).exclude(parent=None).order_by('-id').prefetch_related(PFR, PPFR)
+        ).exclude(parent=None).exclude(
+            parent__created_by=req.user
+        ).order_by('-id').prefetch_related(PFR, PPFR)
         return paginate(req, entries)
 
     @before(auth_user)
