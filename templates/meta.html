@@ -5,8 +5,6 @@
 <title>
     {% if view == 'profile' %}
         {{ member.full_name }} @{{ member}}
-    {% elif view == 'feed' %}
-        {{ brand }}
     {% else %}
         {{ brand }} / {{ view | capitalize }}
     {% endif %}
