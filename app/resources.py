@@ -92,7 +92,7 @@ class MainResource:
         if req.user:
             raise HTTPFound('/feed')
         else:
-            raise HTTPFound('/discover')
+            raise HTTPFound('/trending')
 
 
 class AboutResource:
@@ -670,7 +670,7 @@ class AccountResource:
         else:
             req.user.delete()
             resp.unset_cookie('identity')
-            raise HTTPFound('/discover')
+            raise HTTPFound('/trending')
 
 
 class SocialResource:
@@ -772,7 +772,7 @@ class LoginResource:
 class LogoutResource:
     def on_get(self, req, resp):  # noqa
         resp.unset_cookie('identity')
-        raise HTTPFound('/discover')
+        raise HTTPFound('/trending')
 
 
 class RegisterResource:
