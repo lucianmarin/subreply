@@ -35,7 +35,7 @@
     </div>
     {% if member.description %}
         <div class="content">
-            {{ member.description | parser | safe }}
+            {{ member.description | parser | emojize | safe }}
         </div>
     {% endif %}
     {% if member.website or member.birthday or member.country %}

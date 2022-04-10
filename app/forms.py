@@ -2,9 +2,10 @@ from emoji import demojize, emojize
 from unidecode import unidecode
 
 
-def get_content(form, t="content"):
-    value = form.getvalue(t, '')
-    decoded = unidecode(value)
+def get_content(form, field="content"):
+    value = form.getvalue(field, '')
+    demojized = demojize(value)
+    decoded = unidecode(demojized)
     words = [w.strip() for w in decoded.split()]
     return " ".join(words)
 
@@ -15,7 +16,7 @@ def get_emoji(form):
     return emojize(demojized)
 
 
-def get_name(form, t):
-    value = form.getvalue(f'{t}_name', '')
+def get_name(form, field):
+    value = form.getvalue(f'{field}_name', '')
     words = [w.strip().capitalize() for w in value.split()]
     return "-".join(words)

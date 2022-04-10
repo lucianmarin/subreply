@@ -31,7 +31,7 @@ app.add_route('/people', resources.PeopleResource())
 app.add_route('/trending', resources.TrendingResource())
 
 app.add_route('/about', resources.AboutResource())
-# app.add_route('/emoji', resources.EmojiResource())
+app.add_route('/emoji', resources.EmojiResource())
 
 app.add_route('/login', resources.LoginResource())
 app.add_route('/logout', resources.LogoutResource())

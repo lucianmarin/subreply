@@ -6,6 +6,6 @@
             {% endif %}
             {{ entry.created_by.full_name }}
         </a>
-        {{ entry.content | parser | safe }}
+        {{ entry.content | parser | emojize | safe }}
     </div>
 </div>
