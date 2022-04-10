@@ -23,13 +23,13 @@
 
 <div class="entry">
     <div class="filters">
-        <a href="/{{ member }}" class="{% if tab == 'threads' %}selected{% endif %}">
+        <a href="/{{ member }}" class="{% if view == 'profile' %}selected{% endif %}">
             Threads
         </a>
-        <a href="/{{ member }}/replies" class="{% if tab == 'replies' %}selected{% endif %}">
+        <a href="/{{ member }}/replies" class="{% if view == 'replied' %}selected{% endif %}">
             Replies
         </a>
-        <a href="/{{ member }}/saved" class="{% if tab == 'saved' %}selected{% endif %}">
+        <a href="/{{ member }}/saved" class="{% if view == 'saved' %}selected{% endif %}">
             Saved
         </a>
     </div>

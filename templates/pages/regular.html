@@ -14,7 +14,7 @@
     {% endif %}
 
     <div class="list">
-        {% if view == 'profile' %}
+        {% if view in ['profile', 'replied', 'saved'] %}
             {% include "common/user.html" %}
             {% include "common/status.html" %}
         {% endif %}
@@ -29,6 +29,8 @@
             {% elif view == 'followers' %}
                 {% set member = entry.created_by %}
                 {% include "common/user.html" %}
+            {% elif view in ['profile', 'trending'] %}
+                {% include "common/threads.html" %}
             {% else %}
                 {% include "common/stream.html" %}
             {% endif %}

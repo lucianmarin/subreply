@@ -342,7 +342,7 @@ class ProfileResource:
         page, number = get_page(req)
         is_following, is_followed = self.get_status(req, member, number)
         resp.text = render(
-            page=page, view='profile', tab='threads', number=number, errors={},
+            page=page, view='profile', number=number, errors={},
             user=req.user, member=member, entries=entries,
             is_following=is_following, is_followed=is_followed
         )
@@ -356,7 +356,7 @@ class ProfileResource:
         page, number = get_page(req)
         is_following, is_followed = self.get_status(req, member, number)
         resp.text = render(
-            page=page, view='profile', tab='replies', number=number, errors={},
+            page=page, view='replied', number=number, errors={},
             user=req.user, member=member, entries=entries,
             is_following=is_following, is_followed=is_followed
         )
@@ -370,7 +370,7 @@ class ProfileResource:
         page, number = get_page(req)
         is_following, is_followed = self.get_status(req, member, number)
         resp.text = render(
-            page=page, view='profile', tab='saved', number=number, errors={},
+            page=page, view='saved', number=number, errors={},
             user=req.user, member=member, entries=entries,
             is_following=is_following, is_followed=is_followed
         )
