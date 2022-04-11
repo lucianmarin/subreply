@@ -110,8 +110,6 @@ table a:hover { color: var(--gray); }
 
 .sublist { margin-left: 30px; }
 
-.sublist .entry { border-top: 0 none; padding-top: 0; }
-
 .load { text-align: center; }
 
 .load a { color: var(--gray); }
