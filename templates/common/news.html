@@ -1,0 +1,17 @@
+<div class="entry">
+    <div class="content">
+        <p>
+            <a class="name" href="/news/{{ entry.base }}" target="_blank">
+                {{ entry.title }}
+            </a>
+        </p>
+        <p>{{ entry.description }}</p>
+    </div>
+    <div class="small">
+        <b>{{ entry.pub_at | shortdate }}</b>
+        <b>{{ entry.domain }}</b>
+        {% if entry.score %}
+            <b>{{ entry.score }} reader{% if entry.score != 1 %}s{% endif %}</b>
+        {% endif %}
+    </div>
+</div>

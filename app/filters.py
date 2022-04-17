@@ -1,12 +1,23 @@
 from datetime import date, datetime, timezone
 
+from tldextract import extract
+
 from app.helpers import utc_timestamp
 
 
 def city(location):
+    """Get city name."""
     if "," in location:
         return location.split(",")[0]
     return location
+
+
+def hostname(value):
+    """Get hostname from an url."""
+    subdomain, domain, suffix = extract(value)
+    if subdomain in ['', 'www']:
+        return f'{domain}.{suffix}'
+    return f'{subdomain}.{domain}.{suffix}'
 
 
 def age(birthday, delimiter="-"):

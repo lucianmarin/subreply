@@ -173,3 +173,30 @@ class Relation(models.Model):
     to_user = models.ForeignKey('User', on_delete=models.CASCADE,
                                 related_name='followers')
     seen_at = models.FloatField(default=.0, db_index=True)
+
+
+class Article(models.Model):
+    pub_at = models.FloatField(default=.0, db_index=True)
+    url = models.URLField(max_length=240, unique=True)
+    title = models.CharField(max_length=240, unique=True)
+    domain = models.CharField(max_length=120, db_index=True)
+    author = models.CharField(max_length=120, default='')
+    description = models.CharField(max_length=640, default='')
+    score = models.IntegerField(default=0, db_index=True)
+    paragraphs = models.JSONField(default=list)
+    ips = models.JSONField(default=list)
+
+    @property
+    def base(self):
+        number = self.pk
+        alphabet, base36 = "0123456789abcdefghijklmnopqrstuvwxyz", ""
+        while number:
+            number, i = divmod(number, 36)
+            base36 = alphabet[i] + base36
+        return base36 or alphabet[0]
+
+    def increment(self, ip):
+        self.ips += [ip]
+        self.ips = list(set(self.ips))
+        self.score = len(self.ips)
+        self.save(update_fields=['ips', 'score'])

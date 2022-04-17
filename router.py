@@ -30,6 +30,11 @@ app.add_route('/discover', resources.DiscoverResource())
 app.add_route('/people', resources.PeopleResource())
 app.add_route('/trending', resources.TrendingResource())
 
+app.add_route('/news', resources.NewsResource())
+app.add_route('/news/{base}', resources.LinkResource())
+app.add_route('/news/breaking', resources.LinkResource(), suffix='brk')
+app.add_route('/news/current', resources.LinkResource(), suffix='crt')
+
 app.add_route('/about', resources.AboutResource())
 app.add_route('/emoji', resources.EmojiResource())
 

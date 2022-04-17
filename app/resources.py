@@ -8,13 +8,14 @@ from falcon import status_codes
 from falcon.hooks import before
 from falcon.redirects import HTTPFound
 from strictyaml import as_document
+from user_agents import parse
 
 from app.const import HTML, TEXT
 from app.forms import get_content, get_emoji, get_name
 from app.helpers import build_hash, parse_metadata, utc_timestamp, verify_hash
 from app.hooks import auth_user, login_required
 from app.jinja import render
-from app.models import Comment, Relation, Save, User
+from app.models import Article, Comment, Relation, Save, User
 from app.validation import (
     authentication, changing, profiling, registration, valid_content,
     valid_handle, valid_reply, valid_thread
@@ -570,7 +571,7 @@ class DiscoverResource:
 
 
 class TrendingResource:
-    sample = 16
+    sample = 24
 
     def fetch_entries(self, req):
         sampling = Comment.objects.filter(parent=None).annotate(
@@ -589,6 +590,55 @@ class TrendingResource:
             page=page, view='trending', number=number,
             user=req.user, entries=entries
         )
+
+
+class NewsResource:
+    def ids(self, *args):
+        return Article.objects.order_by(
+            'domain', *args
+        ).distinct('domain').values('id')
+
+    def fetch_entries(self, req, mode):
+        breaking = Article.objects.filter(
+            id__in=self.ids('-score', 'pub_at')
+        ).order_by('-score', 'pub_at')
+        current = Article.objects.filter(
+            id__in=self.ids('-pub_at')
+        ).order_by('-pub_at')
+        entries = breaking if mode == 'breaking' else current
+        return paginate(req, entries)
+
+    @before(auth_user)
+    def on_get(self, req, resp):
+        mode = req.cookies.get('news', 'current')
+        entries = self.fetch_entries(req, mode)
+        page, number = get_page(req)
+        resp.text = render(
+            page=page, view='news', number=number,
+            mode='breaking' if mode == 'breaking' else 'current',
+            user=req.user, entries=entries
+        )
+
+
+class LinkResource:
+    def on_get(self, req, resp, base):
+        articles = Article.objects.filter(id=int(base, 36))
+        if not articles:
+            return not_found(resp, req.user, f'/news/{base}')
+        article = articles[0]
+        ip = req.access_route[0]
+        agent = parse(req.user_agent)
+        if ip and not agent.is_bot:
+            article.increment(ip)
+        raise HTTPFound(article.url)
+
+    def on_get_brk(self, req, resp):
+        resp.set_cookie('news', 'breaking', path="/", max_age=MAX_AGE)
+        raise HTTPFound('/news')
+
+    def on_get_crt(self, req, resp):
+        resp.set_cookie('news', 'current', path="/", max_age=MAX_AGE)
+        raise HTTPFound('/news')
 
 
 class AccountResource:

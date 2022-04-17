@@ -2,7 +2,7 @@
 0 0 1 */1 * certbot renew --renew-hook "systemctl reload nginx"
 
 # user
-*/20 * * * * python3 newscafe/manage.py fetch
+*/20 * * * * python3 subreply/manage.py fetch
 30 0 * * * pg_dump -U postgres subreply | xz > db/subreply.sql.xz
-15 */4 * * * python3 logparser/parse.py logs/news.log.gz --html newscafe/static/logs.html --skip-ref "unfeeder.com"
+# 15 */4 * * * python3 logparser/parse.py logs/news.log.gz --html newscafe/static/logs.html --skip-ref "unfeeder.com"
 45 */4 * * * python3 logparser/parse.py logs/sub.log.gz --html subreply/static/logs.html --skip-ref "subreply.com"

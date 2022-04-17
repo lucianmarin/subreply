@@ -80,6 +80,13 @@
             </svg>
         </a>
     {% endif %}
+    <a href="/news" class="{% if view == 'news' %}on{% endif %}">
+        <i>News<sup>beta</sup></i>
+        <svg id="i-feed" viewBox="0 0 32 32" width="16" height="16">
+            <circle cx="6" cy="26" r="2" />
+            <path d="M4 15 C11 15 17 21 17 28 M4 6 C17 6 26 15 26 28" />
+        </svg>
+    </a>
     <a href="/people" class="{% if view == 'people' %}on{% endif %}">
         <i>People</i>
         <svg id="i-eye" viewBox="0 0 32 32" width="16" height="16">

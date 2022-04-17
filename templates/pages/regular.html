@@ -17,6 +17,8 @@
         {% if view in ['profile', 'replied', 'saved'] %}
             {% include "common/user.html" %}
             {% include "common/status.html" %}
+        {% elif view == 'news' %}
+            {% include "common/modes.html" %}
         {% endif %}
 
         {% for entry in entries %}
@@ -29,6 +31,8 @@
             {% elif view == 'followers' %}
                 {% set member = entry.created_by %}
                 {% include "common/user.html" %}
+            {% elif view == 'news' %}
+                {% include "common/news.html" %}
             {% elif view in ['feed', 'profile', 'trending'] %}
                 {% include "common/threads.html" %}
             {% else %}
@@ -38,7 +42,7 @@
             {% include "common/nothing.html" %}
         {% endfor %}
 
-        {% if not q and entries | length == limit and view != 'trending' %}
+        {% if not q and entries | length == limit %}
             <div class="entry">
                 <div class="load">
                     <a onclick="getPage(event, {{ number + 1 }})">Load more</a>

@@ -138,9 +138,9 @@ table a:hover { color: var(--gray); }
 
 .small { font-size: var(--small); overflow: hidden; }
 
-.small a { color: var(--gray); float: left; margin-right: 10px; }
+.small a, .small b { color: var(--gray); float: left; margin-right: 10px; }
 
-.small a:first-child { float: right; margin-right: 0; }
+.small a:first-child, .small b:first-child { float: right; margin-right: 0; }
 
 .small a:hover { color: var(--silver); }
 
