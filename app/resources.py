@@ -107,9 +107,9 @@ class EmojiResource:
     def on_get(self, req, resp):
         codes = emoji.UNICODE_EMOJI_ENGLISH.values()
         shortcodes = [
-            c for c in codes if not c.count('_') and not c.count('-') and c.islower()
+            c for c in codes if c.count('_') < 2 and not c.count('-') and not c.count('’') and c.islower()
         ]
-        shortcodes = sorted(shortcodes)
+        shortcodes = sorted(set(shortcodes))
         odds = [s for i, s in enumerate(shortcodes) if i % 2 == 0]
         evens = [s for i, s in enumerate(shortcodes) if i % 2 == 1]
         resp.text = render(
@@ -602,20 +602,20 @@ class NewsResource:
         breaking = Article.objects.filter(
             id__in=self.ids('-score', 'pub_at')
         ).order_by('-score', 'pub_at')
-        current = Article.objects.filter(
+        currently = Article.objects.filter(
             id__in=self.ids('-pub_at')
         ).order_by('-pub_at')
-        entries = breaking if mode == 'breaking' else current
+        entries = breaking if mode == 'breaking' else currently
         return paginate(req, entries)
 
     @before(auth_user)
     def on_get(self, req, resp):
-        mode = req.cookies.get('news', 'current')
+        mode = req.cookies.get('news', 'currently')
         entries = self.fetch_entries(req, mode)
         page, number = get_page(req)
         resp.text = render(
             page=page, view='news', number=number,
-            mode='breaking' if mode == 'breaking' else 'current',
+            mode='breaking' if mode == 'breaking' else 'currently',
             user=req.user, entries=entries
         )
 
@@ -637,7 +637,7 @@ class LinkResource:
         raise HTTPFound('/news')
 
     def on_get_crt(self, req, resp):
-        resp.set_cookie('news', 'current', path="/", max_age=MAX_AGE)
+        resp.set_cookie('news', 'currently', path="/", max_age=MAX_AGE)
         raise HTTPFound('/news')
 
 
