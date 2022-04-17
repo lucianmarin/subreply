@@ -59,6 +59,7 @@ INVALID = [
     "mentioned",
     "mentions",
     "options",
+    "news",
     "password",
     "people",
     "policy",
