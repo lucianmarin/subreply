@@ -5,10 +5,10 @@ import requests
 from django.db.models import Q
 from dns.resolver import query as dns_query
 
-from app.const import LATIN, MAX_YEAR, MIN_YEAR, WORLD
 from app.helpers import has_repetions, parse_metadata, verify_hash
 from app.models import Comment, User
 from project.settings import INVALID
+from project.vars import LATIN, MAX_YEAR, MIN_YEAR, WORLD
 
 
 def valid_content(value, user, limit=640):

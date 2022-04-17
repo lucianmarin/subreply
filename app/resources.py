@@ -10,7 +10,6 @@ from falcon.redirects import HTTPFound
 from strictyaml import as_document
 from user_agents import parse
 
-from app.const import HTML, TEXT
 from app.forms import get_content, get_emoji, get_name
 from app.helpers import build_hash, parse_metadata, utc_timestamp, verify_hash
 from app.hooks import auth_user, login_required
@@ -21,6 +20,8 @@ from app.validation import (
     valid_handle, valid_reply, valid_thread
 )
 from project.settings import FERNET, MAX_AGE, SMTP
+from project.vars import HTML, TEXT
+
 
 Comments = Comment.objects.annotate(
     replies=Count('descendants')

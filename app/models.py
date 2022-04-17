@@ -6,8 +6,8 @@ from django.conf import settings
 from django.db import models
 from django.utils.functional import cached_property
 
-from app.const import SOCIAL
 from app.helpers import utc_timestamp
+from project.vars import SOCIAL
 
 if not settings.configured:
     environ.setdefault('DJANGO_SETTINGS_MODULE', 'project.settings')
