@@ -31,57 +31,5 @@ USE_I18N = False
 USE_L10N = False
 USE_TZ = False
 
-# cookies
 FERNET = Fernet(SIGNATURE.encode())
 MAX_AGE = 3600 * 24 * 365
-
-# registration
-INVALID = [
-    "about",
-    "account",
-    "api",
-    "delete",
-    "discover",
-    "edit",
-    "emoji",
-    "feed",
-    "followers",
-    "following",
-    "invites",
-    "lm",
-    "lobby",
-    "login",
-    "logout",
-    "luc",
-    "lucianmarin",
-    "media",
-    "mention",
-    "mentioned",
-    "mentions",
-    "options",
-    "news",
-    "password",
-    "people",
-    "policy",
-    "privacy",
-    "profile",
-    "re",
-    "request",
-    "reply",
-    "replying",
-    "reset",
-    "save",
-    "saved",
-    "saves",
-    "search",
-    "settings",
-    "social",
-    "static",
-    "sub",
-    "subcafe",
-    "sublevel",
-    "terms",
-    "timeline",
-    "trending",
-    "unlock"
-]

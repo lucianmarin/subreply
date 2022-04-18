@@ -7,8 +7,7 @@ from dns.resolver import query as dns_query
 
 from app.helpers import has_repetions, parse_metadata, verify_hash
 from app.models import Comment, User
-from project.settings import INVALID
-from project.vars import LATIN, MAX_YEAR, MIN_YEAR, WORLD
+from project.vars import INVALID, LATIN, MAX_YEAR, MIN_YEAR, WORLD
 
 
 def valid_content(value, user, limit=640):
