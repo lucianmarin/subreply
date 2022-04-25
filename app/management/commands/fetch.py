@@ -13,7 +13,8 @@ from project.vars import FEEDS
 
 class Command(BaseCommand):
     help = "Fetch articles from feeds."
-    cores = 8
+    cores = 4
+    hours = 36 * 3600
     ignored = [
         "https://kottke.org/quick-links"
     ]
@@ -32,7 +33,7 @@ class Command(BaseCommand):
                 entry.link = origlink if origlink else entry.link
                 url = get_url(entry.link)
                 published = parse(entry.published).timestamp()
-                if self.now > published > self.now - 48 * 3600 and url not in self.ignored:
+                if self.now > published > self.now - self.hours and url not in self.ignored:
                     article, is_created = Article.objects.get_or_create(
                         url=url,
                         title=entry.title,
@@ -48,7 +49,7 @@ class Command(BaseCommand):
             executor.map(self.get_entries, FEEDS)
 
     def cleanup(self):
-        q = Article.objects.filter(pub_at__lt=self.now - 48 * 3600)
+        q = Article.objects.filter(pub_at__lt=self.now - self.hours)
         c = q.count()
         q.delete()
         print("Deleted {0} entries".format(c))
