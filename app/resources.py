@@ -8,7 +8,6 @@ from falcon import status_codes
 from falcon.hooks import before
 from falcon.redirects import HTTPFound
 from strictyaml import as_document
-from user_agents import parse
 
 from app.forms import get_content, get_emoji, get_name
 from app.helpers import build_hash, parse_metadata, utc_timestamp, verify_hash
@@ -123,7 +122,9 @@ class FeedResource:
         friends = Relation.objects.filter(created_by=req.user).values('to_user_id')
         entries = Comments.filter(
             created_by__in=friends
-        ).filter(parent=None).order_by('-id').prefetch_related(PFR, PPFR)
+        ).exclude(
+            parent__created_by=req.user
+        ).order_by('-id').prefetch_related(PFR, PPFR)
         return paginate(req, entries)
 
     @before(auth_user)
@@ -166,27 +167,6 @@ class FeedResource:
                 **extra
             )
             raise HTTPFound('/')
-
-
-class ReplyingResource:
-    def fetch_entries(self, req):
-        friends = Relation.objects.filter(created_by=req.user).exclude(to_user=req.user).values('to_user_id')
-        entries = Comments.filter(
-            created_by__in=friends
-        ).exclude(parent=None).exclude(
-            parent__created_by=req.user
-        ).order_by('-id').prefetch_related(PFR, PPFR)
-        return paginate(req, entries)
-
-    @before(auth_user)
-    @before(login_required)
-    def on_get(self, req, resp):
-        entries = self.fetch_entries(req)
-        page, number = get_page(req)
-        resp.text = render(
-            page=page, view='replying', number=number,
-            user=req.user, entries=entries, errors={}
-        )
 
 
 class ReplyResource:
@@ -306,34 +286,8 @@ class ProfileResource:
     def fetch_entries(self, req, member):
         entries = Comments.filter(
             created_by=member
-        ).filter(parent=None).order_by('-id').prefetch_related(PFR, PPFR)
-        return paginate(req, entries)
-
-    def fetch_replies(self, req, member):
-        entries = Comments.filter(
-            created_by=member
-        ).exclude(parent=None).order_by('-id').prefetch_related(PFR, PPFR)
-        return paginate(req, entries)
-
-    def fetch_saved(self, req, member):
-        saved_ids = Save.objects.filter(
-            created_by=member
-        ).values('to_comment__id')
-        entries = Comments.filter(
-            id__in=saved_ids
         ).order_by('-id').prefetch_related(PFR, PPFR)
         return paginate(req, entries)
-
-    def get_status(self, req, member, number):
-        is_following, is_followed = None, None
-        if number == 1:
-            is_following = Relation.objects.filter(
-                created_by=req.user, to_user=member
-            ).exists() if req.user else False
-            is_followed = Relation.objects.filter(
-                created_by=member, to_user=req.user
-            ).exclude(created_by=req.user).exists() if req.user else False
-        return is_following, is_followed
 
     @before(auth_user)
     def on_get(self, req, resp, username):
@@ -342,38 +296,21 @@ class ProfileResource:
             return not_found(resp, req.user, f'/{username}')
         entries = self.fetch_entries(req, member)
         page, number = get_page(req)
-        is_following, is_followed = self.get_status(req, member, number)
+        is_following, is_followed = None, None
+        sent, received = 0, 0
+        if number == 1:
+            is_following = Relation.objects.filter(
+                created_by=req.user, to_user=member
+            ).exists() if req.user else False
+            is_followed = Relation.objects.filter(
+                created_by=member, to_user=req.user
+            ).exclude(created_by=req.user).exists() if req.user else False
+            sent = Comment.objects.filter(parent=None, created_by=member).count()
+            received = Comment.objects.filter(to_user=member).count()
         resp.text = render(
             page=page, view='profile', number=number, errors={},
             user=req.user, member=member, entries=entries,
-            is_following=is_following, is_followed=is_followed
-        )
-
-    @before(auth_user)
-    def on_get_re(self, req, resp, username):
-        member = User.objects.filter(username=username.lower()).first()
-        if not member:
-            return not_found(resp, req.user, f'/{username}')
-        entries = self.fetch_replies(req, member)
-        page, number = get_page(req)
-        is_following, is_followed = self.get_status(req, member, number)
-        resp.text = render(
-            page=page, view='replied', number=number, errors={},
-            user=req.user, member=member, entries=entries,
-            is_following=is_following, is_followed=is_followed
-        )
-
-    @before(auth_user)
-    def on_get_svd(self, req, resp, username):
-        member = User.objects.filter(username=username.lower()).first()
-        if not member:
-            return not_found(resp, req.user, f'/{username}')
-        entries = self.fetch_saved(req, member)
-        page, number = get_page(req)
-        is_following, is_followed = self.get_status(req, member, number)
-        resp.text = render(
-            page=page, view='saved', number=number, errors={},
-            user=req.user, member=member, entries=entries,
+            sent=sent, received=received,
             is_following=is_following, is_followed=is_followed
         )
 
@@ -467,6 +404,27 @@ class RepliesResource:
         )
         if req.user.notif_replies:
             self.clear_replies(req.user)
+
+
+class SavedResource:
+    def fetch_entries(self, req):
+        saved_ids = Save.objects.filter(
+            created_by=req.user
+        ).values('to_comment__id')
+        entries = Comments.filter(
+            id__in=saved_ids
+        ).order_by('-id').prefetch_related(PFR, PPFR)
+        return paginate(req, entries)
+
+    @before(auth_user)
+    @before(login_required)
+    def on_get(self, req, resp):
+        entries = self.fetch_entries(req)
+        page, number = get_page(req)
+        resp.text = render(
+            page=page, view='saved', number=number,
+            user=req.user, entries=entries
+        )
 
 
 class LobbyResource:
@@ -599,47 +557,31 @@ class NewsResource:
             'domain', *args
         ).distinct('domain').values('id')
 
-    def fetch_entries(self, req, mode):
-        breaking = Article.objects.filter(
-            id__in=self.ids('-score', 'pub_at')
-        ).order_by('-score', 'pub_at')
-        currently = Article.objects.filter(
-            id__in=self.ids('-pub_at')
-        ).order_by('-pub_at')
-        entries = breaking if mode == 'breaking' else currently
+    def fetch_entries(self, req):
+        entries = Article.objects.filter(
+            id__in=self.ids('-score', '-pub_at')
+        ).order_by('-score', '-pub_at')
         return paginate(req, entries)
 
     @before(auth_user)
     def on_get(self, req, resp):
-        mode = req.cookies.get('news', 'currently')
-        entries = self.fetch_entries(req, mode)
+        entries = self.fetch_entries(req)
         page, number = get_page(req)
         resp.text = render(
-            page=page, view='news', number=number,
-            mode='breaking' if mode == 'breaking' else 'currently',
-            user=req.user, entries=entries
+            page=page, view='news', number=number, user=req.user, entries=entries
         )
 
 
 class LinkResource:
+    @before(auth_user)
     def on_get(self, req, resp, base):
         articles = Article.objects.filter(id=int(base, 36))
         if not articles:
             return not_found(resp, req.user, f'/news/{base}')
         article = articles[0]
-        ip = req.access_route[0]
-        agent = parse(req.user_agent)
-        if ip and not agent.is_bot:
-            article.increment(ip)
+        if req.user:
+            article.increment(req.user.id)
         raise HTTPFound(article.url)
-
-    def on_get_brk(self, req, resp):
-        resp.set_cookie('news', 'breaking', path="/", max_age=MAX_AGE)
-        raise HTTPFound('/news')
-
-    def on_get_crt(self, req, resp):
-        resp.set_cookie('news', 'currently', path="/", max_age=MAX_AGE)
-        raise HTTPFound('/news')
 
 
 class AccountResource:

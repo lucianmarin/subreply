@@ -3,6 +3,12 @@
         <div class="status">{{ member.social | safe }}</div>
     {% endif %}
 
+    {% if sent or received %}
+        <div class="status">
+            {{ sent }} replies sent. {{ received }} replies received. {{ (sent / received * 100) | round(2) }}% profile ratio.
+        </div>
+    {% endif %}
+
     <div class="status">
         Joined {{ member.joined_at | shortdate }} ago.
         Seen {{ member.seen_at | shortdate }} ago.
@@ -19,18 +25,4 @@
             <a href="/{{ member }}/destroy">Destroy</a>
         </div>
     {% endif %}
-</div>
-
-<div class="entry">
-    <div class="filters">
-        <a href="/{{ member }}" class="{% if view == 'profile' %}selected{% endif %}">
-            Threads
-        </a>
-        <a href="/{{ member }}/replies" class="{% if view == 'replied' %}selected{% endif %}">
-            Replies
-        </a>
-        <a href="/{{ member }}/saved" class="{% if view == 'saved' %}selected{% endif %}">
-            Saved
-        </a>
-    </div>
 </div>

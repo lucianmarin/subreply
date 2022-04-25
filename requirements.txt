@@ -1,3 +1,4 @@
+beautifulsoup4
 cryptography
 django
 django-extensions
@@ -5,6 +6,7 @@ dnspython
 emails
 emoji
 falcon
+feedparser
 gunicorn
 jinja2
 psycopg2-binary
@@ -12,4 +14,3 @@ requests
 strictyaml
 tldextract
 unidecode
-user-agents

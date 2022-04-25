@@ -14,11 +14,9 @@
     {% endif %}
 
     <div class="list">
-        {% if view in ['profile', 'replied', 'saved'] %}
+        {% if view == 'profile' %}
             {% include "common/user.html" %}
             {% include "common/status.html" %}
-        {% elif view == 'news' %}
-            {% include "common/modes.html" %}
         {% endif %}
 
         {% for entry in entries %}
@@ -33,8 +31,6 @@
                 {% include "common/user.html" %}
             {% elif view == 'news' %}
                 {% include "common/news.html" %}
-            {% elif view in ['feed', 'profile', 'trending'] %}
-                {% include "common/threads.html" %}
             {% else %}
                 {% include "common/stream.html" %}
             {% endif %}
