@@ -10,13 +10,14 @@ function ajax(path, method = "post", type = "json", callback) {
     xhr.send();
 }
 
-function getPage(event, number) {
+function getPage(event) {
     event.preventDefault();
-    var link = event.currentTarget;
-    var loader = link.parentElement.parentElement;
+    var element = event.currentTarget;
+    var page = element.dataset.page;
+    var loader = element.parentElement.parentElement;
     var items = loader.parentElement;
-    var url = window.location.pathname + "?p=" + number;
-    link.innerText = "Loading...";
+    var url = window.location.pathname + "?p=" + page;
+    element.innerText = "Loading...";
     ajax(url, "get", "text", function (data) {
         loader.remove();
         items.innerHTML = items.innerHTML + data;

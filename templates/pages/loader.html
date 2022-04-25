@@ -9,7 +9,7 @@
         {% set member = entry.created_by %}
         {% include "common/user.html" %}
     {% elif view == 'news' %}
-        {% include "common/news.html" %}
+        {% include "common/article.html" %}
     {% else %}
         {% include "common/stream.html" %}
     {% endif %}
@@ -26,7 +26,7 @@
 {% if entries | length == limit %}
     <div class="entry">
         <div class="load">
-            <a onclick="getPage(event, {{ number + 1 }})">Load more</a>
+            <a onclick="getPage(event)" data-page="{{ number + 1 }}">Load more</a>
         </div>
     </div>
 {% endif %}
