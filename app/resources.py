@@ -303,7 +303,7 @@ class ProfileResource:
             is_followed = Relation.objects.filter(
                 created_by=member, to_user=req.user
             ).exclude(created_by=req.user).exists() if req.user else False
-            sent = Comment.objects.filter(parent=None, created_by=member).count()
+            sent = Comment.objects.filter(created_by=member).exclude(parent=None).count()
             received = Comment.objects.filter(to_user=member).count()
         resp.text = render(
             page=page, view='profile', number=number, errors={},
