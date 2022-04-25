@@ -122,8 +122,6 @@ class FeedResource:
         friends = Relation.objects.filter(created_by=req.user).values('to_user_id')
         entries = Comments.filter(
             created_by__in=friends
-        ).exclude(
-            parent__created_by=req.user
         ).order_by('-id').prefetch_related(PFR, PPFR)
         return paginate(req, entries)
 
