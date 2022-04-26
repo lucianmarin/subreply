@@ -140,15 +140,6 @@ class Comment(models.Model):
     def __str__(self):
         return self.content
 
-    @cached_property
-    def replied(self):
-        if not self.replies:
-            return 'reply'
-        elif self.replies == 1:
-            return '1 reply'
-        else:
-            return '{0} replies'.format(self.replies)
-
     def get_ancestors(self):
         if not self.parent:
             return []
@@ -185,15 +176,6 @@ class Article(models.Model):
     score = models.IntegerField(default=0, db_index=True)
     paragraphs = models.JSONField(default=list)
     ips = models.JSONField(default=list)
-
-    @property
-    def base(self):
-        number = self.pk
-        alphabet, base36 = "0123456789abcdefghijklmnopqrstuvwxyz", ""
-        while number:
-            number, i = divmod(number, 36)
-            base36 = alphabet[i] + base36
-        return base36 or alphabet[0]
 
     def increment(self, ip):
         self.ips += [ip]

@@ -14,10 +14,10 @@
     {% elif view in ['followers', 'following'] %}
         <div class="title">
             <a href="/followers" class="{% if view == 'followers' %}on{% endif %}">
-                {{ user.followers.count() - 1 }} followers
+                {{ followers }} follower{% if followers != 1 %}s{% endif %}
             </a>
             <a href="/following" class="{% if view == 'following' %}on{% endif %}">
-                {{ user.following.count() - 1 }} following
+                {{ following }} following
             </a>
         </div>
     {% endif %}

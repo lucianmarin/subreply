@@ -326,7 +326,10 @@ class FollowingResource:
         entries = self.fetch_entries(req)
         page, number = get_page(req)
         resp.text = render(
-            page=page, view='following', number=number, user=req.user, entries=entries
+            page=page, view='following', number=number, user=req.user,
+            entries=entries,
+            followers=req.user.followers.count() - 1,
+            following=req.user.following.count() - 1
         )
 
 
@@ -348,7 +351,10 @@ class FollowersResource:
         entries = self.fetch_entries(req)
         page, number = get_page(req)
         resp.text = render(
-            page=page, view='followers', number=number, user=req.user, entries=entries
+            page=page, view='followers', number=number, user=req.user,
+            entries=entries,
+            followers=req.user.followers.count() - 1,
+            following=req.user.following.count() - 1
         )
         if req.user.notif_followers:
             self.clear_followers(req.user)
@@ -572,10 +578,10 @@ class NewsResource:
 
 class LinkResource:
     @before(auth_user)
-    def on_get(self, req, resp, base):
-        articles = Article.objects.filter(id=int(base, 36))
+    def on_get(self, req, resp, id):
+        articles = Article.objects.filter(id=id)
         if not articles:
-            return not_found(resp, req.user, f'/news/{base}')
+            return not_found(resp, req.user, f'/news/{id}')
         article = articles[0]
         if req.user:
             article.increment(req.user.id)
