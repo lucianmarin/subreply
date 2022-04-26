@@ -9,7 +9,7 @@
         <a href="/followers" class="{% if view in ['followers', 'following'] %}on{% endif %} {% if user.notif_followers %}accent{% endif %}">
             <i>Followers{% if user.notif_followers %}<sup>{{ user.notif_followers }}</sup>{% endif %}</i>
             <svg width="16" height="16" viewBox="0 0 24 24">
-                <path d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+                <path d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
             </svg>
         </a>
         <a href="/mentions" class="{% if view == 'mentions' %}on{% endif %} {% if user.notif_mentions %}accent{% endif %}">
