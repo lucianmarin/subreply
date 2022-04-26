@@ -1,5 +1,5 @@
 beautifulsoup4
-cryptography
+cryptography==36.0.2
 django
 django-extensions
 dnspython
