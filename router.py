@@ -20,7 +20,7 @@ app.add_route('/api/follow/{username}', api.FollowEndpoint())
 app.add_route('/api/unfollow/{username}', api.UnfollowEndpoint())
 
 app.add_route('/feed', resources.FeedResource())
-# app.add_route('/following', resources.FollowingResource())
+app.add_route('/following', resources.FollowingResource())
 app.add_route('/followers', resources.FollowersResource())
 app.add_route('/mentions', resources.MentionsResource())
 app.add_route('/replies', resources.RepliesResource())
