@@ -5,7 +5,7 @@
 
     {% if sent and received %}
         <div class="status">
-            {{ sent }} replies sent. {{ received }} replies received. {{ (sent / received * 100) | round(1) }}% profile ratio.
+            {{ received }} replies received. {{ sent }} replies sent. {{ (sent / received * 100) | round(1) }}% profile ratio.
         </div>
     {% endif %}
 
