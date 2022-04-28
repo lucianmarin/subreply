@@ -152,7 +152,7 @@ table a:hover { color: var(--gray); }
 
 .author { color: var(--gray); font-size: var(--small); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
-.author .done, .author .handle, .author b { font-weight: bold; }
+.author .done, .author .handle, .author i { font-weight: bold; }
 
 .author .action, .author .ago, .author .done { color: var(--gray); }
 
@@ -162,7 +162,7 @@ table a:hover { color: var(--gray); }
 
 .author .accent:hover, .author .handle:hover { color: var(--gray); }
 
-.author .ago { float: right; }
+.author b { color: var(--silver); float: right; }
 
 .author .here { color: green; }
 
