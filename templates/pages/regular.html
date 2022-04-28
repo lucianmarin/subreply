@@ -13,6 +13,11 @@
         {% include "input/response.html" %}
     {% elif view in ['discover', 'people'] %}
         {% include "input/query.html" %}
+    {% elif view == 'saved' %}
+        <div class="title">
+            <a href="/{{ member }}">{{ member.first_name }}</a>
+            <a href="/{{ member }}/saved" class="on">Saved</a>
+        </div>
     {% endif %}
 
     <div class="list">

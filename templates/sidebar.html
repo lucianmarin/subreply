@@ -30,12 +30,6 @@
                 <path d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
             </svg>
         </a>
-        <a href="/saved" class="{% if view == 'saved' %}on{% endif %}">
-            <i>Saved</i>
-            <svg width="16" height="16" viewBox="0 0 24 24">
-                <path d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
-            </svg>
-        </a>
         {% if user.lobbies %}
             <a href="/lobby" class="accent {% if view == 'lobby' %}on{% endif %}">
                 <i>Lobby<sup>{{ user.lobbies }}</sup></i>
@@ -44,7 +38,7 @@
                 </svg>
             </a>
         {% else %}
-            <a href="/{{ user }}" class="{% if view == 'profile' %}on{% endif %}">
+            <a href="/{{ user }}" class="{% if view in ['profile', 'saved'] %}on{% endif %}">
                 <i>Profile</i>
                 <svg width="16" height="16" viewBox="0 0 24 24">
                     <path d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z" />

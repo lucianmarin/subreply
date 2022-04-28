@@ -470,9 +470,9 @@ class RepliesResource:
 
 
 class SavedResource:
-    def fetch_entries(self, req):
+    def fetch_entries(self, req, member):
         saved_ids = Save.objects.filter(
-            created_by=req.user
+            created_by=member
         ).values('to_comment__id')
         entries = Comments.filter(
             id__in=saved_ids
@@ -481,12 +481,15 @@ class SavedResource:
 
     @before(auth_user)
     @before(login_required)
-    def on_get(self, req, resp):
-        entries = self.fetch_entries(req)
+    def on_get(self, req, resp, username):
+        member = User.objects.filter(username=username.lower()).first()
+        if not member:
+            return not_found(resp, req.user, f'/{username}')
+        entries = self.fetch_entries(req, member)
         page, number = get_page(req)
         resp.text = render(
-            page=page, view='saved', number=number,
-            user=req.user, entries=entries
+            page=page, view='saved', number=number, user=req.user,
+            member=member, entries=entries
         )
 
 
