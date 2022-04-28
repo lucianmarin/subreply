@@ -9,13 +9,13 @@
         {{ entry.content | parser | emojize | safe }}
     </div>
     <div class="small">
-        <a href="/reply/{{ entry.id }}">
+        <b>
             {% if entry.edited_at %}
                 &middot;&middot;&middot; {{ entry.edited_at | shortdate }}
             {% else %}
                 {{ entry.created_at | shortdate }}
             {% endif %}
-        </a>
+        </b>
         <a href="/reply/{{ entry.id }}">
             {% if not entry.replies %}
                 reply{% elif entry.replies == 1 %}1 reply{% else %}{{ entry.replies }} replies
@@ -35,7 +35,7 @@
                 {% endif %}
             {% endif %}
             {% if user.id in [entry.created_by_id, entry.to_user_id] and not entry.replies %}
-                <a onclick="postDelete(event)" data-id="{{ entry.id }}">
+                <a onclick="postDelete(event, 'delete', 'deleted')" data-id="{{ entry.id }}">
                     delete
                 </a>
             {% endif %}

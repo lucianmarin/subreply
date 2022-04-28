@@ -13,6 +13,7 @@ app.resp_options.secure_cookies_by_default = not DEBUG
 
 app.add_route('/', resources.MainResource())
 
+app.add_route('/api/unsend/{id}', api.UnsendEndpoint())
 app.add_route('/api/delete/{id}', api.DeleteEndpoint())
 app.add_route('/api/save/{id}', api.SaveEndpoint())
 app.add_route('/api/unsave/{id}', api.UnsaveEndpoint())
@@ -30,6 +31,7 @@ app.add_route('/discover', resources.DiscoverResource())
 app.add_route('/people', resources.PeopleResource())
 app.add_route('/trending', resources.TrendingResource())
 
+app.add_route('/messages', resources.MessagesResource())
 app.add_route('/news', resources.NewsResource())
 app.add_route('/news/{id}', resources.LinkResource())
 
@@ -55,6 +57,7 @@ app.add_route('/edit/{id}', resources.EditResource())
 app.add_route('/reply/{id}', resources.ReplyResource())
 app.add_route('/{username}/destroy', resources.LobbyResource(), suffix="dst")
 app.add_route('/{username}/approve', resources.LobbyResource(), suffix="apv")
+app.add_route('/{username}/message', resources.MessageResource())
 app.add_route('/{username}', resources.ProfileResource())
 
 if DEBUG:

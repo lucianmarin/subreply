@@ -1,0 +1,20 @@
+<div class="entry {% if entry.to_user == user and entry.created_by != user %}indent{% endif %}">
+    <div class="content">
+        <a class="name" href="/{{ entry.created_by }}">
+            {% if entry.created_by.emoji %}
+                <b>{{ entry.created_by.emoji }}</b>
+            {% endif %}
+            {{ entry.created_by.full_name }}
+        </a>
+        {{ entry.content | parser | emojize | safe }}
+    </div>
+    {% if entry.created_by == user %}
+        <div class="small">
+            <b>{{ entry.created_at | shortdate }}</b>
+            <b>{% if not entry.seen_at %}un{% endif %}read</b>
+            <a onclick="postDelete(event, 'unsend', 'unsent')" data-id="{{ entry.id }}">
+                unsend
+            </a>
+        </div>
+    {% endif %}
+</div>

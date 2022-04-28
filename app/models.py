@@ -89,6 +89,10 @@ class User(models.Model):
         return self.mentions.filter(mention_seen_at=.0).count()
 
     @cached_property
+    def notif_messages(self):
+        return self.received.filter(seen_at=.0).count()
+
+    @cached_property
     def notif_replies(self):
         return self.replies.filter(reply_seen_at=.0).count()
 
@@ -147,6 +151,14 @@ class Comment(models.Model):
 
     def set_ancestors(self):
         self.ancestors.set(self.get_ancestors())
+
+
+class Message(models.Model):
+    content = models.CharField(max_length=640)
+    created_by = models.ForeignKey('User', on_delete=models.CASCADE, related_name='sent')
+    to_user = models.ForeignKey('User', on_delete=models.CASCADE, related_name='received')
+    created_at = models.FloatField(default=.0)
+    seen_at = models.FloatField(default=.0)
 
 
 class Save(models.Model):

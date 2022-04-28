@@ -241,6 +241,8 @@ table
 .entry
     border-top: var(--whitesmoke) 1px solid
     padding: 5px 0
+    &.indent
+        margin-left: 30px
 
 .sublist
     margin-left: 30px
@@ -281,14 +283,17 @@ table
     font-size: var(--small)
     overflow: hidden
     a, b
-        color: var(--gray)
         float: left
         margin-right: 10px
         &:first-child
             float: right
             margin-right: 0
-    a:hover
+    b
         color: var(--silver)
+    a
+        color: var(--gray)
+        &:hover
+            color: var(--silver)
 
 .author
     color: var(--gray)
@@ -332,13 +337,21 @@ table
     a
         color: var(--gray)
         float: left
-        margin-right: 10px
+        margin: 0 5px
+        &:first-child
+            margin-left: 0
         &:last-child
             margin-right: 0
         &:hover
             color: var(--silver)
         &.selected
             color: var(--accent)
+    .separator
+        background-color: var(--whitesmoke)
+        float: left
+        width: 1px
+        height: 20px
+        margin: 0 5px
 
 .request
     &.upper

@@ -16,6 +16,15 @@ def utc_timestamp():
     return datetime.now(timezone.utc).timestamp()
 
 
+def to_words(number):
+    index = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine"]
+    data = dict(enumerate(index))
+    words = []
+    for n in str(number):
+        words.append(data[int(n)])
+    return " ".join(words)
+
+
 def parse_metadata(text):
     numbers = "0123456789"
     base36 = numbers + "abcdefghijklmnopqrstuvwxyz"

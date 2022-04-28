@@ -1,0 +1,16 @@
+<div class="entry">
+    <div class="content">
+        <a class="name" href="/{{ entry.created_by }}">
+            {% if entry.created_by.emoji %}
+                <b>{{ entry.created_by.emoji }}</b>
+            {% endif %}
+            {{ entry.created_by.full_name }}
+        </a>
+        {{ entry.content | parser | emojize | safe }}
+    </div>
+    <div class="small">
+        <b>{{ entry.created_at | shortdate }}</b>
+        <a href="/{{ entry.created_by }}/message">respond</a>
+        <b>{% if not entry.seen_at %}un{% endif %}read</b>
+    </div>
+</div>

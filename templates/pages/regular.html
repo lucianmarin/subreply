@@ -9,17 +9,10 @@
 {% block main %}
     {% if view == 'feed' %}
         {% include "input/thread.html" %}
+    {% elif view == 'message' %}
+        {% include "input/response.html" %}
     {% elif view in ['discover', 'people'] %}
         {% include "input/query.html" %}
-    {% elif view in ['followers', 'following'] %}
-        <div class="title">
-            <a href="/followers" class="{% if view == 'followers' %}on{% endif %}">
-                {{ followers }} follower{% if followers != 1 %}s{% endif %}
-            </a>
-            <a href="/following" class="{% if view == 'following' %}on{% endif %}">
-                {{ following }} following
-            </a>
-        </div>
     {% endif %}
 
     <div class="list">
@@ -38,8 +31,14 @@
             {% elif view == 'followers' %}
                 {% set member = entry.created_by %}
                 {% include "common/user.html" %}
+            {% elif view == 'messages' %}
+                {% include "common/inbox.html" %}
+            {% elif view == 'message' %}
+                {% include "common/message.html" %}
             {% elif view == 'news' %}
                 {% include "common/article.html" %}
+            {% elif view == 'trending' %}
+                {% include "common/threads.html" %}
             {% else %}
                 {% include "common/stream.html" %}
             {% endif %}

@@ -24,7 +24,7 @@ function getPage(event) {
     });
 }
 
-function postDelete(event) {
+function postDelete(event, call, status) {
     event.preventDefault();
     var element = event.currentTarget;
     var small = element.parentElement;
@@ -35,14 +35,13 @@ function postDelete(event) {
         confirm.innerText = "yes";
         confirm.onclick = function (event) {
             event.preventDefault();
-            ajax("/api/delete/" + id, "post", "json", function (data) {
-                if (data.status == "deleted") {
-                    element.innerText = data.status;
-                    element.onclick = function (ev) {
-                        ev.preventDefault();
-                    };
-                    element.style.cursor = "default";
+            ajax("/api/" + call + "/" + id, "post", "json", function (data) {
+                if (data.status == status) {
+                    var state = document.createElement("b");
+                    state.innerText = data.status;
+                    small.appendChild(state);
                     confirm.remove();
+                    element.remove();
                 } else {
                     confirm.innerText = "error";
                     confirm.style.cursor = "default";
@@ -53,7 +52,7 @@ function postDelete(event) {
         element.dataset.id = "0";
         element.dataset.oldId = id;
     } else {
-        element.innerText = "delete";
+        element.innerText = call;
         var confirm = element.nextElementSibling;
         confirm.remove();
         element.dataset.id = element.dataset.oldId;

@@ -108,6 +108,8 @@ table a:hover { color: var(--gray); }
 
 .entry { border-top: var(--whitesmoke) 1px solid; padding: 5px 0; }
 
+.entry.indent { margin-left: 30px; }
+
 .sublist { margin-left: 30px; }
 
 .load { text-align: center; }
@@ -138,9 +140,13 @@ table a:hover { color: var(--gray); }
 
 .small { font-size: var(--small); overflow: hidden; }
 
-.small a, .small b { color: var(--gray); float: left; margin-right: 10px; }
+.small a, .small b { float: left; margin-right: 10px; }
 
 .small a:first-child, .small b:first-child { float: right; margin-right: 0; }
+
+.small b { color: var(--silver); }
+
+.small a { color: var(--gray); }
 
 .small a:hover { color: var(--silver); }
 
@@ -172,13 +178,17 @@ table a:hover { color: var(--gray); }
 
 .filters { color: var(--gray); font-size: var(--tiny); font-weight: bold; overflow: hidden; text-transform: uppercase; }
 
-.filters a { color: var(--gray); float: left; margin-right: 10px; }
+.filters a { color: var(--gray); float: left; margin: 0 5px; }
+
+.filters a:first-child { margin-left: 0; }
 
 .filters a:last-child { margin-right: 0; }
 
 .filters a:hover { color: var(--silver); }
 
 .filters a.selected { color: var(--accent); }
+
+.filters .separator { background-color: var(--whitesmoke); float: left; width: 1px; height: 20px; margin: 0 5px; }
 
 .request.upper { margin-top: -10px; }
 

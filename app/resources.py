@@ -2,7 +2,7 @@ from cgi import FieldStorage
 
 import emoji
 from django.db.models import Count, Max, Prefetch, Q
-from emails import Message
+from emails import Message as Email
 from emails.template import JinjaTemplate
 from falcon import status_codes
 from falcon.hooks import before
@@ -13,7 +13,7 @@ from app.forms import get_content, get_emoji, get_name
 from app.helpers import build_hash, parse_metadata, utc_timestamp, verify_hash
 from app.hooks import auth_user, login_required
 from app.jinja import render
-from app.models import Article, Comment, Relation, Save, User
+from app.models import Article, Comment, Message, Relation, Save, User
 from app.validation import (
     authentication, changing, profiling, registration, valid_content,
     valid_handle, valid_reply, valid_thread
@@ -141,6 +141,8 @@ class FeedResource:
     def on_post(self, req, resp):
         form = FieldStorage(fp=req.stream, environ=req.env)
         content = get_content(form)
+        if not content:
+            raise HTTPFound("/feed")
         errors = {}
         errors['content'] = valid_content(content, req.user)
         if not errors['content']:
@@ -164,7 +166,7 @@ class FeedResource:
                 created_by=req.user,
                 **extra
             )
-            raise HTTPFound('/')
+            raise HTTPFound('/feed')
 
 
 class ReplyResource:
@@ -196,6 +198,8 @@ class ReplyResource:
         parent = Comments.filter(id=id).select_related('parent').first()
         form = FieldStorage(fp=req.stream, environ=req.env)
         content = get_content(form)
+        if not content:
+            raise HTTPFound(f"/reply/{id}")
         hashrefs, hashtags, links, mentions = parse_metadata(content)
         errors = {}
         errors['content'] = valid_content(content, req.user)
@@ -280,6 +284,64 @@ class EditResource:
             raise HTTPFound(f"/reply/{id}")
 
 
+class MessageResource:
+    def fetch_entries(self, req, member):
+        entries = Message.objects.filter(
+            Q(created_by=req.user.id, to_user=member.id) | Q(created_by=member.id, to_user=req.user.id)
+        ).order_by('-id').select_related('created_by', 'to_user')
+        return paginate(req, entries)
+
+    def clear_messages(self, req, member):
+        Message.objects.filter(
+            created_by=member, to_user=req.user, seen_at=.0
+        ).update(seen_at=utc_timestamp())
+
+    @before(auth_user)
+    @before(login_required)
+    def on_get(self, req, resp, username):
+        member = User.objects.filter(username=username.lower()).first()
+        if not member:
+            return not_found(resp, req.user, f'/{username}/message')
+        entries = self.fetch_entries(req, member)
+        blocked = all(m.created_by == req.user for m in entries[:5])
+        page, number = get_page(req)
+        resp.text = render(
+            page=page, view='message', number=number, user=req.user, errors={},
+            entries=entries, member=member,
+            blocked=blocked if member != req.user else None
+        )
+        if req.user.received.filter(created_by=member, seen_at=.0).count():
+            self.clear_messages(req, member)
+
+    @before(auth_user)
+    @before(login_required)
+    def on_post(self, req, resp, username):
+        member = User.objects.filter(username=username.lower()).first()
+        form = FieldStorage(fp=req.stream, environ=req.env)
+        content = get_content(form)
+        if not content:
+            raise HTTPFound(f"/{username}/message")
+        errors = {}
+        errors['content'] = valid_content(content, req.user)
+        errors = {k: v for k, v in errors.items() if v}
+        if errors:
+            entries = self.fetch_entries(req, member)
+            page, number = get_page(req)
+            resp.text = render(
+                page=page, view='message', number=number, user=req.user,
+                member=member, entries=entries, content=content, errors=errors
+            )
+        else:
+            msg, is_new = Message.objects.get_or_create(
+                to_user=member,
+                content=content,
+                created_at=utc_timestamp(),
+                created_by=req.user,
+                seen_at=utc_timestamp() if member == req.user else .0
+            )
+            raise HTTPFound(f"/{username}/message")
+
+
 class ProfileResource:
     def fetch_entries(self, req, member):
         entries = Comments.filter(
@@ -295,7 +357,6 @@ class ProfileResource:
         entries = self.fetch_entries(req, member)
         page, number = get_page(req)
         is_following, is_followed = None, None
-        sent, received = 0, 0
         if number == 1:
             is_following = Relation.objects.filter(
                 created_by=req.user, to_user=member
@@ -303,12 +364,9 @@ class ProfileResource:
             is_followed = Relation.objects.filter(
                 created_by=member, to_user=req.user
             ).exclude(created_by=req.user).exists() if req.user else False
-            sent = Comment.objects.filter(created_by=member).exclude(parent=None).count()
-            received = Comment.objects.filter(to_user=member).count()
         resp.text = render(
             page=page, view='profile', number=number, errors={},
             user=req.user, member=member, entries=entries,
-            sent=sent, received=received,
             is_following=is_following, is_followed=is_followed
         )
 
@@ -431,6 +489,24 @@ class SavedResource:
         )
 
 
+class MessagesResource:
+    def fetch_entries(self, req):
+        entries = Message.objects.filter(
+            to_user=req.user
+        ).order_by('created_by_id', '-id').distinct('created_by_id').select_related('created_by')
+        return paginate(req, entries)
+
+    @before(auth_user)
+    @before(login_required)
+    def on_get(self, req, resp):
+        entries = self.fetch_entries(req)
+        page, number = get_page(req)
+        resp.text = render(
+            page=page, view='messages', number=number,
+            user=req.user, entries=entries
+        )
+
+
 class LobbyResource:
     @before(auth_user)
     def on_get_apv(self, req, resp, username):  # noqa
@@ -509,15 +585,8 @@ class DiscoverResource:
             f = self.build_query(terms)
             entries = Comments.filter(f).order_by('-id').prefetch_related(PFR, PPFR)
         else:
-            last_threads = User.objects.annotate(
-                last_id=Max('comments__id', filter=Q(comments__parent__isnull=True))
-            ).values('last_id')
-            last_replies = User.objects.annotate(
-                last_id=Max('comments__id', filter=Q(comments__parent__isnull=False))
-            ).values('last_id')
-            entries = Comments.filter(
-                id__in=last_threads.union(last_replies)
-            ).order_by('-id').prefetch_related(PFR, PPFR)
+            lastest = User.objects.annotate(last_id=Max('comments__id')).values('last_id')
+            entries = Comments.filter(id__in=lastest).order_by('-id').prefetch_related(PFR, PPFR)
         return paginate(req, entries)
 
     @before(auth_user)
@@ -856,7 +925,7 @@ class UnlockResource:
             # generate token
             token = FERNET.encrypt(str(user.email).encode()).decode()
             # compose email
-            m = Message(
+            m = Email(
                 html=JinjaTemplate(HTML),
                 text=JinjaTemplate(TEXT),
                 subject="Unlock account on Subreply",

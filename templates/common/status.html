@@ -3,17 +3,10 @@
         <div class="status">{{ member.social | safe }}</div>
     {% endif %}
 
-    {% if sent and received %}
-        <div class="status">
-            {{ received }} repl{% if received == 1 %}y{% else %}ies{% endif %} received.
-            {{ sent }} repl{% if sent == 1 %}y{% else %}ies{% endif %} sent.
-            {{ (sent / received * 100) | round | int }}% profile ratio.
-        </div>
-    {% endif %}
-
     <div class="status">
         Joined {{ member.joined_at | shortdate }} ago.
         Seen {{ member.seen_at | shortdate }} ago.
+        <a href="/{{ member }}/message">Message</a>.
         {% if is_followed %}Follows you.{% endif %}
         {% if user.id == member.id %}
             <a href="/logout">Logout</a>.
