@@ -47,6 +47,24 @@
             </div>
             <div class="line">
                 <div class="left">
+                    <label for="id_patreon">Patreon</label>
+                    <input type="text" name="patreon" id="id_patreon" maxlength="15"
+                        value="{% if form %}{{ fields.patreon }}{% else %}{{ user.links.patreon }}{% endif %}">
+                </div>
+                <div class="right">
+                    <label for="id_paypal">PayPal</label>
+                    <input type="text" name="paypal" id="id_paypal" maxlength="15"
+                        value="{% if form %}{{ fields.paypal }}{% else %}{{ user.links.paypal }}{% endif %}">
+                </div>
+                {% if 'patreon' in errors %}
+                    <div class="error">{{ errors['patreon'] }}</div>
+                {% endif %}
+                {% if 'paypal' in errors %}
+                    <div class="error">{{ errors['paypal'] }}</div>
+                {% endif %}
+            </div>
+            <div class="line">
+                <div class="left">
                     <label for="id_soundcloud">SoundCloud</label>
                     <input type="text" name="soundcloud" id="id_soundcloud" maxlength="15"
                         value="{% if form %}{{ fields.soundcloud }}{% else %}{{ user.links.soundcloud }}{% endif %}">
