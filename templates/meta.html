@@ -4,7 +4,11 @@
 
 <title>
     {% if view == 'profile' %}
-        {{ member.full_name }} @{{ member}}
+        {{ member.full_name }}
+    {% elif view == 'reply' %}
+        {{ brand }} / Reply {{ entry.created_by.first_name }}
+    {% elif view == 'message' %}
+        {{ brand }} / Message {{ member.first_name }}
     {% else %}
         {{ brand }} / {{ view | capitalize }}
     {% endif %}
