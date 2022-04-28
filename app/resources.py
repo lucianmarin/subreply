@@ -303,12 +303,13 @@ class MessageResource:
         if not member:
             return not_found(resp, req.user, f'/{username}/message')
         entries = self.fetch_entries(req, member)
-        blocked = all(m.created_by == req.user for m in entries[:5])
+        blocked = False
+        if entries and member != req.user:
+            blocked = all(m.created_by == req.user for m in entries[:5])
         page, number = get_page(req)
         resp.text = render(
             page=page, view='message', number=number, user=req.user, errors={},
-            entries=entries, member=member,
-            blocked=blocked if member != req.user else None
+            entries=entries, member=member, blocked=blocked
         )
         if req.user.received.filter(created_by=member, seen_at=.0).count():
             self.clear_messages(req, member)
