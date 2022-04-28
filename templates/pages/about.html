@@ -11,51 +11,45 @@
 
         <p>Register your account, improve your profile, wait for approval then see for yourself if it's worthy of your time. You can change your mind at any time.</p>
 
-        <p>As part of a branding, design and technology change, subreply.com replaces sublevel.net while your Sublevel account is actually a Subreply account. Sublevel launched in April, 2014 using technology available at that time.</p>
+        <h4>Built around user stories</h4>
+        <ol>
+            <li>an user comes to start good threads</li>
+            <li>an user comes to write witty replies</li>
+            <li>an user keeps in touch with private messages</li>
+            <li>an user reads quality news articles</li>
+            <li>an user discovers highlighted and saved content</li>
+        </ol>
 
-        <h4>Features</h4>
+        <h4>Features and limitations</h4>
         <ol>
             <li>reverse-chronological order for all feeds</li>
             <li>unique name handles like 💪 John Doe</li>
-            <li>mentions, links, hashtags and bangs support</li>
-            <li>save content posted by anyone</li>
-            <li>easy to find find and follow people</li>
+            <li>mentions, links, hashtags and hashrefs support</li>
             <li>light and dark themes based on OS preference</li>
-        </ol>
-
-        <h4>Principles</h4>
-        <ol>
-            <li>stability provided by a unique set of limitations</li>
-            <li>interactivity driven by replying to anything, anytime</li>
-            <li>longevity provided by low cost server and high performance code</li>
-        </ol>
-
-        <h4>Limitations</h4>
-        <ol>
             <li>640 characters per reply</li>
-            <li>ASCII for content, Latin for names</li>
-            <li>only one reply to a reply to form a conversation</li>
+            <li>ASCII and emojis for content</li>
+            <li>full thread and a full conversation views</li>
             <li>only one bang, mention, link or hashtag per reply</li>
             <li>no support for paragraphs, keeps conversation tidy</li>
-            <li>no popularity counters for replies or profiles</li>
+            <li>no popularity counters or instant gratification</li>
         </ol>
 
-        <h4>Technology</h4>
+        <h4>Keeping things private</h4>
+        <ul>
+            <li>edit or delete your replies before they are replied to</li>
+            <li>delete received replies before they are replied to</li>
+            <li>private and server-side encrypted messages</li>
+            <li>no redistribution of data, private or public based on GDPR</li>
+            <li>email address needed for password reset, no spam</li>
+            <li>straightforward and complete account deletion</li>
+        </ul>
+
+        <h4>Technology stack</h4>
         <ul>
             <li>high frequency <a href="https://www.vultr.com/?ref=8538483-6G">Vultr VPS</a> running Ubuntu LTS</li>
             <li>coded in Python using Falcon framework and Django ORM</li>
             <li>Gunicorn in front of Nginx, PgBouncer in front of PostgreSQL</li>
             <li>SVG icons by <a href="https://heroicons.dev/">Heroicons</a>, Route 159 font by <a href="https://www.dotcolon.net/font/route159/">dotcolon.net</a></li>
         </ul>
-
-        <h4>Privacy</h4>
-        <ol>
-            <li>edit or delete your replies before they are replied to</li>
-            <li>delete received replies before they are replied to</li>
-            <li>private following, followers and saved lists</li>
-            <li>no redistribution of data, private or public based on GDPR</li>
-            <li>email address needed for password reset, no spam</li>
-            <li>straightforward and complete account deletion</li>
-        </ol>
     </div>
 {% endblock %}
