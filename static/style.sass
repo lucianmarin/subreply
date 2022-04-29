@@ -239,22 +239,16 @@ table
     padding: 5px 0
     &.indent
         margin-left: 30px
-    &.text
+    .read p:last-child
+        display: none
+    .text
         margin-left: 30px
         p
-            margin: 10px 0
+            margin: 7.5px 0
             &:first-child
                 margin-top: 0
-            &:last-child
-                margin-bottom: 0
             strong
                 margin-left: -30px
-
-.read
-    .content, .small
-        opacity: 0.5
-    .content p:last-child
-        @include dots
 
 .sublist
     margin-left: 30px

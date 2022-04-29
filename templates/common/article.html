@@ -1,5 +1,5 @@
-<div class="entry {% if user.id in entry.ids %}read{% endif %}">
-    <div class="content">
+<div class="entry">
+    <div class="content {% if user.id in entry.ids %}read{% endif %}">
         <p>
             <a class="name" href="/news/{{ entry.id }}" target="_blank">
                 {{ entry.title }}

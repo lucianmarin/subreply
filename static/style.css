@@ -106,19 +106,15 @@ table a:hover { color: var(--gray); }
 
 .entry.indent { margin-left: 30px; }
 
-.entry.text { margin-left: 30px; }
+.entry .read p:last-child { display: none; }
 
-.entry.text p { margin: 10px 0; }
+.entry .text { margin-left: 30px; }
 
-.entry.text p:first-child { margin-top: 0; }
+.entry .text p { margin: 7.5px 0; }
 
-.entry.text p:last-child { margin-bottom: 0; }
+.entry .text p:first-child { margin-top: 0; }
 
-.entry.text p strong { margin-left: -30px; }
-
-.read .content, .read .small { opacity: 0.5; }
-
-.read .content p:last-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.entry .text p strong { margin-left: -30px; }
 
 .sublist { margin-left: 30px; }
 

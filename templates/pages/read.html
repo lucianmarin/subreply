@@ -3,10 +3,12 @@
 {% block main %}
     <div class="list">
         {% include "common/article.html" %}
-        <div class="entry text">
-            {% for paragraph in entry.paragraphs %}
-                <p>{{ paragraph | safe }}</p>
-            {% endfor %}
+        <div class="entry">
+            <div class="text">
+                {% for paragraph in entry.paragraphs %}
+                    <p>{{ paragraph | safe }}</p>
+                {% endfor %}
+            </div>
         </div>
     </div>
 {% endblock %}
