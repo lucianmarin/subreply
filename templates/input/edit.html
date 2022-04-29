@@ -4,7 +4,7 @@
             rows="1" cols="60" maxlength="720"
             placeholder="Edit content"
             oninput="expand(this)" onkeydown="send(event)"
-            >{{ content }}</textarea>
+            >{{ content | emojize }}</textarea>
         {% for name, error in errors.items() %}
             <div class="error">{{ error | safe }}</div>
         {% endfor %}
