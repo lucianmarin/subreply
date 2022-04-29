@@ -106,8 +106,6 @@ table a:hover { color: var(--gray); }
 
 .entry.indent { margin-left: 30px; }
 
-.entry .read p:last-child { display: none; }
-
 .entry .text { margin-left: 30px; }
 
 .entry .text p { margin: 7.5px 0; }

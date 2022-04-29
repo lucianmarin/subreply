@@ -1,11 +1,10 @@
 <div class="entry">
-    <div class="content {% if user.id in entry.ids %}read{% endif %}">
-        <p>
-            <a class="name" href="/news/{{ entry.id }}" target="_blank">
-                {{ entry.title }}
-            </a>
-        </p>
-        <p>{{ entry.description }}</p>
+    <div class="content">
+        <a class="name" href="/news/{{ entry.id }}" target="_blank">
+            {{ entry.title }}
+        </a>
+        <br />
+        {{ entry.description }}
     </div>
     <div class="small">
         <b>{{ entry.pub_at | shortdate }}</b>

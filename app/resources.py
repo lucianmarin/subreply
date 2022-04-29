@@ -630,14 +630,13 @@ class TrendingResource:
 
 
 class NewsResource:
-    def ids(self, *args):
-        return Article.objects.order_by(
-            'domain', *args
-        ).distinct('domain').values('id')
-
     def fetch_entries(self, req):
+        user_id = req.user.id if req.user else 0
+        latest = Article.objects.exclude(ids__contains=user_id).order_by(
+            'domain', '-readers', '-pub_at'
+        ).distinct('domain').values('id')
         entries = Article.objects.filter(
-            id__in=self.ids('-readers', '-pub_at')
+            id__in=latest
         ).order_by('-readers', '-pub_at')
         return paginate(req, entries)
 
