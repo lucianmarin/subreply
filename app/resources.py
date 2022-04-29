@@ -1,6 +1,5 @@
 from cgi import FieldStorage
 
-import emoji
 from django.db.models import Count, Max, Prefetch, Q
 from emails import Message as Email
 from emails.template import JinjaTemplate
@@ -99,21 +98,13 @@ class MainResource:
 class AboutResource:
     @before(auth_user)
     def on_get(self, req, resp):
-        resp.text = render(page='about', view='about', user=req.user)
-
-
-class EmojiResource:
-    @before(auth_user)
-    def on_get(self, req, resp):
-        codes = emoji.UNICODE_EMOJI_ENGLISH.values()
-        shortcodes = [
-            c for c in codes if c.count('_') < 2 and not c.count('-') and not c.count('’') and c.islower()
-        ]
-        shortcodes = sorted(set(shortcodes))
-        odds = [s for i, s in enumerate(shortcodes) if i % 2 == 0]
-        evens = [s for i, s in enumerate(shortcodes) if i % 2 == 1]
+        luc = User.objects.get(id=1)
+        sub = User.objects.get(id=2)
+        emo = User.objects.exclude(
+            id__in=[1, 2]
+        ).exclude(emoji='').order_by("?").first()
         resp.text = render(
-            page='emoji', view='emoji', user=req.user, rows=zip(evens, odds)
+            page='about', view='about', user=req.user, luc=luc, sub=sub, emo=emo
         )
 
 

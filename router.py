@@ -36,8 +36,6 @@ app.add_route('/news/{id}', resources.ArticleResource(), suffix="link")
 app.add_route('/read/{id}', resources.ArticleResource(), suffix="read")
 
 app.add_route('/about', resources.AboutResource())
-app.add_route('/emoji', resources.EmojiResource())
-
 app.add_route('/login', resources.LoginResource())
 app.add_route('/logout', resources.LogoutResource())
 app.add_route('/register', resources.RegisterResource())

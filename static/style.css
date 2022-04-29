@@ -212,7 +212,7 @@ table a:hover { color: var(--gray); }
 
 .error a { color: var(--orange); font-weight: bold; }
 
-.about a { color: var(--accent); }
+.about a { font-weight: bold; }
 
 .about a:hover { color: var(--gray); }
 
