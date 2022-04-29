@@ -118,6 +118,8 @@ table a:hover { color: var(--gray); }
 
 .read .content, .read .small { opacity: 0.5; }
 
+.read .content p:last-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
 .sublist { margin-left: 30px; }
 
 .load { text-align: center; }
