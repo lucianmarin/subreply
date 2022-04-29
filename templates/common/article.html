@@ -10,8 +10,12 @@
     <div class="small">
         <b>{{ entry.pub_at | shortdate }}</b>
         <a href="/feed?s={{ entry.url | quote }}">{{ entry.domain }}</a>
-        {% if entry.readers %}
-            <b>{{ entry.readers }} reader{% if entry.readers != 1 %}s{% endif %}</a>
-        {% endif %}
+        <a href="/read/{{ entry.id }}">
+            {% if entry.readers %}
+                {{ entry.readers }} reader{% if entry.readers != 1 %}s{% endif %}
+            {% else %}
+                read
+            {% endif %}
+        </a>
     </div>
 </div>

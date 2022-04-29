@@ -514,14 +514,14 @@ class MessagesResource:
 
 class LobbyResource:
     @before(auth_user)
-    def on_get_apv(self, req, resp, username):  # noqa
+    def on_get_approve(self, req, resp, username):  # noqa
         if not req.user.id == 1:
             raise HTTPFound(f'/{username}')
         User.objects.filter(username=username.lower()).update(is_approved=True)
         raise HTTPFound(f'/{username}')
 
     @before(auth_user)
-    def on_get_dst(self, req, resp, username):  # noqa
+    def on_get_destroy(self, req, resp, username):  # noqa
         if not req.user.id == 1:
             raise HTTPFound(f'/{username}')
         User.objects.filter(username=username.lower()).delete()
@@ -650,16 +650,26 @@ class NewsResource:
         )
 
 
-class LinkResource:
+class ArticleResource:
     @before(auth_user)
-    def on_get(self, req, resp, id):
-        articles = Article.objects.filter(id=id)
-        if not articles:
+    def on_get_link(self, req, resp, id):
+        article = Article.objects.filter(id=id).first()
+        if not article:
             return not_found(resp, req.user, f'/news/{id}')
-        article = articles[0]
         if req.user:
             article.increment(req.user.id)
         raise HTTPFound(article.url)
+
+    @before(auth_user)
+    @before(login_required)
+    def on_get_read(self, req, resp, id):
+        article = Article.objects.filter(id=id).first()
+        if not article:
+            return not_found(resp, req.user, f'/read/{id}')
+        article.increment(req.user.id)
+        resp.text = render(
+            page='read', view='read', user=req.user, entry=article
+        )
 
 
 class AccountResource:
@@ -674,7 +684,7 @@ class AccountResource:
 
     @before(auth_user)
     @before(login_required)
-    def on_post_chg(self, req, resp):
+    def on_post_change(self, req, resp):
         form = FieldStorage(fp=req.stream, environ=req.env)
         current = form.getvalue('current', '')
         password1 = form.getvalue('password1', '')
@@ -693,7 +703,7 @@ class AccountResource:
 
     @before(auth_user)
     @before(login_required)
-    def on_post_exp(self, req, resp):
+    def on_post_export(self, req, resp):
         form = FieldStorage(fp=req.stream, environ=req.env)
         username = form.getvalue('username', '').strip().lower()
         errors = {}
@@ -727,7 +737,7 @@ class AccountResource:
 
     @before(auth_user)
     @before(login_required)
-    def on_post_del(self, req, resp):
+    def on_post_delete(self, req, resp):
         form = FieldStorage(fp=req.stream, environ=req.env)
         confirm = form.getvalue('confirm', '')
         errors = {}
@@ -909,7 +919,7 @@ class UnlockResource:
             page='unlock', view='unlock', errors={}, form=form
         )
 
-    def on_get_lnk(self, req, resp, token):  # noqa
+    def on_get_link(self, req, resp, token):  # noqa
         email = FERNET.decrypt(token.encode()).decode()
         user = User.objects.filter(email=email).first()
         token = FERNET.encrypt(str(user.id).encode()).decode()

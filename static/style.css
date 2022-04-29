@@ -106,6 +106,16 @@ table a:hover { color: var(--gray); }
 
 .entry.indent { margin-left: 30px; }
 
+.entry.text { margin-left: 30px; }
+
+.entry.text p { margin: 10px 0; }
+
+.entry.text p:first-child { margin-top: 0; }
+
+.entry.text p:last-child { margin-bottom: 0; }
+
+.entry.text p strong { margin-left: -30px; }
+
 .sublist { margin-left: 30px; }
 
 .load { text-align: center; }
