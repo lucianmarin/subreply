@@ -5,6 +5,8 @@
 <title>
     {% if view == 'profile' %}
         {{ member.full_name }}
+    {% elif view == 'read' %}
+        {{ brand }} / Read {{ entry.domain }}
     {% elif view == 'reply' %}
         {{ brand }} / Reply {{ entry.created_by.first_name }}
     {% elif view == 'message' %}
