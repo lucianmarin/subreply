@@ -1,4 +1,4 @@
-<div class="entry">
+<div class="entry {% if user.id in entry.ids %}read{% endif %}">
     <div class="content">
         <p>
             <a class="name" href="/news/{{ entry.id }}" target="_blank">

@@ -116,6 +116,8 @@ table a:hover { color: var(--gray); }
 
 .entry.text p strong { margin-left: -30px; }
 
+.read .content, .read .small { opacity: 0.5; }
+
 .sublist { margin-left: 30px; }
 
 .load { text-align: center; }
