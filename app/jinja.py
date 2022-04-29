@@ -4,7 +4,7 @@ from jinja2 import Environment, FileSystemBytecodeCache, FileSystemLoader
 from emoji import emojize
 
 from app.filters import age, city, parser, shortdate, superscript
-from project.settings import DEBUG
+from project.settings import DEBUG, FERNET
 
 env = Environment(autoescape=True)
 
@@ -14,6 +14,7 @@ env.loader = FileSystemLoader('templates')
 
 env.filters['age'] = age
 env.filters['city'] = city
+env.filters['decode'] = lambda m: FERNET.decrypt(m.encode()).decode()
 env.filters['emojize'] = emojize
 env.filters['parser'] = parser
 env.filters['quote'] = quote_plus

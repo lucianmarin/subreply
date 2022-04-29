@@ -6,7 +6,7 @@
             {% endif %}
             {{ entry.created_by.full_name }}
         </a>
-        {{ entry.content | parser | emojize | safe }}
+        {{ entry.content | decode | parser | emojize | safe }}
     </div>
     {% if entry.created_by == user %}
         <div class="small">

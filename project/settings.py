@@ -1,6 +1,6 @@
 from cryptography.fernet import Fernet
 
-from project.local import DEBUG, SECRET_KEY, SIGNATURE, SMTP
+from project.local import DEBUG, SIGNATURE, SMTP  # noqa
 
 ALLOWED_HOSTS = []
 AUTH_PASSWORD_VALIDATORS = []
@@ -9,10 +9,6 @@ MIDDLEWARE = []
 TEMPLATES = []
 
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
-
-DEBUG = DEBUG
-SECRET_KEY = SECRET_KEY
-SMTP = SMTP
 
 DATABASES = {
     "default": {

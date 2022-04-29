@@ -154,7 +154,7 @@ class Comment(models.Model):
 
 
 class Message(models.Model):
-    content = models.CharField(max_length=640)
+    content = models.TextField()
     created_by = models.ForeignKey('User', on_delete=models.CASCADE, related_name='sent')
     to_user = models.ForeignKey('User', on_delete=models.CASCADE, related_name='received')
     created_at = models.FloatField(default=.0)
@@ -185,12 +185,12 @@ class Article(models.Model):
     domain = models.CharField(max_length=120, db_index=True)
     author = models.CharField(max_length=120, default='')
     description = models.CharField(max_length=640, default='')
-    score = models.IntegerField(default=0, db_index=True)
     paragraphs = models.JSONField(default=list)
-    ips = models.JSONField(default=list)
+    ids = models.JSONField(default=list)
+    readers = models.IntegerField(default=0, db_index=True)
 
-    def increment(self, ip):
-        self.ips += [ip]
-        self.ips = list(set(self.ips))
-        self.score = len(self.ips)
-        self.save(update_fields=['ips', 'score'])
+    def increment(self, id):
+        self.ids += [id]
+        self.ids = list(set(self.ids))
+        self.readers = len(self.ids)
+        self.save(update_fields=['ids', 'readers'])

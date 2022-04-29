@@ -333,9 +333,10 @@ class MessageResource:
                 member=member, entries=entries, content=content, errors=errors
             )
         else:
+            message = FERNET.encrypt(content.encode()).decode()
             msg, is_new = Message.objects.get_or_create(
                 to_user=member,
-                content=content,
+                content=message,
                 created_at=utc_timestamp(),
                 created_by=req.user,
                 seen_at=utc_timestamp() if member == req.user else .0
@@ -636,8 +637,8 @@ class NewsResource:
 
     def fetch_entries(self, req):
         entries = Article.objects.filter(
-            id__in=self.ids('-score', '-pub_at')
-        ).order_by('-score', '-pub_at')
+            id__in=self.ids('-readers', '-pub_at')
+        ).order_by('-readers', '-pub_at')
         return paginate(req, entries)
 
     @before(auth_user)
