@@ -18,4 +18,4 @@ def auth_user(req, resp, resource, params):  # noqa
 
 def login_required(req, resp, resource, params):  # noqa
     if not req.user:
-        raise HTTPFound('/login')
+        raise HTTPFound('/register')
