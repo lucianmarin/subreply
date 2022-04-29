@@ -640,12 +640,20 @@ class NewsResource:
         ).order_by('-readers', '-pub_at')
         return paginate(req, entries)
 
+    def fetch_read(self, user):
+        if not user:
+            return Article.objects.none()
+        return Article.objects.filter(ids__contains=user.id).order_by('-pub_at')
+
     @before(auth_user)
     def on_get(self, req, resp):
         entries = self.fetch_entries(req)
+        read = self.fetch_read(req.user)
+        last, count = read.last(), read.count()
         page, number = get_page(req)
         resp.text = render(
-            page=page, view='news', number=number, user=req.user, entries=entries
+            page=page, view='news', number=number, user=req.user,
+            entries=entries, last=last, count=count
         )
 
 

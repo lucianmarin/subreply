@@ -5,6 +5,19 @@ from tldextract import extract
 from app.helpers import utc_timestamp
 
 
+def fibojize(count):
+    """Return an emoji based on Fibonacci count."""
+    if count > 21:
+        return ":nerd_face:"
+    elif count > 13:
+        return ":exploding_head:"
+    elif count > 8:
+        return ":rocket:"
+    elif count > 5:
+        return ":fire:"
+    return ":clapping_hands:"
+
+
 def city(location):
     """Get city name."""
     if "," in location:
