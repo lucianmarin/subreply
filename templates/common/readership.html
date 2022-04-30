@@ -1,9 +1,12 @@
 <div class="entry">
     <div class="status">
         {% if view == 'news' %}
-            Read <strong><a href="/read">{{ count }} articles</a></strong> in last {{ last.pub_at | shortdate }}. {{ count | fibojize | emojize }}
+            <strong><a href="/read">{{ count }} articles</a></strong>
+            read since yesterday!
         {% else %}
-            Still <strong><a href="/news">{{ count }} articles</a></strong> to be read. {{ count | fibojize | emojize }}
+            Continue reading another
+            <strong><a href="/news">{{ count }} articles</a></strong>!
         {% endif %}
+        {{ count | fibojize | emojize }}
     </div>
 </div>
