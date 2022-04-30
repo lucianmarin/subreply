@@ -24,13 +24,8 @@
         {% if view == 'profile' %}
             {% include "common/user.html" %}
             {% include "common/status.html" %}
-        {% elif view == 'news' and count > 1 %}
-            <div class="entry">
-                <div class="status">
-                    Read {{ count }} articles in last {{ last.pub_at | shortdate }}.
-                    {{ count | fibojize | emojize }}
-                </div>
-            </div>
+        {% elif view in ['news', 'read'] and count > 1 %}
+            {% include "common/readership.html" %}
         {% endif %}
 
         {% for entry in entries %}
@@ -47,7 +42,7 @@
                 {% include "common/inbox.html" %}
             {% elif view == 'message' %}
                 {% include "common/message.html" %}
-            {% elif view == 'news' %}
+            {% elif view in ['news', 'read'] %}
                 {% include "common/article.html" %}
             {% else %}
                 {% include "common/stream.html" %}

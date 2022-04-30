@@ -31,9 +31,10 @@ app.add_route('/discover', resources.DiscoverResource())
 app.add_route('/people', resources.PeopleResource())
 app.add_route('/trending', resources.TrendingResource())
 
-app.add_route('/news', resources.NewsResource())
-app.add_route('/news/{id}', resources.ArticleResource(), suffix="link")
-app.add_route('/read/{id}', resources.ArticleResource(), suffix="read")
+app.add_route('/news/{id}', resources.ArticleResource(), suffix="linker")
+app.add_route('/news', resources.ArticlesResource(), suffix="news")
+app.add_route('/read/{id}', resources.ArticleResource(), suffix="reader")
+app.add_route('/read', resources.ArticlesResource(), suffix="read")
 
 app.add_route('/about', resources.AboutResource())
 app.add_route('/login', resources.LoginResource())

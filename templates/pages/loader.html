@@ -12,7 +12,7 @@
         {% include "common/inbox.html" %}
     {% elif view == 'message' %}
         {% include "common/message.html" %}
-    {% elif view == 'news' %}
+    {% elif view in ['news', 'read'] %}
         {% include "common/article.html" %}
     {% else %}
         {% include "common/stream.html" %}

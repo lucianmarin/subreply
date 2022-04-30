@@ -620,7 +620,7 @@ class TrendingResource:
         )
 
 
-class NewsResource:
+class ArticlesResource:
     def fetch_entries(self, req):
         user_id = req.user.id if req.user else 0
         latest = Article.objects.exclude(ids__contains=user_id).order_by(
@@ -631,15 +631,24 @@ class NewsResource:
         ).order_by('-readers', '-pub_at')
         return paginate(req, entries)
 
-    def fetch_read(self, user):
+    def get_status(self, user, is_read):
         if not user:
             return Article.objects.none()
-        return Article.objects.filter(ids__contains=user.id).order_by('-pub_at')
+        entries = Article.objects.order_by('-pub_at')
+        if is_read:
+            return entries.filter(ids__contains=user.id)
+        return entries.exclude(ids__contains=user.id)
+
+    def fetch_read(self, req):
+        entries = Article.objects.filter(
+            ids__contains=req.user.id
+        ).order_by('-pub_at')
+        return paginate(req, entries)
 
     @before(auth_user)
-    def on_get(self, req, resp):
+    def on_get_news(self, req, resp):
         entries = self.fetch_entries(req)
-        read = self.fetch_read(req.user)
+        read = self.get_status(req.user, is_read=True)
         last, count = read.last(), read.count()
         page, number = get_page(req)
         resp.text = render(
@@ -647,10 +656,22 @@ class NewsResource:
             entries=entries, last=last, count=count
         )
 
+    @before(auth_user)
+    @before(login_required)
+    def on_get_read(self, req, resp):
+        entries = self.fetch_read(req)
+        unread = self.get_status(req.user, is_read=False)
+        last, count = unread.last(), unread.count()
+        page, number = get_page(req)
+        resp.text = render(
+            page=page, view='read', number=number, user=req.user,
+            entries=entries, last=last, count=count
+        )
+
 
 class ArticleResource:
     @before(auth_user)
-    def on_get_link(self, req, resp, id):
+    def on_get_linker(self, req, resp, id):
         article = Article.objects.filter(id=id).first()
         if not article:
             return not_found(resp, req.user, f'/news/{id}')
@@ -660,13 +681,13 @@ class ArticleResource:
 
     @before(auth_user)
     @before(login_required)
-    def on_get_read(self, req, resp, id):
+    def on_get_reader(self, req, resp, id):
         article = Article.objects.filter(id=id).first()
         if not article:
             return not_found(resp, req.user, f'/read/{id}')
         article.increment(req.user.id)
         resp.text = render(
-            page='read', view='read', user=req.user, entry=article
+            page='reader', view='reader', user=req.user, entry=article
         )
 
 
