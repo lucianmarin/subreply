@@ -2,9 +2,16 @@ import urllib
 
 import requests
 from bs4 import BeautifulSoup
+from unidecode import unidecode
+from emoji import demojize, emojize
 
 from app.filters import hostname
 from project.vars import HEADERS
+
+
+def parse_text(text):
+    decoded = emojize(unidecode(demojize(text)))
+    return " ".join([t.strip() for t in decoded.split()])
 
 
 def get_url(link):
@@ -34,8 +41,7 @@ def get_paragraphs(soup):
                 child.unwrap()
         for child in candidate.children:
             if child.name in allowed:
-                text = " ".join([t.strip() for t in child.text.split()])
-                text = text.encode('latin-1', 'ignore').decode('latin-1')
+                text = parse_text(child.text)
                 if text:
                     if child.name in ["p", "pre", "li"]:
                         paragraphs.append(text)
@@ -57,7 +63,7 @@ def get_description(soup):
         meta_content = meta.get('content', '') if meta else ''
         meta_pretty = " ".join(meta_content.split())
         description = meta_pretty if meta_pretty else description
-    return description
+    return parse_text(description)
 
 
 def fetch_content(link):
