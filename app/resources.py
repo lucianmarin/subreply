@@ -633,7 +633,7 @@ class ArticlesResource:
 
     def get_count(self, user, is_read):
         if not user:
-            return Article.objects.none()
+            return 0
         entries = Article.objects.order_by('-pub_at')
         if is_read:
             return entries.filter(ids__contains=user.id).count()
