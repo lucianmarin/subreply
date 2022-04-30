@@ -1,9 +1,9 @@
 from urllib.parse import quote_plus
 
-from jinja2 import Environment, FileSystemBytecodeCache, FileSystemLoader
 from emoji import emojize
+from jinja2 import Environment, FileSystemBytecodeCache, FileSystemLoader
 
-from app.filters import age, city, fibojize, parser, shortdate, superscript
+from app.filters import age, city, fibojize, parser, shortdate
 from project.settings import DEBUG, FERNET
 
 env = Environment(autoescape=True)
@@ -20,7 +20,6 @@ env.filters['fibojize'] = fibojize
 env.filters['parser'] = parser
 env.filters['quote'] = quote_plus
 env.filters['shortdate'] = shortdate
-env.filters['superscript'] = superscript
 
 env.globals['brand'] = "Subreply"
 env.globals['v'] = 184
