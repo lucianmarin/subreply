@@ -3,11 +3,12 @@ from datetime import datetime, timezone
 
 import feedparser
 import requests
-from app.filters import hostname
-from app.parsers import fetch_content, get_url, parse_text
-from app.models import Article
 from dateutil.parser import parse
 from django.core.management.base import BaseCommand
+
+from app.filters import hostname
+from app.models import Article
+from app.parsers import dehtmlize, fetch_content, get_url
 from project.vars import FEEDS
 
 
@@ -36,7 +37,7 @@ class Command(BaseCommand):
                 if self.now > published > self.now - self.hours and url not in self.ignored:
                     article, is_created = Article.objects.get_or_create(
                         url=url,
-                        title=parse_text(entry.title),
+                        title=dehtmlize(entry.title),
                         domain=hostname(url),
                         pub_at=published,
                         author=getattr(entry, 'author', '')

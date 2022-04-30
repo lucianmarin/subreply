@@ -2,8 +2,8 @@ import urllib
 
 import requests
 from bs4 import BeautifulSoup
-from unidecode import unidecode
 from emoji import demojize, emojize
+from unidecode import unidecode
 
 from app.filters import hostname
 from project.vars import HEADERS
@@ -12,6 +12,10 @@ from project.vars import HEADERS
 def parse_text(text):
     decoded = emojize(unidecode(demojize(text)))
     return " ".join([t.strip() for t in decoded.split()])
+
+
+def dehtmlize(text):
+    return BeautifulSoup(parse_text(text), features="lxml").text
 
 
 def get_url(link):
@@ -63,7 +67,7 @@ def get_description(soup):
         meta_content = meta.get('content', '') if meta else ''
         meta_pretty = " ".join(meta_content.split())
         description = meta_pretty if meta_pretty else description
-    return parse_text(description)
+    return dehtmlize(description)
 
 
 def fetch_content(link):
