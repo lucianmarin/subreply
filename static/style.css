@@ -132,6 +132,8 @@ table a:hover { color: var(--gray); }
 
 .content a.name { color: var(--black); font-weight: bold; }
 
+.content a.story { display: block; }
+
 .content a:hover { color: var(--gray); }
 
 .content b { color: var(--silver); }

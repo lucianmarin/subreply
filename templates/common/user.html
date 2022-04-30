@@ -6,7 +6,6 @@
             <b>{{ entry.created_at | shortdate }}</b>
         {% endif %}
         <a class="handle" href="/{{ member }}">
-            {% if member.emoji %}{{ member.emoji }}{% endif %}
             {{ member.full_name }}
         </a>
         {% if view in ['profile', 'replied', 'saved'] %}
