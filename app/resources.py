@@ -631,13 +631,13 @@ class ArticlesResource:
         ).order_by('-readers', '-pub_at')
         return paginate(req, entries)
 
-    def get_status(self, user, is_read):
+    def get_count(self, user, is_read):
         if not user:
             return Article.objects.none()
         entries = Article.objects.order_by('-pub_at')
         if is_read:
-            return entries.filter(ids__contains=user.id)
-        return entries.exclude(ids__contains=user.id)
+            return entries.filter(ids__contains=user.id).count()
+        return entries.exclude(ids__contains=user.id).count()
 
     def fetch_read(self, req):
         entries = Article.objects.filter(
@@ -648,24 +648,22 @@ class ArticlesResource:
     @before(auth_user)
     def on_get_news(self, req, resp):
         entries = self.fetch_entries(req)
-        read = self.get_status(req.user, is_read=True)
-        last, count = read.last(), read.count()
+        read = self.get_count(req.user, is_read=True)
         page, number = get_page(req)
         resp.text = render(
             page=page, view='news', number=number, user=req.user,
-            entries=entries, last=last, count=count
+            entries=entries, count=read
         )
 
     @before(auth_user)
     @before(login_required)
     def on_get_read(self, req, resp):
         entries = self.fetch_read(req)
-        unread = self.get_status(req.user, is_read=False)
-        last, count = unread.last(), unread.count()
+        unread = self.get_count(req.user, is_read=False)
         page, number = get_page(req)
         resp.text = render(
             page=page, view='read', number=number, user=req.user,
-            entries=entries, last=last, count=count
+            entries=entries, count=unread
         )
 
 
