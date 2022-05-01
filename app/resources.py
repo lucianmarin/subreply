@@ -18,7 +18,7 @@ from app.validation import (
     valid_handle, valid_reply, valid_thread
 )
 from project.settings import FERNET, MAX_AGE, SMTP
-from project.vars import HTML, TEXT
+from project.vars import UNLOCK_HTML, UNLOCK_TEXT
 
 
 Comments = Comment.objects.annotate(
@@ -959,8 +959,8 @@ class UnlockResource:
             token = FERNET.encrypt(str(user.email).encode()).decode()
             # compose email
             m = Email(
-                html=JinjaTemplate(HTML),
-                text=JinjaTemplate(TEXT),
+                html=JinjaTemplate(UNLOCK_HTML),
+                text=JinjaTemplate(UNLOCK_TEXT),
                 subject="Unlock account on Subreply",
                 mail_from=("Subreply", "subreply@outlook.com")
             )

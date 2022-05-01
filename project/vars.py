@@ -52,7 +52,25 @@ LATIN += "ȠȡȢȣȤȥȦȧȨȩȪȫȬȭȮȯ"
 LATIN += "ȰȱȲȳȴȵȶȷȸȹȺȻȼȽȾȿ"
 LATIN += "ɀɁɂɃɄɅɆɇɈɉɊɋɌɍɎɏ"
 
-HTML = (
+ACTIVITY_HTML = (
+    "<html>"
+    "<p>Hello,</p>"
+    "<p>You got a couple of {{ notifs }} left unseen on your Subreply account.</p>"
+    "<p>Login from https://subreply.com/login to check them out. Your username is @{{ username }}.</p>"
+    "<p>You won't be emailed again in couple of months if there's no activity on your account.</p>"
+    "<p>Have a sunny day!</p>"
+    "</html>"
+)
+
+ACTIVITY_TEXT = (
+    "Hello,\n"
+    "You got a couple of {{ notifs }} left unseen on your Subreply account.\n"
+    "Login from https://subreply.com/login to check them out. Your username is @{{ username }}.\n"
+    "You won't be emailed again in couple of months if there's no activity on your account.\n"
+    "Have a sunny day!\n"
+)
+
+UNLOCK_HTML = (
     "<html>"
     "<p>Hello,</p>"
     "<p>Unlock your account on Subreply by going to https://subreply.com/unlock/{{ token }}</p>"
@@ -61,7 +79,7 @@ HTML = (
     "</html>"
 )
 
-TEXT = (
+UNLOCK_TEXT = (
     "Hello,\n"
     "Unlock your account on Subreply by going to https://subreply.com/unlock/{{ token }}\n"
     "Your username is: {{ username }}\n"
