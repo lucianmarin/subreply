@@ -24,7 +24,7 @@
         {% if view == 'profile' %}
             {% include "common/user.html" %}
             {% include "common/status.html" %}
-        {% elif view in ['news', 'read'] and count > 1 %}
+        {% elif view in ['news', 'read'] and count %}
             {% include "common/readership.html" %}
         {% endif %}
 

@@ -34,7 +34,7 @@ class Command(BaseCommand):
                 origlink = entry.get('feedburner_origlink')
                 entry.link = origlink if origlink else entry.link
                 url = get_url(entry.link)
-                published = parse(entry.published).timestamp()
+                published = parse(entry.published).astimezone(timezone.utc).timestamp()
                 if self.now > published > self.now - self.hours and url not in self.ignored:
                     article, is_created = Article.objects.get_or_create(
                         url=url,
