@@ -54,7 +54,7 @@ class Command(BaseCommand):
         user.save(update_fields=['is_notified'])
 
     def handle(self, *args, **options):
-        to_user = self.get_user(mock=True)
+        to_user = self.get_user(mock=False)
         if to_user:
             self.send_mail(to_user)
         print(", ".join(self.mails))
