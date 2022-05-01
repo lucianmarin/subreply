@@ -11,7 +11,7 @@
 
     {% if entry.kids.all() %}
         <div class="sublist">
-            {% for entry in entry.kids.all() %}
+            {% for entry in entry.kids.all()[:8] %}
                 {% include "common/inline.html" %}
             {% endfor %}
         </div>
