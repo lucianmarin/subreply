@@ -16,14 +16,12 @@ class Command(BaseCommand):
             created_by_id=F('to_user_id')
         ).count()
         saves = Save.objects.count()
-        statuses = Comment.objects.filter(parent=None, replies=0).count()
-        threads = Comment.objects.filter(parent=None).exclude(replies=0).count()
+        threads = Comment.objects.filter(parent=None).count()
         replies = Comment.objects.exclude(parent=None).count()
         print('total:')
         print('  accounts:', accounts)
         print('  subscriptions:', subscriptions)
         print('  saves:', saves)
-        print('  statuses:', statuses)
         print('  threads:', threads)
         print('  replies:', replies)
 
@@ -40,14 +38,10 @@ class Command(BaseCommand):
             saves = Save.objects.filter(
                 created_at__gt=first_day, created_at__lt=last_day
             ).count()
-            statuses = Comment.objects.filter(
-                created_at__gt=first_day, created_at__lt=last_day,
-                parent=None, replies=0
-            ).count()
             threads = Comment.objects.filter(
                 created_at__gt=first_day, created_at__lt=last_day,
                 parent=None
-            ).exclude(replies=0).count()
+            ).count()
             replies = Comment.objects.filter(
                 created_at__gt=first_day, created_at__lt=last_day
             ).exclude(parent=None).count()
@@ -55,7 +49,6 @@ class Command(BaseCommand):
             print('  accounts:', accounts)
             print('  subscriptions:', subscriptions)
             print('  saves:', saves)
-            print('  statuses:', statuses)
             print('  threads:', threads)
             print('  replies:', replies)
 
