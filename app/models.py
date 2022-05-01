@@ -112,8 +112,9 @@ class User(models.Model):
         return self.saved.values_list('to_comment_id', flat=True)
 
     def up_seen(self):
-        last_day = datetime.now(timezone.utc).date().isoformat()
-        last_seen = datetime.fromtimestamp(self.seen_at).date().isoformat()
+        fmt = "%Y-%m-%d-%H-%M"
+        last_day = datetime.now(timezone.utc).strftime(fmt)
+        last_seen = datetime.fromtimestamp(self.seen_at).strftime(fmt)
         if last_day != last_seen:
             self.seen_at = utc_timestamp()
             self.save(update_fields=['seen_at'])
