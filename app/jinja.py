@@ -22,7 +22,7 @@ env.filters['quote'] = quote_plus
 env.filters['shortdate'] = shortdate
 
 env.globals['brand'] = "Subreply"
-env.globals['v'] = 186
+env.globals['v'] = 187
 
 
 def render(page, **kwargs):
