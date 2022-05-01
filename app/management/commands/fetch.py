@@ -19,6 +19,7 @@ class Command(BaseCommand):
     ignored = [
         "https://kottke.org/quick-links"
     ]
+    errors = []
 
     @property
     def now(self):
@@ -43,7 +44,7 @@ class Command(BaseCommand):
                         author=getattr(entry, 'author', '')
                     )
             except Exception as e:
-                print(e)
+                self.errors.append("{0} {1}".format(entry.link, e))
 
     def grab_entries(self):
         with ThreadPoolExecutor(max_workers=self.cores) as executor:
@@ -72,3 +73,5 @@ class Command(BaseCommand):
         self.grab_entries()
         self.cleanup()
         self.grab_content()
+        for e in self.errors:
+            print(e)

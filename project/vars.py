@@ -74,8 +74,8 @@ HEADERS = {
 }
 
 FEEDS = [
-    "http://feeds.arstechnica.com/arstechnica/index",
-    "http://feeds.arstechnica.com/arstechnica/features",
+    # "http://feeds.arstechnica.com/arstechnica/index",
+    # "http://feeds.arstechnica.com/arstechnica/features",
     "http://rss.sciam.com/scientificamerican-global",
     # "http://feeds.reuters.com/news/artsculture",
     # "http://feeds.reuters.com/reuters/businessNews",
@@ -109,6 +109,7 @@ FEEDS = [
     "http://feeds.feedburner.com/sub/berkeley",
     "http://feeds.feedburner.com/sub/bgr",
     "http://feeds.feedburner.com/sub/comingsoon",
+    "http://feeds.feedburner.com/sub/conversation",
     "http://feeds.feedburner.com/sub/dailyartmag",
     "http://feeds.feedburner.com/sub/deepmind",
     "http://feeds.feedburner.com/sub/distill",
@@ -143,7 +144,7 @@ FEEDS = [
     "http://feeds.feedburner.com/sub/quantamagazine",
     "http://feeds.feedburner.com/sub/quillette",
     "http://feeds.feedburner.com/sub/qz",
-    "http://feeds.feedburner.com/sub/register",
+    # "http://feeds.feedburner.com/sub/register",
     "http://feeds.feedburner.com/sub/semiaccurate",
     "http://feeds.feedburner.com/sub/seth",
     "http://feeds.feedburner.com/sub/sixthtone",
