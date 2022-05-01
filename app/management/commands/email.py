@@ -51,10 +51,11 @@ class Command(BaseCommand):
         else:
             self.fails.append(user.username)
         user.is_notified = True
-        user.save(update_fields=['is_notfied'])
+        user.save(update_fields=['is_notified'])
 
     def handle(self, *args, **options):
-        to_user = self.get_user(mock=False)
-        self.send_mail(to_user)
+        to_user = self.get_user(mock=True)
+        if to_user:
+            self.send_mail(to_user)
         print(", ".join(self.mails))
         print(", ".join(self.fails))
