@@ -30,6 +30,7 @@ class User(models.Model):
     joined_at = models.FloatField(default=.0)
     seen_at = models.FloatField(default=.0, db_index=True)
     is_approved = models.BooleanField(default=False)
+    is_notified = models.BooleanField(default=False)
 
     emoji = models.CharField(max_length=15, default='')
     birthday = models.CharField(max_length=10, default='')

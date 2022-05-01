@@ -1,5 +1,3 @@
-from json import dump
-
 from django.core.management.base import BaseCommand
 from emails import Message as Email
 from emails.template import JinjaTemplate
@@ -15,8 +13,8 @@ class Command(BaseCommand):
     mails = []
     fails = []
 
-    def get_users(self, mock=True):
-        users = User.objects.order_by('seen_at')
+    def get_user(self, mock=True):
+        users = User.objects.filter(is_notified=False).order_by('seen_at')
         if mock:
             users = users.filter(id__in=[1, 2])
         for user in users:
@@ -31,7 +29,7 @@ class Command(BaseCommand):
                 notifs.append('replies')
             user.notifs = ", ".join(notifs)
             if user.notifs:
-                self.users.append(user)
+                return user
 
     def send_mail(self, user):
         # compose email
@@ -52,12 +50,11 @@ class Command(BaseCommand):
             self.mails.append(user.username)
         else:
             self.fails.append(user.username)
+        user.is_notified = True
+        user.save(update_fields=['is_notfied'])
 
     def handle(self, *args, **options):
-        self.get_users(mock=False)
-        for user in self.users:
-            print(user, '-', user.notifs)
-            self.send_mail(user)
-        with open('emails.json', 'w') as outfile:
-            data = {'mails': self.mails, 'fails': self.fails}
-            dump(data, outfile)
+        to_user = self.get_user(mock=False)
+        self.send_mail(to_user)
+        print(", ".join(self.mails))
+        print(", ".join(self.fails))
