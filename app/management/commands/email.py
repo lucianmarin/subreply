@@ -9,9 +9,6 @@ from project.vars import ACTIVITY_HTML, ACTIVITY_TEXT
 
 class Command(BaseCommand):
     help = "Email inactive users."
-    users = []
-    mails = []
-    fails = []
 
     def get_user(self, mock=True):
         users = User.objects.filter(is_notified=False).order_by('seen_at')
@@ -47,15 +44,13 @@ class Command(BaseCommand):
         )
         # fallback
         if response.status_code == 250:
-            self.mails.append(user.username)
+            print(user, "sent")
+            user.is_notified = True
+            user.save(update_fields=['is_notified'])
         else:
-            self.fails.append(user.username)
-        user.is_notified = True
-        user.save(update_fields=['is_notified'])
+            print(user, "failed")
 
     def handle(self, *args, **options):
         to_user = self.get_user(mock=False)
         if to_user:
             self.send_mail(to_user)
-        print(", ".join(self.mails))
-        print(", ".join(self.fails))
