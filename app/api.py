@@ -3,25 +3,7 @@ from falcon.hooks import before
 
 from app.helpers import utc_timestamp
 from app.hooks import auth_user
-from app.models import Comment, Message, Relation, Save, User
-
-
-class UnsendEndpoint:
-    @before(auth_user)
-    def on_post(self, req, resp, id):
-        resp.content_type = MEDIA_JSON
-        if not req.user:
-            resp.media = {'status': 'not auth'}
-            return
-        entry = Message.objects.filter(id=id).first()
-        if not entry:
-            resp.media = {'status': 'not found'}
-            return
-        if entry.created_by_id != req.user.id:
-            resp.media = {'status': 'not valid'}
-            return
-        entry.delete()
-        resp.media = {'status': 'unsent'}
+from app.models import Comment, Relation, Save, User
 
 
 class DeleteEndpoint:

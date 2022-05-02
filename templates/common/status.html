@@ -9,7 +9,6 @@
         {% if member.saved.count() %}
             <a href="/{{ member }}/saved">Saved</a>.
         {% endif %}
-        <a href="/{{ member }}/message">Message</a>.
         {% if is_followed %}Follows you.{% endif %}
         {% if user.id == member.id %}
             <a href="/logout">Logout</a>.

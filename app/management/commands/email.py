@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand
-from emails import Message as Email
+from emails import Message
 from emails.template import JinjaTemplate
 
 from app.models import User
@@ -20,8 +20,6 @@ class Command(BaseCommand):
                 notifs.append('followers')
             if user.notif_mentions:
                 notifs.append('mentions')
-            if user.notif_messages:
-                notifs.append('messages')
             if user.notif_replies:
                 notifs.append('replies')
             user.notifs = ", ".join(notifs)
@@ -30,7 +28,7 @@ class Command(BaseCommand):
 
     def send_mail(self, user):
         # compose email
-        m = Email(
+        m = Message(
             html=JinjaTemplate(ACTIVITY_HTML),
             text=JinjaTemplate(ACTIVITY_TEXT),
             subject="Activity left unseen on Subreply",

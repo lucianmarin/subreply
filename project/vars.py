@@ -74,7 +74,7 @@ UNLOCK_HTML = (
     "<html>"
     "<p>Hello,</p>"
     "<p>Unlock your account on Subreply by going to https://subreply.com/unlock/{{ token }}</p>"
-    "<p>Your username is: {{ username }}</p>"
+    "<p>Your username is @{{ username }}.</p>"
     "<p>Delete this email if you didn't make such request.</p>"
     "</html>"
 )
@@ -82,7 +82,7 @@ UNLOCK_HTML = (
 UNLOCK_TEXT = (
     "Hello,\n"
     "Unlock your account on Subreply by going to https://subreply.com/unlock/{{ token }}\n"
-    "Your username is: {{ username }}\n"
+    "Your username is @{{ username }}.\n"
     "Delete this email if you didn't make such request.\n"
 )
 

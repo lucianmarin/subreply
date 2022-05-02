@@ -5,7 +5,7 @@ from emoji import emojize
 from jinja2 import Environment, FileSystemBytecodeCache, FileSystemLoader
 
 from app.filters import age, city, fibojize, parser, shortdate
-from project.settings import DEBUG, FERNET
+from project.settings import DEBUG
 
 env = Environment(autoescape=True)
 
@@ -15,7 +15,6 @@ env.loader = FileSystemLoader('templates')
 
 env.filters['age'] = age
 env.filters['city'] = city
-env.filters['decode'] = lambda m: FERNET.decrypt(m.encode()).decode()
 env.filters['emojize'] = emojize
 env.filters['fibojize'] = fibojize
 env.filters['parser'] = parser
@@ -24,7 +23,7 @@ env.filters['shortdate'] = shortdate
 env.filters['shorten'] = shorten
 
 env.globals['brand'] = "Subreply"
-env.globals['v'] = 187
+env.globals['v'] = 188
 
 
 def render(page, **kwargs):

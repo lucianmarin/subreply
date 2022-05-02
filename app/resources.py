@@ -1,7 +1,7 @@
 from cgi import FieldStorage
 
 from django.db.models import Count, Max, Prefetch, Q
-from emails import Message as Email
+from emails import Message
 from emails.template import JinjaTemplate
 from falcon import status_codes
 from falcon.hooks import before
@@ -13,7 +13,7 @@ from app.forms import get_content, get_emoji, get_name
 from app.helpers import build_hash, parse_metadata, utc_timestamp, verify_hash
 from app.hooks import auth_user, login_required
 from app.jinja import render
-from app.models import Article, Comment, Message, Relation, Save, User
+from app.models import Article, Comment, Relation, Save, User
 from app.validation import (
     authentication, changing, profiling, registration, valid_content,
     valid_handle, valid_reply, valid_thread
@@ -278,66 +278,6 @@ class EditResource:
             raise HTTPFound(f"/reply/{id}")
 
 
-class MessageResource:
-    def fetch_entries(self, req, member):
-        entries = Message.objects.filter(
-            Q(created_by=req.user.id, to_user=member.id) | Q(created_by=member.id, to_user=req.user.id)
-        ).order_by('-id').select_related('created_by', 'to_user')
-        return paginate(req, entries)
-
-    def clear_messages(self, req, member):
-        Message.objects.filter(
-            created_by=member, to_user=req.user, seen_at=.0
-        ).update(seen_at=utc_timestamp())
-
-    @before(auth_user)
-    @before(login_required)
-    def on_get(self, req, resp, username):
-        member = User.objects.filter(username=username.lower()).first()
-        if not member:
-            raise HTTPNotFound
-        entries = self.fetch_entries(req, member)
-        blocked = False
-        if entries and member != req.user:
-            blocked = all(m.created_by == req.user for m in entries[:5])
-        page, number = get_page(req)
-        resp.text = render(
-            page=page, view='message', number=number, user=req.user, errors={},
-            entries=entries, member=member, blocked=blocked
-        )
-        if req.user.received.filter(created_by=member, seen_at=.0).count():
-            self.clear_messages(req, member)
-
-    @before(auth_user)
-    @before(login_required)
-    def on_post(self, req, resp, username):
-        member = User.objects.filter(username=username.lower()).first()
-        form = FieldStorage(fp=req.stream, environ=req.env)
-        content = get_content(form)
-        if not content:
-            raise HTTPFound(f"/{username}/message")
-        errors = {}
-        errors['content'] = valid_content(content, req.user)
-        errors = {k: v for k, v in errors.items() if v}
-        if errors:
-            entries = self.fetch_entries(req, member)
-            page, number = get_page(req)
-            resp.text = render(
-                page=page, view='message', number=number, user=req.user,
-                member=member, entries=entries, content=content, errors=errors
-            )
-        else:
-            message = FERNET.encrypt(content.encode()).decode()
-            msg, is_new = Message.objects.get_or_create(
-                to_user=member,
-                content=message,
-                created_at=utc_timestamp(),
-                created_by=req.user,
-                seen_at=utc_timestamp() if member == req.user else .0
-            )
-            raise HTTPFound(f"/{username}/message")
-
-
 class ProfileResource:
     def fetch_entries(self, req, member):
         entries = Comments.filter(
@@ -485,24 +425,6 @@ class SavedResource:
         resp.text = render(
             page=page, view='saved', number=number, user=req.user,
             member=member, entries=entries
-        )
-
-
-class MessagesResource:
-    def fetch_entries(self, req):
-        entries = Message.objects.filter(
-            to_user=req.user
-        ).order_by('created_by_id', '-id').distinct('created_by_id').select_related('created_by')
-        return paginate(req, entries)
-
-    @before(auth_user)
-    @before(login_required)
-    def on_get(self, req, resp):
-        entries = self.fetch_entries(req)
-        page, number = get_page(req)
-        resp.text = render(
-            page=page, view='messages', number=number,
-            user=req.user, entries=entries
         )
 
 
@@ -961,7 +883,7 @@ class UnlockResource:
             # generate token
             token = FERNET.encrypt(str(user.email).encode()).decode()
             # compose email
-            m = Email(
+            m = Message(
                 html=JinjaTemplate(UNLOCK_HTML),
                 text=JinjaTemplate(UNLOCK_TEXT),
                 subject="Unlock account on Subreply",
@@ -969,7 +891,9 @@ class UnlockResource:
             )
             # send email
             response = m.send(
-                render={"username": user, "token": token}, to=user.email, smtp=SMTP
+                render={"username": user, "token": token},
+                to=user.email,
+                smtp=SMTP
             )
             # fallback
             if response.status_code == 250:

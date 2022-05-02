@@ -55,7 +55,7 @@ class User(models.Model):
     def short_name(self):
         if self.last_name:
             return self.first_name[:1] + self.last_name[:1]
-        return self.first_name[:3]
+        return self.first_name[:1]
 
     @cached_property
     def status(self):
@@ -88,10 +88,6 @@ class User(models.Model):
     @cached_property
     def notif_mentions(self):
         return self.mentions.filter(mention_seen_at=.0).count()
-
-    @cached_property
-    def notif_messages(self):
-        return self.received.filter(seen_at=.0).count()
 
     @cached_property
     def notif_replies(self):
@@ -152,14 +148,6 @@ class Comment(models.Model):
 
     def set_ancestors(self):
         self.ancestors.set(self.get_ancestors())
-
-
-class Message(models.Model):
-    content = models.TextField()
-    created_by = models.ForeignKey('User', on_delete=models.CASCADE, related_name='sent')
-    to_user = models.ForeignKey('User', on_delete=models.CASCADE, related_name='received')
-    created_at = models.FloatField(default=.0)
-    seen_at = models.FloatField(default=.0)
 
 
 class Save(models.Model):

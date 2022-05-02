@@ -13,7 +13,6 @@ app.resp_options.secure_cookies_by_default = not DEBUG
 
 app.add_route('/', resources.MainResource())
 
-app.add_route('/api/unsend/{id:int}', api.UnsendEndpoint())
 app.add_route('/api/delete/{id:int}', api.DeleteEndpoint())
 app.add_route('/api/save/{id:int}', api.SaveEndpoint())
 app.add_route('/api/unsave/{id:int}', api.UnsaveEndpoint())
@@ -21,11 +20,10 @@ app.add_route('/api/follow/{username}', api.FollowEndpoint())
 app.add_route('/api/unfollow/{username}', api.UnfollowEndpoint())
 
 app.add_route('/feed', resources.FeedResource())
-# app.add_route('/following', resources.FollowingResource())
+app.add_route('/following', resources.FollowingResource())
 app.add_route('/followers', resources.FollowersResource())
 app.add_route('/replies', resources.RepliesResource())
 app.add_route('/mentions', resources.MentionsResource())
-app.add_route('/messages', resources.MessagesResource())
 
 app.add_route('/discover', resources.DiscoverResource())
 app.add_route('/people', resources.PeopleResource())
@@ -58,7 +56,6 @@ app.add_route('/reply/{id:int}', resources.ReplyResource())
 app.add_route('/{username}/destroy', resources.LobbyResource(), suffix="destroy")
 app.add_route('/{username}/approve', resources.LobbyResource(), suffix="approve")
 app.add_route('/{username}/saved', resources.SavedResource())
-app.add_route('/{username}/message', resources.MessageResource())
 app.add_route('/{username}', resources.ProfileResource())
 
 if DEBUG:

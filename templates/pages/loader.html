@@ -8,10 +8,6 @@
     {% elif view == 'followers' %}
         {% set member = entry.created_by %}
         {% include "common/user.html" %}
-    {% elif view == 'messages' %}
-        {% include "common/inbox.html" %}
-    {% elif view == 'message' %}
-        {% include "common/message.html" %}
     {% elif view in ['news', 'read'] %}
         {% include "common/article.html" %}
     {% else %}
