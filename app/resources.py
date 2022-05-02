@@ -104,6 +104,13 @@ class AboutResource:
         )
 
 
+class SitemapResource:
+    def on_get(self, req, resp):
+        threads = Comment.objects.filter(parent=None).values_list('id', flat=True).order_by('id')[:50000]
+        urls = map(lambda id: f"https://subreply.com/reply/{id}", threads)
+        resp.text = "\n".join(urls)
+
+
 class FeedResource:
     def fetch_entries(self, req):
         friends = Relation.objects.filter(created_by=req.user).values('to_user_id')

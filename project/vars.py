@@ -221,6 +221,7 @@ INVALID = [
     "saves",
     "search",
     "settings",
+    "sitemap",
     "social",
     "static",
     "sub",
