@@ -13,10 +13,10 @@ app.resp_options.secure_cookies_by_default = not DEBUG
 
 app.add_route('/', resources.MainResource())
 
-app.add_route('/api/unsend/{id}', api.UnsendEndpoint())
-app.add_route('/api/delete/{id}', api.DeleteEndpoint())
-app.add_route('/api/save/{id}', api.SaveEndpoint())
-app.add_route('/api/unsave/{id}', api.UnsaveEndpoint())
+app.add_route('/api/unsend/{id:int}', api.UnsendEndpoint())
+app.add_route('/api/delete/{id:int}', api.DeleteEndpoint())
+app.add_route('/api/save/{id:int}', api.SaveEndpoint())
+app.add_route('/api/unsave/{id:int}', api.UnsaveEndpoint())
 app.add_route('/api/follow/{username}', api.FollowEndpoint())
 app.add_route('/api/unfollow/{username}', api.UnfollowEndpoint())
 
@@ -31,9 +31,9 @@ app.add_route('/discover', resources.DiscoverResource())
 app.add_route('/people', resources.PeopleResource())
 app.add_route('/trending', resources.TrendingResource())
 
-app.add_route('/news/{id}', resources.ArticleResource(), suffix="linker")
+app.add_route('/news/{id:int}', resources.ArticleResource(), suffix="linker")
 app.add_route('/news', resources.ArticlesResource(), suffix="news")
-app.add_route('/read/{id}', resources.ArticleResource(), suffix="reader")
+app.add_route('/read/{id:int}', resources.ArticleResource(), suffix="reader")
 app.add_route('/read', resources.ArticlesResource(), suffix="read")
 
 app.add_route('/about', resources.AboutResource())
@@ -52,8 +52,8 @@ app.add_route('/options', resources.OptionsResource())
 app.add_route('/social', resources.SocialResource())
 app.add_route('/lobby', resources.LobbyResource())
 
-app.add_route('/edit/{id}', resources.EditResource())
-app.add_route('/reply/{id}', resources.ReplyResource())
+app.add_route('/edit/{id:int}', resources.EditResource())
+app.add_route('/reply/{id:int}', resources.ReplyResource())
 app.add_route('/{username}/destroy', resources.LobbyResource(), suffix="destroy")
 app.add_route('/{username}/approve', resources.LobbyResource(), suffix="approve")
 app.add_route('/{username}/saved', resources.SavedResource())

@@ -6,6 +6,7 @@ from emails.template import JinjaTemplate
 from falcon import status_codes
 from falcon.hooks import before
 from falcon.redirects import HTTPFound
+from falcon.errors import HTTPNotFound
 from strictyaml import as_document
 
 from app.forms import get_content, get_emoji, get_name
@@ -56,11 +57,6 @@ def paginate(req, qs, limit=16):
     page = get_number(req)
     index = (page - 1) * limit
     return qs[index:index + limit]
-
-
-def not_found(resp, user, url):
-    resp.text = render(page="404", view="404", user=user, url=url)
-    resp.status = status_codes.HTTP_404
 
 
 class StaticResource:
@@ -171,7 +167,7 @@ class ReplyResource:
     def on_get(self, req, resp, id):
         parent = Comments.filter(id=id).first()
         if not parent:
-            return not_found(resp, req.user, f'/reply/{id}')
+            raise HTTPNotFound
         duplicate = Comment.objects.filter(
             parent=parent, created_by=req.user
         ).exists() if req.user else True
@@ -228,7 +224,7 @@ class EditResource:
     def on_get(self, req, resp, id):
         entry = Comments.filter(id=id).prefetch_related(PPFR).first()
         if not entry or entry.created_by != req.user or entry.replies:
-            return not_found(resp, req.user, f'/edit/{id}')
+            raise HTTPNotFound
         ancestors = [entry.parent] if entry.parent_id else []
         resp.text = render(
             page='edit', view='edit',
@@ -292,7 +288,7 @@ class MessageResource:
     def on_get(self, req, resp, username):
         member = User.objects.filter(username=username.lower()).first()
         if not member:
-            return not_found(resp, req.user, f'/{username}/message')
+            raise HTTPNotFound
         entries = self.fetch_entries(req, member)
         blocked = False
         if entries and member != req.user:
@@ -346,7 +342,7 @@ class ProfileResource:
     def on_get(self, req, resp, username):
         member = User.objects.filter(username=username.lower()).first()
         if not member:
-            return not_found(resp, req.user, f'/{username}')
+            raise HTTPNotFound
         entries = self.fetch_entries(req, member)
         page, number = get_page(req)
         is_following, is_followed = None, None
@@ -476,7 +472,7 @@ class SavedResource:
     def on_get(self, req, resp, username):
         member = User.objects.filter(username=username.lower()).first()
         if not member:
-            return not_found(resp, req.user, f'/{username}')
+            raise HTTPNotFound
         entries = self.fetch_entries(req, member)
         page, number = get_page(req)
         resp.text = render(
@@ -672,7 +668,7 @@ class ArticleResource:
     def on_get_linker(self, req, resp, id):
         article = Article.objects.filter(id=id).first()
         if not article:
-            return not_found(resp, req.user, f'/news/{id}')
+            raise HTTPNotFound
         if req.user:
             article.increment(req.user.id)
         raise HTTPFound(article.url)
@@ -682,7 +678,7 @@ class ArticleResource:
     def on_get_reader(self, req, resp, id):
         article = Article.objects.filter(id=id).first()
         if not article:
-            return not_found(resp, req.user, f'/read/{id}')
+            raise HTTPNotFound
         article.increment(req.user.id)
         resp.text = render(
             page='reader', view='reader', user=req.user, entry=article
