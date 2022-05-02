@@ -1,6 +1,10 @@
 <meta charset="utf-8">
 <meta name="referrer" content="always">
-<meta name="viewport" content="width=device-width, height=device-height, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+{% if view == 'reply' and entry.parent %}
+    <meta name="robots" content="noindex">
+{% endif %}
 
 <title>
     {% if view == 'profile' %}
