@@ -4,15 +4,15 @@
 
 <title>
     {% if view == 'profile' %}
-        {{ member.full_name }}
+        {{ member.full_name }} @{{ member }}
     {% elif view == 'reader' %}
-        {{ brand }} / Read {{ entry.domain }}
+        {{ brand }} - {{ entry.title }}
     {% elif view == 'reply' %}
-        {{ brand }} / Reply {{ entry.created_by.first_name }}
+        {{ brand }} - {{ entry.content | emojize | shorten(width=48, placeholder="...") }}
     {% elif view == 'message' %}
-        {{ brand }} / Message {{ member.first_name }}
+        {{ brand }} - Message {{ member.first_name }}
     {% else %}
-        {{ brand }} / {{ view | capitalize }}
+        {{ brand }} - {{ view | capitalize }}
     {% endif %}
 </title>
 

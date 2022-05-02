@@ -1,3 +1,4 @@
+from textwrap import shorten
 from urllib.parse import quote_plus
 
 from emoji import emojize
@@ -20,6 +21,7 @@ env.filters['fibojize'] = fibojize
 env.filters['parser'] = parser
 env.filters['quote'] = quote_plus
 env.filters['shortdate'] = shortdate
+env.filters['shorten'] = shorten
 
 env.globals['brand'] = "Subreply"
 env.globals['v'] = 187
