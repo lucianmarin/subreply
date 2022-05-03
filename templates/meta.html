@@ -7,14 +7,12 @@
 {% endif %}
 
 <title>
-    {% if view == 'sub' %}
-        {{ brand }}
-    {% elif view == 'profile' %}
+    {% if view == 'profile' %}
         {{ member.full_name }} @{{ member }}
-    {% elif view == 'reader' %}
-        {{ brand }}: {{ entry.title }}
     {% elif view == 'reply' %}
         {{ brand }}: {{ entry.content | emojize | shorten(48, placeholder="...") }}
+    {% elif view == 'reader' %}
+        {{ brand }}: {{ entry.title }}
     {% else %}
         {{ brand }} {{ view | capitalize }}
     {% endif %}
@@ -23,11 +21,11 @@
 <link rel="apple-touch-icon" type="image/png" href="/static/logo-white.png">
 <link rel="icon" sizes="192x192" type="image/png" href="/static/logo-white.png">
 <link rel="manifest" type="application/json" href="/static/manifest.json">
-<link rel="stylesheet" type="text/css" href="/static/style.css?v={{v}}">
+<link rel="stylesheet" type="text/css" href="/static/style.css?v={{ v }}">
 
-<script type="text/javascript" src="/static/script.js?v={{v}}" async defer></script>
+<script type="text/javascript" src="/static/script.js?v={{ v }}" async defer></script>
 
-{% if (view in ['feed', 'reply'] and errors) or (view == 'edit') %}
+{% if view in ['feed', 'reply', 'edit'] and content %}
     <script type="text/javascript">
         window.onload = function() {
             var content = document.getElementById('id_content');

@@ -14,7 +14,7 @@
                 rows="1" cols="60" maxlength="720"
                 placeholder="Share your thoughts"
                 oninput="expand(this)" onkeydown="send(event)"
-                >{% if content %}{{ content }}{% elif member and user != member %}@{{ member }} {% endif %}</textarea>
+                >{{ content | emojize }}</textarea>
         {% endif %}
         {% for name, error in errors.items() %}
             <div class="error">{{ error | safe }}</div>
