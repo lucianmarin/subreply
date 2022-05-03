@@ -144,7 +144,7 @@ def parser(text):
             if handle and all(c in numbers for c in handle):
                 word = f'<a href="/reply/{handle}" rel="bookmark">#{handle}</a>'
             elif handle and all(c in limits for c in handle):
-                word = f'<a href="/discover/?q=%23{handle}" rel="tag">#{handle}</a>'
+                word = f'<a href="/discover/?q=%23{handle}" rel="tag nofollow">#{handle}</a>'
         # wrap word
         words[index] = startswith + word + endswith
     return " ".join(words)

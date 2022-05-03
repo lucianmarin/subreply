@@ -9,7 +9,7 @@
             {{ member.full_name }}
         </a>
         {% if view in ['profile', 'replied', 'saved'] %}
-            <a class="done" href="/feed?s=%40{{ member }}">
+            <a class="done" href="/feed?s=%40{{ member }}" rel="nofollow">
                 @{{ member }}
             </a>
         {% endif %}
