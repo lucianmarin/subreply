@@ -15,7 +15,7 @@ from project.vars import FEEDS
 class Command(BaseCommand):
     help = "Fetch articles from feeds."
     cores = 4
-    hours = 36 * 3600
+    hours = 48 * 3600
     ignored = [
         "https://kottke.org/quick-links"
     ]
