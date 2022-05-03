@@ -14,7 +14,7 @@
     {% elif view == 'reader' %}
         {{ brand }}: {{ entry.title }}
     {% elif view == 'reply' %}
-        {{ brand }}: {{ entry.content | emojize | shorten(width=48, placeholder="...") }}
+        {{ brand }}: {{ entry.content | emojize | shorten(48, placeholder="...") }}
     {% else %}
         {{ brand }} {{ view | capitalize }}
     {% endif %}

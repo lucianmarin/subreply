@@ -415,6 +415,7 @@ class SavedResource:
         return paginate(req, entries)
 
     @before(auth_user)
+    @before(login_required)
     def on_get(self, req, resp, username):
         member = User.objects.filter(username=username.lower()).first()
         if not member:
