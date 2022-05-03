@@ -54,19 +54,21 @@
         </form>
     </div>
 
-    <div class="request upper">
-        <form action="/account/delete" enctype="multipart/form-data" method="post" autocomplete="off">
-            <div class="line">
-                <label for="id_confirm">Confirm password<i>*</i></label>
-                <input type="password" name="confirm" id="id_confirm"
-                    value="{{ form.getvalue('confirm', '') }}">
-                {% if 'confirm' in delete_errors %}
-                    <div class="error">{{ delete_errors['confirm'] }}</div>
-                {% endif %}
-            </div>
-            <div class="line">
-                <input type="submit" value="Delete">
-            </div>
-        </form>
-    </div>
+    {% if user.comments.count() < 8 %}
+        <div class="request upper">
+            <form action="/account/delete" enctype="multipart/form-data" method="post" autocomplete="off">
+                <div class="line">
+                    <label for="id_confirm">Confirm password<i>*</i></label>
+                    <input type="password" name="confirm" id="id_confirm"
+                        value="{{ form.getvalue('confirm', '') }}">
+                    {% if 'confirm' in delete_errors %}
+                        <div class="error">{{ delete_errors['confirm'] }}</div>
+                    {% endif %}
+                </div>
+                <div class="line">
+                    <input type="submit" value="Delete">
+                </div>
+            </form>
+        </div>
+    {% endif %}
 {% endblock %}

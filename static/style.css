@@ -210,15 +210,15 @@ table a:hover { color: var(--gray); }
 
 .line .right input, .line .two input { border-bottom-left-radius: 0; border-top-left-radius: 0; }
 
-.line .third { width: calc(100% / 3); }
+.line .third { width: calc(100% / 3 - 2px); }
 
 .line .third input { border-radius: 0; }
 
-.line .third:first-child { margin-right: 2px; width: calc(100% / 3 - 2px); }
+.line .third:first-child { margin-right: 2px; width: calc(100% / 3 - 1px); }
 
 .line .third:first-child input { border-bottom-left-radius: var(--radius); border-top-left-radius: var(--radius); }
 
-.line .third:last-child { margin-left: 2px; width: calc(100% / 3 - 2px); }
+.line .third:last-child { margin-left: 2px; width: calc(100% / 3 - 1px); }
 
 .line .third:last-child input { border-bottom-right-radius: var(--radius); border-top-right-radius: var(--radius); }
 
