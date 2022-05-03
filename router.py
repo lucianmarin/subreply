@@ -11,6 +11,8 @@ app.req_options.strip_url_path_trailing_slash = True
 
 app.resp_options.secure_cookies_by_default = not DEBUG
 
+app.add_route('/', resources.MainResource())
+
 app.add_route('/api/delete/{id:int}', api.DeleteEndpoint())
 app.add_route('/api/save/{id:int}', api.SaveEndpoint())
 app.add_route('/api/unsave/{id:int}', api.UnsaveEndpoint())
@@ -23,7 +25,6 @@ app.add_route('/followers', resources.FollowersResource())
 app.add_route('/replies', resources.RepliesResource())
 app.add_route('/mentions', resources.MentionsResource())
 
-app.add_route('/', resources.TrendingResource(), suffix="sub")
 app.add_route('/trending', resources.TrendingResource())
 app.add_route('/people', resources.PeopleResource())
 app.add_route('/discover', resources.DiscoverResource())
