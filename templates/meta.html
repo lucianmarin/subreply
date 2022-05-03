@@ -7,7 +7,9 @@
 {% endif %}
 
 <title>
-    {% if view == 'profile' %}
+    {% if view == 'sub' %}
+        {{ brand }}
+    {% elif view == 'profile' %}
         {{ member.full_name }} @{{ member }}
     {% elif view == 'reader' %}
         {{ brand }}: {{ entry.title }}
