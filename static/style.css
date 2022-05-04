@@ -38,6 +38,18 @@ svg { stroke-linecap: round; stroke-linejoin: round; stroke-width: 2; }
 
 svg path { fill: none; stroke: var(--black); }
 
+table { margin: 10px 0; width: 100%; }
+
+table th { color: var(--silver); font-size: var(--small); font-weight: normal; padding-bottom: 2px; }
+
+table td { border-top: var(--whitesmoke) 1px solid; padding: 2px 0; }
+
+table td:last-child { padding-bottom: 0; }
+
+table a { color: var(--accent); }
+
+table a:hover { color: var(--gray); }
+
 .container { display: grid; grid-template-columns: auto 145px 525px auto; }
 
 .container > div { min-height: 100vh; }

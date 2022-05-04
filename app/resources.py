@@ -3,10 +3,11 @@ from cgi import FieldStorage
 from django.db.models import Count, Max, Prefetch, Q
 from emails import Message
 from emails.template import JinjaTemplate
+from emoji import UNICODE_EMOJI_ENGLISH
 from falcon import status_codes
+from falcon.errors import HTTPNotFound
 from falcon.hooks import before
 from falcon.redirects import HTTPFound
-from falcon.errors import HTTPNotFound
 from strictyaml import as_document
 
 from app.forms import get_content, get_emoji, get_name
@@ -20,7 +21,6 @@ from app.validation import (
 )
 from project.settings import FERNET, MAX_AGE, SMTP
 from project.vars import UNLOCK_HTML, UNLOCK_TEXT
-
 
 Comments = Comment.objects.annotate(
     replies=Count('descendants')
@@ -98,9 +98,24 @@ class AboutResource:
         sub = User.objects.get(id=2)
         emo = User.objects.exclude(
             id__in=[1, 2]
-        ).exclude(emoji='').order_by("?").first()
+        ).exclude(emoji="").order_by("?").first()
         resp.text = render(
             page='about', view='about', user=req.user, luc=luc, sub=sub, emo=emo
+        )
+
+
+class EmojiResource:
+    @before(auth_user)
+    def on_get(self, req, resp):
+        codes = UNICODE_EMOJI_ENGLISH.values()
+        shortcodes = [
+            c for c in codes if c.count('_') < 2 and not c.count('-') and not c.count('’') and c.islower()
+        ]
+        shortcodes = sorted(set(shortcodes))
+        odds = [s for i, s in enumerate(shortcodes) if i % 2 == 0]
+        evens = [s for i, s in enumerate(shortcodes) if i % 2 == 1]
+        resp.text = render(
+            page='emoji', view='emoji', user=req.user, rows=zip(evens, odds)
         )
 
 

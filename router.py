@@ -34,8 +34,10 @@ app.add_route('/news', resources.ArticlesResource(), suffix="news")
 app.add_route('/read/{id:int}', resources.ArticleResource(), suffix="reader")
 app.add_route('/read', resources.ArticlesResource(), suffix="read")
 
-app.add_route('/sitemap', resources.SitemapResource())
 app.add_route('/about', resources.AboutResource())
+app.add_route('/emoji', resources.EmojiResource())
+app.add_route('/sitemap', resources.SitemapResource())
+
 app.add_route('/login', resources.LoginResource())
 app.add_route('/logout', resources.LogoutResource())
 app.add_route('/register', resources.RegisterResource())
