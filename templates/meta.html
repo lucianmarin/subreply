@@ -2,12 +2,14 @@
 <meta name="referrer" content="always">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-{% if view == 'reply' and entry.parent %}
+{% if view == 'reply' %}
     {% if entry.parent %}
         <meta name="robots" content="noindex">
     {% else %}
-        <meta name="description" content="{{ member.full_name }} @{{ member }} - {{ entry.content | emojize | shorten(128, placeholder="...") }}">
+        <meta name="description" content="{{ entry.created_by.full_name }} @{{ entry.created_by }} - {{ entry.content | emojize | shorten(128, placeholder='...') }}">
     {% endif %}
+{% elif view == 'profile' %}
+    <meta name="description" content="{{ member.description }}">
 {% endif %}
 
 <title>
