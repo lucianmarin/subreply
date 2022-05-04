@@ -108,10 +108,11 @@ class EmojiResource:
     @before(auth_user)
     def on_get(self, req, resp):
         codes = UNICODE_EMOJI_ENGLISH.values()
-        shortcodes = [
-            c for c in codes if c.count('_') < 2 and not c.count('-') and not c.count('’') and c.islower()
-        ]
-        shortcodes = sorted(set(shortcodes))
+        shortcodes = set()
+        for c in codes:
+            if c.count('_') < 2 and '-' not in c and '’' not in c and c.islower():
+                shortcodes.add(c)
+        shortcodes = sorted(shortcodes)
         odds = [s for i, s in enumerate(shortcodes) if i % 2 == 0]
         evens = [s for i, s in enumerate(shortcodes) if i % 2 == 1]
         resp.text = render(
