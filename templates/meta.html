@@ -3,7 +3,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 {% if view == 'reply' and entry.parent %}
-    <meta name="robots" content="noindex">
+    {% if entry.parent %}
+        <meta name="robots" content="noindex">
+    {% else %}
+        <meta name="description" content="{{ member.full_name }} @{{ member }} - {{ entry.content | emojize | shorten(128, placeholder="...") }}">
+    {% endif %}
 {% endif %}
 
 <title>
