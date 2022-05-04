@@ -36,19 +36,7 @@ input[type=submit]:hover { background-color: var(--gainsboro); }
 
 svg { stroke-linecap: round; stroke-linejoin: round; stroke-width: 2; }
 
-svg path, svg circle { fill: none; stroke: var(--black); }
-
-table { margin: 10px 0; width: 100%; }
-
-table th { color: var(--silver); font-size: var(--small); font-weight: normal; padding-bottom: 2px; }
-
-table td { border-top: var(--whitesmoke) 1px solid; padding: 2px 0; }
-
-table td:last-child { padding-bottom: 0; }
-
-table a { color: var(--accent); }
-
-table a:hover { color: var(--gray); }
+svg path { fill: none; stroke: var(--black); }
 
 .container { display: grid; grid-template-columns: auto 145px 525px auto; }
 
@@ -66,11 +54,11 @@ table a:hover { color: var(--gray); }
 
 .links a.on { background-color: var(--whitesmoke); color: var(--accent); }
 
-.links a.on svg path, .links a.on svg circle { stroke: var(--accent); }
+.links a.on svg path { stroke: var(--accent); }
 
 .links a.top { margin-top: 10px; }
 
-.links a.accent svg path, .links a.accent svg circle { stroke: var(--orange); }
+.links a.accent svg path { stroke: var(--orange); }
 
 .links a sup { font-size: var(--super); font-weight: bold; margin-left: 1px; }
 
@@ -176,20 +164,6 @@ table a:hover { color: var(--gray); }
 
 .status a:hover { color: var(--silver); }
 
-.filters { color: var(--gray); font-size: var(--tiny); font-weight: bold; overflow: hidden; text-transform: uppercase; }
-
-.filters a { color: var(--gray); float: left; margin: 0 5px; }
-
-.filters a:first-child { margin-left: 0; }
-
-.filters a:last-child { margin-right: 0; }
-
-.filters a:hover { color: var(--silver); }
-
-.filters a.selected { color: var(--accent); }
-
-.filters .separator { background-color: var(--whitesmoke); float: left; width: 1px; height: 20px; margin: 0 5px; }
-
 .request.upper { margin-top: -10px; }
 
 .line { margin-bottom: 10px; overflow: hidden; }
@@ -241,14 +215,6 @@ table a:hover { color: var(--gray); }
 .about p:last-child { margin-bottom: 10px; }
 
 .about ol, .about ul { margin-bottom: 10px; margin-left: 30px; }
-
-.promo { color: var(--gray); font-size: 11px; padding: 10px 15px; position: sticky; top: 361px; }
-
-.promo a { color: var(--gray); }
-
-.promo a:hover { color: var(--black); }
-
-.promo h5, .promo h6 { font-weight: normal; }
 
 @media (max-width: 670px) { .container { grid-template-columns: auto 50px 525px auto; } .links i { display: none; } }
 

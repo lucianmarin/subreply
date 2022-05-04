@@ -116,27 +116,9 @@ svg
     stroke-linecap: round
     stroke-linejoin: round
     stroke-width: 2
-    path, circle
+    path
         fill: none
         stroke: var(--black)
-
-table
-    margin: 10px 0
-    width: 100%
-    th
-        color: var(--silver)
-        font-size: var(--small)
-        font-weight: normal
-        padding-bottom: 2px
-    td
-        border-top: var(--whitesmoke) 1px solid
-        padding: 2px 0
-        &:last-child
-            padding-bottom: 0
-    a
-        color: var(--accent)
-        &:hover
-            color: var(--gray)
 
 .container
     display: grid
@@ -167,12 +149,12 @@ table
         &.on
             background-color: var(--whitesmoke)
             color: var(--accent)
-            svg path, svg circle
+            svg path
                 stroke: var(--accent)
         &.top
             margin-top: 10px
         &.accent
-            svg path, svg circle
+            svg path
                 stroke: var(--orange)
         sup
             font-size: var(--super)
@@ -329,31 +311,6 @@ table
         &:hover
             color: var(--silver)
 
-.filters
-    color: var(--gray)
-    font-size: var(--tiny)
-    font-weight: bold
-    overflow: hidden
-    text-transform: uppercase
-    a
-        color: var(--gray)
-        float: left
-        margin: 0 5px
-        &:first-child
-            margin-left: 0
-        &:last-child
-            margin-right: 0
-        &:hover
-            color: var(--silver)
-        &.selected
-            color: var(--accent)
-    .separator
-        background-color: var(--whitesmoke)
-        float: left
-        width: 1px
-        height: 20px
-        margin: 0 5px
-
 .request
     &.upper
         margin-top: -10px
@@ -422,19 +379,6 @@ table
     ol, ul
         margin-bottom: 10px
         margin-left: 30px
-
-.promo
-    color: var(--gray)
-    font-size: 11px
-    padding: 10px 15px
-    position: sticky
-    top: 361px
-    a
-        color: var(--gray)
-        &:hover
-            color: var(--black)
-    h5, h6
-        font-weight: normal
 
 @media (max-width: 670px)
     .container
