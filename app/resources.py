@@ -181,7 +181,7 @@ class ReplyResource:
         ancestors = self.fetch_ancestors(parent)
         entries = self.fetch_entries(parent)
         resp.text = render(
-            page='reply', view='reply',
+            page='reply', view='reply', content='',
             user=req.user, entry=parent, errors={}, entries=entries,
             ancestors=ancestors, duplicate=duplicate
         )
