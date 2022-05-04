@@ -10,9 +10,9 @@
     {% if view == 'profile' %}
         {{ member.full_name }} @{{ member }}
     {% elif view == 'reply' %}
-        {{ brand }}: {{ entry.content | emojize | shorten(48, placeholder="...") }}
+        {{ entry.content | emojize | shorten(48, placeholder="...") }}
     {% elif view == 'reader' %}
-        {{ brand }}: {{ entry.title }}
+        {{ entry.title }}
     {% else %}
         {{ brand }} {{ view | capitalize }}
     {% endif %}
