@@ -32,7 +32,7 @@ class User(models.Model):
     is_approved = models.BooleanField(default=False)
     is_notified = models.BooleanField(default=False)
 
-    emoji = models.CharField(max_length=15, default='')
+    emoji = models.CharField(max_length=80, default='')
     birthday = models.CharField(max_length=10, default='')
     location = models.CharField(max_length=60, default='')
     description = models.CharField(max_length=120, default='')
