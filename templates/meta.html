@@ -6,7 +6,7 @@
     {% if entry.parent %}
         <meta name="robots" content="noindex">
     {% else %}
-        <meta name="description" content="{{ entry.content | emojize | shorten(128) }}">
+        <meta name="description" content="{{ entry.created_by.short_name }} - {{ entry.content | emojize | shorten(128) }}">
         <meta property="article:author" content="{{ entry.created_by.short_name }}">
         <meta property="article:published_time" content="{{ entry.created_at | isoformat }}">
         {% if entry.edited_at %}
