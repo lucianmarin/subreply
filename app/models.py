@@ -53,6 +53,12 @@ class User(models.Model):
 
     @cached_property
     def short_name(self):
+        if len(self.last_name) == 1:
+            self.last_name += "."
+        return f"{self.first_name} {self.last_name}".strip()
+
+    @cached_property
+    def abbr_name(self):
         if self.last_name:
             return self.first_name[:1] + self.last_name[:1]
         return self.first_name[:1]

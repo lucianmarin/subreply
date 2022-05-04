@@ -1,3 +1,4 @@
+from datetime import datetime
 from textwrap import shorten
 from urllib.parse import quote_plus
 
@@ -20,6 +21,7 @@ env.filters['fibojize'] = fibojize
 env.filters['parser'] = parser
 env.filters['quote'] = quote_plus
 env.filters['shortdate'] = shortdate
+env.filters['isoformat'] = lambda ts: datetime.fromtimestamp(ts).isoformat()
 env.filters['shorten'] = lambda text, width: shorten(text, width, placeholder="...")
 
 env.globals['brand'] = "Subreply"
