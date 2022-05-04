@@ -122,9 +122,20 @@ class EmojiResource:
 
 class SitemapResource:
     def on_get(self, req, resp):
-        threads = Comment.objects.filter(parent=None).values_list('id', flat=True).order_by('id')[:50000]
-        urls = map(lambda id: f"https://subreply.com/reply/{id}", threads)
+        threads = Comment.objects.filter(parent=None).values_list(
+            'created_by__username', 'id'
+        ).order_by('id')[:50000]
+        urls = [f"https://subreply.com/{u}/{id}" for u, id in threads]
         resp.text = "\n".join(urls)
+
+
+class RedirectResource:
+    @before(auth_user)
+    def on_get(self, req, resp, id):
+        reply = Comment.objects.filter(id=id).first()
+        if reply:
+            raise HTTPFound(f"/{reply.created_by}/{reply.id}")
+        raise HTTPNotFound
 
 
 class FeedResource:
@@ -187,9 +198,9 @@ class ReplyResource:
         return Comments.filter(id__in=parent.ancestors.values('id')).order_by('id')
 
     @before(auth_user)
-    def on_get(self, req, resp, id):
+    def on_get(self, req, resp, username, id):
         parent = Comments.filter(id=id).first()
-        if not parent:
+        if not parent or parent.created_by.username != username.lower():
             raise HTTPNotFound
         duplicate = Comment.objects.filter(
             parent=parent, created_by=req.user
@@ -204,12 +215,12 @@ class ReplyResource:
 
     @before(auth_user)
     @before(login_required)
-    def on_post(self, req, resp, id):
+    def on_post(self, req, resp, username, id):
         parent = Comments.filter(id=id).select_related('parent').first()
         form = FieldStorage(fp=req.stream, environ=req.env)
         content = get_content(form)
         if not content:
-            raise HTTPFound(f"/reply/{id}")
+            raise HTTPFound(f"/{req.user}/{id}")
         hashrefs, hashtags, links, mentions = parse_metadata(content)
         errors = {}
         errors['content'] = valid_content(content, req.user)
@@ -238,7 +249,7 @@ class ReplyResource:
                 **extra
             )
             re.set_ancestors()
-            raise HTTPFound(f"/reply/{id}")
+            raise HTTPFound(f"/{req.user}/{id}")
 
 
 class EditResource:
@@ -291,7 +302,7 @@ class EditResource:
             if previous_at_user != entry.at_user:
                 entry.mention_seen_at = .0
             entry.save(update_fields=fields)
-            raise HTTPFound(f"/reply/{id}")
+            raise HTTPFound(f"/{req.user}/{id}")
 
 
 class ProfileResource:

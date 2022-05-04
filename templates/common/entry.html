@@ -13,7 +13,7 @@
                 {{ entry.created_at | shortdate }}
             {% endif %}
         </b>
-        <a href="/reply/{{ entry.id }}">
+        <a href="/{{ entry.created_by }}/{{ entry.id }}">
             {% if not entry.replies %}
                 reply{% elif entry.replies == 1 %}1 reply{% else %}{{ entry.replies }} replies
             {% endif %}

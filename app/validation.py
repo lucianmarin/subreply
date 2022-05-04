@@ -63,8 +63,9 @@ def valid_thread(value):
     threads = Comment.objects.filter(parent=None).order_by('-id')[:40]
     duplicates = [t for t in threads if t.content.lower() == value.lower()]
     if duplicates:
-        duplicate = duplicates[0]
-        return f'Thread started by <a href="/reply/{duplicate.id}">@{duplicate.created_by}</a>'
+        dup = duplicates[0]
+        err = 'Thread started by <a href="/{0}/{1}">@{0}</a>'
+        return err.format(dup.id, dup.created_by)
 
 
 def valid_reply(parent, user, value, mentions):
