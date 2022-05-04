@@ -20,7 +20,7 @@ env.filters['fibojize'] = fibojize
 env.filters['parser'] = parser
 env.filters['quote'] = quote_plus
 env.filters['shortdate'] = shortdate
-env.filters['shorten'] = shorten
+env.filters['shorten'] = lambda text, width: shorten(text, width, placeholder="...")
 
 env.globals['brand'] = "Subreply"
 env.globals['v'] = 189
