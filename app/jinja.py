@@ -23,6 +23,7 @@ env.filters['quote'] = quote_plus
 env.filters['shortdate'] = shortdate
 env.filters['isoformat'] = lambda ts: datetime.fromtimestamp(ts).isoformat()
 env.filters['shorten'] = lambda text, width: shorten(text, width, placeholder="...")
+env.filters['keywords'] = lambda e: ", ".join(e[1:-1].split("_"))
 
 env.globals['brand'] = "Subreply"
 env.globals['v'] = 189

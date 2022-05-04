@@ -1,7 +1,7 @@
 <div class="entry">
     <div class="content">
         <a class="name" href="/{{ entry.created_by }}">
-            {{ entry.created_by.full_name }}
+            {{ entry.created_by.full_name | emojize }}
         </a>
         {{ entry.content | parser | emojize | safe }}
     </div>

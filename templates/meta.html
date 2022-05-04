@@ -11,13 +11,19 @@
     {% elif entry.edited_at %}
         <meta property="article:modified_time" content="{{ entry.edited_at | isoformat }}">
     {% endif %}
+    {% if entry.hashtag %}
+        <meta name="keywords" content="{{ entry.hashtag }}">
+    {% endif %}
 {% elif view == 'profile' %}
     <meta name="description" content="{{ member.description }}">
+    {% if member.emoji %}
+        <meta name="keywords" content="{{ member.emoji | keywords }}">
+    {% endif %}
 {% endif %}
 
 <title>
     {% if view == 'profile' %}
-        {{ member.full_name }} @{{ member }}
+        {{ member.full_name | emojize }} @{{ member }}
     {% elif view == 'reply' %}
         {{ entry.content | emojize | shorten(48) }}
     {% elif view == 'reader' %}

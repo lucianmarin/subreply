@@ -6,7 +6,7 @@
             <b>{{ entry.created_at | shortdate }}</b>
         {% endif %}
         <a class="handle" href="/{{ member }}">
-            {{ member.full_name }}
+            {{ member.full_name | emojize }}
         </a>
         {% if view in ['profile', 'replied', 'saved'] %}
             <a class="done" href="/feed?s=%40{{ member }}" rel="nofollow">

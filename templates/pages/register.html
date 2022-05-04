@@ -67,7 +67,7 @@
                         <label for="id_emoji">Emoji</label>
                         <input type="text" name="emoji" id="id_emoji"
                             maxlength="10" placeholder=":)"
-                            value="{{ fields.emoji }}">
+                            value="{{ fields.emoji | emojize }}">
                     </div>
                     <div class="two">
                         <label for="id_birthday">Birthday</label>

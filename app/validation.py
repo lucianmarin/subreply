@@ -272,7 +272,7 @@ def valid_location(value, delimiter=", "):
 
 
 def valid_emoji(value):
-    if value and value not in emoji.UNICODE_EMOJI_ENGLISH:
+    if value and value not in emoji.UNICODE_EMOJI_ENGLISH.values():
         return "Emoji is invalid"
 
 

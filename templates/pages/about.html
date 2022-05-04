@@ -7,8 +7,8 @@
 
     <div class="about">
         <p>
-            <a href="/{{ sub }}">{{ sub.full_name }}</a> was created by
-            <a href="/{{ luc }}">{{ luc.full_name }}</a> from the desire of having
+            <a href="/{{ sub }}">{{ sub.full_name | emojize }}</a> was created by
+            <a href="/{{ luc }}">{{ luc.full_name | emojize }}</a> from the desire of having
              a simple to use, English-only, global and public forum that has nothing
              in common with ancient and untrustworthy social networks.
         </p>
@@ -30,7 +30,7 @@
         <h4>Features and limitations</h4>
         <ol>
             <li>reverse-chronological order for all feeds</li>
-            <li>unique name handles like <a href="/{{ emo }}">{{ emo.full_name }}</a></li>
+            <li>unique name handles like <a href="/{{ emo }}">{{ emo.full_name | emojize }}</a></li>
             <li>links, mentions, hashrefs and hashtags support</li>
             <li>light and dark themes based on OS preference</li>
             <li>640 characters per reply</li>

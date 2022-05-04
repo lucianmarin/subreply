@@ -1,4 +1,4 @@
-from emoji import demojize, emojize
+from emoji import demojize
 from unidecode import unidecode
 
 
@@ -12,8 +12,7 @@ def get_content(form, field="content"):
 
 def get_emoji(form):
     value = form.getvalue('emoji', '').strip()
-    demojized = demojize(value)
-    return emojize(demojized)
+    return demojize(value)
 
 
 def get_name(form, field):
