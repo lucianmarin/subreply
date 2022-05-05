@@ -31,8 +31,12 @@
     <title>{{ brand }} {{ view | capitalize }}</title>
 {% endif %}
 
-<link rel="apple-touch-icon" type="image/png" href="/static/logo-white.png">
-<link rel="icon" sizes="192x192" type="image/png" href="/static/logo-white.png">
+<meta property="og:image" content="/static/brand.png">
+<meta name="twitter:image" content="/static/brand.png">
+
+<link rel="apple-touch-icon" type="image/png" href="/static/brand.png">
+<link rel="icon" sizes="192x192" type="image/png" href="/static/brand.png">
+
 <link rel="manifest" type="application/json" href="/static/manifest.json">
 <link rel="stylesheet" type="text/css" href="/static/style.css?v={{ v }}">
 

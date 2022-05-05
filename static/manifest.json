@@ -5,7 +5,7 @@
     "description": "Tiny, but mighty social network.",
     "icons": [
         {
-            "src": "/static/logo-white.png",
+            "src": "/static/brand.png",
             "sizes": "192x192",
             "type": "image/png",
             "purpose": "any maskable"
