@@ -21,6 +21,10 @@
     {% endif %}
 {% endif %}
 
+{% if q %}
+    <meta name="robots" content="noindex">
+{% endif %}
+
 {% if view == 'profile' %}
     <title>{{ member.full_name | emojize }} @{{ member }}</title>
 {% elif view == 'reply' %}

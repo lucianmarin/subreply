@@ -13,11 +13,11 @@ if not settings.configured:
     environ.setdefault('DJANGO_SETTINGS_MODULE', 'project.settings')
     setup()
 
-# if settings.DEBUG:
-#     import logging
-#     log = logging.getLogger('django.db.backends')
-#     log.setLevel(logging.DEBUG)
-#     log.addHandler(logging.StreamHandler())
+if settings.DEBUG:
+    import logging
+    log = logging.getLogger('django.db.backends')
+    log.setLevel(logging.DEBUG)
+    log.addHandler(logging.StreamHandler())
 
 
 class User(models.Model):
