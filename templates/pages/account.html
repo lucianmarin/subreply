@@ -10,14 +10,6 @@
     <div class="request">
         <form action="/account/change" enctype="multipart/form-data" method="post" autocomplete="off">
             <div class="line">
-                <label for="id_current">Current password<i>*</i></label>
-                <input type="password" name="current" id="id_current"
-                    value="{{ form.getvalue('current', '') }}">
-                {% if 'current' in change_errors %}
-                    <div class="error">{{ change_errors['current'] }}</div>
-                {% endif %}
-            </div>
-            <div class="line">
                 <div class="left">
                     <label for="id_password1">New password<i>*</i></label>
                     <input type="password" name="password1" id="id_password1"

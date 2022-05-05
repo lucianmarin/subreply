@@ -3,7 +3,7 @@ from cgi import FieldStorage
 from django.db.models import Count, Max, Prefetch, Q
 from emails import Message
 from emails.template import JinjaTemplate
-from emoji import demojize, UNICODE_EMOJI_ENGLISH
+from emoji import UNICODE_EMOJI_ENGLISH, demojize
 from falcon import status_codes
 from falcon.errors import HTTPNotFound
 from falcon.hooks import before
@@ -16,8 +16,8 @@ from app.hooks import auth_user, login_required
 from app.jinja import render
 from app.models import Article, Comment, Relation, Save, User
 from app.validation import (
-    authentication, changing, profiling, registration, valid_content,
-    valid_handle, valid_reply, valid_thread
+    authentication, profiling, registration, valid_content, valid_handle,
+    valid_password, valid_reply, valid_thread
 )
 from project.settings import FERNET, MAX_AGE, SMTP
 from project.vars import UNLOCK_HTML, UNLOCK_TEXT
@@ -653,10 +653,11 @@ class AccountResource:
     @before(login_required)
     def on_post_change(self, req, resp):
         form = FieldStorage(fp=req.stream, environ=req.env)
-        current = form.getvalue('current', '')
         password1 = form.getvalue('password1', '')
         password2 = form.getvalue('password2', '')
-        errors = changing(req.user, current, password1, password2)
+        errors = {}
+        errors['password'] = valid_password(password1, password2)
+        errors = {k: v for k, v in errors.items() if v}
         if errors:
             resp.text = render(
                 page='account', view='account',
