@@ -21,17 +21,15 @@
     {% endif %}
 {% endif %}
 
-<title>
-    {% if view == 'profile' %}
-        {{ member.full_name | emojize }} @{{ member }}
-    {% elif view == 'reply' %}
-        {{ entry.content | emojize | shorten(48) }}
-    {% elif view == 'reader' %}
-        {{ entry.title }}
-    {% else %}
-        {{ brand }} {{ view | capitalize }}
-    {% endif %}
-</title>
+{% if view == 'profile' %}
+    <title>{{ member.full_name | emojize }} @{{ member }}</title>
+{% elif view == 'reply' %}
+    <title>{{ entry.content | emojize | shorten(48) }}</title>
+{% elif view == 'reader' %}
+    <title>{{ entry.title }}</title>
+{% else %}
+    <title>{{ brand }} {{ view | capitalize }}</title>
+{% endif %}
 
 <link rel="apple-touch-icon" type="image/png" href="/static/logo-white.png">
 <link rel="icon" sizes="192x192" type="image/png" href="/static/logo-white.png">
