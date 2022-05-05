@@ -150,7 +150,7 @@ table a:hover { color: var(--gray); }
 
 .small a:hover { color: var(--silver); }
 
-.author { color: var(--gray); font-size: var(--small); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.author { color: var(--gray); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 .author .done, .author .handle, .author i { font-weight: bold; }
 

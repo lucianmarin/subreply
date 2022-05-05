@@ -3,7 +3,7 @@ from cgi import FieldStorage
 from django.db.models import Count, Max, Prefetch, Q
 from emails import Message
 from emails.template import JinjaTemplate
-from emoji import UNICODE_EMOJI_ENGLISH
+from emoji import demojize, UNICODE_EMOJI_ENGLISH
 from falcon import status_codes
 from falcon.errors import HTTPNotFound
 from falcon.hooks import before
@@ -510,7 +510,7 @@ class PeopleResource:
 
     @before(auth_user)
     def on_get(self, req, resp):
-        q = req.params.get('q', '').strip()
+        q = demojize(req.params.get('q', '').strip())
         terms = [t.strip() for t in q.split() if t.strip()]
         entries = self.fetch_entries(req, terms)
         page, number = get_page(req)
@@ -539,7 +539,7 @@ class DiscoverResource:
 
     @before(auth_user)
     def on_get(self, req, resp):
-        q = req.params.get('q', '').strip()
+        q = demojize(req.params.get('q', '').strip())
         terms = [t.strip() for t in q.split() if t.strip()]
         entries = self.fetch_entries(req, terms)
         page, number = get_page(req)

@@ -5,7 +5,7 @@
                 <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
         </label>
-        <input type="text" id="id_query" name="q" value="{{ q }}"
+        <input type="text" id="id_query" name="q" value="{{ q | emojize }}"
             maxlength="120" placeholder="{{ placeholder }}">
     </form>
 </div>
