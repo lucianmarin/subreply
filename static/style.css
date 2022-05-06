@@ -180,6 +180,8 @@ table a:hover { color: var(--gray); }
 
 .line { margin-bottom: 10px; overflow: hidden; }
 
+.line label { font-size: var(--small); }
+
 .line .one, .line .two, .line .left, .line .right, .line .third { float: left; }
 
 .line .one { width: calc(100% / 3 - 1px); }
