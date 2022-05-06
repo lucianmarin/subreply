@@ -31,17 +31,6 @@ PFR = Prefetch('kids', Comments.order_by('id'))
 RPFR = Prefetch('kids', Comments.prefetch_related(PFR))
 
 
-def get_at_user(hahrefs, mentions, user):
-    if hahrefs:
-        hashref = hahrefs[0]
-        comment = Comment.objects.get(id=hashref)
-        if comment.created_by_id != user.id:
-            return comment.created_by
-    elif mentions:
-        mention = mentions[0].lower()
-        return User.objects.get(username=mention)
-
-
 def get_number(req):
     p = req.params.get('p', '1').strip()
     return int(p) if p.isdecimal() and int(p) else 0
@@ -176,11 +165,13 @@ class FeedResource:
                 user=req.user, entries=entries, errors=errors
             )
         else:
-            hashrefs, hashtags, links, mentions = parse_metadata(content)
+            hashtags, links, mentions = parse_metadata(content)
             extra = {}
             extra['hashtag'] = hashtags[0].lower() if hashtags else ''
             extra['link'] = links[0].lower() if links else ''
-            extra['at_user'] = get_at_user(hashrefs, mentions, req.user)
+            extra['at_user'] = User.objects.get(
+                username=mentions[0].lower()
+            ) if mentions else None
             th, is_new = Comment.objects.get_or_create(
                 content=content,
                 created_at=utc_timestamp(),
@@ -221,7 +212,7 @@ class ReplyResource:
         content = get_content(form)
         if not content:
             raise HTTPFound(f"/{req.user}/{id}")
-        hashrefs, hashtags, links, mentions = parse_metadata(content)
+        hashtags, links, mentions = parse_metadata(content)
         errors = {}
         errors['content'] = valid_content(content, req.user)
         if not errors['content']:
@@ -239,7 +230,9 @@ class ReplyResource:
             extra = {}
             extra['hashtag'] = hashtags[0].lower() if hashtags else ''
             extra['link'] = links[0].lower() if links else ''
-            extra['at_user'] = get_at_user(hashrefs, mentions, req.user)
+            extra['at_user'] = User.objects.get(
+                username=mentions[0].lower()
+            ) if mentions else None
             re, is_new = Comment.objects.get_or_create(
                 parent=parent,
                 to_user=parent.created_by,
@@ -272,7 +265,7 @@ class EditResource:
         entry = Comments.filter(id=id).prefetch_related(PPFR).first()
         form = FieldStorage(fp=req.stream, environ=req.env)
         content = get_content(form)
-        hashrefs, hashtags, links, mentions = parse_metadata(content)
+        hashtags, links, mentions = parse_metadata(content)
         errors = {}
         errors['content'] = valid_content(content, req.user)
         if not errors['content']:
@@ -298,7 +291,9 @@ class EditResource:
             entry.edited_at = utc_timestamp()
             entry.hashtag = hashtags[0].lower() if hashtags else ''
             entry.link = links[0].lower() if links else ''
-            entry.at_user = get_at_user(hashrefs, mentions, req.user)
+            entry.at_user = User.objects.get(
+                username=mentions[0].lower()
+            ) if mentions else None
             if previous_at_user != entry.at_user:
                 entry.mention_seen_at = .0
             entry.save(update_fields=fields)

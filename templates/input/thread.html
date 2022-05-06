@@ -2,8 +2,7 @@
     <form enctype="multipart/form-data" method="post" autocomplete="off">
         {% if not user %}
             <div class="placeholder">
-                <a href="/login">Login</a> or <a href="/register">register</a>
-                your account to share
+                <a href="/login">Login</a> or <a href="/register">register</a> your account to share
             </div>
         {% elif not user.is_approved %}
             <div class="placeholder">

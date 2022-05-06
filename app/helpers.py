@@ -29,7 +29,7 @@ def parse_metadata(text):
     numbers = "0123456789"
     base36 = numbers + "abcdefghijklmnopqrstuvwxyz"
     limits = base36 + "ABCDEFGHIJKLMNOPQRSTUVWXYZ_"
-    hashrefs, hashtags, links, mentions = [], [], [], []
+    hashtags, links, mentions = [], [], []
     for word in text.split():
         if word.endswith(('.', ',', '!', '?', ':', ';')):
             word = word[:-1]
@@ -49,11 +49,9 @@ def parse_metadata(text):
                 mentions.append(handle)
         if word.startswith('#'):
             handle = word[1:]
-            if handle and all(c in numbers for c in handle):
-                hashrefs.append(handle)
-            elif handle and all(c in limits for c in handle):
+            if handle and all(c in limits for c in handle):
                 hashtags.append(handle)
-    return hashrefs, hashtags, links, mentions
+    return hashtags, links, mentions
 
 
 def generate_salt(length=12):

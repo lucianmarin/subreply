@@ -11,7 +11,7 @@ from project.vars import INVALID, LATIN, MAX_YEAR, MIN_YEAR, WORLD
 
 
 def valid_content(value, user, limit=640):
-    hashrefs, hashtags, links, mentions = parse_metadata(value)
+    hashtags, links, mentions = parse_metadata(value)
     if not value:
         return "It can't be blank"
     elif len(value) > limit:
@@ -24,16 +24,6 @@ def valid_content(value, user, limit=640):
         return "Link a single address"
     elif len(hashtags) > 1:
         return "Hashtag a single channel"
-    elif len(hashrefs) > 1:
-        return "Hashref a single reply"
-    elif hashrefs and mentions:
-        return "Only a #ref or a @mention"
-    elif hashrefs:
-        hashref = hashrefs[0].lower()
-        if hashref == value.lower()[1:]:
-            return "It can't be only a #ref"
-        elif not Comment.objects.filter(id=hashref).exists():
-            return "#{0} doesn't exists".format(hashref)
     elif hashtags:
         hashtag = hashtags[0].lower()
         if len(hashtag) > 15:
@@ -46,8 +36,6 @@ def valid_content(value, user, limit=640):
             return "Link can't be longer than 120 characters"
         elif link == value.lower():
             return "It can't be only a link"
-        elif 'subreply.com' in link:
-            return "Use a mention or a bang instead"
     elif mentions:
         mention = mentions[0].lower()
         if user and mention == user.username:
