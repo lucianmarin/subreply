@@ -1,6 +1,6 @@
 [Unit]
 Description=Sub service
-After=network.target
+After=network.target nginx.service postgresql.service
 
 [Service]
 User=lucian
