@@ -19,3 +19,4 @@ WantedBy=default.target
 # sudo cp sub.service /etc/systemd/system/sub.service
 # sudo systemctl daemon-reload
 # sudo systemctl restart sub.service
+# sudo systemctl enable sub.service - on boot
