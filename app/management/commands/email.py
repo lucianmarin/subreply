@@ -13,7 +13,7 @@ class Command(BaseCommand):
     def get_user(self, mock=True):
         users = User.objects.filter(is_notified=False).order_by('seen_at')
         if mock:
-            users = users.filter(id__in=[1, 2])
+            users = users.filter(id__in=[1])
         for user in users:
             notifs = []
             if user.notif_followers:
@@ -32,7 +32,7 @@ class Command(BaseCommand):
             html=JinjaTemplate(ACTIVITY_HTML),
             text=JinjaTemplate(ACTIVITY_TEXT),
             subject="Activity left unseen on Subreply",
-            mail_from=("Subreply", "subreply@outlook.com")
+            mail_from=("Subreply", "noreply@lucianmarin.com")
         )
         # send email
         response = m.send(

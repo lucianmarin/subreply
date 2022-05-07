@@ -242,7 +242,7 @@ class ReplyResource:
                 **extra
             )
             re.set_ancestors()
-            raise HTTPFound(f"/{req.user}/{id}")
+            raise HTTPFound(f"/{req.user}/{re.id}")
 
 
 class EditResource:
@@ -297,7 +297,7 @@ class EditResource:
             if previous_at_user != entry.at_user:
                 entry.mention_seen_at = .0
             entry.save(update_fields=fields)
-            raise HTTPFound(f"/{req.user}/{id}")
+            raise HTTPFound(f"/{req.user}/{entry.id}")
 
 
 class ProfileResource:
