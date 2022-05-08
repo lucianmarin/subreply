@@ -6,13 +6,14 @@
     <meta name="description" content="{{ entry.created_by.short_name }} - {{ entry.content | emojize | shorten(128) }}">
     <meta property="article:author" content="{{ entry.created_by.short_name }}">
     <meta property="article:published_time" content="{{ entry.created_at | isoformat }}">
-    {% if entry.parent %}
-        <meta name="robots" content="noindex">
-    {% elif entry.edited_at %}
+    {% if entry.edited_at %}
         <meta property="article:modified_time" content="{{ entry.edited_at | isoformat }}">
     {% endif %}
     {% if entry.hashtag %}
         <meta name="keywords" content="{{ entry.hashtag }}">
+    {% endif %}
+    {% if entry.parent %}
+        <meta name="robots" content="noindex">
     {% endif %}
 {% elif view == 'profile' %}
     <meta name="description" content="{{ member.description }}">
@@ -30,6 +31,8 @@
 
 {% if view == 'profile' %}
     <title>{{ member.full_name | emojize }} @{{ member }}</title>
+{% elif view == 'saved' %}
+    <title>{{ member.first_name }} {{ view | capitalize }}</title>
 {% elif view == 'reply' %}
     <title>{{ entry.content | emojize | shorten(48) }}</title>
 {% elif view == 'reader' %}
