@@ -113,8 +113,11 @@ class SitemapResource:
     def on_get(self, req, resp):
         threads = Comment.objects.filter(parent=None).values_list(
             'created_by__username', 'id'
-        ).order_by('id')[:50000]
-        urls = [f"https://subreply.com/{u}/{id}" for u, id in threads]
+        ).order_by('id')
+        users = User.objects.exclude(comments=None).values_list('username')
+        thr_urls = [f"https://subreply.com/{u}/{id}" for u, id in threads]
+        usr_urls = [f"https://subreply.com/{u}" for u, in users]
+        urls = sorted(thr_urls + usr_urls)
         resp.text = "\n".join(urls)
 
 

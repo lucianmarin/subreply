@@ -19,6 +19,9 @@
     {% if member.emoji %}
         <meta name="keywords" content="{{ member.emoji | keywords }}">
     {% endif %}
+    {% if not entries %}
+        <meta name="robots" content="noindex">
+    {% endif %}
 {% endif %}
 
 {% if q %}
