@@ -4,10 +4,8 @@ from django.db.models import Count, Max, Prefetch, Q
 from emails import Message
 from emails.template import JinjaTemplate
 from emoji import UNICODE_EMOJI_ENGLISH, demojize
-from falcon import status_codes
-from falcon.errors import HTTPNotFound
-from falcon.hooks import before
-from falcon.redirects import HTTPFound
+from falcon import HTTPFound, HTTPNotFound, before
+from falcon.status_codes import HTTP_200
 from strictyaml import as_document
 
 from app.forms import get_content, get_emoji, get_name
@@ -64,7 +62,7 @@ class StaticResource:
         print("load", filename)
         name, ext = filename.split('.')
         mode = 'rb' if ext in self.binary else 'r'
-        resp.status = status_codes.HTTP_200
+        resp.status = HTTP_200
         resp.content_type = self.mime_types[ext]
         resp.cache_control = ["max-age=3600000"]
         with open(f'static/{filename}', mode) as f:

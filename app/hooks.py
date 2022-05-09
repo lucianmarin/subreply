@@ -1,4 +1,4 @@
-from falcon import HTTPFound
+from falcon import HTTPNotFound
 
 from app.models import User
 from project.settings import FERNET
@@ -18,4 +18,4 @@ def auth_user(req, resp, resource, params):  # noqa
 
 def login_required(req, resp, resource, params):  # noqa
     if not req.user:
-        raise HTTPFound('/register')
+        raise HTTPNotFound
