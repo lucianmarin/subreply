@@ -11,7 +11,7 @@
             "purpose": "any maskable"
         }
     ],
-    "start_url": "/",
+    "start_url": "/feed",
     "display": "standalone",
     "orientation": "portrait",
     "status": "ok"
