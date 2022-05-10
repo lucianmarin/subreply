@@ -81,12 +81,7 @@ sup
 input[type=file]
     display: none
 
-input[type=text],
-input[type=password],
-input[type=email],
-input[type=url],
-select,
-textarea
+input, select, textarea
     -moz-appearance: none
     -webkit-appearance: none
     appearance: none
@@ -95,6 +90,13 @@ textarea
     border: 0 none
     color: var(--black)
     display: block
+
+input[type=text],
+input[type=password],
+input[type=email],
+input[type=url],
+select,
+textarea
     overflow: hidden
     padding: 5px 10px
     padding-right: 5px
@@ -104,10 +106,6 @@ textarea
         outline: 0 none
 
 input[type=submit]
-    background-color: var(--whitesmoke)
-    border-radius: var(--radius)
-    border: 0 none
-    color: var(--black)
     cursor: pointer
     float: right
     font-size: var(--small)
