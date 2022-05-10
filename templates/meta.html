@@ -23,6 +23,8 @@
     {% if not entries %}
         <meta name="robots" content="noindex">
     {% endif %}
+{% elif view in ['news', 'read', 'reader'] %}
+    <meta name="robots" content="noindex nofollow">
 {% endif %}
 
 {% if q %}

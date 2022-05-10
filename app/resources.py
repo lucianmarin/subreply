@@ -107,9 +107,20 @@ class EmojiResource:
         )
 
 
-class SitemapResource:
-    def on_get(self, req, resp):
-        threads = Comment.objects.filter(parent=None).values_list(
+class TxtResource:
+    def on_get_bots(self, req, resp):
+        lines = (
+            "User-agent: *",
+            "Disallow: /news/*",
+            "Disallow: /read/*",
+            "Disallow: /*/saved",
+            "",
+            "Sitemap: https://subreply.com/sitemap.txt"
+        )
+        resp.text = "\n".join(lines)
+
+    def on_get_map(self, req, resp):
+        threads = Comment.objects.filter(parent=None).exclude(kids=None).values_list(
             'created_by__username', 'id'
         ).order_by('id')
         users = User.objects.exclude(comments=None).values_list('username')
@@ -566,7 +577,7 @@ class TrendingResource:
         )
 
 
-class ArticlesResource:
+class NewsResource:
     def fetch_entries(self, req):
         user_id = req.user.id if req.user else 0
         latest = Article.objects.exclude(ids__contains=user_id).order_by(
@@ -624,12 +635,12 @@ class ArticleResource:
         raise HTTPFound(article.url)
 
     @before(auth_user)
-    @before(login_required)
     def on_get_reader(self, req, resp, id):
         article = Article.objects.filter(id=id).first()
         if not article:
             raise HTTPNotFound
-        article.increment(req.user.id)
+        if req.user:
+            article.increment(req.user.id)
         resp.text = render(
             page='reader', view='reader', user=req.user, entry=article
         )

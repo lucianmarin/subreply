@@ -221,13 +221,11 @@ INVALID = [
     "saves",
     "search",
     "settings",
-    "sitemap",
     "social",
     "static",
     "sub",
     "sublevel",
     "terms",
-    "timeline",
     "trending",
     "unlock"
 ]

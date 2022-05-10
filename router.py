@@ -30,13 +30,15 @@ app.add_route('/people', resources.PeopleResource())
 app.add_route('/discover', resources.DiscoverResource())
 
 app.add_route('/news/{id:int}', resources.ArticleResource(), suffix="linker")
-app.add_route('/news', resources.ArticlesResource(), suffix="news")
+app.add_route('/news', resources.NewsResource(), suffix="news")
 app.add_route('/read/{id:int}', resources.ArticleResource(), suffix="reader")
-app.add_route('/read', resources.ArticlesResource(), suffix="read")
+app.add_route('/read', resources.NewsResource(), suffix="read")
 
 app.add_route('/about', resources.AboutResource())
 app.add_route('/emoji', resources.EmojiResource())
-app.add_route('/sitemap', resources.SitemapResource())
+
+app.add_route('/robots.txt', resources.TxtResource(), suffix="bots")
+app.add_route('/sitemap.txt', resources.TxtResource(), suffix="map")
 
 app.add_route('/login', resources.LoginResource())
 app.add_route('/logout', resources.LogoutResource())
