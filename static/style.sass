@@ -78,9 +78,6 @@ label
 sup
     line-height: 0
 
-input[type=file]
-    display: none
-
 input, select, textarea
     -moz-appearance: none
     -webkit-appearance: none
@@ -90,6 +87,7 @@ input, select, textarea
     border: 0 none
     color: var(--black)
     display: block
+    font-weight: normal
 
 input[type=text],
 input[type=password],
@@ -108,7 +106,6 @@ textarea
 input[type=submit]
     cursor: pointer
     float: right
-    font-size: var(--small)
     padding: 5px 15px
     transition: background-color var(--d)
     &:hover
