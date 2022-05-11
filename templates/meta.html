@@ -13,7 +13,7 @@
         <meta name="keywords" content="{{ entry.hashtag }}">
     {% endif %}
     {% if entry.parent %}
-        <meta name="robots" content="noindex">
+        <meta name="robots" content="noindex nofollow">
     {% endif %}
 {% elif view == 'profile' %}
     <meta name="description" content="{{ member.description }}">
@@ -21,14 +21,12 @@
         <meta name="keywords" content="{{ member.emoji | keywords }}">
     {% endif %}
     {% if not entries %}
-        <meta name="robots" content="noindex">
+        <meta name="robots" content="noindex nofollow">
     {% endif %}
-{% elif view in ['news', 'read', 'reader'] %}
+{% elif view == 'trending' %}
+    <meta name="description" content="Trending threads on Subreply, a tiny but mighty social network.">
+{% else %}
     <meta name="robots" content="noindex nofollow">
-{% endif %}
-
-{% if q %}
-    <meta name="robots" content="noindex">
 {% endif %}
 
 {% if view == 'profile' %}
