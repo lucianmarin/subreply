@@ -26,9 +26,9 @@ sup { line-height: 0; }
 
 input, select, textarea { -moz-appearance: none; -webkit-appearance: none; appearance: none; background-color: var(--whitesmoke); border-radius: var(--radius); border: 0 none; color: var(--black); display: block; font-weight: normal; }
 
-input[type=text], input[type=password], input[type=email], input[type=url], select, textarea { overflow: hidden; padding: 5px 10px; padding-right: 5px; resize: none; width: calc(100% - 15px); }
+input:focus, select:focus, textarea:focus { outline: 0 none; }
 
-input[type=text]:focus, input[type=password]:focus, input[type=email]:focus, input[type=url]:focus, select:focus, textarea:focus { outline: 0 none; }
+input[type=text], input[type=password], input[type=email], input[type=url], select, textarea { overflow: hidden; padding: 5px 10px; padding-right: 5px; resize: none; width: calc(100% - 15px); }
 
 input[type=submit] { cursor: pointer; float: right; padding: 5px 15px; transition: background-color var(--d); }
 

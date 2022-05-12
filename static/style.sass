@@ -88,6 +88,8 @@ input, select, textarea
     color: var(--black)
     display: block
     font-weight: normal
+    &:focus
+        outline: 0 none
 
 input[type=text],
 input[type=password],
@@ -100,8 +102,6 @@ textarea
     padding-right: 5px
     resize: none
     width: calc(100% - 15px)
-    &:focus
-        outline: 0 none
 
 input[type=submit]
     cursor: pointer
