@@ -555,20 +555,16 @@ class DiscoverResource:
 
 class TrendingResource:
     def fetch_entries(self, req, sample):
-        sampling = Comment.objects.annotate(
-            replies=Count('kids')
-        ).exclude(replies=0).order_by('-id').values('id')[:sample]
-        entries = Comments.filter(
+        sampling = Comment.objects.filter(parent=None).exclude(kids=None).order_by('-id').values('id')[:sample]
+        return Comments.filter(
             id__in=sampling
         ).order_by('-replies', '-id').prefetch_related(PFR)
-        return paginate(req, entries)
 
     @before(auth_user)
     def on_get(self, req, resp):
-        entries = self.fetch_entries(req, sample=24)
-        page, number = get_page(req)
+        entries = self.fetch_entries(req, sample=16)
         resp.text = render(
-            page=page, view='trending', number=number,
+            page='regular', view='trending', number=1,
             user=req.user, entries=entries
         )
 
