@@ -10,8 +10,6 @@
         {% include "common/user.html" %}
     {% elif view in ['news', 'read'] %}
         {% include "common/article.html" %}
-    {% elif view == 'trending' %}
-        {% include "common/threads.html" %}
     {% else %}
         {% include "common/stream.html" %}
     {% endif %}
