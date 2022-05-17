@@ -355,9 +355,7 @@ class FollowingResource:
         page, number = get_page(req)
         resp.text = render(
             page=page, view='following', number=number, user=req.user,
-            entries=entries,
-            followers=req.user.followers.count() - 1,
-            following=req.user.following.count() - 1
+            entries=entries
         )
 
 
@@ -380,9 +378,7 @@ class FollowersResource:
         page, number = get_page(req)
         resp.text = render(
             page=page, view='followers', number=number, user=req.user,
-            entries=entries,
-            followers=req.user.followers.count() - 1,
-            following=req.user.following.count() - 1
+            entries=entries
         )
         if req.user.notif_followers:
             self.clear_followers(req.user)
