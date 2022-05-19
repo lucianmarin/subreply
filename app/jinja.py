@@ -22,11 +22,11 @@ env.filters['parser'] = parser
 env.filters['quote'] = quote_plus
 env.filters['shortdate'] = shortdate
 env.filters['isoformat'] = lambda ts: datetime.fromtimestamp(ts).isoformat()
-env.filters['shorten'] = lambda text, width: shorten(text, width, placeholder="...")
-env.filters['keywords'] = lambda e: ", ".join(e[1:-1].split("_"))
+env.filters['shorten'] = lambda txt, w: shorten(txt, w, placeholder="...")
+env.filters['keywords'] = lambda emo: ", ".join(emo[1:-1].split("_"))
 
 env.globals['brand'] = "Subreply"
-env.globals['v'] = 201
+env.globals['v'] = 202
 
 
 def render(page, **kwargs):

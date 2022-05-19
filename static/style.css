@@ -50,13 +50,9 @@ table a { color: var(--accent); }
 
 table a:hover { color: var(--gray); }
 
-.container { display: grid; grid-template-columns: auto 145px 525px auto; }
+.container { display: grid; grid-template-columns: auto 144px 504px auto; column-gap: 10px; }
 
 .container > div { min-height: 100vh; }
-
-.sidebar { padding-left: 10px; }
-
-.main { padding: 0 10px; }
 
 .links { position: sticky; text-align: right; top: 10px; }
 
@@ -230,9 +226,9 @@ table a:hover { color: var(--gray); }
 
 .about ol, .about ul { margin-bottom: 10px; margin-left: 30px; }
 
-@media (max-width: 670px) { .container { grid-template-columns: auto 50px 525px auto; } .links i { display: none; } }
+@media (max-width: 677px) { .container { grid-template-columns: auto 40px 504px auto; } .links i { display: none; } }
 
-@media (max-width: 575px) { .container { grid-template-columns: 0 50px calc(100% - 50px) 0; } }
+@media (max-width: 573px) { .container { grid-template-columns: 0 40px calc(100% - 70px) 0; } }
 
 @font-face { font-family: "Route 159"; font-style: normal; font-weight: normal; src: url(/static/r159regular.woff2) format("woff2"); }
 
