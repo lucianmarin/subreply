@@ -50,7 +50,7 @@ table a { color: var(--accent); }
 
 table a:hover { color: var(--gray); }
 
-.container { display: grid; grid-template-columns: auto 144px 504px auto; column-gap: 10px; }
+.container { display: grid; grid-column-gap: 10px; grid-template-columns: auto 144px 504px auto; }
 
 .container > div { min-height: 100vh; }
 
@@ -64,11 +64,9 @@ table a:hover { color: var(--gray); }
 
 .links a.on svg path { stroke: var(--accent); }
 
-.links a.top { margin-top: 10px; }
+.links a.red svg path { stroke: var(--orange); }
 
-.links a.accent svg path { stroke: var(--orange); }
-
-.links a sup { font-size: var(--super); font-weight: bold; margin-left: 1px; }
+.links sup { font-size: var(--super); font-weight: bold; margin-left: 1px; }
 
 .links svg { float: right; margin: 0 10px; padding: 2px; }
 

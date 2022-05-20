@@ -12,26 +12,26 @@
                 <path d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12" />
             </svg>
         </a>
-        <a href="/followers" class="{% if view == 'followers' %}on{% endif %} {% if user.notif_followers %}accent{% endif %}">
+        <a href="/followers" class="{% if view == 'followers' %}on{% endif %} {% if user.notif_followers %}red{% endif %}">
             <i>Followers{% if user.notif_followers %}<sup>{{ user.notif_followers }}</sup>{% endif %}</i>
             <svg width="16" height="16" viewBox="0 0 24 24">
                 <path d="M3 4h13M3 8h9m-9 4h9m5-4v12m0 0l-4-4m4 4l4-4" />
             </svg>
         </a>
-        <a href="/mentions" class="{% if view == 'mentions' %}on{% endif %} {% if user.notif_mentions %}accent{% endif %}">
+        <a href="/mentions" class="{% if view == 'mentions' %}on{% endif %} {% if user.notif_mentions %}red{% endif %}">
             <i>Mentions{% if user.notif_mentions %}<sup>{{ user.notif_mentions }}</sup>{% endif %}</i>
             <svg width="16" height="16" viewBox="0 0 24 24">
                 <path d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" />
             </svg>
         </a>
-        <a href="/replies" class="{% if view == 'replies' %}on{% endif %} {% if user.notif_replies %}accent{% endif %}">
+        <a href="/replies" class="{% if view == 'replies' %}on{% endif %} {% if user.notif_replies %}red{% endif %}">
             <i>Replies{% if user.notif_replies %}<sup>{{ user.notif_replies }}</sup>{% endif %}</i>
             <svg width="16" height="16" viewBox="0 0 24 24">
                 <path d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
             </svg>
         </a>
         {% if user.lobbies %}
-            <a href="/lobby" class="accent {% if view == 'lobby' %}on{% endif %}">
+            <a href="/lobby" class="red {% if view == 'lobby' %}on{% endif %}">
                 <i>Lobby<sup>{{ user.lobbies }}</sup></i>
                 <svg width="16" height="16" viewBox="0 0 24 24">
                     <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />

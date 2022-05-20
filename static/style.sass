@@ -139,8 +139,8 @@ table
 
 .container
     display: grid
+    grid-column-gap: 10px
     grid-template-columns: auto 144px 504px auto
-    column-gap: 10px;
     &> div
         min-height: 100vh
 
@@ -163,15 +163,13 @@ table
             color: var(--accent)
             svg path
                 stroke: var(--accent)
-        &.top
-            margin-top: 10px
-        &.accent
+        &.red
             svg path
                 stroke: var(--orange)
-        sup
-            font-size: var(--super)
-            font-weight: bold
-            margin-left: 1px
+    sup
+        font-size: var(--super)
+        font-weight: bold
+        margin-left: 1px
     svg
         float: right
         margin: 0 10px
