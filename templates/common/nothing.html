@@ -1,3 +1,9 @@
 <div class="entry">
-    <div class="content">Uh, nothing here yet.</div>
+    <div class="content">
+        {% if view == 'profile' %}
+            Start a thread or leave a reply to keep your account.
+        {% else %}
+            Uh, nothing here yet.
+        {% endif %}
+    </div>
 </div>
