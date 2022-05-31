@@ -912,7 +912,7 @@ class UnlockResource:
                 html=JinjaTemplate(UNLOCK_HTML),
                 text=JinjaTemplate(UNLOCK_TEXT),
                 subject="Unlock account on Subreply",
-                mail_from=("Subreply", "noreply@lucianmarin.com")
+                mail_from=("Subreply", "subreply@outlook.com")
             )
             # send email
             response = m.send(
