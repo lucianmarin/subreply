@@ -556,8 +556,8 @@ class DiscoverResource:
 class TrendingResource:
     def fetch_entries(self, req, sample):
         sampling = Comment.objects.filter(parent=None).annotate(
-            max_ts=Max('descendants')
-        ).exclude(max_ts=0).order_by('-max_ts').values('id')[:sample]
+            max_ds=Max('descendants')
+        ).exclude(max_ds=0).order_by('-max_ds').values('id')[:sample]
         entries = Comments.filter(
             id__in=sampling
         ).order_by('-replies', '-id').prefetch_related(PFR)
