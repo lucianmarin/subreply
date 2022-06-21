@@ -9,6 +9,7 @@ falcon
 feedparser
 gunicorn
 jinja2
+pip
 psycopg2-binary
 requests
 strictyaml
