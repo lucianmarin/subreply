@@ -1,6 +1,6 @@
 [Unit]
 Description=Sub service
-After=network.target nginx.service postgresql.service
+After=network.target nginx.service postgresql.service pgbouncer.service
 
 [Service]
 User=lucian
