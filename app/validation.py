@@ -1,9 +1,9 @@
 from datetime import date
 
-import emoji
-import requests
 from django.db.models import Q
 from dns.resolver import query as dns_query
+from emoji import get_emoji_unicode_dict
+from requests import head
 
 from app.helpers import has_repetions, parse_metadata, verify_hash
 from app.models import Comment, User
@@ -187,9 +187,7 @@ def valid_website(value, user_id=0):
             return f'Website is used by <a href="/{duplicate}">@{duplicate}</a>'
         else:
             try:
-                headers = requests.head(
-                    value, allow_redirects=True, timeout=5
-                ).headers
+                headers = head(value, allow_redirects=True, timeout=5).headers
             except Exception as e:
                 headers = {}
                 print(e)
@@ -261,7 +259,7 @@ def valid_location(value, delimiter=", "):
 
 
 def valid_emoji(value):
-    if value and value not in emoji.UNICODE_EMOJI_ENGLISH.values():
+    if value and value not in get_emoji_unicode_dict('en').keys():
         return "Emoji is invalid"
 
 
