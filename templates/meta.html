@@ -37,6 +37,8 @@
     <title>{{ entry.content | emojize | shorten(48) }}</title>
 {% elif view == 'reader' %}
     <title>{{ entry.title }}</title>
+{% elif view == 'feed' %}
+    <title>{{ brand }}</title>
 {% else %}
     <title>{{ brand }} {{ view | capitalize }}</title>
 {% endif %}
