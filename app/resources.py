@@ -458,6 +458,40 @@ class SavedResource:
         )
 
 
+class SubResource:
+    def fetch_entries(self, req, name):
+        entries = Comments.filter(
+            hashtag=name.lower()
+        ).order_by('-id').prefetch_related(PFR, PPFR)
+        return paginate(req, entries)
+
+    @before(auth_user)
+    def on_get(self, req, resp, name):
+        entries = self.fetch_entries(req, name)
+        page, number = get_page(req)
+        resp.text = render(
+            page=page, view='sub', number=number, user=req.user,
+            entries=entries, name=name
+        )
+
+
+class SubsResource:
+    def fetch_entries(self, req):
+        entries = Comment.objects.exclude(hashtag='').values('hashtag').annotate(
+            tags=Count('hashtag'), latest=Max('created_at')
+        ).order_by('-latest')
+        return paginate(req, entries, 24)
+
+    @before(auth_user)
+    def on_get(self, req, resp):
+        entries = self.fetch_entries(req)
+        page, number = get_page(req)
+        resp.text = render(
+            page=page, view='subs', number=number, user=req.user,
+            entries=entries
+        )
+
+
 class LobbyResource:
     @before(auth_user)
     def on_get_approve(self, req, resp, username):  # noqa

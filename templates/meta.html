@@ -39,6 +39,8 @@
     <title>{{ entry.title }}</title>
 {% elif view == 'feed' %}
     <title>{{ brand }}</title>
+{% elif view == 'sub' %}
+    <title>{{ brand }} #{{ name }} </title>
 {% else %}
     <title>{{ brand }} {{ view | capitalize }}</title>
 {% endif %}

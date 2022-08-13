@@ -12,6 +12,8 @@
         {% include "common/threads.html" %}
     {% elif view in ['news', 'read'] %}
         {% include "common/article.html" %}
+    {% elif view == 'subs' %}
+        {% include "common/sub.html" %}
     {% else %}
         {% include "common/stream.html" %}
     {% endif %}
@@ -19,7 +21,7 @@
     {% include "common/nothing.html" %}
 {% endfor %}
 
-{% if view in ['following', 'followers', 'lobby', 'people'] %}
+{% if view in ['following', 'followers', 'lobby', 'people', 'subs'] %}
     {% set limit = 24 %}
 {% else %}
     {% set limit = 16 %}
