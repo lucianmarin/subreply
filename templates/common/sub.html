@@ -1,9 +1,16 @@
 <div class="entry">
-    <div class="small">
+    <div class="content small">
         <b>{{ entry.latest | shortdate }}</b>
         <a class="name" href="/sub/{{ entry.hashtag.lower() }}">
             <strong>#{{ entry.hashtag }}</strong>
         </a>
-        <b>{{ entry.tags }} entries</b>
+        <b>
+            {% if entry.threads %}
+                {{ entry.threads }} thread{% if entry.threads != 1 %}s{% endif %}
+            {% endif %}
+            {% if entry.replies %}
+                {{ entry.replies }} &not;
+            {% endif %}
+        </b>
     </div>
 </div>
