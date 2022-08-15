@@ -1,11 +1,5 @@
 {% extends "base.html" %}
 
-{% if view in ['following', 'followers', 'lobby', 'people', 'subs'] %}
-    {% set limit = 24 %}
-{% else %}
-    {% set limit = 16 %}
-{% endif %}
-
 {% block main %}
     {% if view == 'feed' %}
         {% include "input/thread.html" %}
@@ -48,6 +42,8 @@
         {% else %}
             {% include "common/nothing.html" %}
         {% endfor %}
+
+        {% if not limit %} {% set limit = 16 %} {% endif %}
 
         {% if not q and entries | length == limit %}
             <div class="entry">

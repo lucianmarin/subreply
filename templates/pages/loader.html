@@ -21,11 +21,7 @@
     {% include "common/nothing.html" %}
 {% endfor %}
 
-{% if view in ['following', 'followers', 'lobby', 'people', 'subs'] %}
-    {% set limit = 24 %}
-{% else %}
-    {% set limit = 16 %}
-{% endif %}
+{% if not limit %} {% set limit = 16 %} {% endif %}
 
 {% if entries | length == limit %}
     <div class="entry">

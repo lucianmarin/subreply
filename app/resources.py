@@ -355,7 +355,7 @@ class FollowingResource:
         page, number = get_page(req)
         resp.text = render(
             page=page, view='following', number=number, user=req.user,
-            entries=entries
+            entries=entries, limit=24
         )
 
 
@@ -378,7 +378,7 @@ class FollowersResource:
         page, number = get_page(req)
         resp.text = render(
             page=page, view='followers', number=number, user=req.user,
-            entries=entries
+            entries=entries, limit=24
         )
         if req.user.notif_followers:
             self.clear_followers(req.user)
@@ -482,7 +482,7 @@ class SubsResource:
             replies=Count('hashtag', filter=Q(parent__isnull=False)),
             latest=Max('created_at')
         ).order_by('-latest')
-        return paginate(req, entries, 24)
+        return paginate(req, entries, 32)
 
     @before(auth_user)
     def on_get(self, req, resp):
@@ -490,7 +490,7 @@ class SubsResource:
         page, number = get_page(req)
         resp.text = render(
             page=page, view='subs', number=number, user=req.user,
-            entries=entries
+            entries=entries, limit=32
         )
 
 
@@ -519,8 +519,8 @@ class LobbyResource:
         entries = self.fetch_entries(req)
         page, number = get_page(req)
         resp.text = render(
-            page=page, view='lobby', number=number,
-            user=req.user, entries=entries
+            page=page, view='lobby', number=number, user=req.user,
+            entries=entries, limit=24
         )
 
 
@@ -554,9 +554,9 @@ class PeopleResource:
         entries = self.fetch_entries(req, terms)
         page, number = get_page(req)
         resp.text = render(
-            page=page, view='people', number=number,
-            q=q, placeholder="Find people",
-            user=req.user, entries=entries
+            page=page, view='people', number=number, q=q,
+            placeholder="Find people", user=req.user,
+            entries=entries, limit=24
         )
 
 
