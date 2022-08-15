@@ -478,7 +478,7 @@ class SubResource:
 class SubsResource:
     def fetch_entries(self, req):
         entries = Comment.objects.exclude(hashtag='').values('hashtag').annotate(
-            threads=Count('hashtag', filter=Q(parent=None)),
+            threads=Count('hashtag', filter=Q(parent__isnull=True)),
             replies=Count('hashtag', filter=Q(parent__isnull=False)),
             latest=Max('created_at')
         ).order_by('-latest')
