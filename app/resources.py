@@ -12,7 +12,7 @@ from app.forms import get_content, get_emoji, get_name
 from app.helpers import build_hash, parse_metadata, utc_timestamp, verify_hash
 from app.hooks import auth_user, login_required
 from app.jinja import render
-from app.models import Article, Comment, Relation, Save, User
+from app.models import Comment, Relation, Save, User
 from app.validation import (
     authentication, profiling, registration, valid_content, valid_handle,
     valid_password, valid_reply, valid_thread
@@ -606,75 +606,6 @@ class TrendingResource:
         resp.text = render(
             page=page, view='trending', number=number,
             user=req.user, entries=entries
-        )
-
-
-class NewsResource:
-    def fetch_entries(self, req):
-        user_id = req.user.id if req.user else 0
-        latest = Article.objects.exclude(ids__contains=user_id).order_by(
-            'domain', '-readers', '-pub_at'
-        ).distinct('domain').values('id')
-        entries = Article.objects.filter(
-            id__in=latest
-        ).order_by('-readers', '-pub_at')
-        return paginate(req, entries)
-
-    def get_count(self, user, is_read):
-        if not user:
-            return 0
-        entries = Article.objects.order_by('-pub_at')
-        if is_read:
-            return entries.filter(ids__contains=user.id).count()
-        return entries.exclude(ids__contains=user.id).count()
-
-    def fetch_read(self, req):
-        entries = Article.objects.filter(
-            ids__contains=req.user.id
-        ).order_by('-pub_at')
-        return paginate(req, entries)
-
-    @before(auth_user)
-    def on_get_news(self, req, resp):
-        entries = self.fetch_entries(req)
-        read = self.get_count(req.user, is_read=True)
-        page, number = get_page(req)
-        resp.text = render(
-            page=page, view='news', number=number, user=req.user,
-            entries=entries, count=read
-        )
-
-    @before(auth_user)
-    @before(login_required)
-    def on_get_read(self, req, resp):
-        entries = self.fetch_read(req)
-        unread = self.get_count(req.user, is_read=False)
-        page, number = get_page(req)
-        resp.text = render(
-            page=page, view='read', number=number, user=req.user,
-            entries=entries, count=unread
-        )
-
-
-class ArticleResource:
-    @before(auth_user)
-    def on_get_linker(self, req, resp, id):
-        article = Article.objects.filter(id=id).first()
-        if not article:
-            raise HTTPNotFound
-        if req.user:
-            article.increment(req.user.id)
-        raise HTTPFound(article.url)
-
-    @before(auth_user)
-    def on_get_reader(self, req, resp, id):
-        article = Article.objects.filter(id=id).first()
-        if not article:
-            raise HTTPNotFound
-        if req.user:
-            article.increment(req.user.id)
-        resp.text = render(
-            page='reader', view='reader', user=req.user, entry=article
         )
 
 
