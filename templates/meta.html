@@ -35,21 +35,19 @@
     <title>{{ member.first_name }} {{ view | capitalize }}</title>
 {% elif view == 'reply' %}
     <title>{{ entry.content | emojize | shorten(48) }}</title>
-{% elif view == 'reader' %}
-    <title>{{ entry.title }}</title>
-{% elif view == 'feed' %}
-    <title>{{ brand }}</title>
 {% elif view == 'sub' %}
     <title>{{ brand }} #{{ name }} </title>
+{% elif view == 'feed' %}
+    <title>{{ brand }}</title>
 {% else %}
     <title>{{ brand }} {{ view | capitalize }}</title>
 {% endif %}
 
-<meta property="og:image" content="/static/brand.png">
-<meta name="twitter:image" content="/static/brand.png">
+<meta property="og:image" content="/static/192.png">
+<meta name="twitter:image" content="/static/192.png">
 
-<link rel="apple-touch-icon" type="image/png" href="/static/brand.png">
-<link rel="icon" sizes="192x192" type="image/png" href="/static/brand.png">
+<link rel="apple-touch-icon" type="image/png" href="/static/192.png">
+<link rel="icon" sizes="192x192" type="image/png" href="/static/192.png">
 
 <link rel="manifest" type="application/json" href="/static/manifest.json">
 <link rel="stylesheet" type="text/css" href="/static/style.css?v={{ v }}">
