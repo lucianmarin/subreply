@@ -7,11 +7,8 @@
     </div>
     <div class="small">
         <b>
-            {% if entry.edited_at %}
-                &middot;&middot;&middot; {{ entry.edited_at | shortdate }}
-            {% else %}
-                {{ entry.created_at | shortdate }}
-            {% endif %}
+            {% if entry.edited_at %}&middot;&middot;&middot;{% endif %}
+            {{ entry.created_at | shortdate }}
         </b>
         <a href="/{{ entry.created_by }}/{{ entry.id }}">
             {% if not entry.replies %}

@@ -1,10 +1,10 @@
-html { --super: 8px; --tiny: 11px; --small: 13px; --regular: 14px; --radius: 6px; --d: 0.2s; --white: white; --whitesmoke: #f0f0f0; --redsmoke: #fff0f0; --gainsboro: #e0e0e0; --silver: #c0c0c0; --gray: #808080; --black: black; --accent: #4060e0; --orange: #FF4000; -ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; }
+html { --tiny: 9px; --small: 14px; --regular: 15px; --radius: 6px; --d: 0.2s; --white: #fff; --whitesmoke: #f0f0f0; --redsmoke: #fff0f0; --gainsboro: #e0e0e0; --silver: #c0c0c0; --gray: #808080; --black: #000; --accent: #4060e0; --orange: #FF4000; -ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; }
 
 ::-moz-placeholder { color: #1f1f1f; }
 
 ::-webkit-input-placeholder { color: var(--gray); }
 
-@media (prefers-color-scheme: dark) { html { --white: black; --whitesmoke: #181818; --redsmoke: #281818; --gainsboro: #282828; --silver: #404040; --gray: #808080; --black: white; --accent: #6080e0; } ::-moz-placeholder { color: #eeeeee; } }
+@media (prefers-color-scheme: dark) { html { --white: #000; --whitesmoke: #181818; --redsmoke: #281818; --gainsboro: #282828; --silver: #404040; --gray: #808080; --black: #fff; --accent: #6080e0; } ::-moz-placeholder { color: #eeeeee; } }
 
 * { margin: 0; padding: 0; }
 
@@ -16,7 +16,7 @@ b, i, u { font-style: normal; font-weight: normal; text-decoration: none; }
 
 form, input, img, label { display: block; }
 
-body, label, input, select, textarea { font-family: "Route 159", sans-serif; font-size: var(--regular); line-height: 20px; }
+body, label, input, select, textarea { font-family: "Vegur", sans-serif; font-size: var(--regular); line-height: 20px; }
 
 label { color: var(--black); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
@@ -66,7 +66,7 @@ table a:hover { color: var(--gray); }
 
 .links a.red svg path { stroke: var(--orange); }
 
-.links sup { font-size: var(--super); font-weight: bold; margin-left: 1px; }
+.links sup { font-size: var(--tiny); font-weight: bold; margin-left: 1px; }
 
 .links svg { float: right; margin: 0 10px; padding: 2px; }
 
@@ -228,6 +228,6 @@ table a:hover { color: var(--gray); }
 
 @media (max-width: 587px) { .container { grid-template-columns: 0 40px calc(100% - 70px) 0; } }
 
-@font-face { font-family: "Route 159"; font-style: normal; font-weight: normal; src: url(/static/r159regular.woff2) format("woff2"); }
+@font-face { font-family: "Vegur"; font-style: normal; font-weight: normal; src: url(/static/vegur-regular.woff2) format("woff2"); }
 
-@font-face { font-family: "Route 159"; font-style: normal; font-weight: bold; src: url(/static/r159bold.woff2) format("woff2"); }
+@font-face { font-family: "Vegur"; font-style: normal; font-weight: bold; src: url(/static/vegur-bold.woff2) format("woff2"); }
