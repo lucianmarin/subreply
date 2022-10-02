@@ -9,13 +9,13 @@
         <a href="/following" class="{% if view == 'following' %}on{% endif %}">
             <i>Following</i>
             <svg width="16" height="16" viewBox="0 0 24 24">
-                <path d="M19 7.5v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.125a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zM4 19.235v-.11a6.375 6.375 0 0112.75 0v.109A12.318 12.318 0 0110.374 21c-2.331 0-4.512-.645-6.374-1.766z" />
+                <path d="M3 4.5h14.25M3 9h9.75M3 13.5h5.25m5.25-.75L17.25 9m0 0L21 12.75M17.25 9v12" />
             </svg>
         </a>
         <a href="/followers" class="{% if view == 'followers' %}on{% endif %} {% if user.notif_followers %}red{% endif %}">
             <i>Followers{% if user.notif_followers %}<sup>{{ user.notif_followers }}</sup>{% endif %}</i>
             <svg width="16" height="16" viewBox="0 0 24 24">
-                <path d="M22 10.5h-6m-2.25-4.125a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zM4 19.235v-.11a6.375 6.375 0 0112.75 0v.109A12.318 12.318 0 0110.374 21c-2.331 0-4.512-.645-6.374-1.766z" />
+                <path d="M3 4.5h14.25M3 9h9.75M3 13.5h9.75m4.5-4.5v12m0 0l-3.75-3.75M17.25 21L21 17.25" />
             </svg>
         </a>
         <a href="/mentions" class="{% if view == 'mentions' %}on{% endif %} {% if user.notif_mentions %}red{% endif %}">
@@ -27,7 +27,7 @@
         <a href="/replies" class="{% if view == 'replies' %}on{% endif %} {% if user.notif_replies %}red{% endif %}">
             <i>Replies{% if user.notif_replies %}<sup>{{ user.notif_replies }}</sup>{% endif %}</i>
             <svg width="16" height="16" viewBox="0 0 24 24">
-                <path d="M20.25 8.511c.884.284 1.5 1.128 1.5 2.097v4.286c0 1.136-.847 2.1-1.98 2.193-.34.027-.68.052-1.02.072v3.091l-3-3c-1.354 0-2.694-.055-4.02-.163a2.115 2.115 0 01-.825-.242m9.345-8.334a2.126 2.126 0 00-.476-.095 48.64 48.64 0 00-8.048 0c-1.131.094-1.976 1.057-1.976 2.192v4.286c0 .837.46 1.58 1.155 1.951m9.345-8.334V6.637c0-1.621-1.152-3.026-2.76-3.235A48.455 48.455 0 0011.25 3c-2.115 0-4.198.137-6.24.402-1.608.209-2.76 1.614-2.76 3.235v6.226c0 1.621 1.152 3.026 2.76 3.235.577.075 1.157.14 1.74.194V21l4.155-4.155" />
+                <path d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
             </svg>
         </a>
         <a href="/subs" class="{% if view in ['subs', 'sub'] %}on{% endif %}">
@@ -90,7 +90,7 @@
     <a href="/trending" class="{% if view == 'trending' %}on{% endif %}">
         <i>Trending</i>
         <svg width="16" height="16" viewBox="0 0 24 24">
-            <path d="M3 4.5h14.25M3 9h9.75M3 13.5h5.25m5.25-.75L17.25 9m0 0L21 12.75M17.25 9v12" />
+            <path d="M2.25 18L9 11.25l4.306 4.307a11.95 11.95 0 015.814-5.519l2.74-1.22m0 0l-5.94-2.28m5.94 2.28l-2.28 5.941" />
         </svg>
     </a>
     <a href="/discover" class="{% if view == 'discover' %}on{% endif %}">
