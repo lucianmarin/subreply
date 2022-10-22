@@ -49,7 +49,9 @@ def parse_metadata(text):
                 mentions.append(handle)
         if word.startswith('#'):
             handle = word[1:]
-            if handle and all(c in limits for c in handle):
+            if handle and all(c in numbers for c in handle):
+                pass
+            elif handle and all(c in limits for c in handle):
                 hashtags.append(handle)
     return hashtags, links, mentions
 
