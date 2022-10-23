@@ -727,9 +727,8 @@ class AccountResource:
 
 class SocialResource:
     sites = [
-        'dribbble', 'github', 'instagram', 'linkedin',
-        'patreon', 'paypal', 'soundcloud', 'spotify',
-        'telegram', 'twitter'
+        'dribbble', 'github', 'instagram', 'linkedin', 'patreon',
+        'paypal', 'soundcloud', 'spotify', 'telegram', 'twitter'
     ]
 
     @before(auth_user)
