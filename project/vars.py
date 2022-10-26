@@ -150,7 +150,8 @@ EMOJIS = {
     "polygon.com": ":joystick:",
     "electrek.co": ":sport_utility_vehicle:",
     "dailyartmagazine.com": ":framed_picture:",
-    "petapixel.com": ":camera:"
+    "petapixel.com": ":camera:",
+    "spacenews.com": ":ringed_planet:"
 }
 
 FEEDS = [
