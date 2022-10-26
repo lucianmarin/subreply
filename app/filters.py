@@ -2,28 +2,6 @@ from datetime import date, datetime, timezone
 
 from tldextract import extract
 
-from app.helpers import utc_timestamp
-
-
-def fibojize(count):
-    """Return an emoji based on Fibonacci count."""
-    if count > 21:
-        return ":nerd_face:"
-    elif count > 13:
-        return ":exploding_head:"
-    elif count > 8:
-        return ":rocket:"
-    elif count > 5:
-        return ":fire:"
-    return ":clapping_hands:"
-
-
-def city(location):
-    """Get city name."""
-    if "," in location:
-        return location.split(",")[0]
-    return location
-
 
 def hostname(value):
     """Get hostname from an url."""
@@ -43,11 +21,6 @@ def age(birthday, delimiter="-"):
         years = round(delta.days / 365.25, 1)
         return int(years) if years.is_integer() else years
     return datetime.now(timezone.utc).year - int(birthday)
-
-
-def shortdate(timestamp):
-    """Short time interval for a timestamp."""
-    return timeago(utc_timestamp() - timestamp)
 
 
 def timeago(seconds):

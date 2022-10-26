@@ -5,8 +5,10 @@ from urllib.parse import quote_plus
 from emoji import emojize
 from jinja2 import Environment, FileSystemBytecodeCache, FileSystemLoader
 
-from app.filters import age, city, fibojize, parser, shortdate
+from app.filters import age, parser, timeago
+from app.helpers import utc_timestamp
 from project.settings import DEBUG
+from project.vars import EMOJIS
 
 env = Environment(autoescape=True)
 
@@ -15,12 +17,12 @@ env.bytecode_cache = FileSystemBytecodeCache()
 env.loader = FileSystemLoader('templates')
 
 env.filters['age'] = age
-env.filters['city'] = city
+env.filters['city'] = lambda loc: loc.split(",")[0] if "," in loc else loc
 env.filters['emojize'] = emojize
-env.filters['fibojize'] = fibojize
+env.filters['nemojize'] = lambda dns: EMOJIS.get(dns, "")
 env.filters['parser'] = parser
 env.filters['quote'] = quote_plus
-env.filters['shortdate'] = shortdate
+env.filters['shortdate'] = lambda ts: timeago(utc_timestamp() - ts)
 env.filters['isoformat'] = lambda ts: datetime.fromtimestamp(ts).isoformat()
 env.filters['shorten'] = lambda txt, w: shorten(txt, w, placeholder="...")
 env.filters['keywords'] = lambda emo: ", ".join(emo[1:-1].split("_"))

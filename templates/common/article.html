@@ -1,6 +1,7 @@
 <div class="entry">
     <div class="content">
         <a class="story name" href="/news/{{ entry.id }}" target="_blank">
+            {{ entry.domain | nemojize | emojize }}
             {{ entry.title }}
         </a>
         {{ entry.description }}

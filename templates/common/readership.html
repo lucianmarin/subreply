@@ -7,6 +7,6 @@
             Continue reading the other
             <strong><a href="/news">{{ count }} articles</a></strong>!
         {% endif %}
-        {{ count | fibojize | emojize }}
+        {% if count > 1 %}{{ ":fire:" | emojize }}{% endif %}
     </div>
 </div>

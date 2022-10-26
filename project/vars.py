@@ -142,6 +142,15 @@ INVALID = [
     "unlock"
 ]
 
+EMOJIS = {
+    "japantimes.co.jp": ":Japan:",
+    "gsmarena.com": ":mobile_phone:",
+    "comingsoon.net": ":popcorn:",
+    "arenaev.com": ":sport_utility_vehicle:",
+    "polygon.com": ":joystick:",
+    "electrek.co": ":sport_utility_vehicle:"
+}
+
 FEEDS = [
     # "http://feeds.arstechnica.com/arstechnica/index",
     # "http://feeds.arstechnica.com/arstechnica/features",
@@ -219,6 +228,7 @@ FEEDS = [
     "https://feeds.feedburner.com/sub/sciencenews",
     "https://feeds.feedburner.com/sub/semiaccurate",
     "https://feeds.feedburner.com/sub/seth",
+    "https://feeds.feedburner.com/sub/singularityhub",
     "https://feeds.feedburner.com/sub/sixthtone",
     "https://feeds.feedburner.com/sub/smashing",
     "https://feeds.feedburner.com/sub/smithsonianmag",
