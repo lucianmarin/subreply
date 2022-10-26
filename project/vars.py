@@ -148,7 +148,9 @@ EMOJIS = {
     "comingsoon.net": ":popcorn:",
     "arenaev.com": ":sport_utility_vehicle:",
     "polygon.com": ":joystick:",
-    "electrek.co": ":sport_utility_vehicle:"
+    "electrek.co": ":sport_utility_vehicle:",
+    "dailyartmagazine.com": ":framed_picture:",
+    "petapixel.com": ":camera:"
 }
 
 FEEDS = [
