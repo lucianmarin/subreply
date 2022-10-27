@@ -151,7 +151,8 @@ EMOJIS = {
     "electrek.co": ":sport_utility_vehicle:",
     "dailyartmagazine.com": ":framed_picture:",
     "petapixel.com": ":camera:",
-    "spacenews.com": ":ringed_planet:"
+    "spacenews.com": ":ringed_planet:",
+    "spaceexplored.com": ":ringed_planet:"
 }
 
 FEEDS = [
