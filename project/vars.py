@@ -238,6 +238,7 @@ FEEDS = [
     "https://feeds.feedburner.com/sub/smithsonianmag",
     # "https://feeds.feedburner.com/sub/techcrunch",
     "https://feeds.feedburner.com/sub/spacenews",
+    "https://feeds.feedburner.com/sub/spectrum",
     "https://feeds.feedburner.com/sub/thefreethoughtproject",
     "https://feeds.feedburner.com/sub/thegradient",
     "https://feeds.feedburner.com/sub/tidbits",
