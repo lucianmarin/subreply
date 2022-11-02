@@ -62,7 +62,9 @@ table a:hover { color: var(--gray); }
 
 .logo { font-size: var(--tiny); font-weight: bold; line-height: 30px; text-align: center; overflow: hidden; position: sticky; top: 10px; padding: 0 10px; }
 
-.logo a { background-color: var(--black); border-radius: 15px; color: var(--white); display: block; float: right; height: 30px; width: 30px; }
+.logo a { background-color: var(--white); border-radius: 15px; color: var(--black); display: block; float: right; height: 30px; width: 30px; }
+
+.logo.on a { color: var(--accent); }
 
 .links { position: sticky; text-align: right; top: 50px; }
 
