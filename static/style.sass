@@ -174,15 +174,19 @@ table
     text-align: right
     top: 50px
     a
+        background-color: var(--whitesmoke)
         border-bottom: var(--gainsboro) 1px solid
         color: var(--black)
         display: block
         height: 20px
         padding: 5px 0
         transition: background-color var(--d)
+        &:hover
+            background-color: var(--white)
         &:last-child
             border-bottom: 0 none
         &.on
+            background-color: var(--white)
             color: var(--accent)
             svg path
                 stroke: var(--accent)

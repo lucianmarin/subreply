@@ -66,11 +66,13 @@ table a:hover { color: var(--gray); }
 
 .links { position: sticky; text-align: right; top: 50px; }
 
-.links a { border-bottom: var(--gainsboro) 1px solid; color: var(--black); display: block; height: 20px; padding: 5px 0; transition: background-color var(--d); }
+.links a { background-color: var(--whitesmoke); border-bottom: var(--gainsboro) 1px solid; color: var(--black); display: block; height: 20px; padding: 5px 0; transition: background-color var(--d); }
+
+.links a:hover { background-color: var(--white); }
 
 .links a:last-child { border-bottom: 0 none; }
 
-.links a.on { color: var(--accent); }
+.links a.on { background-color: var(--white); color: var(--accent); }
 
 .links a.on svg path { stroke: var(--accent); }
 
