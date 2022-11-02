@@ -11,7 +11,7 @@
         {% else %}
             <textarea name="content" id="id_content"
                 rows="1" cols="60" maxlength="720"
-                placeholder="Start a thread"
+                placeholder="Share your thoughts"
                 oninput="expand(this)" onkeydown="send(event)"
                 >{{ content | emojize }}</textarea>
         {% endif %}

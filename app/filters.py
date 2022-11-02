@@ -102,8 +102,6 @@ def parser(text):
             protocol, separator, address = word.partition('://')
             if address.startswith('www.'):
                 address = address[4:]
-            if address.startswith('subreply.com'):
-                address = address[12:]
             if address.endswith('/'):
                 address = address[:-1]
             if len(address) > 21:

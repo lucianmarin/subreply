@@ -1,5 +1,5 @@
 html
-    --tiny: 8px
+    --tiny: 10px
     --small: 13px
     --regular: 14px
     --radius: 6px
@@ -45,7 +45,7 @@ html
     padding: 0
 
 body
-    background-color: var(--white)
+    background-color: var(--gainsboro)
     color: var(--black)
     cursor: default
 
@@ -138,27 +138,51 @@ table
 
 .container
     display: grid
-    grid-column-gap: 10px
-    grid-template-columns: auto 148px 518px auto
+    grid-template-columns: auto 150px 525px auto
     &> div
         min-height: 100vh
+
+.sidebar, .leftside
+    background-color: var(--whitesmoke)
+
+.main, .rightside
+    background-color: var(--white)
+
+.main
+    padding: 0 10px
+
+.logo
+    font-size: var(--tiny)
+    font-weight: bold
+    line-height: 30px
+    text-align: center
+    overflow: hidden
+    position: sticky
+    top: 10px
+    padding: 0 10px
+    a
+        background-color: var(--black)
+        border-radius: 15px
+        color: var(--white)
+        display: block
+        float: right
+        height: 30px
+        width: 30px
 
 .links
     position: sticky
     text-align: right
-    top: 10px
+    top: 50px
     a
-        background-color: var(--white)
-        border-radius: var(--radius)
+        border-bottom: var(--gainsboro) 1px solid
         color: var(--black)
         display: block
         height: 20px
         padding: 5px 0
         transition: background-color var(--d)
-        &:hover
-            background-color: var(--whitesmoke)
+        &:last-child
+            border-bottom: 0 none
         &.on
-            background-color: var(--whitesmoke)
             color: var(--accent)
             svg path
                 stroke: var(--accent)
@@ -171,7 +195,8 @@ table
         margin-left: 1px
     svg
         float: right
-        margin: 0 10px
+        margin-right: 15px
+        margin-left: 10px
         padding: 2px
 
 .title
@@ -390,15 +415,15 @@ table
         margin-bottom: 10px
         margin-left: 30px
 
-@media (max-width: 695px)
+@media (max-width: 674px)
     .container
-        grid-template-columns: auto 40px 518px auto
+        grid-template-columns: auto 50px 525px auto
     .links i
         display: none
 
-@media (max-width: 587px)
+@media (max-width: 574px)
     .container
-        grid-template-columns: 0 40px calc(100% - 70px) 0
+        grid-template-columns: 0 50px calc(100% - 50px) 0
 
 @font-face
     font-family: "Route 159"
