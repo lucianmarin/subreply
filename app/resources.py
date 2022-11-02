@@ -574,49 +574,40 @@ class TrendingResource:
 
 
 class NewsResource:
-    def fetch_entries(self, req):
-        user_id = req.user.id if req.user else 0
-        latest = Article.objects.exclude(ids__contains=user_id).order_by(
-            'domain', '-readers', '-pub_at'
+    def ids(self, *args):
+        return Article.objects.order_by(
+            'domain', *args
         ).distinct('domain').values('id')
-        entries = Article.objects.filter(
-            id__in=latest
-        ).order_by('-readers', '-pub_at')
-        return paginate(req, entries)
 
-    def get_count(self, user, is_read):
-        if not user:
-            return 0
-        entries = Article.objects.order_by('-pub_at')
-        if is_read:
-            return entries.filter(ids__contains=user.id).count()
-        return entries.exclude(ids__contains=user.id).count()
+    def fetch_news(self, req):
+        entries = Article.objects.filter(
+            id__in=self.ids('-readers', 'pub_at')
+        ).order_by('-readers', 'pub_at')
+        return paginate(req, entries)
 
     def fetch_read(self, req):
         entries = Article.objects.filter(
-            ids__contains=req.user.id
+            id__in=self.ids('-pub_at')
         ).order_by('-pub_at')
         return paginate(req, entries)
 
     @before(auth_user)
     def on_get_news(self, req, resp):
-        entries = self.fetch_entries(req)
-        read = self.get_count(req.user, is_read=True)
+        entries = self.fetch_news(req)
         page, number = get_page(req)
         resp.text = render(
             page=page, view='news', number=number, user=req.user,
-            entries=entries, count=read
+            entries=entries
         )
 
     @before(auth_user)
     @before(login_required)
     def on_get_read(self, req, resp):
         entries = self.fetch_read(req)
-        unread = self.get_count(req.user, is_read=False)
         page, number = get_page(req)
         resp.text = render(
             page=page, view='read', number=number, user=req.user,
-            entries=entries, count=unread
+            entries=entries
         )
 
 

@@ -5,6 +5,15 @@
         {% include "input/thread.html" %}
     {% elif view in ['discover', 'people'] %}
         {% include "input/query.html" %}
+    {% elif view in ['news', 'read'] %}
+        <div class="title">
+            <a href="/news" class="{% if view == 'news' %}on{% endif %}">
+                Headlines
+            </a>
+            <a href="/read" class="{% if view == 'read' %}on{% endif %}">
+                Breaking
+            </a>
+        </div>
     {% elif view == 'saved' %}
         <div class="title">
             <a href="/{{ member }}">{{ member.first_name }}</a>
@@ -16,8 +25,6 @@
         {% if view == 'profile' %}
             {% include "common/user.html" %}
             {% include "common/status.html" %}
-        {% elif view in ['news', 'read'] and count %}
-            {% include "common/readership.html" %}
         {% endif %}
 
         {% for entry in entries %}
