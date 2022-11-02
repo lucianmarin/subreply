@@ -574,30 +574,38 @@ class TrendingResource:
 
 
 class NewsResource:
-    def ids(self, *args):
-        return Article.objects.order_by(
-            'domain', *args
-        ).distinct('domain').values('id')
-
     def fetch_news(self, req):
+        user_id = req.user.id if req.user else 0
+        latest_ids = Article.objects.exclude(ids__contains=user_id).order_by(
+            'domain', '-pub_at'
+        ).distinct('domain').values('id')
         entries = Article.objects.filter(
-            id__in=self.ids('-readers', 'pub_at')
-        ).order_by('-readers', 'pub_at')
+            id__in=latest_ids
+        ).order_by('-pub_at')
         return paginate(req, entries)
 
     def fetch_read(self, req):
         entries = Article.objects.filter(
-            id__in=self.ids('-pub_at')
+            ids__contains=req.user.id
         ).order_by('-pub_at')
         return paginate(req, entries)
+
+    def get_count(self, user, is_read):
+        entries = Article.objects.order_by('-pub_at')
+        if not user:
+            return 0
+        elif is_read:
+            return entries.filter(ids__contains=user.id).count()
+        return entries.exclude(ids__contains=user.id).count()
 
     @before(auth_user)
     def on_get_news(self, req, resp):
         entries = self.fetch_news(req)
         page, number = get_page(req)
+        read = self.get_count(req.user, is_read=True)
         resp.text = render(
             page=page, view='news', number=number, user=req.user,
-            entries=entries
+            entries=entries, count=read
         )
 
     @before(auth_user)
@@ -605,9 +613,10 @@ class NewsResource:
     def on_get_read(self, req, resp):
         entries = self.fetch_read(req)
         page, number = get_page(req)
+        read = self.get_count(req.user, is_read=True)
         resp.text = render(
             page=page, view='read', number=number, user=req.user,
-            entries=entries
+            entries=entries, count=read
         )
 
 
