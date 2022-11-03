@@ -31,12 +31,8 @@
 
 {% if view == 'profile' %}
     <title>{{ member.full_name | emojize }} @{{ member }}</title>
-{% elif view == 'saved' %}
-    <title>{{ member.first_name }} {{ view | capitalize }}</title>
 {% elif view == 'reply' %}
     <title>{{ entry.content | emojize | shorten(48) }}</title>
-{% elif view == 'sub' %}
-    <title>{{ brand }} #{{ name }} </title>
 {% else %}
     <title>{{ brand }} {{ view | capitalize }}</title>
 {% endif %}

@@ -5,11 +5,6 @@
         {% include "input/thread.html" %}
     {% elif view in ['discover', 'people'] %}
         {% include "input/query.html" %}
-    {% elif view == 'saved' %}
-        <div class="title">
-            <a href="/{{ member }}">{{ member.first_name }}</a>
-            <a href="/{{ member }}/saved" class="on">Saved</a>
-        </div>
     {% endif %}
 
     <div class="list">
@@ -34,8 +29,6 @@
                 {% include "common/threads.html" %}
             {% elif view in ['news', 'read'] %}
                 {% include "common/article.html" %}
-            {% elif view == 'subs' %}
-                {% include "common/sub.html" %}
             {% else %}
                 {% include "common/stream.html" %}
             {% endif %}

@@ -6,9 +6,6 @@
     <div class="status">
         Joined {{ member.joined_at | shortdate }} ago.
         Seen {{ member.seen_at | shortdate }} ago.
-        {% if user and member.saved.count() %}
-            <a href="/{{ member }}/saved">Saved</a>.
-        {% endif %}
         {% if is_followed %}Follows you.{% endif %}
         {% if user.id == member.id %}
             <a href="/logout">Logout</a>.
