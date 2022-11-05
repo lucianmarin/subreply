@@ -238,7 +238,7 @@ table a:hover { color: var(--gray); }
 
 .about ol, .about ul { margin-bottom: 10px; margin-left: 30px; }
 
-@media (max-width: 674px) { .container { grid-template-columns: auto 50px 525px auto; } .links i { display: none; } }
+@media (max-width: 674px) { .container { grid-template-columns: auto 50px 525px 0; } .links i { display: none; } }
 
 @media (max-width: 574px) { .container { grid-template-columns: 0 50px calc(100% - 50px) 0; } }
 

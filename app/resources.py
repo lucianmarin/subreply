@@ -592,20 +592,20 @@ class NewsResource:
     def on_get_news(self, req, resp):
         entries = self.fetch_news(req)
         page, number = get_page(req)
-        read = self.get_count(req.user, is_read=False)
+        # read = self.get_count(req.user, is_read=False)
         resp.text = render(
             page=page, view='news', number=number, user=req.user,
-            entries=entries, count=read
+            entries=entries
         )
 
     @before(auth_user)
     def on_get_read(self, req, resp):
         entries = self.fetch_read(req)
         page, number = get_page(req)
-        read = self.get_count(req.user, is_read=True)
+        # read = self.get_count(req.user, is_read=True)
         resp.text = render(
             page=page, view='read', number=number, user=req.user,
-            entries=entries, count=read
+            entries=entries
         )
 
 
