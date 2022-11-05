@@ -113,7 +113,6 @@ class TxtResource:
             "User-agent: *",
             "Disallow: /news/*",
             "Disallow: /read/*",
-            "Disallow: /*/saved",
             "",
             "Sitemap: https://subreply.com/sitemap.txt"
         )
