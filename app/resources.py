@@ -560,7 +560,7 @@ class TrendingResource:
 
     @before(auth_user)
     def on_get(self, req, resp):
-        entries = self.fetch_entries(req, sample=24)
+        entries = self.fetch_entries(req, sample=20)
         page, number = get_page(req)
         resp.text = render(
             page=page, view='trending', number=number,
