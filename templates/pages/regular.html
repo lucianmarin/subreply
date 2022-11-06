@@ -11,6 +11,8 @@
         {% if view == 'profile' %}
             {% include "common/user.html" %}
             {% include "common/status.html" %}
+        {% elif view in ['news', 'read'] and count %}
+            {% include "common/reader.html" %}
         {% endif %}
 
         {% for entry in entries %}
