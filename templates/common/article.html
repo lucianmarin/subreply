@@ -15,6 +15,9 @@
             {% else %}
                 read
             {% endif %}
+            {% if user and user.id in entry.ids %}
+                <span>&deg;</span>
+        {% endif %}
         </a>
     </div>
 </div>
