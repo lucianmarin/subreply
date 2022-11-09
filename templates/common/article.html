@@ -11,13 +11,16 @@
         <a href="/feed?s={{ entry.url | quote }}">{{ entry.domain }}</a>
         <a href="/read/{{ entry.id }}">
             {% if entry.readers %}
-                {{ entry.readers }} reader{% if entry.readers != 1 %}s{% endif %}
+                {% if entry.readers and user.id not in entry.ids %}
+                    +{{ entry.readers }}
+                {% else %}
+                    {{ entry.readers }}
+                {% endif %}
+                reader{% if entry.readers != 1 %}s{% endif %}
             {% else %}
                 read
             {% endif %}
-            {% if user and user.id in entry.ids %}
-                <span>&deg;</span>
-        {% endif %}
+
         </a>
     </div>
 </div>
