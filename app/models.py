@@ -9,6 +9,7 @@ from django.utils.functional import cached_property
 from app.helpers import utc_timestamp
 from project.vars import SOCIAL
 
+
 if not settings.configured:
     environ.setdefault('DJANGO_SETTINGS_MODULE', 'project.settings')
     setup()
@@ -76,7 +77,6 @@ class User(models.Model):
 
     @cached_property
     def social(self):
-        also = "Also on {0}."
         keys = sorted(self.links)
         holder = ""
         for key in keys[:-2]:
@@ -85,7 +85,7 @@ class User(models.Model):
             holder += SOCIAL[key].format(self.links[key])
             if not index and len(keys) > 1:
                 holder += " and "
-        return also.format(holder)
+        return holder
 
     @cached_property
     def notif_followers(self):
@@ -183,6 +183,19 @@ class Article(models.Model):
     paragraphs = models.JSONField(default=list)
     ids = models.JSONField(default=list)
     readers = models.IntegerField(default=0, db_index=True)
+
+    @cached_property
+    def read(self):
+        users = list(User.objects.filter(id__in=self.ids).values_list('username', flat=True))
+        link = '<a href="/{0}">@{0}</a>'
+        holder = ""
+        for user in users[:-2]:
+            holder += link.format(user) + ", "
+        for index, user in enumerate(users[-2:]):
+            holder += link.format(user)
+            if not index and len(users) > 1:
+                holder += " and "
+        return holder
 
     def increment(self, uid):
         self.ids += [uid]
