@@ -615,7 +615,7 @@ class ArticleResource:
         article = Article.objects.filter(id=id).first()
         if not article:
             raise HTTPNotFound
-        if req.user:
+        if req.user and req.user.is_approved:
             article.increment(req.user.id)
         raise HTTPFound(article.url)
 
@@ -624,7 +624,7 @@ class ArticleResource:
         article = Article.objects.filter(id=id).first()
         if not article:
             raise HTTPNotFound
-        if req.user:
+        if req.user and req.user.is_approved:
             article.increment(req.user.id)
         resp.text = render(
             page='reader', view='reader', user=req.user, entry=article
