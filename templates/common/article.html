@@ -1,26 +1,25 @@
 <div class="entry">
     <div class="content">
-        <a class="story name" href="/news/{{ entry.id }}" target="_blank">
+        <a class="story name" href="/read/{{ entry.id }}" target="_blank">
             {{ entry.domain | nemojize | emojize }}
             {{ entry.title }}
         </a>
         {{ entry.description }}
     </div>
     <div class="small">
-        <b>{{ entry.pub_at | shortdate }}</b>
-        <a href="/feed?s={{ entry.url | quote }}">{{ entry.domain }}</a>
+        <b>
+            {% if user and user.id in entry.ids %}
+                &middot;&middot;&middot;
+            {% endif %}
+            {{ entry.pub_at | shortdate }}
+        </b>
+        <a href="/news/{{ entry.id }}">{{ entry.domain }}</a>
         <a href="/read/{{ entry.id }}">
             {% if entry.readers %}
-                {% if entry.readers and user.id not in entry.ids %}
-                    +{{ entry.readers }}
-                {% else %}
-                    {{ entry.readers }}
-                {% endif %}
-                reader{% if entry.readers != 1 %}s{% endif %}
+                {{ entry.readers }} reader{% if entry.readers != 1 %}s{% endif %}
             {% else %}
                 read
             {% endif %}
-
         </a>
     </div>
 </div>
