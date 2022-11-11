@@ -4,7 +4,7 @@
     <div class="list">
         {% include "common/article.html" %}
         <div class="entry">
-            <div class="status">Read by {{ entry.read | safe }}.</div>
+            <div class="status">Read by {{ entry.read | emojize | safe }}.</div>
         </div>
         <div class="entry">
             <div class="text">

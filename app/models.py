@@ -186,13 +186,13 @@ class Article(models.Model):
 
     @cached_property
     def read(self):
-        users = list(User.objects.filter(id__in=self.ids).values_list('username', flat=True))
-        link = '<a href="/{0}">@{0}</a>'
+        users = list(User.objects.filter(id__in=self.ids))
+        link = '<a href="/{0}">{1}</a>'
         holder = ""
         for user in users[:-2]:
-            holder += link.format(user) + ", "
+            holder += link.format(user.username, user.full_name) + ", "
         for index, user in enumerate(users[-2:]):
-            holder += link.format(user)
+            holder += link.format(user.username, user.full_name)
             if not index and len(users) > 1:
                 holder += " and "
         return holder
