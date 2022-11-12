@@ -567,6 +567,21 @@ class TrendingResource:
         )
 
 
+class LinksResource:
+    def fetch_entries(self, req):
+        entries = Comments.exclude(link='').order_by('-id').prefetch_related(PFR)
+        return paginate(req, entries)
+
+    @before(auth_user)
+    def on_get(self, req, resp):
+        entries = self.fetch_entries(req)
+        page, number = get_page(req)
+        resp.text = render(
+            page=page, view='links', number=number,
+            user=req.user, entries=entries
+        )
+
+
 class NewsResource:
     def fetch_news(self, req):
         user_id = req.user.id if req.user else 0
