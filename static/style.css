@@ -142,8 +142,6 @@ table a:hover { color: var(--gray); }
 
 .content a.story { display: block; }
 
-.content a.read { color: var(--gray); }
-
 .content a:hover { color: var(--gray); }
 
 .content b { color: var(--silver); }

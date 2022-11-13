@@ -1,6 +1,6 @@
 <div class="entry">
     <div class="content">
-        <a class="story name {% if user and user.id in entry.ids %}read{% endif %}" href="/news/{{ entry.id }}" target="_blank">
+        <a class="story name" href="/news/{{ entry.id }}" target="_blank">
             {{ entry.domain | nemojize | emojize }}
             {{ entry.title }}
         </a>
@@ -8,9 +8,6 @@
     </div>
     <div class="small">
         <b>
-            {% if user and user.id in entry.ids %}
-                &middot;&middot;&middot;
-            {% endif %}
             {{ entry.pub_at | shortdate }}
         </b>
         <a href="/read/{{ entry.id }}">{{ entry.domain }}</a>
