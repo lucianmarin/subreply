@@ -171,34 +171,3 @@ class Relation(models.Model):
     to_user = models.ForeignKey('User', on_delete=models.CASCADE,
                                 related_name='followers')
     seen_at = models.FloatField(default=.0, db_index=True)
-
-
-class Article(models.Model):
-    pub_at = models.FloatField(default=.0, db_index=True)
-    url = models.URLField(max_length=240, unique=True)
-    title = models.CharField(max_length=240, unique=True)
-    domain = models.CharField(max_length=120, db_index=True)
-    author = models.CharField(max_length=120, default='')
-    description = models.TextField(default='')
-    paragraphs = models.JSONField(default=list)
-    ids = models.JSONField(default=list)
-    readers = models.IntegerField(default=0, db_index=True)
-
-    @cached_property
-    def read(self):
-        users = list(User.objects.filter(id__in=self.ids))
-        link = '<a href="/{0}">{1}</a>'
-        holder = ""
-        for user in users[:-2]:
-            holder += link.format(user.username, user.full_name) + ", "
-        for index, user in enumerate(users[-2:]):
-            holder += link.format(user.username, user.full_name)
-            if not index and len(users) > 1:
-                holder += " and "
-        return holder
-
-    def increment(self, uid):
-        self.ids += [uid]
-        self.ids = list(set(self.ids))
-        self.readers = len(self.ids)
-        self.save(update_fields=['ids', 'readers'])

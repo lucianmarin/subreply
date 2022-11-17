@@ -25,8 +25,6 @@
                 {% include "common/user.html" %}
             {% elif view == 'trending' %}
                 {% include "common/threads.html" %}
-            {% elif view in ['news', 'read'] %}
-                {% include "common/article.html" %}
             {% else %}
                 {% include "common/stream.html" %}
             {% endif %}
