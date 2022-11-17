@@ -31,10 +31,12 @@ app.add_route('/trending', resources.TrendingResource())
 app.add_route('/people', resources.PeopleResource())
 app.add_route('/discover', resources.DiscoverResource())
 
-app.add_route('/news/{id:int}', resources.ArticleResource(), suffix="linker")
-app.add_route('/news', resources.NewsResource(), suffix="news")
-app.add_route('/read/{id:int}', resources.ArticleResource(), suffix="reader")
-app.add_route('/read', resources.NewsResource(), suffix="read")
+app.add_route('/links', resources.LinksResource())
+
+# app.add_route('/news/{id:int}', resources.ArticleResource(), suffix="linker")
+# app.add_route('/news', resources.NewsResource(), suffix="news")
+# app.add_route('/read/{id:int}', resources.ArticleResource(), suffix="reader")
+# app.add_route('/read', resources.NewsResource(), suffix="read")
 
 app.add_route('/about', resources.AboutResource())
 app.add_route('/emoji', resources.EmojiResource())
