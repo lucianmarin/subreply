@@ -549,9 +549,7 @@ class DiscoverResource:
 
 class TrendingResource:
     def fetch_entries(self, req, sample):
-        sampling = Comment.objects.filter(parent=None).exclude(
-            kids=None
-        ).order_by('-id').values('id')[:sample]
+        sampling = Comment.objects.filter(parent=None).order_by('-id').values('id')[:sample]
         entries = Comments.filter(
             id__in=sampling
         ).order_by('-replies', '-id').prefetch_related(PFR)
@@ -559,7 +557,7 @@ class TrendingResource:
 
     @before(auth_user)
     def on_get(self, req, resp):
-        entries = self.fetch_entries(req, sample=20)
+        entries = self.fetch_entries(req, sample=40)
         page, number = get_page(req)
         resp.text = render(
             page=page, view='trending', number=number,
