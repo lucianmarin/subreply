@@ -34,7 +34,7 @@
 {% elif view == 'reply' %}
     <title>{{ entry.content | emojize | shorten(48) }}</title>
 {% else %}
-    <title>{{ brand }} {{ view | capitalize }}</title>
+    <title>{{ brand }} / {{ view | capitalize }}</title>
 {% endif %}
 
 <meta property="og:image" content="/static/192.png">
