@@ -11,42 +11,38 @@
             <a href="/{{ sub }}">{{ sub.full_name | emojize }}</a> was designed by
             <a href="/{{ luc }}">{{ luc.full_name | emojize }}</a> for scientists, engineers, journalists and people who activating in other liberal arts fields.
         </p>
-
         <p>
             Register your account, improve your profile, wait for approval then
             see for yourself if it's worthy of your time. You can change your mind at any time.
         </p>
 
-        <h4>Features and limitations</h4>
+        <h4>Apps</h4>
+        <ul>
+            <li>Download <a href="https://play.google.com/store/apps/details?id=com.lucianmarin.sub">Subreply for Android</a> from Google Play Store.</li>
+            <li>Install Subreply on iOS by adding it to Home Screen from Safari.</li>
+            <li><a href="https://github.com/lucianmarin/logparser">Logparser</a> is an open-source access logs parser built for Subreply.</li>
+        </ul>
+
+        <h4>Technology</h4>
+        <ul>
+            <li>Hosted on a high frequency <a href="https://www.vultr.com/?ref=8538483-6G">Vultr VPS</a> running lastest Ubuntu Server.</li>
+            <li>Coded in Python using Falcon framework and Django ORM.</li>
+            <li>Traffic handled by using Gunicorn in front of Nginx, PgBouncer in front of PostgreSQL.</li>
+            <li>SVG icons from <a href="https://heroicons.dev/">Heroicons</a>, Route 159 font from <a href="https://www.dotcolon.net/font/route159/">dotcolon.net</a>.</li>
+        </ul>
+
+        <h4>Principles</h4>
         <ol>
             <li>reverse-chronological order for all feeds</li>
-            <li>unique name handles like <a href="/{{ emo }}">{{ emo.full_name | emojize }}</a></li>
-            <li>light and dark themes based on OS preference</li>
-            <li>640 characters per reply</li>
-            <li>ASCII and emojis for content</li>
             <li>full thread and entire conversation support</li>
+            <li>unique name handles like <a href="/{{ emo }}">{{ emo.full_name | emojize }}</a></li>
+            <li>640 characters per reply, ASCII and emojis for content</li>
             <li>only one link, mention or hashtag per reply</li>
-            <li>no support for paragraphs, keeps conversation tidy</li>
-            <li>no popularity counters or instant gratification</li>
-        </ol>
-
-        <h4>Keeping things private</h4>
-        <ul>
+            <li>no support for multiple paragraphs or popularity counters</li>
             <li>edit or delete your replies before they are replied to</li>
-            <li>delete received replies before they are replied to</li>
             <li>no redistribution of data, private or public based on GDPR</li>
-            <li>email address needed for password reset, no spam</li>
-            <li>straightforward and complete account deletion</li>
+            <li>email address needed only for password reset, no spamming</li>
             <li>data export in a human readable format</li>
-            <li><a href="https://github.com/lucianmarin/logparser">logparser</a> code for parsing access logs is open-sourced</li>
-        </ul>
-
-        <h4>Technology stack</h4>
-        <ul>
-            <li>high frequency <a href="https://www.vultr.com/?ref=8538483-6G">Vultr VPS</a> running Ubuntu LTS</li>
-            <li>coded in Python using Falcon framework and Django ORM</li>
-            <li>Gunicorn in front of Nginx, PgBouncer in front of PostgreSQL</li>
-            <li>SVG icons by <a href="https://heroicons.dev/">Heroicons</a>, Route 159 font by <a href="https://www.dotcolon.net/font/route159/">dotcolon.net</a></li>
-        </ul>
+        </ol>
     </div>
 {% endblock %}
