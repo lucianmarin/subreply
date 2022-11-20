@@ -9,10 +9,16 @@
 {% else %}
     {% include "common/entry.html" %}
 
-    {% if entry.kids.all() %}
+    {% set kids = entry.kids.all() %}
+
+    {% if kids %}
         <div class="sublist">
-            {% for entry in entry.kids.all() %}
-                {% include "common/inline.html" %}
+            {% for entry in kids %}
+                {% if kids | length in [1, 2] %}
+                    {% include "common/entry.html" %}
+                {% else %}
+                    {% include "common/inline.html" %}
+                {% endif %}
             {% endfor %}
         </div>
     {% endif %}
