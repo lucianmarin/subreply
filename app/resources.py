@@ -75,7 +75,7 @@ class MainResource:
         if req.user:
             raise HTTPFound('/feed')
         else:
-            raise HTTPFound('/trending')
+            raise HTTPFound('/threads')
 
 
 class AboutResource:
@@ -547,20 +547,19 @@ class DiscoverResource:
         )
 
 
-class TrendingResource:
-    def fetch_entries(self, req, sample):
-        sampling = Comment.objects.filter(parent=None).order_by('-id').values('id')[:sample]
-        entries = Comments.filter(
-            id__in=sampling
-        ).order_by('-replies', '-id').prefetch_related(PFR)
+class ThreadsResource:
+    def fetch_entries(self, req):
+        entries = Comments.filter(parent=None).exclude(kids=None).order_by(
+            '-id'
+        ).prefetch_related(PFR)
         return paginate(req, entries)
 
     @before(auth_user)
     def on_get(self, req, resp):
-        entries = self.fetch_entries(req, sample=40)
+        entries = self.fetch_entries(req)
         page, number = get_page(req)
         resp.text = render(
-            page=page, view='trending', number=number,
+            page=page, view='threads', number=number,
             user=req.user, entries=entries
         )
 
@@ -660,7 +659,7 @@ class AccountResource:
         else:
             req.user.delete()
             resp.unset_cookie('identity')
-            raise HTTPFound('/trending')
+            raise HTTPFound('/threads')
 
 
 class SocialResource:
@@ -762,7 +761,7 @@ class LoginResource:
 class LogoutResource:
     def on_get(self, req, resp):  # noqa
         resp.unset_cookie('identity')
-        raise HTTPFound('/trending')
+        raise HTTPFound('/threads')
 
 
 class RegisterResource:
