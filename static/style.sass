@@ -280,11 +280,13 @@ table
         &:hover
             color: var(--silver)
 
-.inline
-    opacity: 0.5
+.inline, .parent
     @include dots
     .name
         font-weight: bold
+
+.parent
+    opacity: 0.5
 
 .content
     cursor: text

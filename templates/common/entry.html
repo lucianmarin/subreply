@@ -14,7 +14,7 @@
             {% if not entry.replies %}
                 reply{% elif entry.replies == 1 %}1 reply{% else %}{{ entry.replies }} replies
             {% endif %}
-            {% if not entry.parent_id %}&not;{% endif %}
+            {% if not entry.parent %}&not;{% endif %}
         </a>
         {% if user %}
             {% if entry.created_by_id == user.id %}

@@ -1,6 +1,6 @@
 {% if entry.parent %}
     {% for entry in [entry.parent] %}
-        {% include "common/inline.html" %}
+        {% include "common/parent.html" %}
     {% endfor %}
 
     <div class="sublist">
@@ -14,11 +14,7 @@
     {% if kids %}
         <div class="sublist">
             {% for entry in kids %}
-                {% if kids | length in [1, 2] %}
-                    {% include "common/entry.html" %}
-                {% else %}
-                    {% include "common/inline.html" %}
-                {% endif %}
+                {% include "common/inline.html" %}
             {% endfor %}
         </div>
     {% endif %}

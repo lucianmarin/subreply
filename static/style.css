@@ -130,9 +130,11 @@ table a:hover { color: var(--gray); }
 
 .load a:hover { color: var(--silver); }
 
-.inline { opacity: 0.5; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.inline, .parent { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
-.inline .name { font-weight: bold; }
+.inline .name, .parent .name { font-weight: bold; }
+
+.parent { opacity: 0.5; }
 
 .content { cursor: text; word-break: break-word; }
 
