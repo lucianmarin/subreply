@@ -1,7 +1,7 @@
 {% if entry.parent %}
-    {% set to_display = prev and prev.parent and prev.parent == entry.parent %}
+    {% set to_hide = prev and prev.parent == entry.parent %}
 
-    {% if not to_display %}
+    {% if not to_hide %}
         {% for entry in [entry.parent] %}
             {% include "common/inline.html" %}
         {% endfor %}
