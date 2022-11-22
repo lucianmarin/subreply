@@ -1,8 +1,0 @@
-<div class="entry">
-    <div class="parent">
-        <a class="name" href="/{{ entry.created_by }}">
-            {{ entry.created_by.full_name | emojize }}
-        </a>
-        {{ entry.content | parser | emojize | safe }}
-    </div>
-</div>
