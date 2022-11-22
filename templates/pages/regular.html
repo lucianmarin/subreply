@@ -24,7 +24,9 @@
                 {% set member = entry.created_by %}
                 {% include "common/user.html" %}
             {% else %}
-                {% include "common/stream.html" %}
+                {% with prev=loop.previtem %}
+                    {% include "common/stream.html" %}
+                {% endwith %}
             {% endif %}
         {% else %}
             {% include "common/nothing.html" %}

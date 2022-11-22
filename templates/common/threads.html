@@ -1,8 +1,10 @@
 {% include "common/entry.html" %}
 
-{% if entry.kids.all() %}
+{% set kids = entry.kids.all() %}
+
+{% if kids %}
     <div class="sublist">
-        {% for entry in entry.kids.all() %}
+        {% for entry in kids %}
             {% include "common/entry.html" %}
         {% endfor %}
     </div>
