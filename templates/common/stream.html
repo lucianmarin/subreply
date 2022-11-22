@@ -14,7 +14,7 @@
     {% if kids %}
         <div class="sublist">
             {% for entry in kids %}
-                {% if kids | length in [1, 2] %}
+                {% if loop.revindex == 1 %}
                     {% include "common/entry.html" %}
                 {% else %}
                     {% include "common/inline.html" %}
