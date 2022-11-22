@@ -2,8 +2,9 @@
     {% set to_display = prev and prev.parent and prev.parent == entry.parent %}
 
     {% if not to_display %}
-        {% set entry = entry.parent %}
-        {% include "common/inline.html" %}
+        {% for entry in [entry.parent] %}
+            {% include "common/inline.html" %}
+        {% endfor %}
     {% endif %}
 
     <div class="sublist">
