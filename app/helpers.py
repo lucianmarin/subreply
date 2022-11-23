@@ -25,15 +25,14 @@ def to_metadata(text):
     words = []
     for word in text.split():
         if word.startswith(('http://', 'https://')):
-            protocol, separator, address = word.partition('://')
-            domain, dot, full_path = address.partition('.')
-            if domain == 'subreply':
-                ltd, slash, path = full_path.partition('/')
-                if '/' in path:
-                    username, slash, reply = path.partition('/')
-                    if reply:
-                        words.append("@{0}/{1}".format(username, reply))
-                elif path:
+            protocol, separator, path = word.partition('://subreply.com')
+            if path.startswith('/'):
+                path = path[1:]
+            if path:
+                username, slash, reply = path.partition('/')
+                if reply:
+                    words.append("@{0}/{1}".format(username, reply))
+                else:
                     words.append("@{0}".format(path))
         else:
             words.append(word)
