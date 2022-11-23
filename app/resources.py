@@ -25,7 +25,7 @@ Comments = Comment.objects.annotate(
 ).select_related('created_by')
 
 PPFR = Prefetch('parent', Comments)
-PFR = Prefetch('kids', Comments.order_by('id'))
+PFR = Prefetch('kids', Comments.order_by('-id'))
 RPFR = Prefetch('kids', Comments.prefetch_related(PFR))
 
 
@@ -810,9 +810,6 @@ class RegisterResource:
                 created_at=utc_timestamp(), seen_at=utc_timestamp(),
                 created_by=user, to_user=user
             )
-            # clear emoji statuses for unseen people
-            # half_year = utc_timestamp() - (3600 * 24 * 183)
-            # User.objects.filter(seen_at__lt=half_year).update(emoji='')
             # set id cookie
             token = FERNET.encrypt(str(user.id).encode()).decode()
             resp.set_cookie('identity', token, path="/", max_age=MAX_AGE)
