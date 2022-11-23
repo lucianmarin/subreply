@@ -4,10 +4,6 @@ from hashlib import pbkdf2_hmac
 from random import choice
 
 
-def cleaner(value):
-    return " ".join([w.strip() for w in value.split()])
-
-
 def has_repetions(word, n=3):
     return any(char * n in word for char in word)
 
@@ -22,6 +18,25 @@ def to_words(number):
     words = []
     for n in str(number):
         words.append(data[int(n)])
+    return " ".join(words)
+
+
+def to_metadata(text):
+    words = []
+    for word in text.split():
+        if word.startswith(('http://', 'https://')):
+            protocol, separator, address = word.partition('://')
+            domain, dot, full_path = address.partition('.')
+            if domain == 'subreply':
+                ltd, slash, path = full_path.partition('/')
+                if '/' in path:
+                    username, slash, reply = path.partition('/')
+                    if reply:
+                        words.append("@{0}/{1}".format(username, reply))
+                elif path:
+                    words.append("@{0}".format(path))
+        else:
+            words.append(word)
     return " ".join(words)
 
 
@@ -47,6 +62,9 @@ def parse_metadata(text):
             handle = word[1:]
             if handle and all(c in limits for c in handle):
                 mentions.append(handle)
+            elif '/' in handle:
+                username, slash, reply = handle.partition('/')
+                mentions.append(username)
         if word.startswith('#'):
             handle = word[1:]
             if handle and all(c in numbers for c in handle):

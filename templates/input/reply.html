@@ -2,12 +2,20 @@
     <form enctype="multipart/form-data" method="post" autocomplete="off">
         {% if entry.created_by == user %}
             <div class="placeholder">
-                {% if entry.replies %} Reply back to people{% else %}No reply yet{% endif %}
+                {% if entry.replies %}
+                    Reply back to people
+                {% else %}
+                    No reply yet
+                {% endif %}
             </div>
         {% elif duplicate %}
             <div class="placeholder">
                 {% if user %}
-                    Already replied to <a href="/{{ entry.created_by }}">@{{ entry.created_by }}</a>
+                    Share
+                    <a href="/feed?s=%40{{ entry.created_by }}%2F{{ entry.id }}">
+                        @{{ entry.created_by }}/{{ entry.id }}
+                    </a>
+                    reply
                 {% else %}
                     <a href="/login">Login</a> or <a href="/register">register</a> your account to reply
                 {% endif %}
