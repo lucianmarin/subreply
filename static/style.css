@@ -52,7 +52,7 @@ table td:last-child { padding-bottom: 0; }
 
 table td:nth-child(odd), table th:nth-child(odd) { text-align: center; width: 40px; }
 
-table td:nth-child(even), table th:nth-child(even) { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; border-right: var(--whitesmoke) 1px solid; }
+table td:nth-child(even), table th:nth-child(even) { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; border-right: var(--whitesmoke) 1px solid; word-break: break-all; }
 
 table td:nth-child(even):last-child, table th:nth-child(even):last-child { border-right: 0 none; }
 
