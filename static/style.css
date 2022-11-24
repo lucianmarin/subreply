@@ -256,7 +256,7 @@ table .code:last-child { border-right: 0 none; }
 
 .about ol { margin-left: 40px; }
 
-.about svg { float: left; margin-left: -40px; padding: 2px 7px; }
+.about svg { float: left; margin-left: -40px; padding: 2px 12px; }
 
 .about .emoji { float: left; margin-left: -40px; text-align: center; width: 40px; }
 
