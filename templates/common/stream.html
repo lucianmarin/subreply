@@ -13,7 +13,7 @@
 {% else %}
     {% include "common/entry.html" %}
 
-    {% set kids = entry.kids.all()[:8] | reverse  %}
+    {% set kids = entry.kids.all()[:8] | reverse | list %}
 
     {% if kids %}
         <div class="sublist">
