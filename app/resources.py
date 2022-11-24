@@ -97,7 +97,7 @@ class EmojiResource:
         codes = get_emoji_unicode_dict('en').keys()
         shortcodes = set()
         for c in codes:
-            if c.count('_') < 3 and '-' not in c and '’' not in c and c.islower():
+            if c.count('_') < 2 and '-' not in c and '’' not in c and c.islower():
                 shortcodes.add(c)
         shortcodes = sorted(shortcodes)
         odds = [s for i, s in enumerate(shortcodes) if i % 2 == 0]

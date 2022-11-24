@@ -38,21 +38,19 @@ svg { stroke-linecap: round; stroke-linejoin: round; stroke-width: 2; }
 
 svg path { fill: none; stroke: var(--black); }
 
-table { border-spacing: 0px; font-size: var(--small); margin: 10px 0; width: 100%; }
+table { border-spacing: 0px; font-size: var(--small); line-height: 15px; margin: 10px 0; width: 100%; }
 
 table a { color: var(--accent); }
 
 table a:hover { color: var(--gray); }
 
-table th { color: var(--silver); font-weight: normal; text-align: left; padding-bottom: 3px; }
+table th { color: var(--silver); font-weight: normal; text-align: left; padding-bottom: 6px; }
 
-table td { border-top: var(--whitesmoke) 1px solid; padding: 3px 0; }
+table td { border-top: var(--whitesmoke) 1px solid; padding: 6px 0; }
 
-table td:last-child { padding-bottom: 0; }
+table td:nth-child(odd), table th:nth-child(odd) { text-align: center; width: 30px; }
 
-table td:nth-child(odd), table th:nth-child(odd) { text-align: center; width: 40px; }
-
-table td:nth-child(even), table th:nth-child(even) { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; border-right: var(--whitesmoke) 1px solid; word-break: break-all; }
+table td:nth-child(even), table th:nth-child(even) { width: calc(50% - 30px); overflow-wrap: break-word; word-break: break-all; }
 
 table td:nth-child(even):last-child, table th:nth-child(even):last-child { border-right: 0 none; }
 

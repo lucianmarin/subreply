@@ -121,6 +121,7 @@ svg
 table
     border-spacing: 0px
     font-size: var(--small)
+    line-height: 15px
     margin: 10px 0
     width: 100%
     a
@@ -131,19 +132,17 @@ table
         color: var(--silver)
         font-weight: normal
         text-align: left
-        padding-bottom: 3px
+        padding-bottom: 6px
     td
         border-top: var(--whitesmoke) 1px solid
-        padding: 3px 0
-        &:last-child
-            padding-bottom: 0
+        padding: 6px 0
     td, th
         &:nth-child(odd)
             text-align: center
-            width: 40px
+            width: 30px
         &:nth-child(even)
-            @include dots
-            border-right: var(--whitesmoke) 1px solid
+            width: calc(50% - 30px)
+            overflow-wrap: break-word
             word-break: break-all
             &:last-child
                 border-right: 0 none
