@@ -48,12 +48,12 @@ def valid_content(value, user, limit=640):
 
 def valid_thread(value):
     """Duplicate topic against old topics."""
-    threads = Comment.objects.filter(parent=None).order_by('-id')[:40]
+    threads = Comment.objects.filter(parent=None).order_by('-id')[:32]
     duplicates = [t for t in threads if t.content.lower() == value.lower()]
     if duplicates:
-        dup = duplicates[0]
-        err = 'Thread started by <a href="/{0}/{1}">@{0}</a>'
-        return err.format(dup.id, dup.created_by)
+        duplicate = duplicates[0]
+        err = 'Thread started at <a href="/{0}/{1}">@{0}/{1}</a>'
+        return err.format(duplicate.created_by, duplicate.id)
 
 
 def valid_reply(parent, user, value, mentions):
@@ -64,7 +64,8 @@ def valid_reply(parent, user, value, mentions):
         (Q(ancestors=top_id) | Q(id=top_id)) & Q(content__iexact=value)
     ).first()
     if duplicate:
-        return f'Replied by <a href="/reply/{duplicate.id}">@{duplicate.created_by}</a> in thread'
+        err = 'Duplicate of <a href="/{0}/{1}">@{0}/{1}</a> in thread'
+        return err.format(duplicate.created_by, duplicate.id)
     elif parent.created_by_id == user.id:
         return "Can't reply to yourself"
     elif len(mentions) == 1 and mentions[0].lower() == parent.created_by.username:

@@ -24,6 +24,19 @@ def to_words(number):
 def to_metadata(text):
     words = []
     for word in text.split():
+        # unwrap word
+        endswith = ""
+        startswith = ""
+        if word.endswith(('.', ',', '!', '?', ':', ';')):
+            endswith = word[-1:]
+            word = word[:-1]
+        if word.endswith((')', ']', '}', "'", '"')):
+            endswith = word[-1:] + endswith
+            word = word[:-1]
+        if word.startswith(('(', '[', '{', "'", '"')):
+            startswith = word[:1]
+            word = word[1:]
+        # handle subreply links
         if word.startswith(('http://', 'https://')):
             protocol, separator, path = word.partition('://subreply.com')
             if path.startswith('/'):
@@ -31,11 +44,14 @@ def to_metadata(text):
             if path:
                 username, slash, reply = path.partition('/')
                 if reply:
-                    words.append("@{0}/{1}".format(username, reply))
+                    word = "@{0}/{1}".format(username, reply)
                 else:
-                    words.append("@{0}".format(path))
-        else:
-            words.append(word)
+                    word = "@{0}".format(path)
+            elif separator:
+                word = "@subreply"
+        # wrap word
+        word = startswith + word + endswith
+        words.append(word)
     return " ".join(words)
 
 

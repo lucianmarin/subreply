@@ -79,9 +79,8 @@ def parser(text):
     # replace &nbsp; (160) with space (32)
     text = text.replace(chr(160), chr(32))
     # split text in words and parse each
-    words = text.split()
-    for index in range(len(words)):
-        word = words[index]
+    words = []
+    for word in text.split():
         # unwrap word
         endswith = ""
         startswith = ""
@@ -122,5 +121,6 @@ def parser(text):
             elif handle and all(c in limits for c in handle):
                 word = f'<a href="/discover?q={handle}" rel="tag">#{handle}</a>'
         # wrap word
-        words[index] = startswith + word + endswith
+        word = startswith + word + endswith
+        words.append(word)
     return " ".join(words)
