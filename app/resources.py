@@ -502,7 +502,7 @@ class PeopleResource:
         q = self.build_query(terms)
         entries = User.objects.filter(q).exclude(
             is_approved=False
-        ).order_by('-seen_at')
+        ).order_by('-id')
         return paginate(req, entries, 24)
 
     @before(auth_user)
