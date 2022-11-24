@@ -53,7 +53,7 @@
             </li>
             <li>
                 <div class="emo">{{ ":vertical_traffic_light:" | emojize }}</div>
-                Traffic handled by using Gunicorn in front of Nginx, PgBouncer in front of PostgreSQL.
+                Traffic handled by using Gunicorn async workers and PgBouncer for connections pooling.
             </li>
             <li>
                 <div class="emo">{{ ":artist_palette:" | emojize }}</div>
