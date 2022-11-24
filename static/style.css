@@ -38,23 +38,23 @@ svg { stroke-linecap: round; stroke-linejoin: round; stroke-width: 2; }
 
 svg path { fill: none; stroke: var(--black); }
 
-table { border-spacing: 0px; margin: 10px 0; width: 100%; }
-
-table th { color: var(--silver); font-size: var(--small); font-weight: normal; padding-bottom: 3px; }
-
-table td { border-top: var(--whitesmoke) 1px solid; padding: 3px 0; }
-
-table td:last-child { padding-bottom: 0; }
+table { border-spacing: 0px; font-size: var(--small); margin: 10px 0; width: 100%; }
 
 table a { color: var(--accent); }
 
 table a:hover { color: var(--gray); }
 
-table .emo { text-align: center; width: 40px; }
+table th { color: var(--silver); font-weight: normal; text-align: left; padding-bottom: 3px; }
 
-table .code { border-right: var(--whitesmoke) 1px solid; }
+table td { border-top: var(--whitesmoke) 1px solid; padding: 3px 0; }
 
-table .code:last-child { border-right: 0 none; }
+table td:last-child { padding-bottom: 0; }
+
+table td:nth-child(odd), table th:nth-child(odd) { text-align: center; width: 40px; }
+
+table td:nth-child(even), table th:nth-child(even) { border-right: var(--whitesmoke) 1px solid; }
+
+table td:nth-child(even):last-child, table th:nth-child(even):last-child { border-right: 0 none; }
 
 .container { display: grid; grid-template-columns: auto 150px 525px auto; }
 

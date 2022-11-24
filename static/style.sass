@@ -120,29 +120,31 @@ svg
 
 table
     border-spacing: 0px
+    font-size: var(--small)
     margin: 10px 0
     width: 100%
+    a
+        color: var(--accent)
+        &:hover
+            color: var(--gray)
     th
         color: var(--silver)
-        font-size: var(--small)
         font-weight: normal
+        text-align: left
         padding-bottom: 3px
     td
         border-top: var(--whitesmoke) 1px solid
         padding: 3px 0
         &:last-child
             padding-bottom: 0
-    a
-        color: var(--accent)
-        &:hover
-            color: var(--gray)
-    .emo
-        text-align: center
-        width: 40px
-    .code
-        border-right: var(--whitesmoke) 1px solid
-        &:last-child
-            border-right: 0 none
+    td, th
+        &:nth-child(odd)
+            text-align: center
+            width: 40px
+        &:nth-child(even)
+            border-right: var(--whitesmoke) 1px solid
+            &:last-child
+                border-right: 0 none
 
 .container
     display: grid

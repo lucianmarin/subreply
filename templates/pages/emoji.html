@@ -9,16 +9,16 @@
     <div class="about">
         <table>
             <tr>
-                <th class="emo">:)</th>
-                <th class="code">Shortcode</th>
-                <th class="emo">;)</th>
-                <th class="code">Shortcode</th>
+                <th>:)</th>
+                <th>Shortcode</th>
+                <th>;)</th>
+                <th>Shortcode</th>
             </tr>
             {% for row in rows %}
                 <tr>
                     {% for shortcode in row %}
-                        <td class="emo">{{ shortcode | emojize }}</td>
-                        <td class="code">{{ shortcode }}</td>
+                        <td>{{ shortcode | emojize }}</td>
+                        <td>{{ shortcode }}</td>
                     {% endfor %}
                 </tr>
             {% endfor %}
