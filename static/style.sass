@@ -135,6 +135,13 @@ table
         color: var(--accent)
         &:hover
             color: var(--gray)
+    .emo
+        text-align: center
+        width: 40px
+    .code
+        border-right: var(--whitesmoke) 1px solid
+        &:last-child
+            border-right: 0 none
 
 .container
     display: grid
@@ -414,7 +421,7 @@ table
             text-indent: 0
     p
         padding-bottom: 3px
-        text-indent: 30px
+        text-indent: 40px
         &:first-child
             text-indent: 0
         &:last-child
@@ -431,18 +438,18 @@ table
     ul
         list-style: none
         li
-            padding-left: 30px
+            padding-left: 40px
     ol
-        margin-left: 30px
+        margin-left: 40px
     svg
         float: left
-        margin-left: -30px
+        margin-left: -40px
         padding: 2px 7px
-    .emo
+    .emoji
         float: left
-        margin-left: -30px
+        margin-left: -40px
         text-align: center
-        width: 30px
+        width: 40px
 
 @media (max-width: 674px)
     .container
