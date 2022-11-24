@@ -1,7 +1,7 @@
 <div class="entry">
     <div class="author">
         {% if view == 'people' %}
-            <b>{{ entry.seen_at | shortdate }}</b>
+            <b>{{ entry.joined_at | shortdate }}</b>
         {% elif view in ['following', 'followers'] %}
             <b>{{ entry.created_at | shortdate }}</b>
         {% endif %}
@@ -13,8 +13,8 @@
                 @{{ member }}
             </a>
         {% endif %}
-        <i class="{{ member.status }}">&bull;</i>
         {% if user %}
+            <i>&bull;</i>
             {% if member.id == user.id %}
                 <a class="action" href="/options">edit</a>
             {% elif member.id in user.follows %}

@@ -29,9 +29,7 @@ class User(models.Model):
     password = models.CharField(max_length=80)
 
     joined_at = models.FloatField(default=.0)
-    seen_at = models.FloatField(default=.0, db_index=True)
     is_approved = models.BooleanField(default=False)
-    is_notified = models.BooleanField(default=False)
 
     emoji = models.CharField(max_length=80, default='')
     birthday = models.CharField(max_length=10, default='')
@@ -63,17 +61,6 @@ class User(models.Model):
         if self.last_name:
             return self.first_name[:1] + self.last_name[:1]
         return self.first_name[:1]
-
-    @cached_property
-    def status(self):
-        now, week = utc_timestamp(), 7 * 24 * 3600
-        away, gone = now - 12 * week, now - 72 * week
-        if self.seen_at > away:
-            return "here"
-        elif gone <= self.seen_at <= away:
-            return "away"
-        else:
-            return "gone"
 
     @cached_property
     def social(self):
@@ -112,14 +99,6 @@ class User(models.Model):
     @cached_property
     def saves(self):
         return self.saved.values_list('to_comment_id', flat=True)
-
-    def up_seen(self):
-        fmt = "%Y-%m-%d-%H-%M"
-        last_day = datetime.now(timezone.utc).strftime(fmt)
-        last_seen = datetime.fromtimestamp(self.seen_at).strftime(fmt)
-        if last_day != last_seen:
-            self.seen_at = utc_timestamp()
-            self.save(update_fields=['seen_at'])
 
 
 class Comment(models.Model):
