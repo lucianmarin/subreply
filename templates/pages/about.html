@@ -7,42 +7,72 @@
     </div>
 
     <div class="about">
-        <p>
-            <a href="/{{ sub }}">{{ sub.full_name | emojize }}</a> was designed by
-            <a href="/{{ luc }}">{{ luc.full_name | emojize }}</a> for scientists, engineers, journalists and people who activating in other liberal arts fields.
-        </p>
-        <p>
-            Register your account, improve your profile, wait for approval then
-            see for yourself if it's worthy of your time. You can change your mind at any time.
-        </p>
+        <div class="block">
+            <p>
+                <a href="/{{ sub }}">{{ sub.full_name | emojize }}</a> was created by
+                <a href="/{{ luc }}">{{ luc.full_name | emojize }}</a> for scientists, journalists, engineers, doctors and people who are activating in other liberal arts fields.
+            </p>
+            <p>
+                <a href="/register">Register</a> your account, improve your profile, wait for approval then
+                see for yourself if it's worthy of your time. You can change your mind at any time.
+            </p>
+            <p>It was built around what you can call theory of everything. A system has some degrees of freedoms, a set of contraints and certain roadblocks. This makes <a href="/{{ sub }}">{{ sub.full_name | emojize }}</a> more than a social network, a complete system that doesn't require moderation and it's intuitive to use.</p>
+        </div>
 
         <h4>Apps</h4>
         <ul>
-            <li>Download <a href="https://play.google.com/store/apps/details?id=com.lucianmarin.sub">Subreply for Android</a> from Google Play Store.</li>
-            <li>Install Subreply on iOS by adding it to Home Screen from Safari.</li>
-            <li><a href="https://github.com/lucianmarin/logparser">Logparser</a> is an open-source access logs parser built for Subreply.</li>
+            <li>
+                <svg width="16" height="16" viewBox="0 0 24 24">
+                    <path d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 010 1.971l-11.54 6.347a1.125 1.125 0 01-1.667-.985V5.653z" />
+                </svg>
+                Download <a href="https://play.google.com/store/apps/details?id=com.lucianmarin.sub">Subreply for Android</a> from Google Play Store.
+            </li>
+            <li>
+                <svg width="16" height="16" viewBox="0 0 24 24">
+                    <path d="M10.5 1.5H8.25A2.25 2.25 0 006 3.75v16.5a2.25 2.25 0 002.25 2.25h7.5A2.25 2.25 0 0018 20.25V3.75a2.25 2.25 0 00-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3m-3 18.75h3" />
+                </svg>
+                Install Subreply on iOS by adding it to Home Screen from Safari.
+            </li>
+            <li>
+                <svg width="16" height="16" viewBox="0 0 24 24">
+                    <path d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <a href="https://github.com/lucianmarin/logparser">Logparser</a> is an open-source access logs parser built for Subreply.
+            </li>
         </ul>
 
         <h4>Technology</h4>
         <ul>
-            <li>Hosted on a high frequency <a href="https://www.vultr.com/?ref=8538483-6G">Vultr VPS</a> running lastest Ubuntu Server.</li>
-            <li>Coded in Python using Falcon framework and Django ORM.</li>
-            <li>Traffic handled by using Gunicorn in front of Nginx, PgBouncer in front of PostgreSQL.</li>
-            <li>SVG icons from <a href="https://heroicons.dev/">Heroicons</a>, Route 159 font from <a href="https://www.dotcolon.net/font/route159/">dotcolon.net</a>.</li>
+            <li>
+                <div class="emo">{{ ":keyboard:" | emojize }}</div>
+                Hosted on a high frequency <a href="https://www.vultr.com/?ref=8538483-6G">Vultr VPS</a> running lastest Ubuntu Server.
+            </li>
+            <li>
+                <div class="emo">{{ " :snake:" | emojize }}</div>
+                Coded in Python using Falcon framework and Django ORM.
+            </li>
+            <li>
+                <div class="emo">{{ ":vertical_traffic_light:" | emojize }}</div>
+                Traffic handled by using Gunicorn in front of Nginx, PgBouncer in front of PostgreSQL.
+            </li>
+            <li>
+                <div class="emo">{{ ":artist_palette:" | emojize }}</div>
+                SVG icons from <a href="https://heroicons.dev/">Heroicons</a>, Route 159 font from <a href="https://www.dotcolon.net/font/route159/">dotcolon.net</a>.
+            </li>
         </ul>
 
         <h4>Principles</h4>
         <ol>
-            <li>reverse-chronological order for all feeds</li>
-            <li>full thread and entire conversation support</li>
-            <li>unique name handles like <a href="/{{ emo }}">{{ emo.full_name | emojize }}</a></li>
-            <li>640 characters per reply, ASCII and emojis for content</li>
-            <li>only one link, mention or hashtag per reply</li>
-            <li>no support for multiple paragraphs or popularity counters</li>
-            <li>edit or delete your replies before they are replied to</li>
-            <li>no redistribution of data, private or public based on GDPR</li>
-            <li>email address needed only for password reset, no spamming</li>
-            <li>data export in a human readable format</li>
+            <li>Reverse-chronological order for all feeds.</li>
+            <li>Full thread and entire conversation support.</li>
+            <li>Unique name handles like <a href="/{{ emo }}">{{ emo.full_name | emojize }}.</a></li>
+            <li>Limited to ASCII, emojis and 640 characters per reply.</li>
+            <li>Only one link, mention or hashtag per reply.</li>
+            <li>No support for multiple paragraphs or popularity counters.</li>
+            <li>Edit or delete your replies before they are replied to.</li>
+            <li>No redistribution of data, private or public based on GDPR.</li>
+            <li>Email address needed only for password reset, no spamming.</li>
+            <li>Data export in a human readable format.</li>
         </ol>
     </div>
 {% endblock %}

@@ -40,9 +40,9 @@ svg path { fill: none; stroke: var(--black); }
 
 table { margin: 10px 0; width: 100%; }
 
-table th { color: var(--silver); font-size: var(--small); font-weight: normal; padding-bottom: 2px; }
+table th { color: var(--silver); font-size: var(--small); font-weight: normal; padding-bottom: 3px; }
 
-table td { border-top: var(--whitesmoke) 1px solid; padding: 2px 0; }
+table td { border-top: var(--whitesmoke) 1px solid; padding: 3px 0; }
 
 table td:last-child { padding-bottom: 0; }
 
@@ -226,17 +226,33 @@ table a:hover { color: var(--gray); }
 
 .about a:hover { color: var(--gray); }
 
-.about h4 { margin-top: 10px; }
+.about h4 { margin-top: 10px; margin-bottom: 3px; }
 
 .about h4 + p { text-indent: 0; }
 
-.about p { text-indent: 30px; }
+.about p { padding-bottom: 3px; text-indent: 40px; }
 
 .about p:first-child { text-indent: 0; }
 
-.about p:last-child { margin-bottom: 10px; }
+.about p:last-child { padding-bottom: 0; }
 
-.about ol, .about ul { margin-bottom: 10px; margin-left: 30px; }
+.about .block { margin-bottom: 10px; }
+
+.about ol, .about ul { margin-bottom: 10px; }
+
+.about ol li, .about ul li { border-bottom: var(--whitesmoke) 1px solid; padding: 3px 0; }
+
+.about ol li:last-child, .about ul li:last-child { border-bottom: 0 none; }
+
+.about ul { list-style: none; }
+
+.about ul li { padding-left: 40px; }
+
+.about ol { margin-left: 40px; }
+
+.about svg { float: left; margin-left: -40px; padding: 2px 12px; }
+
+.about .emo { float: left; margin-left: -40px; text-align: center; width: 40px; }
 
 @media (max-width: 674px) { .container { grid-template-columns: auto 50px 525px 0; } .links i { display: none; } }
 

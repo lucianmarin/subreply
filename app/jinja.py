@@ -26,7 +26,7 @@ env.filters['shorten'] = lambda txt, w: shorten(txt, w, placeholder="...")
 env.filters['keywords'] = lambda emo: ", ".join(emo[1:-1].split("_"))
 
 env.globals['brand'] = "Subreply"
-env.globals['v'] = 213
+env.globals['v'] = 214
 
 
 def render(page, **kwargs):

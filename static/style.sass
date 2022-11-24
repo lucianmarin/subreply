@@ -125,10 +125,10 @@ table
         color: var(--silver)
         font-size: var(--small)
         font-weight: normal
-        padding-bottom: 2px
+        padding-bottom: 3px
     td
         border-top: var(--whitesmoke) 1px solid
-        padding: 2px 0
+        padding: 3px 0
         &:last-child
             padding-bottom: 0
     a
@@ -409,17 +409,40 @@ table
             color: var(--gray)
     h4
         margin-top: 10px
+        margin-bottom: 3px
         &+ p
             text-indent: 0
     p
-        text-indent: 30px
+        padding-bottom: 3px
+        text-indent: 40px
         &:first-child
             text-indent: 0
         &:last-child
-            margin-bottom: 10px
+            padding-bottom: 0
+    .block
+        margin-bottom: 10px
     ol, ul
         margin-bottom: 10px
-        margin-left: 30px
+        li
+            border-bottom: var(--whitesmoke) 1px solid
+            padding: 3px 0
+            &:last-child
+                border-bottom: 0 none
+    ul
+        list-style: none
+        li
+            padding-left: 40px
+    ol
+        margin-left: 40px
+    svg
+        float: left
+        margin-left: -40px
+        padding: 2px 12px
+    .emo
+        float: left
+        margin-left: -40px
+        text-align: center
+        width: 40px
 
 @media (max-width: 674px)
     .container
