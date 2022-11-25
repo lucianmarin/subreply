@@ -1,13 +1,15 @@
-<div class="entry">
-    {% if member.links %}
+{% if member.links %}
+    <div class="entry">
         <div class="status">Also on {{ member.social | safe }}.</div>
-    {% endif %}
+    </div>
+{% endif %}
 
-    {% if user.id == 1 and not member.is_approved %}
+{% if user.id == 1 and not member.is_approved %}
+    <div class="entry">
         <div class="status">
             {{ member.email }} &mdash;
             <a href="/{{ member }}/approve">Approve</a> &bull;
             <a href="/{{ member }}/destroy">Destroy</a>
         </div>
-    {% endif %}
-</div>
+    </div>
+{% endif %}
