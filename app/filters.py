@@ -13,13 +13,14 @@ def hostname(value):
 
 def age(birthday, delimiter="-"):
     """Age based on yyyy-mm-dd format."""
-    if birthday.count(delimiter):
+    delimiters = birthday.count(delimiter)
+    if delimiters:
         integers = [int(v) for v in birthday.split(delimiter)]
-        integers += [15] if len(integers) == 2 else []
+        if len(integers) == 2:
+            integers += [15]
         year, month, day = integers
         delta = datetime.now(timezone.utc).date() - date(year, month, day)
-        years = round(delta.days / 365.25, 1)
-        return int(years) if years.is_integer() else years
+        return int(round(delta.days / 365.25))
     return datetime.now(timezone.utc).year - int(birthday)
 
 
