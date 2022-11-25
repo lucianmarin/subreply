@@ -50,7 +50,6 @@ app.add_route('/account/export', resources.AccountResource(), suffix="export")
 
 app.add_route('/options', resources.OptionsResource())
 app.add_route('/social', resources.SocialResource())
-app.add_route('/lobby', resources.LobbyResource())
 
 app.add_route('/edit/{id:int}', resources.EditResource())
 app.add_route('/reply/{id:int}', resources.RedirectResource())

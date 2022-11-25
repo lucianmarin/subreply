@@ -447,30 +447,16 @@ class LobbyResource:
     @before(auth_user)
     def on_get_approve(self, req, resp, username):  # noqa
         if not req.user.id == 1:
-            raise HTTPFound(f'/{username}')
+            raise HTTPFound(f'/people')
         User.objects.filter(username=username.lower()).update(is_approved=True)
-        raise HTTPFound(f'/{username}')
+        raise HTTPFound(f'/people')
 
     @before(auth_user)
     def on_get_destroy(self, req, resp, username):  # noqa
         if not req.user.id == 1:
-            raise HTTPFound(f'/{username}')
+            raise HTTPFound(f'/people')
         User.objects.filter(username=username.lower()).delete()
-        raise HTTPFound('/lobby')
-
-    def fetch_entries(self, req):
-        entries = User.objects.filter(is_approved=False).order_by('-id')
-        return paginate(req, entries, 24)
-
-    @before(auth_user)
-    @before(login_required)
-    def on_get(self, req, resp):
-        entries = self.fetch_entries(req)
-        page, number = get_page(req)
-        resp.text = render(
-            page=page, view='lobby', number=number, user=req.user,
-            entries=entries, limit=24
-        )
+        raise HTTPFound('/people')
 
 
 class PeopleResource:
@@ -498,11 +484,18 @@ class PeopleResource:
             entries = qs.order_by('-id')
         return paginate(req, entries, 24)
 
+    def fetch_lobbies(self, req):
+        entries = User.objects.filter(is_approved=False).order_by('-id')
+        return paginate(req, entries, 24)
+
     @before(auth_user)
     def on_get(self, req, resp):
         q = demojize(req.params.get('q', '').strip())
         terms = [t.strip() for t in q.split() if t.strip()]
-        entries = self.fetch_entries(req, terms)
+        if req.user.lobbies:
+            entries = self.fetch_lobbies(req)
+        else:
+            entries = self.fetch_entries(req, terms)
         page, number = get_page(req)
         resp.text = render(
             page=page, view='people', number=number, q=q,

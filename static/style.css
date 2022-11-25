@@ -84,7 +84,7 @@ table td:nth-child(even):last-child, table th:nth-child(even):last-child { borde
 
 .links a.red svg path { stroke: var(--orange); }
 
-.links sup { font-size: var(--tiny); font-weight: bold; margin-left: 1px; }
+.links sup { font-size: var(--tiny); margin-left: 1px; }
 
 .links svg { float: right; margin-right: 15px; margin-left: 10px; padding: 2px; }
 
