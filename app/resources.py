@@ -325,18 +325,9 @@ class ProfileResource:
             raise HTTPNotFound
         entries = self.fetch_entries(req, member)
         page, number = get_page(req)
-        is_following, is_followed = None, None
-        if number == 1:
-            is_following = Relation.objects.filter(
-                created_by=req.user, to_user=member
-            ).exists() if req.user else False
-            is_followed = Relation.objects.filter(
-                created_by=member, to_user=req.user
-            ).exclude(created_by=req.user).exists() if req.user else False
         resp.text = render(
             page=page, view='profile', number=number, errors={},
-            user=req.user, member=member, entries=entries,
-            is_following=is_following, is_followed=is_followed
+            user=req.user, member=member, entries=entries
         )
 
 

@@ -1,7 +1,9 @@
 <div class="entry">
     <div class="author">
-        {% if view != 'profile' %}
+        {% if view in ['following', 'followers'] %}
             <b>{{ entry.created_at | shortdate }}</b>
+        {% else %}
+            <b>{{ member.created_at | shortdate }}</b>
         {% endif %}
         <a class="handle" href="/{{ member }}">
             {{ member.full_name | emojize }}

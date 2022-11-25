@@ -3,16 +3,6 @@
         <div class="status">Also on {{ member.social | safe }}.</div>
     {% endif %}
 
-    <div class="status">
-        Joined {{ member.created_at | shortdate }} ago.
-        {% if is_followed %}
-            Follows you.
-        {% endif %}
-        {% if user.id == member.id %}
-            <a href="/logout">Logout</a>.
-        {% endif %}
-    </div>
-
     {% if user.id == 1 and not member.is_approved %}
         <div class="status">
             {{ member.email }} &mdash;
