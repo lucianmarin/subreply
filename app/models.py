@@ -28,7 +28,7 @@ class User(models.Model):
     email = models.CharField(max_length=120, unique=True)
     password = models.CharField(max_length=80)
 
-    joined_at = models.FloatField(default=.0)
+    created_at = models.FloatField(default=.0)
     is_approved = models.BooleanField(default=False)
 
     emoji = models.CharField(max_length=80, default='')

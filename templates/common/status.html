@@ -4,7 +4,7 @@
     {% endif %}
 
     <div class="status">
-        Joined {{ member.joined_at | shortdate }} ago.
+        Joined {{ member.created_at | shortdate }} ago.
         {% if is_followed %}
             Follows you.
         {% endif %}

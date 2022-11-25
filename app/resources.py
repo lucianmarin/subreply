@@ -500,9 +500,11 @@ class PeopleResource:
 
     def fetch_entries(self, req, terms):
         q = self.build_query(terms)
-        entries = User.objects.filter(q).exclude(
-            is_approved=False
-        ).order_by('-id')
+        qs = User.objects.filter(q).exclude(is_approved=False)
+        if terms:
+            entries = qs.order_by('id')
+        else:
+            entries = qs.order_by('-id')
         return paginate(req, entries, 24)
 
     @before(auth_user)
@@ -794,8 +796,7 @@ class RegisterResource:
             user, is_new = User.objects.get_or_create(
                 username=f['username'],
                 defaults={
-                    'joined_at': utc_timestamp(),
-                    'seen_at': utc_timestamp(),
+                    'created_at': utc_timestamp(),
                     'password': build_hash(f['password1']),
                     'email': f['email'],
                     'first_name': f['first_name'],

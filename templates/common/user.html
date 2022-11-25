@@ -1,8 +1,6 @@
 <div class="entry">
     <div class="author">
-        {% if view == 'people' %}
-            <b>{{ entry.joined_at | shortdate }}</b>
-        {% elif view in ['following', 'followers'] %}
+        {% if view != 'profile' %}
             <b>{{ entry.created_at | shortdate }}</b>
         {% endif %}
         <a class="handle" href="/{{ member }}">

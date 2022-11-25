@@ -30,7 +30,7 @@ class Command(BaseCommand):
             first_day = datetime(year, 1, 1).timestamp()
             last_day = datetime(year, 12, 31).timestamp()
             accounts = User.objects.filter(
-                joined_at__gt=first_day, joined_at__lt=last_day
+                created_at__gt=first_day, created_at__lt=last_day
             ).count()
             subscriptions = Relation.objects.filter(
                 created_at__gt=first_day, created_at__lt=last_day
