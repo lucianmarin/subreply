@@ -72,7 +72,7 @@ table td:nth-child(even):last-child, table th:nth-child(even):last-child { borde
 
 .links { position: sticky; text-align: right; top: 50px; }
 
-.links a { background-color: var(--whitesmoke); border-bottom: var(--gainsboro) 1px solid; color: var(--black); display: block; height: 20px; padding: 5px 0; transition: background-color var(--d); }
+.links a { background-color: var(--whitesmoke); border-bottom-left-radius: var(--radius); border-top-left-radius: var(--radius); color: var(--black); display: block; height: 20px; padding: 5px 0; transition: background-color var(--d); }
 
 .links a:hover { background-color: var(--white); }
 
@@ -260,7 +260,7 @@ table td:nth-child(even):last-child, table th:nth-child(even):last-child { borde
 
 @media (max-width: 674px) { .container { grid-template-columns: auto 50px 525px 0; } .links i { display: none; } }
 
-@media (max-width: 574px) { .container { grid-template-columns: 0 50px calc(100% - 50px) 0; } }
+@media (max-width: 574px) { .container { grid-template-columns: 0 50px calc(100% - 50px) 0; } .links a { border-radius: 0; } }
 
 @font-face { font-family: "Route 159"; font-style: normal; font-weight: normal; src: url(/static/route159-regular.woff2) format("woff2"); }
 
