@@ -492,7 +492,7 @@ class PeopleResource:
     def on_get(self, req, resp):
         q = demojize(req.params.get('q', '').strip())
         terms = [t.strip() for t in q.split() if t.strip()]
-        if req.user.lobbies:
+        if req.user and req.user.lobbies:
             entries = self.fetch_lobbies(req)
         else:
             entries = self.fetch_entries(req, terms)
