@@ -115,7 +115,7 @@ class Comment(models.Model):
                                 related_name='replies')
     content = models.CharField(max_length=640, db_index=True)
     hashtag = models.CharField(max_length=15, default='')
-    link = models.CharField(max_length=120, default='')
+    link = models.CharField(max_length=240, default='')
     edited_at = models.FloatField(default=.0)
     mention_seen_at = models.FloatField(default=.0, db_index=True)
     reply_seen_at = models.FloatField(default=.0, db_index=True)

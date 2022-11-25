@@ -1,14 +1,12 @@
 from emoji import demojize
 from unidecode import unidecode
-from app.helpers import to_metadata
 
 
 def get_content(form, field="content"):
     value = form.getvalue(field, '')
     demojized = demojize(value)
     decoded = unidecode(demojized)
-    text = " ".join(w.strip() for w in decoded.split())
-    return to_metadata(text)
+    return " ".join(w.strip() for w in decoded.split())
 
 
 def get_emoji(form):

@@ -13,9 +13,9 @@ from project.vars import INVALID, LATIN, MAX_YEAR, MIN_YEAR, WORLD
 def valid_content(value, user, limit=640):
     hashtags, links, mentions = parse_metadata(value)
     if not value:
-        return "It can't be blank"
+        return "Share something"
     elif len(value) > limit:
-        return f"It can't be longer than {limit} characters"
+        return f"Share fewer than {limit} characters"
     elif len(value) != len(value.encode()):
         return "Only ASCII characters are allowed"
     elif len(mentions) > 1:
@@ -29,19 +29,21 @@ def valid_content(value, user, limit=640):
         if len(hashtag) > 15:
             return "Hashtag can't be longer than 15 characters"
         elif hashtag == value.lower()[1:]:
-            return "It can't be only a hashtag"
+            return "Share more than a hashtag"
     elif links:
         link = links[0].lower()
-        if len(link) > 120:
+        if len(link) > 240:
             return "Link can't be longer than 120 characters"
         elif link == value.lower():
-            return "It can't be only a link"
+            return "Share more than a link"
+        elif link.startswith(('http://subreply.com', 'https://subreply.com/')):
+            return "Try @username or @username/1234"
     elif mentions:
         mention = mentions[0].lower()
         if user and mention == user.username:
-            return "Can't mention yourself"
+            return "Don't mention yourself"
         elif mention == value.lower()[1:]:
-            return "It can't be only a mention"
+            return "Share more than a mention"
         elif not User.objects.filter(username=mention).exists():
             return "@{0} doesn't exists".format(mention)
 
@@ -67,9 +69,9 @@ def valid_reply(parent, user, value, mentions):
         err = 'Duplicate of <a href="/{0}/{1}">@{0}/{1}</a> in thread'
         return err.format(duplicate.created_by, duplicate.id)
     elif parent.created_by_id == user.id:
-        return "Can't reply to yourself"
+        return "Don't reply to yourself"
     elif len(mentions) == 1 and mentions[0].lower() == parent.created_by.username:
-        return "Can't mention the author"
+        return "Don't mention the author"
 
 
 def authentication(username, password):
