@@ -514,9 +514,9 @@ class DiscoverResource:
             f = self.build_query(terms)
             entries = Comments.filter(f).order_by('-id').prefetch_related(PFR, PPFR)
         else:
-            lastest = User.objects.annotate(last_id=Max('comments__id')).values('last_id')
-            entries = Comments.filter(id__in=lastest).order_by('-id').prefetch_related(PFR, PPFR)
-        return paginate(req, entries)
+            lastest = User.objects.annotate(last_id=Max('comments')).values('last_id')
+            entries = Comments.filter(id__in=lastest)
+        return paginate(req, entries.order_by('-id').prefetch_related(PFR, PPFR))
 
     @before(auth_user)
     def on_get(self, req, resp):
@@ -550,7 +550,7 @@ class ThreadsResource:
 
 class LinksResource:
     def fetch_entries(self, req):
-        entries = Comments.exclude(link='').order_by('-id').prefetch_related(PFR)
+        entries = Comments.exclude(link='').order_by('-id').prefetch_related(PFR, PPFR)
         return paginate(req, entries)
 
     @before(auth_user)
