@@ -139,10 +139,8 @@ class RedirectResource:
 class FeedResource:
     def fetch_entries(self, req):
         friends = Relation.objects.filter(created_by=req.user).values('to_user_id')
-        entries = Comments.filter(
-            created_by__in=friends
-        ).order_by('-id').prefetch_related(PFR, PPFR)
-        return paginate(req, entries)
+        entries = Comments.filter(created_by__in=friends).order_by('-id')
+        return paginate(req, entries.prefetch_related(PFR, PPFR))
 
     @before(auth_user)
     @before(login_required)
@@ -195,7 +193,9 @@ class ReplyResource:
         return Comments.filter(parent=parent).order_by('-id').prefetch_related(RPFR)
 
     def fetch_ancestors(self, parent):
-        return Comments.filter(id__in=parent.ancestors.values('id')).order_by('id')
+        return Comments.filter(
+            id__in=parent.ancestors.values('id')
+        ).order_by('id').prefetch_related(PPFR)
 
     @before(auth_user)
     def on_get(self, req, resp, username, id):
@@ -311,10 +311,8 @@ class EditResource:
 
 class ProfileResource:
     def fetch_entries(self, req, member):
-        entries = Comments.filter(
-            created_by=member
-        ).order_by('-id').prefetch_related(PFR, PPFR)
-        return paginate(req, entries)
+        entries = Comments.filter(created_by=member).order_by('-id')
+        return paginate(req, entries.prefetch_related(PFR, PPFR))
 
     @before(auth_user)
     def on_get(self, req, resp, username):
@@ -331,10 +329,8 @@ class ProfileResource:
 
 class FollowingResource:
     def fetch_entries(self, req):
-        entries = Relation.objects.filter(
-            created_by=req.user
-        ).exclude(to_user=req.user).order_by('-id').select_related('to_user')
-        return paginate(req, entries, 24)
+        entries = Relation.objects.filter(created_by=req.user).exclude(to_user=req.user)
+        return paginate(req, entries.order_by('-id').select_related('to_user'), 24)
 
     @before(auth_user)
     @before(login_required)
@@ -349,10 +345,8 @@ class FollowingResource:
 
 class FollowersResource:
     def fetch_entries(self, req):
-        entries = Relation.objects.filter(
-            to_user=req.user
-        ).exclude(created_by=req.user).order_by('-id').select_related('created_by')
-        return paginate(req, entries, 24)
+        entries = Relation.objects.filter(to_user=req.user).exclude(created_by=req.user)
+        return paginate(req, entries.order_by('-id').select_related('created_by'), 24)
 
     def clear_followers(self, user):
         Relation.objects.filter(
@@ -374,10 +368,8 @@ class FollowersResource:
 
 class MentionsResource:
     def fetch_entries(self, req):
-        entries = Comments.filter(
-            at_user=req.user
-        ).order_by('-id').prefetch_related(PFR, PPFR)
-        return paginate(req, entries)
+        entries = Comments.filter(at_user=req.user).order_by('-id')
+        return paginate(req, entries.prefetch_related(PFR, PPFR))
 
     def clear_mentions(self, user):
         Comment.objects.filter(
@@ -399,10 +391,8 @@ class MentionsResource:
 
 class RepliesResource:
     def fetch_entries(self, req):
-        entries = Comments.filter(
-            to_user=req.user
-        ).order_by('-id').prefetch_related(PPFR)
-        return paginate(req, entries)
+        entries = Comments.filter(to_user=req.user).order_by('-id')
+        return paginate(req, entries.prefetch_related(PPFR))
 
     def clear_replies(self, user):
         Comment.objects.filter(
@@ -425,10 +415,8 @@ class RepliesResource:
 class SavedResource:
     def fetch_entries(self, req):
         saved_ids = Save.objects.filter(created_by=req.user).values('to_comment__id')
-        entries = Comments.filter(
-            id__in=saved_ids
-        ).order_by('-id').prefetch_related(PFR, PPFR)
-        return paginate(req, entries)
+        entries = Comments.filter(id__in=saved_ids).order_by('-id')
+        return paginate(req, entries.prefetch_related(PFR, PPFR))
 
     @before(auth_user)
     @before(login_required)
@@ -475,12 +463,9 @@ class PeopleResource:
 
     def fetch_entries(self, req, terms):
         q = self.build_query(terms)
-        qs = User.objects.filter(q).exclude(is_approved=False)
-        if terms:
-            entries = qs.order_by('id')
-        else:
-            entries = qs.order_by('-id')
-        return paginate(req, entries, 24)
+        entries = User.objects.filter(q).exclude(is_approved=False)
+        sort = 'id' if terms else '-id'
+        return paginate(req, entries.order_by(sort), 24)
 
     def fetch_lobbies(self, req):
         entries = User.objects.filter(is_approved=False).order_by('-id')
@@ -512,11 +497,11 @@ class DiscoverResource:
     def fetch_entries(self, req, terms):
         if terms:
             f = self.build_query(terms)
-            entries = Comments.filter(f).order_by('-id').prefetch_related(PFR, PPFR)
         else:
-            lastest = User.objects.annotate(last_id=Max('comments')).values('last_id')
-            entries = Comments.filter(id__in=lastest)
-        return paginate(req, entries.order_by('-id').prefetch_related(PFR, PPFR))
+            last_ids = User.objects.annotate(last_id=Max('comments')).values('last_id')
+            f = Q(id__in=last_ids)
+        entries = Comments.filter(f).order_by('-id')
+        return paginate(req, entries.prefetch_related(PFR, PPFR))
 
     @before(auth_user)
     def on_get(self, req, resp):
@@ -533,10 +518,8 @@ class DiscoverResource:
 
 class ThreadsResource:
     def fetch_entries(self, req):
-        entries = Comments.filter(parent=None).exclude(kids=None).order_by(
-            '-id'
-        ).prefetch_related(PFR)
-        return paginate(req, entries)
+        entries = Comments.filter(parent=None).exclude(kids=None).order_by('-id')
+        return paginate(req, entries.prefetch_related(PFR))
 
     @before(auth_user)
     def on_get(self, req, resp):
@@ -550,8 +533,8 @@ class ThreadsResource:
 
 class LinksResource:
     def fetch_entries(self, req):
-        entries = Comments.exclude(link='').order_by('-id').prefetch_related(PFR, PPFR)
-        return paginate(req, entries)
+        entries = Comments.exclude(link='').order_by('-id')
+        return paginate(req, entries.prefetch_related(PFR, PPFR))
 
     @before(auth_user)
     def on_get(self, req, resp):
