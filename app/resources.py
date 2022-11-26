@@ -111,8 +111,6 @@ class TxtResource:
     def on_get_bots(self, req, resp):
         lines = (
             "User-agent: *",
-            "Disallow: /news/*",
-            "Disallow: /read/*",
             "",
             "Sitemap: https://subreply.com/sitemap.txt"
         )
