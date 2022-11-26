@@ -1,6 +1,6 @@
 {% if member.links %}
     <div class="entry">
-        <div class="status">Also on {{ member.social | safe }}.</div>
+        <div class="status">Also on {{ member.links | enumerize| safe }}.</div>
     </div>
 {% endif %}
 

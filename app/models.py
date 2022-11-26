@@ -1,4 +1,3 @@
-from datetime import datetime, timezone
 from os import environ
 
 from django import setup
@@ -6,19 +5,15 @@ from django.conf import settings
 from django.db import models
 from django.utils.functional import cached_property
 
-from app.helpers import utc_timestamp
-from project.vars import SOCIAL
-
-
 if not settings.configured:
     environ.setdefault('DJANGO_SETTINGS_MODULE', 'project.settings')
     setup()
 
 if settings.DEBUG:
     import logging
-    log = logging.getLogger('django.db.backends')
-    log.setLevel(logging.DEBUG)
-    log.addHandler(logging.StreamHandler())
+    logger = logging.getLogger('django.db.backends')
+    logger.setLevel(logging.DEBUG)
+    logger.addHandler(logging.StreamHandler())
 
 
 class User(models.Model):
@@ -61,18 +56,6 @@ class User(models.Model):
         if self.last_name:
             return self.first_name[:1] + self.last_name[:1]
         return self.first_name[:1]
-
-    @cached_property
-    def social(self):
-        keys = sorted(self.links)
-        holder = ""
-        for key in keys[:-2]:
-            holder += SOCIAL[key].format(self.links[key]) + ", "
-        for index, key in enumerate(keys[-2:]):
-            holder += SOCIAL[key].format(self.links[key])
-            if not index and len(keys) > 1:
-                holder += " and "
-        return holder
 
     @cached_property
     def notif_followers(self):

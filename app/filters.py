@@ -2,6 +2,21 @@ from datetime import date, datetime, timezone
 
 from tldextract import extract
 
+from project.vars import SOCIAL
+
+
+def enumerize(links):
+    """Enumerate social links."""
+    keys = sorted(links)  # eg. github
+    holder = ""
+    for key in keys[:-2]:
+        holder += SOCIAL[key].format(links[key]) + ", "
+    for index, key in enumerate(keys[-2:]):
+        holder += SOCIAL[key].format(links[key])
+        if not index and len(keys) > 1:
+            holder += " and "
+    return holder
+
 
 def hostname(value):
     """Get hostname from an url."""
