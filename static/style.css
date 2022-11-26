@@ -260,9 +260,9 @@ table td:nth-child(even):last-child, table th:nth-child(even):last-child { borde
 
 .about .emoji { float: left; margin-left: -40px; text-align: center; width: 40px; }
 
-@media (max-width: 674px) { .container { grid-template-columns: auto 50px 525px 0; } }
+@media (max-width: 674px) { .container { grid-template-columns: auto 50px 525px 0; } .links i { display: none; } }
 
-@media (max-width: 574px) { .container { grid-template-columns: 0 50px calc(100% - 50px) 0; } .links a { border-radius: 0; } }
+@media (max-width: 574px) { .container { grid-template-columns: 0 50px calc(100% - 50px) 0; } .links a:first-child, .links a:last-child { border-radius: 0; } }
 
 @font-face { font-family: "Route 159"; font-style: normal; font-weight: normal; src: url(/static/route159-regular.woff2) format("woff2"); }
 

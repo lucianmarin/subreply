@@ -460,12 +460,15 @@ table
 @media (max-width: 674px)
     .container
         grid-template-columns: auto 50px 525px 0
+    .links i
+        display: none
 
 @media (max-width: 574px)
     .container
         grid-template-columns: 0 50px calc(100% - 50px) 0
     .links a
-        border-radius: 0
+        &:first-child, &:last-child
+            border-radius: 0
 
 @font-face
     font-family: "Route 159"
