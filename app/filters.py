@@ -1,4 +1,5 @@
 from datetime import date, datetime, timezone
+from string import ascii_letters, digits
 
 from tldextract import extract
 
@@ -87,9 +88,7 @@ def superscript(number):
 
 def parser(text):
     """Convert plain text to HTML."""
-    numbers = "0123456789"
-    base36 = numbers + "abcdefghijklmnopqrstuvwxyz"
-    limits = base36 + "ABCDEFGHIJKLMNOPQRSTUVWXYZ_"
+    limits = digits + ascii_letters + "_"
     # unicode xml safe
     text = text.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
     # replace &nbsp; (160) with space (32)
@@ -132,7 +131,7 @@ def parser(text):
                 word = f'<a href="/{username}" rel="author">@{username}</a>/<a href="/{username}/{reply}" rel="bookmark">{reply}</a>'
         elif word.startswith('#'):
             handle = word[1:]
-            if handle and all(c in numbers for c in handle):
+            if handle and all(c in digits for c in handle):
                 word = f'<a href="/reply/{handle}" rel="bookmark">#{handle}</a>'
             elif handle and all(c in limits for c in handle):
                 word = f'<a href="/discover?q={handle}" rel="tag">#{handle}</a>'

@@ -1,4 +1,5 @@
 from datetime import date
+from string import ascii_letters, digits
 
 from django.db.models import Q
 from dns.resolver import query as dns_query
@@ -89,7 +90,7 @@ def authentication(username, password):
 
 
 def valid_username(value, user_id=0):
-    limits = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_"
+    limits = digits + ascii_letters + "_"
     if not value:
         return "Username can't be blank"
     elif len(value) > 15:
@@ -107,11 +108,18 @@ def valid_username(value, user_id=0):
 
 
 def valid_handle(value):
-    limits = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-"
+    limits = digits + ascii_letters + "_-"
     if len(value) > 15:
         return "Handle can't be longer than 15 characters"
     elif not all(c in limits for c in value):
         return "Handle can be only alphanumeric"
+
+
+def valid_id(value):
+    if len(value) > 15:
+        return "Handle can't be longer than 15 characters"
+    elif not all(c in digits for c in value):
+        return "ID can be only numeric"
 
 
 def valid_first_name(value):

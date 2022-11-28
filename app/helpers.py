@@ -2,6 +2,7 @@ from base64 import b64encode
 from datetime import datetime, timezone
 from hashlib import pbkdf2_hmac
 from random import choice
+from string import ascii_letters, digits
 
 
 def has_repetions(word, n=3):
@@ -22,9 +23,7 @@ def to_words(number):
 
 
 def parse_metadata(text):
-    numbers = "0123456789"
-    base36 = numbers + "abcdefghijklmnopqrstuvwxyz"
-    limits = base36 + "ABCDEFGHIJKLMNOPQRSTUVWXYZ_"
+    limits = digits + ascii_letters + "_"
     hashtags, links, mentions = [], [], []
     for word in text.split():
         if word.endswith(('.', ',', '!', '?', ':', ';')):
@@ -48,7 +47,7 @@ def parse_metadata(text):
                 mentions.append(username)
         if word.startswith('#'):
             handle = word[1:]
-            if handle and all(c in numbers for c in handle):
+            if handle and all(c in digits for c in handle):
                 pass
             elif handle and all(c in limits for c in handle):
                 hashtags.append(handle)
