@@ -7,8 +7,8 @@ from emoji import get_emoji_unicode_dict
 from requests import head
 
 from app.forms import get_metadata
-from app.models import Comment, User
 from app.utils import has_repetions, verify_hash
+from app.models import Comment, User
 from project.vars import INVALID, LATIN, MAX_YEAR, MIN_YEAR, WORLD
 
 
@@ -16,37 +16,37 @@ def valid_content(value, user, limit=640):
     hashtags, links, mentions = get_metadata(value)
     if not value:
         return "Share something"
-    if len(value) > limit:
+    elif len(value) > limit:
         return f"Share fewer than {limit} characters"
-    if len(value) != len(value.encode()):
+    elif len(value) != len(value.encode()):
         return "Only ASCII characters are allowed"
-    if len(mentions) > 1:
+    elif len(mentions) > 1:
         return "Mention a single member"
-    if len(links) > 1:
+    elif len(links) > 1:
         return "Link a single address"
-    if len(hashtags) > 1:
+    elif len(hashtags) > 1:
         return "Hashtag a single channel"
-    if hashtags:
+    elif hashtags:
         hashtag = hashtags[0].lower()
         if len(hashtag) > 15:
             return "Hashtag can't be longer than 15 characters"
-        if hashtag == value.lower()[1:]:
+        elif hashtag == value.lower()[1:]:
             return "Share more than a hashtag"
-    if links:
+    elif links:
         link = links[0].lower()
         if len(link) > 240:
             return "Link can't be longer than 120 characters"
-        if link == value.lower():
+        elif link == value.lower():
             return "Share more than a link"
-        if link.startswith(('http://subreply.com', 'https://subreply.com')):
+        elif link.startswith(('http://subreply.com', 'https://subreply.com')):
             return "Try @username or @username/1234"
-    if mentions:
+    elif mentions:
         mention = mentions[0].lower()
         if user and mention == user.username:
             return "Don't mention yourself"
-        if mention == value.lower()[1:]:
+        elif mention == value.lower()[1:]:
             return "Share more than a mention"
-        if not User.objects.filter(username=mention).exists():
+        elif not User.objects.filter(username=mention).exists():
             return "@{0} doesn't exists".format(mention)
 
 
@@ -70,9 +70,9 @@ def valid_reply(parent, user, value, mentions):
     if duplicate:
         err = 'Duplicate of <a href="/{0}/{1}">@{0}/{1}</a> in thread'
         return err.format(duplicate.created_by, duplicate.id)
-    if parent.created_by_id == user.id:
+    elif parent.created_by_id == user.id:
         return "Don't reply to yourself"
-    if len(mentions) == 1 and mentions[0].lower() == parent.created_by.username:
+    elif len(mentions) == 1 and mentions[0].lower() == parent.created_by.username:
         return "Don't mention the author"
 
 
@@ -94,17 +94,17 @@ def valid_username(value, user_id=0):
     limits = digits + ascii_letters + "_"
     if not value:
         return "Username can't be blank"
-    if len(value) > 15:
+    elif len(value) > 15:
         return "Username can't be longer than 15 characters"
-    if not all(c in limits for c in value):
+    elif not all(c in limits for c in value):
         return "Username can be only alphanumeric"
-    if has_repetions(value):
+    elif has_repetions(value):
         return "Username contains repeating characters"
-    if "__" in value:
+    elif "__" in value:
         return "Username contains consecutive underscores"
-    if value in INVALID:
+    elif value in INVALID:
         return "Username is invalid"
-    if User.objects.filter(username=value).exclude(id=user_id).exists():
+    elif User.objects.filter(username=value).exclude(id=user_id).exists():
         return "Username is already taken"
 
 
@@ -112,164 +112,162 @@ def valid_handle(value):
     limits = digits + ascii_letters + "_-"
     if len(value) > 15:
         return "Handle can't be longer than 15 characters"
-    if not all(c in limits for c in value):
+    elif not all(c in limits for c in value):
         return "Handle can be only alphanumeric"
 
 
 def valid_id(value):
     if len(value) > 15:
         return "Handle can't be longer than 15 characters"
-    if not all(c in digits for c in value):
+    elif not all(c in digits for c in value):
         return "ID can be only numeric"
 
 
 def valid_first_name(value):
     if not value:
         return "First name can't be blank"
-    if len(value) > 15:
+    elif len(value) > 15:
         return "First name can't be longer than 15 characters"
-    if len(value) == 1:
+    elif len(value) == 1:
         return "First name is just too short"
-    if not all(c in LATIN for c in value):
+    elif not all(c in LATIN for c in value):
         return "First name should use Latin characters"
-    if has_repetions(value):
+    elif has_repetions(value):
         return "First name contains repeating characters"
-    if value.count('-') > 1 or value.startswith('-') or value.endswith('-'):
+    elif value.count('-') > 1 or value.startswith('-') or value.endswith('-'):
         return "Only one double-name is allowed"
 
 
 def valid_last_name(value):
     if len(value) > 15:
         return "Last name can't be longer than 15 characters"
-    if not all(c in LATIN for c in value):
+    elif not all(c in LATIN for c in value):
         return "Last name should use Latin characters"
-    if value and has_repetions(value):
+    elif value and has_repetions(value):
         return "Last name contains repeating characters"
-    if value.count('-') > 1 or value.startswith('-') or value.endswith('-'):
+    elif value.count('-') > 1 or value.startswith('-') or value.endswith('-'):
         return "Only one double-name is allowed"
 
 
 def valid_full_name(emoji, first_name, last_name, user_id=0):
-    match = User.objects.exclude(id=user_id).filter(
+    if User.objects.filter(
         emoji=emoji, first_name=first_name, last_name=last_name
-    )
-    if match.exists():
+    ).exclude(id=user_id).exists():
         return "Emoji and names combination is taken"
-    if first_name == last_name:
+    elif first_name == last_name:
         return "First and last names should be different"
 
 
 def valid_email(value, user_id=0):
     if not value:
         return "Email can't be blank"
-    if len(value) > 120:
+    elif len(value) > 120:
         return "Email can't be longer than 120 characters"
-    if len(value) != len(value.encode()):
+    elif len(value) != len(value.encode()):
         return "Email should use ASCII characters"
-    if "@" not in value:
+    elif "@" not in value:
         return "Email isn't a valid address"
-    if User.objects.filter(email=value).exclude(id=user_id).exists():
+    elif User.objects.filter(email=value).exclude(id=user_id).exists():
         return "Email is used by someone else"
-    handle, domain = value.split('@', 1)
-    try:
-        has_mx = bool(dns_query(domain, 'MX'))
-    except Exception as e:
-        has_mx = False
-        print(e)
-    if not has_mx:
-        return "Email can't be sent to this address"
+    else:
+        handle, domain = value.split('@', 1)
+        try:
+            has_mx = bool(dns_query(domain, 'MX'))
+        except Exception as e:
+            has_mx = False
+            print(e)
+        if not has_mx:
+            return "Email can't be sent to this address"
 
 
 def valid_description(value, user_id=0):
-    if not value:
-        return
-    user = User.objects.filter(id=user_id).first()
-    return valid_content(value, user, limit=120)
+    if value:
+        user = User.objects.filter(id=user_id).first()
+        return valid_content(value, user, limit=120)
 
 
 def valid_website(value, user_id=0):
-    if not value:
-        return
-    duplicate = User.objects.filter(website=value).exclude(id=user_id).first()
-    if len(value) > 120:
-        return "Website can't be longer than 120 characters"
-    if len(value) != len(value.encode()):
-        return "Website should use ASCII characters"
-    if not value.startswith(('http://', 'https://')):
-        return "Website hasn't a valid http(s) address"
-    if duplicate:
-        return f'Website is used by <a href="/{duplicate}">@{duplicate}</a>'
-    try:
-        headers = head(value, allow_redirects=True, timeout=5).headers
-    except Exception as e:
-        headers = {}
-        print(e)
-    if 'text/html' not in headers.get('Content-Type', '').lower():
-        return "Website isn't a valid HTML page"
+    if value:
+        duplicate = User.objects.filter(website=value).exclude(id=user_id).first()
+        if len(value) > 120:
+            return "Website can't be longer than 120 characters"
+        elif len(value) != len(value.encode()):
+            return "Website should use ASCII characters"
+        elif not value.startswith(('http://', 'https://')):
+            return "Website hasn't a valid http(s) address"
+        elif duplicate:
+            return f'Website is used by <a href="/{duplicate}">@{duplicate}</a>'
+        else:
+            try:
+                headers = head(value, allow_redirects=True, timeout=5).headers
+            except Exception as e:
+                headers = {}
+                print(e)
+            if 'text/html' not in headers.get('Content-Type', '').lower():
+                return "Website isn't a valid HTML page"
 
 
 def valid_password(value1, value2):
     if not value1 or not value2:
         return "Password can't be blank"
-    if value1 != value2:
+    elif value1 != value2:
         return "Password doesn't match"
-    if len(value1) < 8:
+    elif len(value1) < 8:
         return "Password is just too short"
-    if len(value1) != sum(len(p) for p in value1.split()):
+    elif len(value1) != sum(len(p) for p in value1.split()):
         return "Password contains spaces"
-    if value1 == value1.lower():
+    elif value1 == value1.lower():
         return "Password needs an uppercase letter"
-    if value1 == value1.upper():
+    elif value1 == value1.upper():
         return "Password needs a lowercase letter"
 
 
 def valid_birthday(value, delimiter="-"):
-    if not value:
-        return
-    years = [str(y) for y in range(MIN_YEAR, MAX_YEAR + 1)]
-    zeroes = [str(z).zfill(2) for z in range(1, 10)]
-    months = [str(m) for m in range(1, 13)] + zeroes
-    days = [str(d) for d in range(1, 32)] + zeroes
-    if value.count(delimiter) > 2:
-        return "Birthday has an invalid format"
-    if len(value) > 10:
-        return "Birthday is too long"
-    if value.count(delimiter) == 2:
-        year, month, day = value.split(delimiter)
-        if year not in years:
+    if value:
+        years = [str(y) for y in range(MIN_YEAR, MAX_YEAR + 1)]
+        zeroes = [str(z).zfill(2) for z in range(1, 10)]
+        months = [str(m) for m in range(1, 13)] + zeroes
+        days = [str(d) for d in range(1, 32)] + zeroes
+        if value.count(delimiter) > 2:
+            return "Birthday has an invalid format"
+        elif len(value) > 10:
+            return "Birthday is too long"
+        elif value.count(delimiter) == 2:
+            year, month, day = value.split(delimiter)
+            if year not in years:
+                return "Year is not between {0}-{1}".format(MIN_YEAR, MAX_YEAR)
+            elif month not in months:
+                return "Month is not between 1-12"
+            elif day not in days:
+                return "Day is not between 1-31"
+            else:
+                try:
+                    _ = date(int(year), int(month), int(day))
+                except Exception as e:
+                    print(e)
+                    return "Birthday is invalid"
+        elif value.count(delimiter):
+            year, month = value.split(delimiter)
+            if year not in years:
+                return "Year is not between {0}-{1}".format(MIN_YEAR, MAX_YEAR)
+            elif month not in months:
+                return "Month is not between 1-12"
+        elif value not in years:
             return "Year is not between {0}-{1}".format(MIN_YEAR, MAX_YEAR)
-        if month not in months:
-            return "Month is not between 1-12"
-        if day not in days:
-            return "Day is not between 1-31"
-        try:
-            _ = date(int(year), int(month), int(day))
-        except Exception as e:
-            print(e)
-            return "Birthday is invalid"
-    if value.count(delimiter):
-        year, month = value.split(delimiter)
-        if year not in years:
-            return "Year is not between {0}-{1}".format(MIN_YEAR, MAX_YEAR)
-        if month not in months:
-            return "Month is not between 1-12"
-    if value not in years:
-        return "Year is not between {0}-{1}".format(MIN_YEAR, MAX_YEAR)
 
 
 def valid_location(value, delimiter=", "):
-    if not value:
-        return
-    if value.count(delimiter) > 1:
-        return "City, Country or just Country"
-    if value.count(delimiter):
-        city, country = value.split(delimiter)
-        if country not in WORLD:
+    if value:
+        if value.count(delimiter) > 1:
+            return "City, Country or just Country"
+        elif value.count(delimiter):
+            city, country = value.split(delimiter)
+            if country not in WORLD:
+                return "Country is invalid"
+            elif city not in WORLD[country]:
+                return "City is invalid"
+        elif value not in WORLD:
             return "Country is invalid"
-        if city not in WORLD[country]:
-            return "City is invalid"
-    if value not in WORLD:
-        return "Country is invalid"
 
 
 def valid_emoji(value):
