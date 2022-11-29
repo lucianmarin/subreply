@@ -1,3 +1,5 @@
+from string import ascii_letters, digits
+
 from emoji import demojize
 from unidecode import unidecode
 
@@ -17,3 +19,35 @@ def get_emoji(form):
 def get_name(form, field):
     value = form.getvalue(f'{field}_name', '')
     return "-".join(w.strip().capitalize() for w in value.split())
+
+
+def get_metadata(text):
+    limits = digits + ascii_letters + "_"
+    hashtags, links, mentions = [], [], []
+    for word in text.split():
+        if word.endswith(('.', ',', '!', '?', ':', ';')):
+            word = word[:-1]
+        if word.endswith((')', ']', '}', "'", '"')):
+            word = word[:-1]
+        if word.startswith(('(', '[', '{', "'", '"')):
+            word = word[1:]
+        if word.endswith("'s"):
+            word = word[:-2]
+        if word.startswith(('http://', 'https://')):
+            protocol, separator, address = word.partition('://')
+            if "." in address:
+                links.append(word)
+        if word.startswith('@'):
+            handle = word[1:]
+            if handle and all(c in limits for c in handle):
+                mentions.append(handle)
+            elif '/' in handle:
+                username, slash, reply = handle.partition('/')
+                mentions.append(username)
+        if word.startswith('#'):
+            handle = word[1:]
+            if handle and all(c in digits for c in handle):
+                pass
+            elif handle and all(c in limits for c in handle):
+                hashtags.append(handle)
+    return hashtags, links, mentions

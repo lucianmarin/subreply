@@ -1,9 +1,9 @@
 from falcon.constants import MEDIA_JSON
 from falcon.hooks import before
 
-from app.helpers import utc_timestamp
 from app.hooks import auth_user
 from app.models import Comment, Relation, Save, User
+from app.utils import utc_timestamp
 
 
 class DeleteEndpoint:

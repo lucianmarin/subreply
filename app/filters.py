@@ -51,39 +51,29 @@ def timeago(seconds):
     if not years and not days:
         if not seconds:
             return "%dms" % milliseconds
-        elif seconds < 60:
+        if seconds < 60:
             return "%ds" % seconds
-        elif seconds < 3600:
+        if seconds < 3600:
             return "%dm" % (seconds // 60)
-        else:
-            return "%dh" % (seconds // 3600)
-    elif not years:
+        return "%dh" % (seconds // 3600)
+    if not years:
         if not weeks:
             return "%dd" % days
-        else:
-            return "%dw" % weeks
-    else:
-        if not weeks and not days:
-            return "%dy" % years
-        elif not weeks:
-            return "%dy, %dd" % (years, days)
-        else:
-            return "%dy, %dw" % (years, weeks)
+        return "%dw" % weeks
+    if not weeks and not days:
+        return "%dy" % years
+    if not weeks:
+        return "%dy, %dd" % (years, days)
+    return "%dy, %dw" % (years, weeks)
 
 
 def superscript(number):
     """Convert 1 to sup(1)."""
     text = str(number)
-    text = text.replace('0', chr(8304))
-    text = text.replace('1', chr(185))
-    text = text.replace('2', chr(178))
-    text = text.replace('3', chr(179))
-    text = text.replace('4', chr(8308))
-    text = text.replace('5', chr(8309))
-    text = text.replace('6', chr(8310))
-    text = text.replace('7', chr(8311))
-    text = text.replace('8', chr(8312))
-    return text.replace('9', chr(8313))
+    ints = [8304, 185, 178, 179, 8308, 8309, 8310, 8311, 8312, 8313]
+    for i, o in enumerate(ints):
+        text = text.replace(str(i), chr(o))
+    return text
 
 
 def parser(text):
@@ -128,7 +118,9 @@ def parser(text):
                 word = f'<a href="/{handle}" rel="author">@{handle}</a>'
             elif '/' in handle:
                 username, slash, reply = handle.partition('/')
-                word = f'<a href="/{username}" rel="author">@{username}</a>/<a href="/{username}/{reply}" rel="bookmark">{reply}</a>'
+                u_link = f'<a href="/{username}" rel="author">@{username}</a>'
+                r_link = f'<a href="/{username}/{reply}" rel="bookmark">{reply}</a>'
+                word = u_link + "/" + r_link
         elif word.startswith('#'):
             handle = word[1:]
             if handle and all(c in digits for c in handle):

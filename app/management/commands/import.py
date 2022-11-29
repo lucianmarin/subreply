@@ -4,7 +4,7 @@ from dateutil.parser import parse
 from django.core.management.base import BaseCommand
 from unidecode import unidecode
 
-from app.helpers import parse_metadata
+from app.forms import get_metadata
 from app.models import Comment, Relation, Save, User
 
 
@@ -30,7 +30,7 @@ class Command(BaseCommand):
         self.users[pk] = user
 
     def fetch_comments(self, fields, pk):
-        hashtags, links, mentions = parse_metadata(fields['content'])
+        hashtags, links, mentions = get_metadata(fields['content'])
         at_user = None
         if mentions:
             at_user = User.objects.filter(username=mentions[0].lower()).first()

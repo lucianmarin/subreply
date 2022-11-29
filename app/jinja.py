@@ -6,7 +6,7 @@ from emoji import emojize
 from jinja2 import Environment, FileSystemBytecodeCache, FileSystemLoader
 
 from app.filters import age, enumerize, parser, timeago
-from app.helpers import utc_timestamp
+from app.utils import utc_timestamp
 from project.settings import DEBUG
 
 env = Environment(autoescape=True)

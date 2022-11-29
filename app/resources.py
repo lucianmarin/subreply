@@ -8,15 +8,14 @@ from falcon import HTTPFound, HTTPNotFound, before
 from falcon.status_codes import HTTP_200
 from strictyaml import as_document
 
-from app.forms import get_content, get_emoji, get_name
-from app.helpers import build_hash, parse_metadata, utc_timestamp, verify_hash
+from app.forms import get_content, get_emoji, get_metadata, get_name
 from app.hooks import auth_user, login_required
 from app.jinja import render
 from app.models import Comment, Relation, Save, User
-from app.validation import (
-    authentication, profiling, registration, valid_content, valid_handle,
-    valid_password, valid_reply, valid_thread
-)
+from app.utils import build_hash, utc_timestamp, verify_hash
+from app.validation import (authentication, profiling, registration,
+                            valid_content, valid_handle, valid_password,
+                            valid_reply, valid_thread)
 from project.settings import FERNET, MAX_AGE, SMTP
 from project.vars import UNLOCK_HTML, UNLOCK_TEXT
 
@@ -74,8 +73,7 @@ class MainResource:
     def on_get(self, req, resp):  # noqa
         if req.user:
             raise HTTPFound('/feed')
-        else:
-            raise HTTPFound('/threads')
+        raise HTTPFound('/threads')
 
 
 class AboutResource:
@@ -108,7 +106,7 @@ class EmojiResource:
 
 
 class TxtResource:
-    def on_get_bots(self, req, resp):
+    def on_get_bots(self, req, resp):  # noqa
         lines = (
             "User-agent: *",
             "",
@@ -116,12 +114,12 @@ class TxtResource:
         )
         resp.text = "\n".join(lines)
 
-    def on_get_map(self, req, resp):
+    def on_get_map(self, req, resp):  # noqa
         threads = Comment.objects.filter(parent=None).exclude(kids=None).values_list(
             'created_by__username', 'id'
         ).order_by('id')
         users = User.objects.exclude(comments=None).values_list('username')
-        thr_urls = [f"https://subreply.com/{u}/{id}" for u, id in threads]
+        thr_urls = [f"https://subreply.com/{u}/{i}" for u, i in threads]
         usr_urls = [f"https://subreply.com/{u}" for u, in users]
         urls = sorted(thr_urls + usr_urls)
         resp.text = "\n".join(urls)
@@ -129,7 +127,7 @@ class TxtResource:
 
 class RedirectResource:
     @before(auth_user)
-    def on_get(self, req, resp, id):
+    def on_get(self, req, resp, id):  # noqa
         reply = Comment.objects.filter(id=id).first()
         if reply:
             raise HTTPFound(f"/{reply.created_by}/{reply.id}")
@@ -172,7 +170,7 @@ class FeedResource:
                 user=req.user, entries=entries, errors=errors
             )
         else:
-            hashtags, links, mentions = parse_metadata(content)
+            hashtags, links, mentions = get_metadata(content)
             extra = {}
             extra['hashtag'] = hashtags[0].lower() if hashtags else ''
             extra['link'] = links[0].lower() if links else ''
@@ -215,13 +213,13 @@ class ReplyResource:
 
     @before(auth_user)
     @before(login_required)
-    def on_post(self, req, resp, username, id):
+    def on_post(self, req, resp, username, id):  # noqa
         parent = Comments.filter(id=id).select_related('parent').first()
         form = FieldStorage(fp=req.stream, environ=req.env)
         content = get_content(form)
         if not content:
             raise HTTPFound(f"/{req.user}/{id}")
-        hashtags, links, mentions = parse_metadata(content)
+        hashtags, links, mentions = get_metadata(content)
         errors = {}
         errors['content'] = valid_content(content, req.user)
         if not errors['content']:
@@ -274,7 +272,7 @@ class EditResource:
         entry = Comments.filter(id=id).prefetch_related(PPFR).first()
         form = FieldStorage(fp=req.stream, environ=req.env)
         content = get_content(form)
-        hashtags, links, mentions = parse_metadata(content)
+        hashtags, links, mentions = get_metadata(content)
         errors = {}
         errors['content'] = valid_content(content, req.user)
         if not errors['content']:
@@ -433,14 +431,14 @@ class LobbyResource:
     @before(auth_user)
     def on_get_approve(self, req, resp, username):  # noqa
         if not req.user.id == 1:
-            raise HTTPFound(f'/people')
+            raise HTTPFound('/people')
         User.objects.filter(username=username.lower()).update(is_approved=True)
-        raise HTTPFound(f'/people')
+        raise HTTPFound('/people')
 
     @before(auth_user)
     def on_get_destroy(self, req, resp, username):  # noqa
         if not req.user.id == 1:
-            raise HTTPFound(f'/people')
+            raise HTTPFound('/people')
         User.objects.filter(username=username.lower()).delete()
         raise HTTPFound('/people')
 
@@ -826,5 +824,4 @@ class UnlockResource:
             # fallback
             if response.status_code == 250:
                 raise HTTPFound('/login')
-            else:
-                raise HTTPFound('/unlock')
+            raise HTTPFound('/unlock')
