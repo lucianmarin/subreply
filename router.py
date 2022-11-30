@@ -24,7 +24,7 @@ app.add_route('/following', resources.FollowingResource())
 app.add_route('/followers', resources.FollowersResource())
 app.add_route('/mentions', resources.MentionsResource())
 app.add_route('/replies', resources.RepliesResource())
-app.add_route('/saved', resources.SavedResource())
+app.add_route('/saves', resources.SavesResource())
 
 app.add_route('/links', resources.LinksResource())
 app.add_route('/threads', resources.ThreadsResource())

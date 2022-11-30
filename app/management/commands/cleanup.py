@@ -7,7 +7,7 @@ class Command(BaseCommand):
     help = "Delete inactive users."
 
     def get_user(self):
-        users = User.objects.filter(comments=None, saved=None).order_by('seen_at')
+        users = User.objects.filter(comments=None).order_by('-id')
         return users.first()
 
     def handle(self, *args, **options):

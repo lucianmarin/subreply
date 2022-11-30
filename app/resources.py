@@ -393,7 +393,7 @@ class RepliesResource:
             self.clear_replies(req.user)
 
 
-class SavedResource:
+class SavesResource:
     def fetch_entries(self, user):
         saved_ids = Save.objects.filter(created_by=user).values('to_comment__id')
         entries = Comments.filter(id__in=saved_ids).order_by('-id')
@@ -404,7 +404,7 @@ class SavedResource:
     def on_get(self, req, resp):
         entries, page, number = paginate(req, self.fetch_entries(req.user))
         resp.text = render(
-            page=page, view='saved', number=number, user=req.user, entries=entries
+            page=page, view='saves', number=number, user=req.user, entries=entries
         )
 
 

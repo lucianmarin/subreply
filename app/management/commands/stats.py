@@ -12,7 +12,7 @@ class Command(BaseCommand):
 
     def total(self):
         accounts = User.objects.count()
-        subscriptions = Relation.objects.exclude(
+        relations = Relation.objects.exclude(
             created_by_id=F('to_user_id')
         ).count()
         saves = Save.objects.count()
@@ -20,7 +20,7 @@ class Command(BaseCommand):
         replies = Comment.objects.exclude(parent=None).count()
         print('total:')
         print('  accounts:', accounts)
-        print('  subscriptions:', subscriptions)
+        print('  relations:', relations)
         print('  saves:', saves)
         print('  threads:', threads)
         print('  replies:', replies)
@@ -32,7 +32,7 @@ class Command(BaseCommand):
             accounts = User.objects.filter(
                 created_at__gt=first_day, created_at__lt=last_day
             ).count()
-            subscriptions = Relation.objects.filter(
+            relations = Relation.objects.filter(
                 created_at__gt=first_day, created_at__lt=last_day
             ).exclude(created_by_id=F('to_user_id')).count()
             saves = Save.objects.filter(
@@ -47,7 +47,7 @@ class Command(BaseCommand):
             ).exclude(parent=None).count()
             print(f'{year}:')
             print('  accounts:', accounts)
-            print('  subscriptions:', subscriptions)
+            print('  relations:', relations)
             print('  saves:', saves)
             print('  threads:', threads)
             print('  replies:', replies)
