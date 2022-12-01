@@ -198,7 +198,7 @@ table td:nth-child(even):last-child, table th:nth-child(even):last-child { borde
 
 .line label { font-size: var(--small); }
 
-.line .one, .line .two, .line .left, .line .right, .line .third { float: left; }
+.line .one, .line .two, .line .left, .line .right, .line .three { float: left; }
 
 .line .one { width: calc(100% / 3 - 1px); }
 
@@ -214,17 +214,17 @@ table td:nth-child(even):last-child, table th:nth-child(even):last-child { borde
 
 .line .right input, .line .two input { border-bottom-left-radius: 0; border-top-left-radius: 0; }
 
-.line .third { width: calc(100% / 3 - 2px); }
+.line .three { width: calc(100% / 3 - 2px); }
 
-.line .third input { border-radius: 0; }
+.line .three input { border-radius: 0; }
 
-.line .third:first-child { margin-right: 2px; width: calc(100% / 3 - 1px); }
+.line .three:first-child { margin-right: 2px; width: calc(100% / 3 - 1px); }
 
-.line .third:first-child input { border-bottom-left-radius: var(--radius); border-top-left-radius: var(--radius); }
+.line .three:first-child input { border-bottom-left-radius: var(--radius); border-top-left-radius: var(--radius); }
 
-.line .third:last-child { margin-left: 2px; width: calc(100% / 3 - 1px); }
+.line .three:last-child { margin-left: 2px; width: calc(100% / 3 - 1px); }
 
-.line .third:last-child input { border-bottom-right-radius: var(--radius); border-top-right-radius: var(--radius); }
+.line .three:last-child input { border-bottom-right-radius: var(--radius); border-top-right-radius: var(--radius); }
 
 .error { clear: both; color: var(--orange); font-size: var(--small); }
 

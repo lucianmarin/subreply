@@ -1,14 +1,15 @@
 from datetime import date
-from string import ascii_letters, digits
+from string import ascii_letters, ascii_uppercase, digits
 
+import phonenumbers
 from django.db.models import Q
 from dns.resolver import query as dns_query
 from emoji import get_emoji_unicode_dict
 from requests import head
 
 from app.forms import get_metadata
-from app.utils import has_repetions, verify_hash
 from app.models import Comment, User
+from app.utils import has_repetions, verify_hash
 from project.vars import INVALID, LATIN, MAX_YEAR, MIN_YEAR, WORLD
 
 
@@ -273,6 +274,46 @@ def valid_location(value, delimiter=", "):
 def valid_emoji(value):
     if value and value not in get_emoji_unicode_dict('en').keys():
         return "Emoji is invalid"
+
+
+def valid_phone(code, number):
+    if not code and not number:
+        return
+    elif not code:
+        return "Code is needed"
+    elif not number:
+        return "Number is needed"
+    elif not code.startswith('+'):
+        return "Code starts with +"
+    elif len(code) < 2 and len(code) > 4:
+        return "Code between +1 and +999"
+    elif not code[1:].isdecimal():
+        return "Code must be numeric"
+    elif not number.isdecimal():
+        return "Number must be numeric"
+    else:
+        phone = phonenumbers.parse(code + number, None)
+        if not phonenumbers.is_possible_number(phone):
+            return "Number is impossible"
+        elif not phonenumbers.is_valid_number(phone):
+            return "Number is invalid"
+
+
+def valid_wallet(coin, id):
+    if not coin and not id:
+        return
+    elif not coin:
+        return "Coin or currency is needed"
+    elif not id:
+        return "ID or IBAN is needed"
+    elif len(coin) > 5:
+        return "Coin or currency is too long"
+    elif len(id) < 13 or len(id) > 78:
+        return "ID or IBAN between 13 and 78"
+    elif not all(c in ascii_uppercase for c in coin):
+        return "Coin or currency must be in uppercase letters"
+    elif not all(c in digits + ascii_letters for c in id):
+        return "ID or IBAN must be only digits and letters"
 
 
 def changing(user, current, password1, password2):

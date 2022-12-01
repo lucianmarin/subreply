@@ -8,7 +8,7 @@
         <a class="handle" href="/{{ member }}">
             {{ member.full_name | emojize }}
         </a>
-        {% if view == 'profile' %}
+        {% if view == 'member' %}
             <a class="done" href="/feed?s=%40{{ member }}" rel="nofollow">
                 @{{ member }}
             </a>
@@ -16,7 +16,7 @@
         {% if user %}
             <i>&bull;</i>
             {% if member.id == user.id %}
-                <a class="action" href="/options">edit</a>
+                <a class="action" href="/profile">edit</a>
             {% elif member.id in user.follows %}
                 <a class="action" onclick="postFollow(event, 'unfollow')" data-username="{{ member }}">unfollow</a>
             {% else %}

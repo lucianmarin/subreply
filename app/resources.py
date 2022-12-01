@@ -15,7 +15,7 @@ from app.models import Comment, Relation, Save, User
 from app.utils import build_hash, utc_timestamp, verify_hash
 from app.validation import (authentication, profiling, registration,
                             valid_content, valid_handle, valid_password,
-                            valid_reply, valid_thread)
+                            valid_reply, valid_thread, valid_phone, valid_wallet)
 from project.settings import FERNET, MAX_AGE, SMTP
 from project.vars import UNLOCK_HTML, UNLOCK_TEXT
 
@@ -297,7 +297,7 @@ class EditResource:
             raise HTTPFound(f"/{req.user}/{entry.id}")
 
 
-class ProfileResource:
+class MemberResource:
     def fetch_entries(self, member):
         entries = Comments.filter(created_by=member).order_by('-id')
         return entries.prefetch_related(PFR, PPFR)
@@ -309,7 +309,7 @@ class ProfileResource:
             raise HTTPNotFound
         entries, page, number = paginate(req, self.fetch_entries(member))
         resp.text = render(
-            page=page, view='profile', number=number, errors={},
+            page=page, view='member', number=number, errors={},
             user=req.user, member=member, entries=entries
         )
 
@@ -598,51 +598,62 @@ class AccountResource:
             raise HTTPFound('/threads')
 
 
-class SocialResource:
-    sites = [
-        'dribbble', 'github', 'instagram', 'linkedin', 'patreon',
-        'paypal', 'soundcloud', 'spotify', 'telegram', 'twitter'
-    ]
+class DetailsResource:
+    social = ['github', 'instagram', 'linkedin', 'patreon', 'spotify', 'twitter']
+    phone = ['code', 'number']
+    wallet = ['coin', 'id']
+
+    def update(self, form, d, fields, is_lower=False):
+        for field in fields:
+            value = form.getvalue(field, '').strip()
+            if value:
+                d[field] = value.lower() if is_lower else value
 
     @before(auth_user)
     @before(login_required)
     def on_get(self, req, resp):
         form = FieldStorage(fp=req.stream, environ=req.env)
         resp.text = render(
-            page='social', view='social', user=req.user, form=form, errors={}
+            page='details', view='details', user=req.user, form=form, errors={}
         )
 
     @before(auth_user)
     @before(login_required)
     def on_post(self, req, resp):
         form = FieldStorage(fp=req.stream, environ=req.env)
-        f = {}
-        for site in self.sites:
-            value = form.getvalue(site, '').strip().lower()
-            if value:
-                f[site] = value
+        f, s, p, w = {}, {}, {}, {}
+        self.update(form, s, self.social, True)
+        self.update(form, p, self.phone)
+        self.update(form, w, self.wallet)
         errors = {}
-        for field, value in f.items():
-            if valid_handle(value):
-                errors[field] = valid_handle(value)
+        for field, value in s.items():
+            errors[field] = valid_handle(value)
+        errors['phone'] = valid_phone(p.get('code', ''), p.get('number', ''))
+        errors['wallet'] = valid_wallet(w.get('coin', ''), w.get('id', ''))
+        errors = {k: v for k, v in errors.items() if v}
         if errors:
+            f.update(p)
+            f.update(s)
+            f.update(w)
             resp.text = render(
-                page='social', view='social',
-                user=req.user, errors=errors, form=form, fields=f
+                page='details', view='details', fields=f,
+                user=req.user, errors=errors, form=form
             )
         else:
-            req.user.links = f
-            req.user.save(update_fields=['links'])
-            raise HTTPFound(f"/{req.user.username}")
+            req.user.phone = p
+            req.user.social = s
+            req.user.wallet = w
+            req.user.save(update_fields=['phone', 'social', 'wallet'])
+            raise HTTPFound(f"/{req.user}")
 
 
-class OptionsResource:
+class ProfileResource:
     @before(auth_user)
     @before(login_required)
     def on_get(self, req, resp):
         form = FieldStorage(fp=req.stream, environ=req.env)
         resp.text = render(
-            page='options', view='options',
+            page='profile', view='profile',
             user=req.user, errors={}, form=form
         )
 
@@ -663,7 +674,7 @@ class OptionsResource:
         errors = profiling(f, req.user.id)
         if errors:
             resp.text = render(
-                page='options', view='options',
+                page='profile', view='profile',
                 user=req.user, errors=errors, form=form, fields=f
             )
         else:

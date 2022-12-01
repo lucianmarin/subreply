@@ -15,7 +15,7 @@
     {% if entry.parent %}
         <meta name="robots" content="noindex nofollow">
     {% endif %}
-{% elif view == 'profile' %}
+{% elif view == 'member' %}
     <meta name="description" content="{{ member.description }}">
     {% if member.emoji %}
         <meta name="keywords" content="{{ member.emoji | keywords }}">
@@ -29,7 +29,7 @@
     <meta name="robots" content="noindex nofollow">
 {% endif %}
 
-{% if view == 'profile' %}
+{% if view == 'member' %}
     <title>{{ member.full_name | emojize }} @{{ member }}</title>
 {% elif view == 'reply' %}
     <title>{{ entry.content | emojize | shorten(48) }}</title>

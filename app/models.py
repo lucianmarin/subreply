@@ -31,7 +31,9 @@ class User(models.Model):
     location = models.CharField(max_length=60, default='')
     description = models.CharField(max_length=120, default='')
     website = models.CharField(max_length=120, default='')
-    links = models.JSONField(default=dict)
+    phone = models.JSONField(default=dict)
+    wallet = models.JSONField(default=dict)
+    social = models.JSONField(default=dict)
 
     class Meta:
         unique_together = ['emoji', 'first_name', 'last_name']
