@@ -7,14 +7,11 @@
 {% if user and (member.phone or member.wallet) %}
     <div class="entry">
         <div class="status">
-            {% if member.phone and member.wallet %}
-                ({{ member.phone.code }}) {{ member.phone.number }}
-                &bull;
-                ({{ member.wallet.coin }}) {{ member.wallet.id }}
-            {% elif member.phone %}
-                Phone is ({{ member.phone.code }}) {{ member.phone.number }}.
-            {% elif member.wallet %}
-                Wallet is ({{ member.wallet.coin }}) {{ member.wallet.id }}.
+            {% if member.phone %}
+                Phone at ({{ member.phone.code }}) {{ member.phone.number }}.
+            {% endif %}
+            {% if member.wallet %}
+                Pay at ({{ member.wallet.coin }}) {{ member.wallet.id }}.
             {% endif %}
         </div>
     </div>
