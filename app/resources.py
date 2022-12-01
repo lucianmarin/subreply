@@ -599,7 +599,7 @@ class AccountResource:
 
 
 class DetailsResource:
-    social = ['github', 'instagram', 'linkedin', 'patreon', 'spotify', 'twitter']
+    social = ['dribbble', 'github', 'instagram', 'linkedin', 'pinboard', 'spotify']
     phone = ['code', 'number']
     wallet = ['coin', 'id']
 

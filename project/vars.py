@@ -14,6 +14,7 @@ SOCIAL = {
     'linkedin': '<a href="https://linkedin.com/in/{0}">LinkedIn</a>',
     'patreon': '<a href="https://patreon.com/{0}">Patreon</a>',
     'paypal': '<a href="https://paypal.me/{0}">PayPal</a>',
+    'pinboard': '<a href="https://pinboard.in/u:{0}/">Pinboard</a>',
     'soundcloud': '<a href="https://soundcloud.com/{0}">SoundCloud</a>',
     'spotify': '<a href="https://open.spotify.com/user/{0}">Spotify</a>',
     'telegram': '<a href="https://t.me/{0}">Telegram</a>',
