@@ -52,6 +52,6 @@ class Command(BaseCommand):
             print('  threads:', threads)
             print('  replies:', replies)
 
-    def handle(self, *args, **options):
+    def handle(self, *args, **options):  # noqa
         self.yearly()
         self.total()

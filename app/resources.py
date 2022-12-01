@@ -8,14 +8,14 @@ from falcon import HTTPFound, HTTPNotFound, before
 from falcon.status_codes import HTTP_200
 from strictyaml import as_document
 
-from app.forms import get_content, get_emoji, get_metadata, get_name
+from app.forms import get_content, get_emoji, get_location, get_metadata, get_name
 from app.hooks import auth_user, login_required
 from app.jinja import render
 from app.models import Comment, Relation, Save, User
 from app.utils import build_hash, utc_timestamp, verify_hash
-from app.validation import (authentication, profiling, registration,
-                            valid_content, valid_handle, valid_password,
-                            valid_reply, valid_thread, valid_phone, valid_wallet)
+from app.validation import (authentication, profiling, registration, valid_content,
+                            valid_handle, valid_password, valid_phone, valid_reply,
+                            valid_thread, valid_wallet)
 from project.settings import FERNET, MAX_AGE, SMTP
 from project.vars import UNLOCK_HTML, UNLOCK_TEXT
 
@@ -668,7 +668,7 @@ class ProfileResource:
         f['last_name'] = get_name(form, 'last')
         f['emoji'] = get_emoji(form)
         f['birthday'] = form.getvalue('birthday', '').strip()
-        f['location'] = form.getvalue('location', '')
+        f['location'] = get_location(form)
         f['description'] = get_content(form, 'description')
         f['website'] = form.getvalue('website', '').strip().lower()
         errors = profiling(f, req.user.id)

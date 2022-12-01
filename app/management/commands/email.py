@@ -48,7 +48,7 @@ class Command(BaseCommand):
         else:
             print(user, "failed")
 
-    def handle(self, *args, **options):
+    def handle(self, *args, **options):  # noqa
         to_user = self.get_user(mock=False)
         if to_user:
             self.send_mail(to_user)

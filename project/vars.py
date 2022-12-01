@@ -2,8 +2,13 @@ from json import load
 from pathlib import Path
 
 
-with open(Path(__file__).parent.parent / 'static/worldcities.json') as file:
-    WORLD = load(file)
+ROOT = Path(__file__).parent.parent
+
+with open(ROOT / 'static/cities.json') as file:
+    CITIES = load(file)
+
+with open(ROOT / 'static/countries.json') as file:
+    COUNTRIES = load(file)
 
 MIN_YEAR, MAX_YEAR = 1918, 2018
 

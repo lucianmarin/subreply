@@ -1,16 +1,16 @@
 from datetime import date
 from string import ascii_letters, ascii_uppercase, digits
 
-from phonenumbers import parse, is_possible_number, is_valid_number
 from django.db.models import Q
 from dns.resolver import query as dns_query
 from emoji import get_emoji_unicode_dict
+from phonenumbers import is_possible_number, is_valid_number, parse
 from requests import head
 
 from app.forms import get_metadata
 from app.models import Comment, User
 from app.utils import has_repetions, verify_hash
-from project.vars import INVALID, LATIN, MAX_YEAR, MIN_YEAR, WORLD
+from project.vars import INVALID, LATIN, MAX_YEAR, MIN_YEAR, CITIES
 
 
 def valid_content(value, user, limit=640):
@@ -263,11 +263,11 @@ def valid_location(value, delimiter=", "):
             return "City, Country or just Country"
         elif value.count(delimiter):
             city, country = value.split(delimiter)
-            if country not in WORLD:
+            if country not in CITIES:
                 return "Country is invalid"
-            elif city not in WORLD[country]:
+            elif city not in CITIES[country]:
                 return "City is invalid"
-        elif value not in WORLD:
+        elif value not in CITIES:
             return "Country is invalid"
 
 

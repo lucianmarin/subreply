@@ -3,6 +3,17 @@ from string import ascii_letters, digits
 from emoji import demojize
 from unidecode import unidecode
 
+from project.vars import COUNTRIES
+
+
+def get_location(form, delimiter=", "):
+    location = form.getvalue('location', '').strip()
+    if delimiter in location:
+        city, country = location.split(delimiter)
+        country = COUNTRIES.get(country, country)
+        return delimiter.join([city, country])
+    return location
+
 
 def get_content(form, field="content"):
     value = form.getvalue(field, '')
