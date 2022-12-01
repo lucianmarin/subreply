@@ -14,7 +14,7 @@
                 <div class="one">
                     <label for="id_code">Code</label>
                     <input type="text" name="code" id="id_code" maxlength="4"
-                        placeholder="+40" value="{% if form %}{{ fields.code }}{% else %}{{ user.phone.code }}{% endif %}">
+                        placeholder="+1" value="{% if form %}{{ fields.code }}{% else %}{{ user.phone.code }}{% endif %}">
                 </div>
                 <div class="two">
                     <label for="id_number">Phone number</label>
@@ -29,7 +29,7 @@
                 <div class="one">
                     <label for="id_coin">Coin</label>
                     <input type="text" name="coin" id="id_coin" maxlength="5"
-                        placeholder="BTC" value="{% if form %}{{ fields.coin }}{% else %}{{ user.wallet.coin }}{% endif %}">
+                        placeholder="USD" value="{% if form %}{{ fields.coin }}{% else %}{{ user.wallet.coin }}{% endif %}">
                 </div>
                 <div class="two">
                     <label for="id_id">Wallet ID <i>or IBAN</i></label>
