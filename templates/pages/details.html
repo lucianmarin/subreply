@@ -73,20 +73,20 @@
                         value="{% if form %}{{ fields.linkedin }}{% else %}{{ user.social.linkedin }}{% endif %}">
                 </div>
                 <div class="three">
-                    <label for="id_pinboard">Pinboard</label>
-                    <input type="text" name="pinboard" id="id_pinboard" maxlength="15"
-                        value="{% if form %}{{ fields.pinboard }}{% else %}{{ user.social.pinboard }}{% endif %}">
-                </div>
-                <div class="three">
                     <label for="id_spotify">Spotify</label>
                     <input type="text" name="spotify" id="id_spotify" maxlength="15"
                         value="{% if form %}{{ fields.spotify }}{% else %}{{ user.social.spotify }}{% endif %}">
                 </div>
+                <div class="three">
+                    <label for="id_youtube">YouTube</label>
+                    <input type="text" name="youtube" id="id_youtube" maxlength="15"
+                        value="{% if form %}{{ fields.youtube }}{% else %}{{ user.social.youtube }}{% endif %}">
+                </div>
                 {% if 'linkedin' in errors %}
                     <div class="error">{{ errors['linkedin'] }}</div>
                 {% endif %}
-                {% if 'pinboard' in errors %}
-                    <div class="error">{{ errors['pinboard'] }}</div>
+                {% if 'youtube' in errors %}
+                    <div class="error">{{ errors['youtube'] }}</div>
                 {% endif %}
                 {% if 'spotify' in errors %}
                     <div class="error">{{ errors['spotify'] }}</div>
