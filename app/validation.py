@@ -1,7 +1,7 @@
 from datetime import date
 from string import ascii_letters, ascii_uppercase, digits
 
-import phonenumbers
+from phonenumbers import parse, is_possible_number, is_valid_number
 from django.db.models import Q
 from dns.resolver import query as dns_query
 from emoji import get_emoji_unicode_dict
@@ -292,10 +292,10 @@ def valid_phone(code, number):
     elif not number.isdecimal():
         return "Number must be numeric"
     else:
-        phone = phonenumbers.parse(code + number, None)
-        if not phonenumbers.is_possible_number(phone):
+        phone = parse(code + number, None)
+        if not is_possible_number(phone):
             return "Number is impossible"
-        elif not phonenumbers.is_valid_number(phone):
+        elif not is_valid_number(phone):
             return "Number is invalid"
 
 
