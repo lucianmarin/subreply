@@ -8,10 +8,10 @@
     <div class="entry">
         <div class="status">
             {% if member.phone %}
-                Phone at ({{ member.phone.code }}) {{ member.phone.number }}.
+                Phone at {{ member.phone | phonenumber }}.
             {% endif %}
             {% if member.wallet %}
-                Pay at ({{ member.wallet.coin }}) {{ member.wallet.id }}.
+                Pay in {{ member.wallet.coin }} at {{ member.wallet.id }}.
             {% endif %}
         </div>
     </div>

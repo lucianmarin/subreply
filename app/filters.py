@@ -1,9 +1,16 @@
 from datetime import date, datetime, timezone
 from string import ascii_letters, digits
 
+from phonenumbers import PhoneNumberFormat, format_number, parse
 from tldextract import extract
 
 from project.vars import SOCIAL
+
+
+def phonenumber(phone):
+    """Format phone number."""
+    number = parse(phone['code'] + phone['number'], None)
+    return format_number(number, PhoneNumberFormat.INTERNATIONAL)
 
 
 def enumerize(links):
