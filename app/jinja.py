@@ -16,6 +16,7 @@ env.bytecode_cache = FileSystemBytecodeCache()
 env.loader = FileSystemLoader('templates')
 
 env.filters['age'] = age
+env.filters['cap'] = lambda notif: "+" if notif > 99 else str(notif)
 env.filters['city'] = lambda loc: loc.split(",")[0] if "," in loc else loc
 env.filters['emojize'] = emojize
 env.filters['enumerize'] = enumerize
@@ -28,7 +29,7 @@ env.filters['shortdate'] = lambda ts: timeago(utc_timestamp() - ts)
 env.filters['shorten'] = lambda txt, w: shorten(txt, w, placeholder="...")
 
 env.globals['brand'] = "Subreply"
-env.globals['v'] = 228
+env.globals['v'] = 229
 
 
 def render(page, **kwargs):

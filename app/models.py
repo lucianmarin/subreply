@@ -57,7 +57,7 @@ class User(models.Model):
     def abbr_name(self):
         if self.last_name:
             return self.first_name[:1] + self.last_name[:1]
-        return self.first_name[:1]
+        return self.first_name[:3]
 
     @cached_property
     def notif_followers(self):

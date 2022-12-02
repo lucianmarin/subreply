@@ -1,4 +1,5 @@
 html
+    --sup: 8px
     --tiny: 10px
     --small: 13px
     --regular: 14px
@@ -193,6 +194,7 @@ table
         display: block
         height: 20px
         padding: 5px 0
+        position: relative
         transition: background-color var(--d)
         &:hover
             background-color: var(--white)
@@ -207,11 +209,18 @@ table
             svg path
                 stroke: var(--accent)
         &.red
+            color: var(--orange)
             svg path
                 stroke: var(--orange)
     sup
-        font-size: var(--tiny)
-        margin-left: 1px
+        color: var(--orange)
+        font-size: var(--sup)
+        font-weight: bold
+        position: absolute
+        top: 10px
+        right: 0
+        text-align: left
+        width: 15px
     svg
         float: right
         margin-right: 15px
