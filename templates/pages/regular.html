@@ -10,7 +10,7 @@
     <div class="list">
         {% if view == 'member' %}
             {% include "common/user.html" %}
-            {% include "common/status.html" %}
+            {% if user %} {% include "common/status.html" %} {% endif %}
         {% endif %}
 
         {% for entry in entries %}

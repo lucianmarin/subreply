@@ -85,6 +85,12 @@ class User(models.Model):
     def saves(self):
         return self.saved.values_list('to_comment_id', flat=True)
 
+    @cached_property
+    def links(self):
+        if self.phone:
+            self.social['phone'] = self.phone['code'] + self.phone['number']
+        return self.social
+
 
 class Comment(models.Model):
     ancestors = models.ManyToManyField('self', related_name='descendants',

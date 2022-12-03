@@ -1,18 +1,13 @@
-{% if member.social %}
+{% if member.links %}
     <div class="entry">
-        <div class="status">Also on {{ member.social | enumerize| safe }}.</div>
+        <div class="status">Also on {{ member.links | enumerize | safe }}.</div>
     </div>
 {% endif %}
 
-{% if user and (member.phone or member.wallet) %}
+{% if member.wallet %}
     <div class="entry">
         <div class="status">
-            {% if member.phone %}
-                Phone at {{ member.phone | phonenumber }}.
-            {% endif %}
-            {% if member.wallet %}
-                Pay in {{ member.wallet.coin }} at {{ member.wallet.id }}.
-            {% endif %}
+            Accepts {{ member.wallet.coin }} at {{ member.wallet.id }}.
         </div>
     </div>
 {% endif %}
