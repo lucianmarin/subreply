@@ -308,8 +308,8 @@ def valid_wallet(coin, id):
         return "ID or IBAN is needed"
     elif len(coin) > 5:
         return "Coin or currency is too long"
-    elif len(id) < 13 or len(id) > 78:
-        return "ID or IBAN between 13 and 78"
+    elif len(id) < 15 or len(id) > 95:
+        return "ID or IBAN between 15 and 95"
     elif not all(c in ascii_uppercase for c in coin):
         return "Coin or currency must be in uppercase letters"
     elif not all(c in digits + ascii_letters for c in id):

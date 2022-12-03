@@ -85,7 +85,7 @@
                 </div>
                 <div class="two">
                     <label for="id_id">Wallet ID <i>or IBAN</i></label>
-                    <input type="text" name="id" id="id_id" maxlength="78"
+                    <input type="text" name="id" id="id_id" maxlength="95"
                         value="{% if form %}{{ fields.id }}{% else %}{{ user.wallet.id }}{% endif %}">
                 </div>
                 {% if 'wallet' in errors %}
