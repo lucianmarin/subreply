@@ -5,7 +5,7 @@ from urllib.parse import quote_plus
 from emoji import emojize
 from jinja2 import Environment, FileSystemBytecodeCache, FileSystemLoader
 
-from app.filters import age, enumerize, parser, phonenumber, timeago
+from app.filters import age, enumerize, parser, timeago
 from app.utils import utc_timestamp
 from project.settings import DEBUG
 
@@ -23,7 +23,6 @@ env.filters['enumerize'] = enumerize
 env.filters['isoformat'] = lambda ts: datetime.fromtimestamp(ts).isoformat()
 env.filters['keywords'] = lambda emo: ", ".join(emo[1:-1].split("_"))
 env.filters['parser'] = parser
-env.filters['phonenumber'] = phonenumber
 env.filters['quote'] = quote_plus
 env.filters['shortdate'] = lambda ts: timeago(utc_timestamp() - ts)
 env.filters['shorten'] = lambda txt, w: shorten(txt, w, placeholder="...")

@@ -1,16 +1,9 @@
 from datetime import date, datetime, timezone
 from string import ascii_letters, digits
 
-from phonenumbers import PhoneNumberFormat, format_number, parse
 from tldextract import extract
 
-from project.vars import SOCIAL
-
-
-def phonenumber(phone):
-    """Format phone number."""
-    number = parse(phone['code'] + phone['number'], None)
-    return format_number(number, PhoneNumberFormat.INTERNATIONAL)
+from project.vars import LINKS
 
 
 def enumerize(links):
@@ -18,9 +11,9 @@ def enumerize(links):
     keys = sorted(links)  # eg. github
     holder = ""
     for key in keys[:-2]:
-        holder += SOCIAL[key].format(links[key]) + ", "
+        holder += LINKS[key].format(links[key]) + ", "
     for index, key in enumerate(keys[-2:]):
-        holder += SOCIAL[key].format(links[key])
+        holder += LINKS[key].format(links[key])
         if not index and len(keys) > 1:
             holder += " and "
     return holder
