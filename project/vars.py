@@ -11,7 +11,7 @@ with open(ROOT / 'static/countries.json') as file:
 
 MIN_YEAR, MAX_YEAR = 1918, 2018
 
-SOCIAL = {
+LINKS = {
     'dribbble': '<a href="https://dribbble.com/{0}">Dribbble</a>',
     'github': '<a href="https://github.com/{0}">GitHub</a>',
     'instagram': '<a href="https://instagram.com/{0}">Instagram</a>',
