@@ -154,7 +154,7 @@ class FeedResource:
             errors['content'] = valid_thread(content)
         errors = {k: v for k, v in errors.items() if v}
         if errors:
-            entries = self.fetch_entries(req.user)
+            entries = self.fetch_entries(req.user)[:16]
             resp.text = render(
                 page='regular', view='feed', content=content, number=1,
                 user=req.user, entries=entries, errors=errors
