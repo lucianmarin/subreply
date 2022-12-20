@@ -6,6 +6,19 @@ from unidecode import unidecode
 from project.vars import COUNTRIES
 
 
+def get_content(form, field="content"):
+    value = form.getvalue(field, '')
+    demojized = demojize(value)
+    decoded = unidecode(demojized)
+    text = " ".join(w.strip() for w in decoded.split())
+    return to_metadata(text)
+
+
+def get_emoji(form):
+    value = form.getvalue('emoji', '').strip()
+    return demojize(value)
+
+
 def get_location(form, delimiter=", "):
     location = form.getvalue('location', '').strip()
     if delimiter in location:
@@ -13,18 +26,6 @@ def get_location(form, delimiter=", "):
         country = COUNTRIES.get(country, country)
         return delimiter.join([city, country])
     return location
-
-
-def get_content(form, field="content"):
-    value = form.getvalue(field, '')
-    demojized = demojize(value)
-    decoded = unidecode(demojized)
-    return " ".join(w.strip() for w in decoded.split())
-
-
-def get_emoji(form):
-    value = form.getvalue('emoji', '').strip()
-    return demojize(value)
 
 
 def get_name(form, field):
@@ -62,3 +63,22 @@ def get_metadata(text):
             elif handle and all(c in limits for c in handle):
                 hashtags.append(handle)
     return hashtags, links, mentions
+
+
+def to_metadata(text):
+    words = []
+    for word in text.split():
+        if word.startswith(('http://', 'https://')):
+            protocol, separator, address = word.partition('://')
+            domain, dot, full_path = address.partition('.')
+            if domain == 'subreply':
+                ltd, slash, path = full_path.partition('/')
+                if '/' in path:
+                    username, slash, reply = path.partition('/')
+                    if reply:
+                        words.append("@{0}/{1}".format(username, reply))
+                elif path:
+                    words.append("@{0}".format(path))
+        else:
+            words.append(word)
+    return " ".join(words)
