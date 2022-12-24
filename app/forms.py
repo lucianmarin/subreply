@@ -68,17 +68,26 @@ def get_metadata(text):
 def to_metadata(text):
     words = []
     for word in text.split():
-        if word.startswith(('http://', 'https://')):
-            protocol, separator, address = word.partition('://')
-            domain, dot, full_path = address.partition('.')
-            if domain == 'subreply':
-                ltd, slash, path = full_path.partition('/')
-                if '/' in path:
-                    username, slash, reply = path.partition('/')
-                    if reply:
-                        words.append("@{0}/{1}".format(username, reply))
-                elif path:
-                    words.append("@{0}".format(path))
-        else:
-            words.append(word)
+        endswith = ""
+        startswith = ""
+        if word.endswith(('.', ',', '!', '?', ':', ';')):
+            endswith = word[-1:]
+            word = word[:-1]
+        if word.endswith((')', ']', '}', "'", '"')):
+            endswith = word[-1:] + endswith
+            word = word[:-1]
+        if word.startswith(('(', '[', '{', "'", '"')):
+            startswith = word[:1]
+            word = word[1:]
+        if word.endswith("'s"):
+            endswith = word[-2:] + endswith
+            word = word[:-2]
+        if word.startswith(('http://subreply.com/', 'https://subreply.com/')):
+            parts = word.split('/')
+            if len(parts) == 4:
+                word = "@{0}".format(parts[3])
+            if len(parts) == 5:
+                word = "@{0}/{1}".format(parts[3], parts[4])
+        word = startswith + word + endswith
+        words.append(word)
     return " ".join(words)
