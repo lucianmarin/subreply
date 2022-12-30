@@ -32,34 +32,34 @@
     </div>
 
     <div class="request upper">
-        {% if user.comments.count() < 16 %}
-            <form action="/account/delete" enctype="multipart/form-data" method="post" autocomplete="off">
-                <div class="line">
-                    <label for="id_confirm">Confirm password<i>*</i></label>
-                    <input type="password" name="confirm" id="id_confirm"
-                        value="{{ form.getvalue('confirm', '') }}">
-                    {% if 'confirm' in delete_errors %}
-                        <div class="error">{{ delete_errors['confirm'] }}</div>
-                    {% endif %}
-                </div>
-                <div class="line">
-                    <input type="submit" value="Delete">
-                </div>
-            </form>
-        {% else %}
-            <form action="/account/export" enctype="multipart/form-data" method="post" autocomplete="off">
-                <div class="line">
-                    <label for="id_username">Username<i>*</i></label>
-                    <input type="text" name="username" id="id_username"
-                        value="{{ form.getvalue('username', '') }}">
-                    {% if 'username' in delete_errors %}
-                        <div class="error">{{ delete_errors['username'] }}</div>
-                    {% endif %}
-                </div>
-                <div class="line">
-                    <input type="submit" value="Export">
-                </div>
-            </form>
-        {% endif %}
+        <form action="/account/export" enctype="multipart/form-data" method="post" autocomplete="off">
+            <div class="line">
+                <label for="id_username">Username<i>*</i></label>
+                <input type="text" name="username" id="id_username"
+                    value="{{ form.getvalue('username', '') }}">
+                {% if 'username' in delete_errors %}
+                    <div class="error">{{ delete_errors['username'] }}</div>
+                {% endif %}
+            </div>
+            <div class="line">
+                <input type="submit" value="Export">
+            </div>
+        </form>
+    </div>
+
+    <div class="request upper">
+        <form action="/account/delete" enctype="multipart/form-data" method="post" autocomplete="off">
+            <div class="line">
+                <label for="id_confirm">Confirm password<i>*</i></label>
+                <input type="password" name="confirm" id="id_confirm"
+                    value="{{ form.getvalue('confirm', '') }}">
+                {% if 'confirm' in delete_errors %}
+                    <div class="error">{{ delete_errors['confirm'] }}</div>
+                {% endif %}
+            </div>
+            <div class="line">
+                <input type="submit" value="Delete">
+            </div>
+        </form>
     </div>
 {% endblock %}
