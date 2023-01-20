@@ -8,7 +8,7 @@ html { --sup: 8px; --tiny: 10px; --small: 13px; --regular: 14px; --radius: 6px; 
 
 * { margin: 0; padding: 0; }
 
-body { background-color: var(--gainsboro); color: var(--black); cursor: default; }
+body { background-color: var(--white); color: var(--black); cursor: default; }
 
 a { color: var(--black); cursor: pointer; text-decoration: none; transition: color var(--d); }
 
@@ -54,15 +54,9 @@ table td:nth-child(even), table th:nth-child(even) { width: calc(50% - 30px); ov
 
 table td:nth-child(even):last-child, table th:nth-child(even):last-child { border-right: 0 none; }
 
-.container { display: grid; grid-template-columns: auto 150px 525px auto; }
+.container { display: grid; grid-column-gap: 10px; grid-template-columns: auto 150px 525px auto; }
 
 .container > div { min-height: 100vh; }
-
-.sidebar, .leftside { background-color: var(--whitesmoke); }
-
-.main, .rightside { background-color: var(--white); }
-
-.main { padding: 0 10px; }
 
 .logo { font-size: var(--tiny); font-weight: bold; line-height: 30px; text-align: center; overflow: hidden; position: sticky; top: 10px; padding: 0 10px; }
 
@@ -70,25 +64,23 @@ table td:nth-child(even):last-child, table th:nth-child(even):last-child { borde
 
 .logo.on a { color: var(--accent); }
 
-.links { position: sticky; text-align: right; top: 50px; }
+.links { position: sticky; text-align: right; top: 10px; }
 
-.links a { background-color: var(--whitesmoke); border-bottom: var(--gainsboro) 1px solid; color: var(--black); display: block; height: 20px; padding: 5px 0; position: relative; transition: background-color var(--d); }
+.links a { background-color: var(--white); border-radius: var(--radius); color: var(--black); display: block; height: 20px; padding: 5px 0; position: relative; transition: background-color var(--d); }
 
-.links a:hover { background-color: var(--white); }
+.links a:hover { background-color: var(--whitesmoke); }
 
-.links a:first-child { border-top-left-radius: var(--radius); }
-
-.links a:last-child { border-bottom: 0 none; border-bottom-left-radius: var(--radius); }
-
-.links a.on { background-color: var(--white); color: var(--accent); }
+.links a.on { background-color: var(--whitesmoke); color: var(--accent); }
 
 .links a.on svg path { stroke: var(--accent); }
 
 .links a.on sup { color: var(--accent); }
 
-.links sup { color: var(--orange); font-size: var(--sup); font-weight: bold; position: absolute; top: 10px; right: 0; text-align: left; width: 15px; }
+.links a.red svg path { stroke: var(--orange); }
 
-.links svg { float: right; margin-right: 15px; margin-left: 10px; padding: 2px; }
+.links sup { color: var(--orange); font-size: var(--sup); font-weight: bold; margin-left: 1px; }
+
+.links svg { float: right; margin: 0 10px; padding: 2px; }
 
 .title { color: var(--silver); font-weight: bold; margin: 15px 0; overflow: hidden; }
 
@@ -262,9 +254,9 @@ table td:nth-child(even):last-child, table th:nth-child(even):last-child { borde
 
 .about .emoji { float: left; margin-left: -40px; text-align: center; width: 40px; }
 
-@media (max-width: 674px) { .container { grid-template-columns: auto 50px 525px 0; } .links i { display: none; } }
+@media (max-width: 704px) { .container { grid-template-columns: auto 40px 525px 0; } .links i { display: none; } }
 
-@media (max-width: 574px) { .container { grid-template-columns: 0 50px calc(100% - 50px) 0; } .links a:first-child, .links a:last-child { border-radius: 0; } }
+@media (max-width: 594px) { .container { grid-template-columns: 0 40px calc(100% - 70px) 0; } }
 
 @font-face { font-family: "Route 159"; font-style: normal; font-weight: normal; src: url(/static/route159-regular.woff2) format("woff2"); }
 
