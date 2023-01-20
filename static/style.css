@@ -74,11 +74,11 @@ table td:nth-child(even):last-child, table th:nth-child(even):last-child { borde
 
 .links a.on svg path { stroke: var(--accent); }
 
-.links a.on sup { color: var(--accent); }
+.links a.on span { color: var(--accent); }
 
 .links a.red svg path { stroke: var(--orange); }
 
-.links sup { color: var(--orange); font-size: var(--sup); font-weight: bold; margin-left: 1px; }
+.links span { color: var(--orange); display: block; font-size: var(--sup); font-weight: bold; position: absolute; right: 0; text-align: center; top: 0; width: 17px; }
 
 .links svg { float: right; margin: 0 10px; padding: 2px; }
 

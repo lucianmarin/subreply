@@ -13,19 +13,28 @@
             </svg>
         </a>
         <a href="/followers" class="{% if view == 'followers' %}on{% elif user.notif_followers %}red{% endif %}">
-            <i>Followers{% if user.notif_followers %}<sup>{{ user.notif_followers }}</sup>{% endif %}</i>
+            <i>Followers</i>
+            {% if user.notif_followers %}
+                <span>{{ user.notif_followers | cap }}</span>
+            {% endif %}
             <svg width="16" height="16" viewBox="0 0 24 24">
                 <path d="M3 4.5h14.25M3 9h9.75M3 13.5h9.75m4.5-4.5v12m0 0l-3.75-3.75M17.25 21L21 17.25" />
             </svg>
         </a>
         <a href="/mentions" class="{% if view == 'mentions' %}on{% elif user.notif_mentions %}red{% endif %}">
-            <i>Mentions{% if user.notif_mentions %}<sup>{{ user.notif_mentions }}</sup>{% endif %}</i>
+            <i>Mentions</i>
+            {% if user.notif_mentions %}
+                <span>{{ user.notif_mentions | cap }}<span>
+            {% endif %}
             <svg width="16" height="16" viewBox="0 0 24 24">
                 <path d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" />
             </svg>
         </a>
-        <a href="/replies" class="{% if view == 'replies' %}on{% elif user.notif_replies %}red{% endif %}">
-            <i>Replies{% if user.notif_replies %}<sup>{{ user.notif_replies }}</sup>{% endif %}</i>
+        <a href="/replies" class="{% if view == 'replies' %}on{% endif %}">
+            <i>Replies</i>
+            {% if user.notif_replies %}
+                <span>{{ user.notif_replies | cap }}</span>
+            {% endif %}
             <svg width="16" height="16" viewBox="0 0 24 24">
                 <path d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
             </svg>
@@ -72,8 +81,11 @@
             <path d="M15.042 21.672L13.684 16.6m0 0l-2.51 2.225.569-9.47 5.227 7.917-3.286-.672zm-7.518-.267A8.25 8.25 0 1120.25 10.5M8.288 14.212A5.25 5.25 0 1117.25 10.5" />
         </svg>
     </a>
-    <a href="/people" class="{% if view == 'people' %}on{% elif user and user.lobbies %}red{% endif %}">
-        <i>People{% if user and user.lobbies %}<sup>{{ user.lobbies }}</sup>{% endif %}</i>
+    <a href="/people" class="{% if view == 'people' %}on{% endif %}">
+        <i>People</i>
+        {% if user and user.lobbies %}
+            <span>{{ user.lobbies | cap }}</span>
+        {% endif %}
         <svg viewBox="0 0 24 24" width="16" height="16">
             <path d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" />
         </svg>
