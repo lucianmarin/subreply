@@ -106,7 +106,7 @@ class TxtResource:
         resp.text = "\n".join(lines)
 
     def on_get_map(self, req, resp):  # noqa
-        threads = Comment.objects.filter(parent=None).exclude(kids=None).values_list(
+        threads = Comments.filter(parent=None).exclude(replies=0).values_list(
             'created_by__username', 'id'
         ).order_by('id')
         users = User.objects.exclude(comments=None).values_list('username')
@@ -474,7 +474,7 @@ class DiscoverResource:
         if terms:
             f = self.build_query(terms)
         else:
-            last_ids = User.objects.annotate(last_id=Max('comments')).values('last_id')
+            last_ids = User.objects.annotate(last=Max('comments')).values('last')
             f = Q(id__in=last_ids)
         return Comments.filter(f).order_by('-id').prefetch_related(PFR, PPFR)
 
@@ -491,7 +491,7 @@ class DiscoverResource:
 
 class ThreadsResource:
     def fetch_entries(self):
-        entries = Comments.filter(parent=None).exclude(kids=None).order_by('-id')
+        entries = Comments.filter(parent=None).exclude(replies=0).order_by('-id')
         return entries.prefetch_related(PFR)
 
     @before(auth_user)
