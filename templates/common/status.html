@@ -15,9 +15,7 @@
 {% if user.id == 1 and not member.is_approved %}
     <div class="entry">
         <div class="status">
-            {{ member.email }} &mdash;
-            <a href="/{{ member }}/approve">Approve</a> &bull;
-            <a href="/{{ member }}/destroy">Destroy</a>
+            {{ member.email }}
         </div>
     </div>
 {% endif %}

@@ -409,19 +409,30 @@ class SavesResource:
 
 
 class LobbyResource:
+    def fetch_lobbies(self):
+        return User.objects.filter(is_approved=False).order_by('-id')
+
+    @before(auth_user)
+    @before(login_required)
+    def on_get(self, req, resp):
+        entries, page, number = paginate(req, self.fetch_lobbies())
+        resp.text = render(
+            page=page, view='lobby', number=number, user=req.user, entries=entries
+        )
+
     @before(auth_user)
     def on_get_approve(self, req, resp, username):  # noqa
         if not req.user.id == 1:
-            raise HTTPFound('/people')
+            raise HTTPFound('/lobby')
         User.objects.filter(username=username.lower()).update(is_approved=True)
-        raise HTTPFound('/people')
+        raise HTTPFound('/lobby')
 
     @before(auth_user)
-    def on_get_destroy(self, req, resp, username):  # noqa
+    def on_get_destroy(self, req, resp):  # noqa
         if not req.user.id == 1:
-            raise HTTPFound('/people')
-        User.objects.filter(username=username.lower()).delete()
-        raise HTTPFound('/people')
+            raise HTTPFound('/lobby')
+        User.objects.filter(is_approved=False).delete()
+        raise HTTPFound('/lobby')
 
 
 class PeopleResource:
@@ -445,17 +456,11 @@ class PeopleResource:
         qs = User.objects.filter(q).exclude(is_approved=False)
         return qs.order_by('id') if terms else qs.order_by('-id')
 
-    def fetch_lobbies(self):
-        return User.objects.filter(is_approved=False).order_by('-id')
-
     @before(auth_user)
     def on_get(self, req, resp):
         q = demojize(req.params.get('q', '').strip())
         terms = [t.strip() for t in q.split() if t.strip()]
-        if req.user and req.user.lobbies:
-            entries = self.fetch_lobbies()
-        else:
-            entries = self.fetch_entries(terms)
+        entries = self.fetch_entries(terms)
         entries, page, number = paginate(req, entries, 24)
         resp.text = render(
             page=page, view='people', number=number, q=q, user=req.user,
