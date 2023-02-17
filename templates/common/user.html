@@ -15,7 +15,7 @@
         {% endif %}
         {% if user %}
             <i>&bull;</i>
-            {% if not member.is_approveed and user.id == 1 %}
+            {% if not member.is_approved and user.id == 1 %}
                 <a class="action" href="/{{ member }}/approve">approve</a>
             {% elif member.id == user.id %}
                 <a class="action" href="/profile">edit</a>
