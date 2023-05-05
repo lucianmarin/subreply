@@ -476,12 +476,10 @@ class DiscoverResource:
         return query
 
     def fetch_entries(self, terms):
+        entries = Comments
         if terms:
-            f = self.build_query(terms)
-        else:
-            last_ids = User.objects.annotate(last=Max('comments')).values('last')
-            f = Q(id__in=last_ids)
-        return Comments.filter(f).order_by('-id').prefetch_related(PFR, PPFR)
+            entries = Comments.filter(self.build_query(terms))
+        return entries.order_by('-id').prefetch_related(PFR, PPFR)
 
     @before(auth_user)
     def on_get(self, req, resp):
