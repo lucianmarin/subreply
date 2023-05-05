@@ -1,6 +1,6 @@
 from cgi import FieldStorage
 
-from django.db.models import Count, Max, Prefetch, Q
+from django.db.models import Count, Prefetch, Q
 from emails import Message
 from emails.template import JinjaTemplate
 from emoji import demojize, get_emoji_unicode_dict
@@ -494,7 +494,10 @@ class DiscoverResource:
 
 class ThreadsResource:
     def fetch_entries(self):
-        entries = Comments.filter(parent=None).exclude(replies=0).order_by('-id')
+        sampling = Comment.objects.filter(parent=None).exclude(
+            kids=None
+        ).order_by('-id').values('id')[:24]
+        entries = Comments.filter(id__in=sampling).order_by('-replies', '-id')
         return entries.prefetch_related(PFR)
 
     @before(auth_user)
