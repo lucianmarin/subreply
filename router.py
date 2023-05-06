@@ -27,7 +27,7 @@ app.add_route('/replies', resources.RepliesResource())
 app.add_route('/saves', resources.SavesResource())
 
 app.add_route('/links', resources.LinksResource())
-app.add_route('/threads', resources.ThreadsResource())
+app.add_route('/trending', resources.TrendingResource())
 app.add_route('/people', resources.PeopleResource())
 app.add_route('/discover', resources.DiscoverResource())
 
