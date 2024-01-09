@@ -308,7 +308,7 @@ class EditResource:
 
 class RoomResource:
     def fetch_entries(self, room):
-        entries = Comments.filter(in_room=room, parent=None).order_by('-id')
+        entries = Comments.filter(in_room=room).order_by('-id')
         return entries.prefetch_related(PFR, PPFR)
 
     @before(auth_user)
