@@ -308,7 +308,7 @@ class EditResource:
 
 class RoomResource:
     def fetch_entries(self, room):
-        entries = Comments.filter(in_room=room).order_by('-id')
+        entries = Comments.filter(in_room=room, parent=None).order_by('-id')
         return entries.prefetch_related(PFR, PPFR)
 
     @before(auth_user)
@@ -338,7 +338,7 @@ class RoomResource:
             errors['content'] = valid_thread(content)
         errors = {k: v for k, v in errors.items() if v}
         if errors:
-            entries = self.fetch_entries(req.user)[:16]
+            entries = self.fetch_entries(room)[:16]
             resp.text = render(
                 page='regular', view='room', content=content, number=1,
                 user=req.user, entries=entries, errors=errors
