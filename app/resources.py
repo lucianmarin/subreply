@@ -331,7 +331,7 @@ class RoomResource:
         form = FieldStorage(fp=req.stream, environ=req.env)
         content = get_content(form)
         if not content:
-            raise HTTPFound(f"/sub/{name}")
+            raise HTTPFound(f"/r/{name}")
         errors = {}
         errors['content'] = valid_content(content, req.user)
         if not errors['content']:
@@ -360,7 +360,7 @@ class RoomResource:
                 in_room=room,
                 **extra
             )
-            raise HTTPFound(f"/sub/{name}")
+            raise HTTPFound(f"/r/{name}")
 
 
 class MemberResource:
@@ -588,7 +588,7 @@ class RoomsResource:
         q = q[1:] if q.startswith('#') else q
         if q and is_valid_room(q):
             room, _ = Room.objects.get_or_create(name=q.lower())
-            raise HTTPFound(f"/sub/{room.name}")
+            raise HTTPFound(f"/r/{room.name}")
         entries, page, number = paginate(req, self.fetch_entries())
         resp.text = render(
             page=page, view='rooms', number=number, user=req.user, q=q,
