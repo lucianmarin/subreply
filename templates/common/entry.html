@@ -5,7 +5,7 @@
                 {{ entry.created_by.full_name | emojize }}
             </a>
             {% if entry.in_room %}
-                in <a href="/sub/{{ entry.in_room }}">#{{ entry.in_room }}</a>
+                in <a href="/r/{{ entry.in_room }}">#{{ entry.in_room }}</a>
             {% else %}
                 <a href="/feed?s=%40{{ entry.created_by }}">
                     @{{ entry.created_by }}

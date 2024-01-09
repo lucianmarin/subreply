@@ -119,7 +119,7 @@ def parser(text):
         elif word.startswith('#'):
             handle = word[1:]
             if handle and all(c in limits for c in handle):
-                word = f'<a href="/sub/{handle}" rel="tag">#{handle}</a>'
+                word = f'<a href="/r/{handle}" rel="tag">#{handle}</a>'
         # wrap word
         word = startswith + word + endswith
         words.append(word)
