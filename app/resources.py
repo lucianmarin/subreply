@@ -586,9 +586,7 @@ class RoomsResource:
         q = req.params.get('q', '').strip()
         q = q[1:] if q.startswith('#') else q
         if q and is_valid_room(q):
-            room, is_new = Room.objects.get_or_create(name=q.lower())
-            if is_new:
-                Room.objects.filter(threads=None).delete()
+            room, _ = Room.objects.get_or_create(name=q.lower())
             raise HTTPFound(f"/r/{room}")
         entries, page, number = paginate(req, self.fetch_entries())
         resp.text = render(
