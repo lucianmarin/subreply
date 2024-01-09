@@ -149,7 +149,6 @@ class Relation(models.Model):
 
 class Room(models.Model):
     name = models.CharField(max_length=15, unique=True)
-    created_at = models.FloatField(default=.0)
 
     def __str__(self):
         return self.name
