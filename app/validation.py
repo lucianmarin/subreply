@@ -8,9 +8,24 @@ from phonenumbers import is_possible_number, is_valid_number, parse
 from requests import head
 
 from app.forms import get_metadata
-from app.models import Comment, User
+from app.models import Comment, Room, User
 from app.utils import has_repetions, verify_hash
 from project.vars import INVALID, LATIN, MAX_YEAR, MIN_YEAR, CITIES
+
+
+def is_valid_room(value):
+    limits = digits + ascii_letters
+    if not value:
+        return False
+    elif len(value) > 15:
+        return False
+    elif not all(c in limits for c in value):
+        return False
+    elif has_repetions(value):
+        return False
+    elif value in INVALID:
+        return False
+    return True
 
 
 def valid_content(value, user, limit=640):
@@ -26,21 +41,21 @@ def valid_content(value, user, limit=640):
     elif len(links) > 1:
         return "Link a single address"
     elif len(hashtags) > 1:
-        return "Hashtag a single channel"
+        return "Hashtag a single sub"
     elif hashtags:
         hashtag = hashtags[0].lower()
         if len(hashtag) > 15:
             return "Hashtag can't be longer than 15 characters"
         elif hashtag == value.lower()[1:]:
             return "Share more than a hashtag"
+        elif not Room.objects.filter(name=hashtag).exists():
+            return "#{0} doesn't exists".format(hashtag)
     elif links:
         link = links[0].lower()
         if len(link) > 240:
             return "Link can't be longer than 120 characters"
         elif link == value.lower():
             return "Share more than a link"
-        elif link.startswith(('http://subreply.com', 'https://subreply.com')):
-            return "Try @username or @username/1234"
     elif mentions:
         mention = mentions[0].lower()
         if user and mention == user.username:

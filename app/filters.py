@@ -116,17 +116,10 @@ def parser(text):
             handle = word[1:]
             if handle and all(c in limits for c in handle):
                 word = f'<a href="/{handle}" rel="author">@{handle}</a>'
-            elif '/' in handle:
-                username, slash, reply = handle.partition('/')
-                u_link = f'<a href="/{username}" rel="author">@{username}</a>'
-                r_link = f'<a href="/{username}/{reply}" rel="bookmark">{reply}</a>'
-                word = u_link + "/" + r_link
         elif word.startswith('#'):
             handle = word[1:]
-            if handle and all(c in digits for c in handle):
-                word = f'<a href="/reply/{handle}" rel="bookmark">#{handle}</a>'
-            elif handle and all(c in limits for c in handle):
-                word = f'<a href="/discover?q={handle}" rel="tag">#{handle}</a>'
+            if handle and all(c in limits for c in handle):
+                word = f'<a href="/sub/{handle}" rel="tag">#{handle}</a>'
         # wrap word
         word = startswith + word + endswith
         words.append(word)

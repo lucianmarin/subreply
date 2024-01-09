@@ -26,7 +26,6 @@ app.add_route('/mentions', resources.MentionsResource())
 app.add_route('/replies', resources.RepliesResource())
 app.add_route('/saves', resources.SavesResource())
 
-app.add_route('/links', resources.LinksResource())
 app.add_route('/trending', resources.TrendingResource())
 app.add_route('/people', resources.PeopleResource())
 app.add_route('/discover', resources.DiscoverResource())
@@ -53,6 +52,9 @@ app.add_route('/details', resources.DetailsResource())
 
 app.add_route('/lobby', resources.LobbyResource())
 app.add_route('/lobby/destroy', resources.LobbyResource(), suffix="destroy")
+
+app.add_route('/subs', resources.RoomsResource())
+app.add_route('/sub/{name}', resources.RoomResource())
 
 app.add_route('/edit/{id:int}', resources.EditResource())
 app.add_route('/reply/{id:int}', resources.RedirectResource())

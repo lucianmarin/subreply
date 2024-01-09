@@ -11,17 +11,17 @@ from strictyaml import as_document
 from app.forms import get_content, get_emoji, get_location, get_metadata, get_name
 from app.hooks import auth_user, login_required
 from app.jinja import render
-from app.models import Comment, Relation, Save, User
+from app.models import Comment, Relation, Room, Save, User
 from app.utils import build_hash, utc_timestamp, verify_hash
 from app.validation import (authentication, profiling, registration, valid_content,
                             valid_handle, valid_password, valid_phone, valid_reply,
-                            valid_thread, valid_wallet)
+                            valid_thread, valid_wallet, is_valid_room)
 from project.settings import FERNET, MAX_AGE, SMTP
 from project.vars import UNLOCK_HTML, UNLOCK_TEXT
 
 Comments = Comment.objects.annotate(
     replies=Count('descendants')
-).select_related('created_by')
+).select_related('created_by', 'in_room')
 
 PPFR = Prefetch('parent', Comments)
 PFR = Prefetch('kids', Comments.order_by('-id'))
@@ -138,7 +138,8 @@ class FeedResource:
         entries, page, number = paginate(req, self.fetch_entries(req.user))
         resp.text = render(
             page=page, view='feed', number=number, content=s,
-            user=req.user, entries=entries, errors={}
+            user=req.user, entries=entries, errors={},
+            placeholder="Share your thoughts"
         )
 
     @before(auth_user)
@@ -157,13 +158,16 @@ class FeedResource:
             entries = self.fetch_entries(req.user)[:16]
             resp.text = render(
                 page='regular', view='feed', content=content, number=1,
-                user=req.user, entries=entries, errors=errors
+                user=req.user, entries=entries, errors=errors,
+                placeholder="Share your thoughts"
             )
         else:
             hashtags, links, mentions = get_metadata(content)
             extra = {}
-            extra['hashtag'] = hashtags[0].lower() if hashtags else ''
             extra['link'] = links[0].lower() if links else ''
+            extra['at_room'] = Room.objects.get(
+                name=hashtags[0].lower()
+            ) if hashtags else None
             extra['at_user'] = User.objects.get(
                 username=mentions[0].lower()
             ) if mentions else None
@@ -225,8 +229,10 @@ class ReplyResource:
             )
         else:
             extra = {}
-            extra['hashtag'] = hashtags[0].lower() if hashtags else ''
             extra['link'] = links[0].lower() if links else ''
+            extra['at_room'] = Room.objects.get(
+                name=hashtags[0].lower()
+            ) if hashtags else None
             extra['at_user'] = User.objects.get(
                 username=mentions[0].lower()
             ) if mentions else None
@@ -236,6 +242,7 @@ class ReplyResource:
                 content=content,
                 created_at=utc_timestamp(),
                 created_by=req.user,
+                in_room=parent.in_room,
                 **extra
             )
             re.set_ancestors()
@@ -286,8 +293,10 @@ class EditResource:
             previous_at_user = entry.at_user
             entry.content = content
             entry.edited_at = utc_timestamp()
-            entry.hashtag = hashtags[0].lower() if hashtags else ''
             entry.link = links[0].lower() if links else ''
+            entry.at_room = Room.objects.get(
+                name=hashtags[0].lower()
+            ) if hashtags else None
             entry.at_user = User.objects.get(
                 username=mentions[0].lower()
             ) if mentions else None
@@ -295,6 +304,63 @@ class EditResource:
                 entry.mention_seen_at = .0
             entry.save(update_fields=fields)
             raise HTTPFound(f"/{req.user}/{entry.id}")
+
+
+class RoomResource:
+    def fetch_entries(self, room):
+        entries = Comments.filter(in_room=room).order_by('-id')
+        return entries.prefetch_related(PFR, PPFR)
+
+    @before(auth_user)
+    @before(login_required)
+    def on_get(self, req, resp, name):
+        room = Room.objects.filter(name=name.lower()).first()
+        if not room:
+            raise HTTPNotFound
+        entries, page, number = paginate(req, self.fetch_entries(room))
+        resp.text = render(
+            page=page, view='room', number=number, content='',
+            user=req.user, entries=entries, errors={},
+            placeholder=f"Share on #{room.name}"
+        )
+
+    @before(auth_user)
+    @before(login_required)
+    def on_post(self, req, resp, name):
+        room = Room.objects.filter(name=name.lower()).first()
+        form = FieldStorage(fp=req.stream, environ=req.env)
+        content = get_content(form)
+        if not content:
+            raise HTTPFound(f"/sub/{name}")
+        errors = {}
+        errors['content'] = valid_content(content, req.user)
+        if not errors['content']:
+            errors['content'] = valid_thread(content)
+        errors = {k: v for k, v in errors.items() if v}
+        if errors:
+            entries = self.fetch_entries(req.user)[:16]
+            resp.text = render(
+                page='regular', view='room', content=content, number=1,
+                user=req.user, entries=entries, errors=errors
+            )
+        else:
+            hashtags, links, mentions = get_metadata(content)
+            extra = {}
+            extra['link'] = links[0].lower() if links else ''
+            extra['at_room'] = Room.objects.get(
+                name=hashtags[0].lower()
+            ) if hashtags else None
+            extra['at_user'] = User.objects.get(
+                username=mentions[0].lower()
+            ) if mentions else None
+            th, is_new = Comment.objects.get_or_create(
+                content=content,
+                created_at=utc_timestamp(),
+                created_by=req.user,
+                in_room=room,
+                **extra
+            )
+            raise HTTPFound(f"/sub/{name}")
 
 
 class MemberResource:
@@ -510,16 +576,23 @@ class TrendingResource:
         )
 
 
-class LinksResource:
+class RoomsResource:
     def fetch_entries(self):
-        entries = Comments.exclude(link='').order_by('-id')
+        last_ids = Room.objects.annotate(last=Max('threads', filter=Q(threads__parent=None))).values('last')
+        entries = Comments.filter(id__in=last_ids).order_by('-id')
         return entries.prefetch_related(PFR, PPFR)
 
     @before(auth_user)
     def on_get(self, req, resp):
+        q = req.params.get('q', '').strip()
+        q = q[1:] if q.startswith('#') else q
+        if q and is_valid_room(q):
+            room, _ = Room.objects.get_or_create(name=q.lower())
+            raise HTTPFound(f"/sub/{room.name}")
         entries, page, number = paginate(req, self.fetch_entries())
         resp.text = render(
-            page=page, view='links', number=number, user=req.user, entries=entries
+            page=page, view='rooms', number=number, user=req.user, q=q,
+            entries=entries, placeholder="Find or create #sub"
         )
 
 

@@ -85,10 +85,10 @@
             </svg>
         </a>
     {% endif %}
-    <a href="/links" class="{% if view == 'links' %}on{% endif %}">
-        <i>Links</i>
+    <a href="/subs" class="{% if view in ['room', 'rooms'] %}on{% endif %}">
+        <i>Subs</i>
         <svg width="16" height="16" viewBox="0 0 24 24">
-            <path d="M15.042 21.672L13.684 16.6m0 0l-2.51 2.225.569-9.47 5.227 7.917-3.286-.672zm-7.518-.267A8.25 8.25 0 1120.25 10.5M8.288 14.212A5.25 5.25 0 1117.25 10.5" />
+            <path d="M5.25 8.25h15m-16.5 7.5h15m-1.8-13.5-3.9 19.5m-2.1-19.5-3.9 19.5" />
         </svg>
     </a>
     <a href="/people" class="{% if view == 'people' %}on{% endif %}">
