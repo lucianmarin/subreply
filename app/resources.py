@@ -320,7 +320,7 @@ class RoomResource:
         resp.text = render(
             page=page, view='room', number=number, content='',
             user=req.user, entries=entries, errors={},
-            placeholder=f"Share on #{room.name}"
+            placeholder=f"Share on #{room}", room=room
         )
 
     @before(auth_user)
@@ -587,7 +587,7 @@ class RoomsResource:
         q = q[1:] if q.startswith('#') else q
         if q and is_valid_room(q):
             room, _ = Room.objects.get_or_create(name=q.lower())
-            raise HTTPFound(f"/r/{room.name}")
+            raise HTTPFound(f"/r/{room}")
         entries, page, number = paginate(req, self.fetch_entries())
         resp.text = render(
             page=page, view='rooms', number=number, user=req.user, q=q,
