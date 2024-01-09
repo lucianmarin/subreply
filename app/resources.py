@@ -582,7 +582,6 @@ class RoomsResource:
         entries = Comments.filter(id__in=last_ids).order_by('-id')
         return entries.prefetch_related(PFR, PPFR)
 
-    @before(auth_user)
     def on_get(self, req, resp):
         q = req.params.get('q', '').strip()
         q = q[1:] if q.startswith('#') else q
