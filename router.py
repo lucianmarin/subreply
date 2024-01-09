@@ -31,6 +31,8 @@ app.add_route('/people', resources.PeopleResource())
 app.add_route('/discover', resources.DiscoverResource())
 
 app.add_route('/about', resources.AboutResource())
+app.add_route('/terms', resources.AboutResource(), suffix="terms")
+app.add_route('/privacy', resources.AboutResource(), suffix="privacy")
 app.add_route('/emoji', resources.EmojiResource())
 
 app.add_route('/robots.txt', resources.TxtResource(), suffix="bots")

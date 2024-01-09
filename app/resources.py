@@ -79,6 +79,18 @@ class AboutResource:
             page='about', view='about', user=req.user, luc=luc, sub=sub, emo=emo
         )
 
+    @before(auth_user)
+    def on_get_terms(self, req, resp):
+        resp.text = render(
+            page='terms', view='about', user=req.user
+        )
+
+    @before(auth_user)
+    def on_get_privacy(self, req, resp):
+        resp.text = render(
+            page='privacy', view='about', user=req.user
+        )
+
 
 class EmojiResource:
     @before(auth_user)
