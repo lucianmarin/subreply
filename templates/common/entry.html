@@ -1,16 +1,11 @@
 <div class="entry">
     {% if entry.in_room and not entry.parent %}
-        <div class="content">
-            <a class="name" href="/{{ entry.created_by }}">
+        <div class="above">
+            <a href="/{{ entry.created_by }}">
                 {{ entry.created_by.full_name | emojize }}
             </a>
-            {% if entry.in_room %}
-                in <a href="/r/{{ entry.in_room }}">#{{ entry.in_room }}</a>
-            {% else %}
-                <a href="/feed?s=%40{{ entry.created_by }}">
-                    @{{ entry.created_by }}
-                </a>
-            {% endif %}
+            in
+            <a href="/r/{{ entry.in_room }}">#{{ entry.in_room }}</a>
         </div>
     {% endif %}
     <div class="content">
