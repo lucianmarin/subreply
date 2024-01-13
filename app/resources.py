@@ -606,7 +606,7 @@ class RoomsResource:
         entries, page, number = paginate(req, self.fetch_entries())
         resp.text = render(
             page=page, view='rooms', number=number, user=req.user, q=q,
-            entries=entries, placeholder="Find or create #sub"
+            entries=entries, placeholder="Create or find a #sub"
         )
 
 
