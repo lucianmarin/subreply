@@ -138,7 +138,11 @@ table td:nth-child(even):last-child, table th:nth-child(even):last-child { borde
 
 .above a { font-weight: bold; }
 
+.above a:hover { color: var(--gray); }
+
 .above a:last-child { color: var(--gray); }
+
+.above a:last-child:hover { color: var(--silver); }
 
 .content { cursor: text; word-break: break-word; }
 
