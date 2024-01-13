@@ -597,9 +597,12 @@ class RoomsResource:
     def on_get(self, req, resp):
         q = req.params.get('q', '').strip()
         q = q[1:] if q.startswith('#') else q
-        if q and is_valid_room(q):
-            room, _ = Room.objects.get_or_create(name=q.lower())
-            raise HTTPFound(f"/r/{room}")
+        if q:
+            if is_valid_room(q):
+                room, _ = Room.objects.get_or_create(name=q.lower())
+                raise HTTPFound(f"/r/{room}")
+            else:
+                q = "#{0} isn't a valid name".format(q)
         entries, page, number = paginate(req, self.fetch_entries())
         resp.text = render(
             page=page, view='rooms', number=number, user=req.user, q=q,
