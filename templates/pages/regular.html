@@ -1,9 +1,9 @@
 {% extends "base.html" %}
 
 {% block main %}
-    {% if view in ['feed', 'room'] %}
+    {% if view in ['feed', 'sub'] %}
         {% include "input/thread.html" %}
-    {% elif view in ['discover', 'people', 'rooms'] %}
+    {% elif view in ['discover', 'people', 'subs'] %}
         {% include "input/query.html" %}
     {% endif %}
 

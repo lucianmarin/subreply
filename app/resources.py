@@ -330,7 +330,7 @@ class RoomResource:
             raise HTTPNotFound
         entries, page, number = paginate(req, self.fetch_entries(room))
         resp.text = render(
-            page=page, view='room', number=number, content='',
+            page=page, view='sub', number=number, content='',
             user=req.user, entries=entries, errors={},
             placeholder=f"Share on #{room}", room=room
         )
@@ -605,7 +605,7 @@ class RoomsResource:
                 q = "#{0} isn't a valid name".format(q)
         entries, page, number = paginate(req, self.fetch_entries())
         resp.text = render(
-            page=page, view='rooms', number=number, user=req.user, q=q,
+            page=page, view='subs', number=number, user=req.user, q=q,
             entries=entries, placeholder="Create or find a #sub"
         )
 
