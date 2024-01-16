@@ -198,6 +198,8 @@ table td:nth-child(even):last-child, table th:nth-child(even):last-child { borde
 
 .line { margin-bottom: 10px; overflow: hidden; }
 
+.line span { color: var(--gray); font-size: var(--small); line-height: 30px; }
+
 .line label { font-size: var(--small); }
 
 .line .one, .line .two, .line .left, .line .right, .line .three { float: left; }
