@@ -58,9 +58,7 @@ def get_metadata(text):
                 mentions.append(username)
         if word.startswith('#'):
             handle = word[1:]
-            if handle and all(c in digits for c in handle):
-                pass
-            elif handle and all(c in limits for c in handle):
+            if handle and all(c in digits + ascii_letters for c in handle):
                 hashtags.append(handle)
     return hashtags, links, mentions
 
@@ -82,12 +80,6 @@ def to_metadata(text):
         if word.endswith("'s"):
             endswith = word[-2:] + endswith
             word = word[:-2]
-        if word.startswith(('http://subreply.com/', 'https://subreply.com/')):
-            parts = word.split('/')
-            if len(parts) == 4:
-                word = "@{0}".format(parts[3])
-            if len(parts) == 5:
-                word = "@{0}/{1}".format(parts[3], parts[4])
         word = startswith + word + endswith
         words.append(word)
     return " ".join(words)

@@ -49,7 +49,7 @@ def valid_content(value, user, limit=640):
         elif hashtag == value.lower()[1:]:
             return "Share more than a hashtag"
         elif not Room.objects.filter(name=hashtag).exists():
-            return "#{0} doesn't exists".format(hashtag)
+            return "Sub #{0} doesn't exists".format(hashtag)
     elif links:
         link = links[0].lower()
         if len(link) > 240:
@@ -63,7 +63,7 @@ def valid_content(value, user, limit=640):
         elif mention == value.lower()[1:]:
             return "Share more than a mention"
         elif not User.objects.filter(username=mention).exists():
-            return "@{0} doesn't exists".format(mention)
+            return "User @{0} doesn't exists".format(mention)
 
 
 def valid_thread(value):
