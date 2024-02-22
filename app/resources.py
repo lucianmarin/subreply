@@ -113,6 +113,11 @@ class TxtResource:
         lines = (
             "User-agent: *",
             "",
+            "User-agent: Google-Extended",
+            "User-agent: GPTBot",
+            "User-agent: PetalBot"
+            "Disallow: /",
+            "",
             "Sitemap: https://subreply.com/sitemap.txt"
         )
         resp.text = "\n".join(lines)
