@@ -305,8 +305,8 @@ class EditResource:
                 ancestors=ancestors
             )
         else:
-            fields = ['content', 'edited_at', 'hashtag', 'link',
-                      'at_user', 'mention_seen_at']
+            fields = ['content', 'edited_at', 'link', 'at_room', 'at_user',
+                      'mention_seen_at']
             previous_at_user = entry.at_user
             entry.content = content
             entry.edited_at = utc_timestamp()
@@ -594,8 +594,9 @@ class TrendingResource:
 
 class RoomsResource:
     def fetch_entries(self):
-        last_ids = Room.objects.annotate(last=Max('threads', filter=Q(threads__parent=None))).values('last')
-        entries = Comments.filter(id__in=last_ids).order_by('-id')
+        threads = Room.objects.annotate(thread=Max('threads', filter=Q(threads__parent=None))).values('thread')
+        hashtags = Room.objects.annotate(hashtag=Max('hashtags', filter=Q(hashtags__parent=None))).values('hashtag')
+        entries = Comments.filter(Q(id__in=threads) | Q(id__in=hashtags)).order_by('-id')
         return entries.prefetch_related(PFR, PPFR)
 
     @before(auth_user)
