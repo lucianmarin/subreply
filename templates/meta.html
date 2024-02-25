@@ -9,8 +9,8 @@
     {% if entry.edited_at %}
         <meta property="article:modified_time" content="{{ entry.edited_at | isoformat }}">
     {% endif %}
-    {% if entry.hashtag %}
-        <meta name="keywords" content="{{ entry.hashtag }}">
+    {% if entry.at_room or entry.in_room %}
+        <meta name="keywords" content="{{ entry.at_room }} {{ entry.in_room }}">
     {% endif %}
     {% if entry.parent %}
         <meta name="robots" content="noindex nofollow">
