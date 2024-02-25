@@ -19,6 +19,8 @@ def is_valid_room(value):
         return False
     elif len(value) > 15:
         return False
+    elif all(c in digits for c in value):
+        return False
     elif not all(c in limits for c in value):
         return False
     elif has_repetions(value):
