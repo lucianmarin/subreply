@@ -43,15 +43,15 @@ def valid_content(value, user, limit=640):
     elif len(links) > 1:
         return "Link a single address"
     elif len(hashtags) > 1:
-        return "Hashtag a single sub"
+        return "Hashtag a single group"
     elif hashtags:
         hashtag = hashtags[0].lower()
         if len(hashtag) > 15:
             return "Hashtag can't be longer than 15 characters"
         elif hashtag == value.lower()[1:]:
-            return "Share more than a hashtag"
+            return "Share more than a group"
         elif not Room.objects.filter(name=hashtag).exists():
-            return "Sub #{0} doesn't exists".format(hashtag)
+            return "Group doesn't exists"
     elif links:
         link = links[0].lower()
         if len(link) > 240:
