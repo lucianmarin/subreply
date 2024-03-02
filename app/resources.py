@@ -15,7 +15,7 @@ from app.models import Comment, Relation, Room, Save, User
 from app.utils import build_hash, utc_timestamp, verify_hash
 from app.validation import (authentication, profiling, registration, valid_content,
                             valid_handle, valid_password, valid_phone, valid_reply,
-                            valid_thread, valid_wallet, is_valid_room)
+                            valid_thread, valid_wallet, valid_hashtag)
 from project.settings import FERNET, MAX_AGE, SMTP
 from project.vars import UNLOCK_HTML, UNLOCK_TEXT
 
@@ -127,9 +127,13 @@ class TxtResource:
             'created_by__username', 'id'
         ).order_by('id')
         users = User.objects.exclude(comments=None).values_list('username')
+        rooms = Room.objects.exclude(
+            Q(threads=None) & Q(hashtags=None)
+        ).values_list('name')
         thr_urls = [f"https://subreply.com/{u}/{i}" for u, i in threads]
         usr_urls = [f"https://subreply.com/{u}" for u, in users]
-        urls = sorted(thr_urls + usr_urls)
+        rms_urls = [f"https://subreply.com/r/{n}" for n, in rooms]
+        urls = sorted(thr_urls + usr_urls + rms_urls)
         resp.text = "\n".join(urls)
 
 
@@ -182,9 +186,9 @@ class FeedResource:
             hashtags, links, mentions = get_metadata(content)
             extra = {}
             extra['link'] = links[0].lower() if links else ''
-            extra['at_room'] = Room.objects.get(
+            extra['at_room'] = Room.objects.get_or_create(
                 name=hashtags[0].lower()
-            ) if hashtags else None
+            )[0] if hashtags else None
             extra['at_user'] = User.objects.get(
                 username=mentions[0].lower()
             ) if mentions else None
@@ -247,9 +251,9 @@ class ReplyResource:
         else:
             extra = {}
             extra['link'] = links[0].lower() if links else ''
-            extra['at_room'] = Room.objects.get(
+            extra['at_room'] = Room.objects.get_or_create(
                 name=hashtags[0].lower()
-            ) if hashtags else None
+            )[0] if hashtags else None
             extra['at_user'] = User.objects.get(
                 username=mentions[0].lower()
             ) if mentions else None
@@ -311,9 +315,9 @@ class EditResource:
             entry.content = content
             entry.edited_at = utc_timestamp()
             entry.link = links[0].lower() if links else ''
-            entry.at_room = Room.objects.get(
+            entry.at_room = Room.objects.get_or_create(
                 name=hashtags[0].lower()
-            ) if hashtags else None
+            )[0] if hashtags else None
             entry.at_user = User.objects.get(
                 username=mentions[0].lower()
             ) if mentions else None
@@ -323,7 +327,7 @@ class EditResource:
             raise HTTPFound(f"/{req.user}/{entry.id}")
 
 
-class RoomResource:
+class GroupResource:
     def fetch_entries(self, room):
         entries = Comments.filter(Q(in_room=room) | Q(at_room=room)).order_by('-id')
         return entries.prefetch_related(PFR, PPFR)
@@ -363,9 +367,9 @@ class RoomResource:
             hashtags, links, mentions = get_metadata(content)
             extra = {}
             extra['link'] = links[0].lower() if links else ''
-            extra['at_room'] = Room.objects.get(
+            extra['at_room'] = Room.objects.get_or_create(
                 name=hashtags[0].lower()
-            ) if hashtags else None
+            )[0] if hashtags else None
             extra['at_user'] = User.objects.get(
                 username=mentions[0].lower()
             ) if mentions else None
@@ -571,7 +575,7 @@ class DiscoverResource:
         terms = [t.strip() for t in q.split() if t.strip()]
         entries, page, number = paginate(req, self.fetch_entries(terms))
         resp.text = render(
-            page=page, view='discover', number=number, q=q,
+            page=page, view='discover', number=number, q=q, errors={},
             placeholder="Search content", user=req.user, entries=entries
         )
 
@@ -592,7 +596,7 @@ class TrendingResource:
         )
 
 
-class RoomsResource:
+class GroupsResource:
     def fetch_entries(self):
         threads = Room.objects.annotate(thread=Max('threads', filter=Q(threads__parent=None))).values('thread')
         hashtags = Room.objects.annotate(hashtag=Max('hashtags', filter=Q(hashtags__parent=None))).values('hashtag')
@@ -602,17 +606,18 @@ class RoomsResource:
     @before(auth_user)
     def on_get(self, req, resp):
         q = req.params.get('q', '').strip()
-        q = q[1:] if q.startswith('#') else q
-        if q:
-            if is_valid_room(q):
+        hashtag = q[1:] if q.startswith('#') else q
+        errors = {}
+        if hashtag:
+            errors['hashtag'] = valid_hashtag(hashtag)
+            errors = {k: v for k, v in errors.items() if v}
+            if not errors:
                 room, _ = Room.objects.get_or_create(name=q.lower())
                 raise HTTPFound(f"/r/{room}")
-            else:
-                q = "#{0} isn't a valid name".format(q)
         entries, page, number = paginate(req, self.fetch_entries())
         resp.text = render(
             page=page, view='groups', number=number, user=req.user, q=q,
-            entries=entries, placeholder="Create or find a #group"
+            entries=entries, errors=errors, placeholder="Create or find a #group"
         )
 
 

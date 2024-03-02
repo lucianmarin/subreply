@@ -33,7 +33,7 @@
     <title>{{ member.full_name | emojize }} @{{ member }}</title>
 {% elif view == 'reply' %}
     <title>{{ entry.content | emojize | shorten(48) }}</title>
-{% elif view == 'room' %}
+{% elif view == 'group' %}
     <title>{{ brand }} / #{{ room }}</title>
 {% else %}
     <title>{{ brand }} / {{ view | capitalize }}</title>

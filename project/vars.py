@@ -130,6 +130,7 @@ INVALID = [
     "policy",
     "privacy",
     "profile",
+    "r",
     "read",
     "reply",
     "replying",

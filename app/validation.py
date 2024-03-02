@@ -13,27 +13,26 @@ from app.utils import has_repetions, verify_hash
 from project.vars import INVALID, LATIN, MAX_YEAR, MIN_YEAR, CITIES
 
 
-def is_valid_room(value):
+def valid_hashtag(value):
     limits = digits + ascii_letters
     if not value:
-        return False
+        return "Value cannot be empty"
     elif len(value) > 15:
-        return False
+        return "Hashtag is too long"
     elif all(c in digits for c in value):
-        return False
+        return "Hashtag contains only digits"
     elif not all(c in limits for c in value):
-        return False
+        return "Hashtag can be only alphanumeric"
     elif has_repetions(value):
-        return False
+        return "Hashtag contains repetions"
     elif value in INVALID:
-        return False
-    return True
+        return "Hashtag is not valid"
 
 
 def valid_content(value, user, limit=640):
     hashtags, links, mentions = get_metadata(value)
     if not value:
-        return "Share something"
+        return "Value cannot be emtpy"
     elif len(value) > limit:
         return f"Share fewer than {limit} characters"
     elif len(value) != len(value.encode()):
@@ -46,12 +45,9 @@ def valid_content(value, user, limit=640):
         return "Hashtag a single group"
     elif hashtags:
         hashtag = hashtags[0].lower()
-        if len(hashtag) > 15:
-            return "Hashtag can't be longer than 15 characters"
-        elif hashtag == value.lower()[1:]:
+        if hashtag == value.lower()[1:]:
             return "Share more than a group"
-        elif not Room.objects.filter(name=hashtag).exists():
-            return "Group doesn't exists"
+        return valid_hashtag(hashtag)
     elif links:
         link = links[0].lower()
         if len(link) > 240:

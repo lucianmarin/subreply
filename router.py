@@ -55,8 +55,8 @@ app.add_route('/details', resources.DetailsResource())
 app.add_route('/lobby', resources.LobbyResource())
 app.add_route('/lobby/destroy', resources.LobbyResource(), suffix="destroy")
 
-app.add_route('/groups', resources.RoomsResource())
-app.add_route('/r/{name}', resources.RoomResource())
+app.add_route('/r/{name}', resources.GroupResource())
+app.add_route('/groups', resources.GroupsResource())
 
 app.add_route('/edit/{id:int}', resources.EditResource())
 app.add_route('/reply/{id:int}', resources.RedirectResource())
