@@ -127,9 +127,7 @@ class TxtResource:
             'created_by__username', 'id'
         ).order_by('id')
         users = User.objects.exclude(comments=None).values_list('username')
-        rooms = Room.objects.exclude(
-            Q(threads=None) & Q(hashtags=None)
-        ).values_list('name')
+        rooms = Room.objects.exclude(threads=None).values_list('name')
         thr_urls = [f"https://subreply.com/{u}/{i}" for u, i in threads]
         usr_urls = [f"https://subreply.com/{u}" for u, in users]
         rms_urls = [f"https://subreply.com/r/{n}" for n, in rooms]
@@ -329,7 +327,7 @@ class EditResource:
 
 class GroupResource:
     def fetch_entries(self, room):
-        entries = Comments.filter(Q(in_room=room) | Q(at_room=room)).order_by('-id')
+        entries = Comments.filter(in_room=room).order_by('-id')
         return entries.prefetch_related(PFR, PPFR)
 
     @before(auth_user)
@@ -598,9 +596,10 @@ class TrendingResource:
 
 class GroupsResource:
     def fetch_entries(self):
-        threads = Room.objects.annotate(thread=Max('threads', filter=Q(threads__parent=None))).values('thread')
-        hashtags = Room.objects.annotate(hashtag=Max('hashtags', filter=Q(hashtags__parent=None))).values('hashtag')
-        entries = Comments.filter(Q(id__in=threads) | Q(id__in=hashtags)).order_by('-id')
+        threads = Room.objects.annotate(thread=Max(
+            'threads', filter=Q(threads__parent=None))
+        ).values('thread')
+        entries = Comments.filter(id__in=threads).order_by('-id')
         return entries.prefetch_related(PFR, PPFR)
 
     @before(auth_user)
