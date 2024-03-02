@@ -550,7 +550,7 @@ class PeopleResource:
         entries, page, number = paginate(req, entries, 24)
         resp.text = render(
             page=page, view='people', number=number, q=q, user=req.user,
-            placeholder="Find people", entries=entries, limit=24
+            placeholder="Find people", entries=entries, errors={}, limit=24
         )
 
 
