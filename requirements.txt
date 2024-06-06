@@ -3,7 +3,7 @@ django
 django-extensions
 dnspython
 emails
-emoji
+emoji==2.10.1
 falcon
 gunicorn
 jinja2
