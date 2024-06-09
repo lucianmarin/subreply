@@ -17,6 +17,7 @@
             "purpose": "maskable"
         }
     ],
+    "id": "/feed",
     "start_url": "/feed",
     "display": "standalone",
     "orientation": "portrait",
