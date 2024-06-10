@@ -59,6 +59,7 @@ app.add_route('/edit/{id:int}', resources.EditResource())
 app.add_route('/reply/{id:int}', resources.ReplyResource())
 app.add_route('/group/{name}', resources.GroupResource())
 app.add_route('/groups', resources.GroupsResource())
+app.add_route('/links', resources.LinksResource())
 
 app.add_route('/{username}/approve', resources.LobbyResource(), suffix="approve")
 app.add_route('/{username}', resources.MemberResource())
