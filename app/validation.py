@@ -54,6 +54,8 @@ def valid_content(value, user, limit=640):
             return "Link can't be longer than 120 characters"
         elif link == value.lower():
             return "Share more than a link"
+        elif link.startswith(('http://subreply.com', 'https://subreply.com')):
+            return "Use @username, #group or a reply #id"
     elif mentions:
         mention = mentions[0].lower()
         if user and mention == user.username:
@@ -70,7 +72,7 @@ def valid_thread(value):
     duplicates = [t for t in threads if t.content.lower() == value.lower()]
     if duplicates:
         duplicate = duplicates[0]
-        err = 'Thread started at <a href="/{0}/{1}">@{0}/{1}</a>'
+        err = 'Thread <a href="/reply/{1}">#{1}</a> started by <a href="/{0}">@{0}</a>'
         return err.format(duplicate.created_by, duplicate.id)
 
 
@@ -82,7 +84,7 @@ def valid_reply(parent, user, value, mentions):
         (Q(ancestors=top_id) | Q(id=top_id)) & Q(content__iexact=value)
     ).first()
     if duplicate:
-        err = 'Duplicate of <a href="/{0}/{1}">@{0}/{1}</a> in thread'
+        err = 'Duplicate of <a href="/reply/{1}">#{1}</a> by <a href="/{0}">@{0}</a>'
         return err.format(duplicate.created_by, duplicate.id)
     elif parent.created_by_id == user.id:
         return "Don't reply to yourself"

@@ -11,11 +11,7 @@
         {% elif duplicate %}
             <div class="placeholder">
                 {% if user %}
-                    Share
-                    <a href="/feed?s=%40{{ entry.created_by }}%2F{{ entry.id }}">
-                        @{{ entry.created_by }}/{{ entry.id }}
-                    </a>
-                    reply
+                    Share reply #{{ entry.id }} anywhere
                 {% else %}
                     <a href="/login">Login</a> or <a href="/register">register</a> your account to reply
                 {% endif %}

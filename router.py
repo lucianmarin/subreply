@@ -55,13 +55,12 @@ app.add_route('/details', resources.DetailsResource())
 app.add_route('/lobby', resources.LobbyResource())
 app.add_route('/lobby/destroy', resources.LobbyResource(), suffix="destroy")
 
-app.add_route('/r/{name}', resources.GroupResource())
+app.add_route('/edit/{id:int}', resources.EditResource())
+app.add_route('/reply/{id:int}', resources.ReplyResource())
+app.add_route('/group/{name}', resources.GroupResource())
 app.add_route('/groups', resources.GroupsResource())
 
-app.add_route('/edit/{id:int}', resources.EditResource())
-app.add_route('/reply/{id:int}', resources.RedirectResource())
 app.add_route('/{username}/approve', resources.LobbyResource(), suffix="approve")
-app.add_route('/{username}/{id:int}', resources.ReplyResource())
 app.add_route('/{username}', resources.MemberResource())
 
 if DEBUG:

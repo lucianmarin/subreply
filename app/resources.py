@@ -123,27 +123,14 @@ class TxtResource:
         resp.text = "\n".join(lines)
 
     def on_get_map(self, req, resp):  # noqa
-        threads = Comments.filter(parent=None).exclude(replies=0).values_list(
-            'created_by__username', 'id'
-        ).order_by('id')
+        replies = Comments.filter(parent=None).exclude(replies=0).values_list('id').order_by('id')
+        groups = Room.objects.exclude(Q(threads=None) & Q(hashtags=None)).values_list('name')
         users = User.objects.exclude(comments=None).values_list('username')
-        rooms = Room.objects.exclude(
-            Q(threads=None) & Q(hashtags=None)
-        ).values_list('name')
-        thr_urls = [f"https://subreply.com/{u}/{i}" for u, i in threads]
-        usr_urls = [f"https://subreply.com/{u}" for u, in users]
-        rms_urls = [f"https://subreply.com/r/{n}" for n, in rooms]
-        urls = sorted(thr_urls + usr_urls + rms_urls)
+        reply_urls = [f"https://subreply.com/reply/{i}" for i, in replies]
+        group_urls = [f"https://subreply.com/group/{n}" for n, in groups]
+        user_urls = [f"https://subreply.com/{u}" for u, in users]
+        urls = sorted(user_urls + reply_urls + group_urls)
         resp.text = "\n".join(urls)
-
-
-class RedirectResource:
-    @before(auth_user)
-    def on_get(self, req, resp, id):  # noqa
-        reply = Comment.objects.filter(id=id).first()
-        if reply:
-            raise HTTPFound(f"/{reply.created_by}/{reply.id}")
-        raise HTTPNotFound
 
 
 class FeedResource:
@@ -155,10 +142,9 @@ class FeedResource:
     @before(auth_user)
     @before(login_required)
     def on_get(self, req, resp):
-        s = req.params.get('s', '').strip()
         entries, page, number = paginate(req, self.fetch_entries(req.user))
         resp.text = render(
-            page=page, view='feed', number=number, content=s,
+            page=page, view='feed', number=number, content="",
             user=req.user, entries=entries, errors={},
             placeholder="Share your thoughts"
         )
@@ -169,7 +155,7 @@ class FeedResource:
         form = FieldStorage(fp=req.stream, environ=req.env)
         content = get_content(form)
         if not content:
-            raise HTTPFound("/feed")
+            raise HTTPFound('/feed')
         errors = {}
         errors['content'] = valid_content(content, req.user)
         if not errors['content']:
@@ -211,10 +197,8 @@ class ReplyResource:
         ).order_by('id').prefetch_related(PPFR)
 
     @before(auth_user)
-    def on_get(self, req, resp, username, id):
+    def on_get(self, req, resp, id):
         parent = Comments.filter(id=id).first()
-        if not parent or parent.created_by.username != username.lower():
-            raise HTTPNotFound
         duplicate = Comment.objects.filter(
             parent=parent, created_by=req.user
         ).exists() if req.user else True
@@ -228,12 +212,12 @@ class ReplyResource:
 
     @before(auth_user)
     @before(login_required)
-    def on_post(self, req, resp, username, id):
+    def on_post(self, req, resp, id):
         parent = Comments.filter(id=id).select_related('parent').first()
         form = FieldStorage(fp=req.stream, environ=req.env)
         content = get_content(form)
         if not content:
-            raise HTTPFound(f"/{username}/{id}")
+            raise HTTPFound(f"/reply/{id}")
         hashtags, links, mentions = get_metadata(content)
         errors = {}
         errors['content'] = valid_content(content, req.user)
@@ -267,7 +251,7 @@ class ReplyResource:
                 **extra
             )
             re.set_ancestors()
-            raise HTTPFound(f"/{req.user}/{re.id}")
+            raise HTTPFound(f"/reply/{re.id}")
 
 
 class EditResource:
@@ -324,7 +308,7 @@ class EditResource:
             if previous_at_user != entry.at_user:
                 entry.mention_seen_at = .0
             entry.save(update_fields=fields)
-            raise HTTPFound(f"/{req.user}/{entry.id}")
+            raise HTTPFound(f"/reply/{entry.id}")
 
 
 class GroupResource:
@@ -351,7 +335,7 @@ class GroupResource:
         form = FieldStorage(fp=req.stream, environ=req.env)
         content = get_content(form)
         if not content:
-            raise HTTPFound(f"/r/{name}")
+            raise HTTPFound(f"/group/{name}")
         errors = {}
         errors['content'] = valid_content(content, req.user)
         if not errors['content']:
@@ -380,7 +364,7 @@ class GroupResource:
                 in_room=room,
                 **extra
             )
-            raise HTTPFound(f"/r/{name}")
+            raise HTTPFound(f"/group/{name}")
 
 
 class MemberResource:
@@ -614,7 +598,7 @@ class GroupsResource:
             errors = {k: v for k, v in errors.items() if v}
             if not errors:
                 room, _ = Room.objects.get_or_create(name=q.lower())
-                raise HTTPFound(f"/r/{room}")
+                raise HTTPFound(f"/group/{room}")
         entries, page, number = paginate(req, self.fetch_entries())
         resp.text = render(
             page=page, view='groups', number=number, user=req.user, q=q,

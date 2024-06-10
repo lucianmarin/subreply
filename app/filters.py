@@ -118,8 +118,10 @@ def parser(text):
                 word = f'<a href="/{handle}" rel="author">@{handle}</a>'
         elif word.startswith('#'):
             handle = word[1:]
-            if handle and all(c in digits + ascii_letters for c in handle):
-                word = f'<a href="/r/{handle}" rel="tag">#{handle}</a>'
+            if handle and all(c in digits for c in handle):
+                word = f'<a href="/reply/{handle}" rel="bookmark">#{handle}</a>'
+            elif handle and all(c in digits + ascii_letters for c in handle):
+                word = f'<a href="/group/{handle}" rel="tag">#{handle}</a>'
         # wrap word
         word = startswith + word + endswith
         words.append(word)
