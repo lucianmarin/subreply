@@ -1,5 +1,5 @@
 {% for entry in entries %}
-    {% if view in ['lobby', 'people'] %}
+    {% if view in ['incomers', 'people'] %}
         {% set member = entry %}
         {% include "common/user.html" %}
     {% elif view == 'following' %}

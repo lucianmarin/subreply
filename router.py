@@ -52,8 +52,8 @@ app.add_route('/account/export', resources.AccountResource(), suffix="export")
 app.add_route('/profile', resources.ProfileResource())
 app.add_route('/details', resources.DetailsResource())
 
-app.add_route('/lobby', resources.LobbyResource())
-app.add_route('/lobby/destroy', resources.LobbyResource(), suffix="destroy")
+app.add_route('/incomers', resources.IncomersResource())
+app.add_route('/incomers/destroy', resources.IncomersResource(), suffix="destroy")
 
 app.add_route('/edit/{id:int}', resources.EditResource())
 app.add_route('/reply/{id:int}', resources.ReplyResource())
@@ -61,7 +61,7 @@ app.add_route('/group/{name}', resources.GroupResource())
 app.add_route('/groups', resources.GroupsResource())
 app.add_route('/links', resources.LinksResource())
 
-app.add_route('/{username}/approve', resources.LobbyResource(), suffix="approve")
+app.add_route('/{username}/approve', resources.IncomersResource(), suffix="approve")
 app.add_route('/{username}', resources.MemberResource())
 
 if DEBUG:
