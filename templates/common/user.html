@@ -16,7 +16,7 @@
             {% if not member.is_approved and user.id == 1 %}
                 <a class="action" href="/{{ member }}/approve">approve</a>
             {% elif member.id == user.id %}
-                <a class="action" href="/profile">edit</a>
+                <a class="action" href="/logout">logout</a>
             {% elif member.id in user.follows %}
                 <a class="action" onclick="postFollow(event, 'unfollow')" data-username="{{ member }}">unfollow</a>
             {% else %}
