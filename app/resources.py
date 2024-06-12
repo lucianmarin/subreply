@@ -538,8 +538,9 @@ class PeopleResource:
         entries = self.fetch_entries(terms)
         entries, page, number = paginate(req, entries, 24)
         resp.text = render(
-            page=page, view='people', number=number, q=q, user=req.user,
-            placeholder="Find people", entries=entries, errors={}, limit=24
+            page=page, view='people', number=number, q=q,
+            user=req.user, entries=entries, errors={}, limit=24,
+            placeholder="Find people"
         )
 
 
@@ -564,17 +565,20 @@ class DiscoverResource:
         terms = [t.strip() for t in q.split() if t.strip()]
         entries, page, number = paginate(req, self.fetch_entries(terms))
         resp.text = render(
-            page=page, view='discover', number=number, q=q, errors={},
-            placeholder="Search content", user=req.user, entries=entries
+            page=page, view='discover', number=number, q=q,
+            user=req.user, entries=entries, errors={},
+            placeholder="Search content"
         )
 
 
 class TrendingResource:
+    limit = 24
+
     def fetch_entries(self):
-        sampling = Comment.objects.filter(parent=None).exclude(
+        sample = Comment.objects.filter(parent=None).exclude(
             kids=None
-        ).order_by('-id').values('id')[:24]
-        entries = Comments.filter(id__in=sampling).order_by('-replies', '-id')
+        ).order_by('-id').values('id')[:self.limit]
+        entries = Comments.filter(id__in=sample).order_by('-replies', '-id')
         return entries.prefetch_related(PFR)
 
     @before(auth_user)
@@ -619,8 +623,9 @@ class GroupsResource:
                 raise HTTPFound(f"/group/{room}")
         entries, page, number = paginate(req, self.fetch_entries())
         resp.text = render(
-            page=page, view='groups', number=number, user=req.user, q=q,
-            entries=entries, errors=errors, placeholder="Create or find a #group"
+            page=page, view='groups', number=number, q=q,
+            user=req.user, entries=entries, errors=errors,
+            placeholder="Create or find a #group"
         )
 
 
