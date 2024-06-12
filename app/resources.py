@@ -134,6 +134,8 @@ class TxtResource:
 
 
 class FeedResource:
+    placeholder = "What are you up to?"
+
     def fetch_entries(self, user):
         friends = Relation.objects.filter(created_by=user).values('to_user_id')
         entries = Comments.filter(created_by__in=friends).order_by('-id')
@@ -146,7 +148,7 @@ class FeedResource:
         resp.text = render(
             page=page, view='feed', number=number, content="",
             user=req.user, entries=entries, errors={},
-            placeholder="Share your thoughts"
+            placeholder=self.placeholder
         )
 
     @before(auth_user)
@@ -166,7 +168,7 @@ class FeedResource:
             resp.text = render(
                 page='regular', view='feed', content=content, number=1,
                 user=req.user, entries=entries, errors=errors,
-                placeholder="Share your thoughts"
+                placeholder=self.placeholder
             )
         else:
             hashtags, links, mentions = get_metadata(content)
