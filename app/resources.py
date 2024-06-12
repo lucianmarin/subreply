@@ -314,6 +314,8 @@ class EditResource:
 
 
 class GroupResource:
+    placeholder = "Chat in #{0}"
+
     def fetch_entries(self, room):
         entries = Comments.filter(Q(in_room=room) | Q(at_room=room)).order_by('-id')
         return entries.prefetch_related(PFR, PPFR)
@@ -326,8 +328,8 @@ class GroupResource:
         entries, page, number = paginate(req, self.fetch_entries(room))
         resp.text = render(
             page=page, view='group', number=number, content='',
-            user=req.user, entries=entries, errors={},
-            placeholder=f"Share on #{room}", room=room
+            user=req.user, entries=entries, errors={}, room=room,
+            placeholder=self.placeholder.format(room)
         )
 
     @before(auth_user)
@@ -346,8 +348,9 @@ class GroupResource:
         if errors:
             entries = self.fetch_entries(room)[:16]
             resp.text = render(
-                page='regular', view='group', content=content, number=1,
-                user=req.user, entries=entries, errors=errors
+                page='regular', view='group', number=1, content=content,
+                user=req.user, entries=entries, errors=errors, room=room,
+                placeholder=self.placeholder.format(room)
             )
         else:
             hashtags, links, mentions = get_metadata(content)
