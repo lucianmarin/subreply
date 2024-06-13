@@ -625,7 +625,7 @@ class GroupsResource:
         resp.text = render(
             page=page, view='groups', number=number, q=q,
             user=req.user, entries=entries, errors=errors,
-            placeholder="Create or find a #group"
+            placeholder="Find or create #group"
         )
 
 
