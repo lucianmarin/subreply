@@ -1,9 +1,9 @@
-cryptography==36.0.2
+cryptography
 django
 django-extensions
 dnspython
 emails
-emoji==2.10.1
+emoji
 falcon
 gunicorn
 jinja2

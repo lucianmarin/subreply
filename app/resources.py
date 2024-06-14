@@ -3,7 +3,7 @@ from cgi import FieldStorage
 from django.db.models import Count, Prefetch, Q, Max
 from emails import Message
 from emails.template import JinjaTemplate
-from emoji import demojize, get_emoji_unicode_dict
+from emoji import demojize, EMOJI_DATA
 from falcon import HTTPFound, HTTPNotFound, before
 from falcon.status_codes import HTTP_200
 from strictyaml import as_document
@@ -95,7 +95,7 @@ class AboutResource:
 class EmojiResource:
     @before(auth_user)
     def on_get(self, req, resp):
-        codes = get_emoji_unicode_dict('en').keys()
+        codes = [v['en'] for v in EMOJI_DATA.values()]
         shortcodes = set()
         for c in codes:
             if c.count('_') < 2 and '-' not in c and '’' not in c and c.islower():

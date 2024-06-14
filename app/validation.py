@@ -3,12 +3,12 @@ from string import ascii_letters, ascii_uppercase, digits
 
 from django.db.models import Q
 from dns.resolver import query as dns_query
-from emoji import get_emoji_unicode_dict
+from emoji import EMOJI_DATA
 from phonenumbers import is_possible_number, is_valid_number, parse
 from requests import head
 
 from app.forms import get_metadata
-from app.models import Comment, Room, User
+from app.models import Comment, User
 from app.utils import has_repetions, verify_hash
 from project.vars import INVALID, LATIN, MAX_YEAR, MIN_YEAR, CITIES
 
@@ -287,7 +287,8 @@ def valid_location(value, delimiter=", "):
 
 
 def valid_emoji(value):
-    if value and value not in get_emoji_unicode_dict('en').keys():
+    codes = [v['en'] for v in EMOJI_DATA.values()]
+    if value and value not in codes:
         return "Emoji is invalid"
 
 
