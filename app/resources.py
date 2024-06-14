@@ -380,14 +380,11 @@ class MemberResource:
     @before(auth_user)
     def on_get(self, req, resp, username):
         member = User.objects.filter(username=username.lower()).first()
-        received = Comment.objects.filter(to_user=member).count()
-        sent = Comment.objects.filter(parent=None, created_by=member).count()
         if not member:
             raise HTTPNotFound
         entries, page, number = paginate(req, self.fetch_entries(member))
         resp.text = render(
             page=page, view='member', number=number, errors={},
-            received=received, sent=sent,
             user=req.user, member=member, entries=entries
         )
 
@@ -716,7 +713,7 @@ class AccountResource:
 
 
 class DetailsResource:
-    social = ['dribbble', 'github', 'instagram', 'linkedin', 'spotify', 'youtube']
+    social = ['github', 'instagram', 'linkedin', 'spotify', 'x', 'youtube']
     phone = ['code', 'number']
     wallet = ['coin', 'id']
 

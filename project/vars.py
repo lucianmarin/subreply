@@ -24,6 +24,7 @@ LINKS = {
     'spotify': '<a href="https://open.spotify.com/user/{0}">Spotify</a>',
     'telegram': '<a href="https://t.me/{0}">Telegram</a>',
     'twitter': '<a href="https://twitter.com/{0}">Twitter</a>',
+    'x': '<a href="https://x.com/{0}">X</a>',
     'youtube': '<a href="https://youtube.com/@{0}">YouTube</a>'
 }
 

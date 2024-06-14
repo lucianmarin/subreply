@@ -108,7 +108,7 @@ table td:nth-child(even):last-child, table th:nth-child(even):last-child { borde
 
 .list > .entry:last-child { padding-bottom: 0; }
 
-.entry { border-top: var(--whitesmoke) 1px solid; padding: 5px 0; position: relative; }
+.entry { border-top: var(--whitesmoke) 1px solid; padding: 5px 0; }
 
 .entry.indent { margin-left: 30px; }
 
@@ -189,12 +189,6 @@ table td:nth-child(even):last-child, table th:nth-child(even):last-child { borde
 .status a { color: var(--gray); }
 
 .status a:hover { color: var(--silver); }
-
-.score { overflow: hidden; height: 1px; position: absolute; width: 100%; top: -1px; }
-
-.score .sent { background-color: forestgreen; height: 1px; float: left; }
-
-.score .received { background-color: darkorange; height: 1px; float: right; }
 
 .request.upper { margin-top: -10px; }
 

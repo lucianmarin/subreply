@@ -11,11 +11,6 @@
         <form enctype="multipart/form-data" method="post" autocomplete="off">
             <div class="line">
                 <div class="three">
-                    <label for="id_dribbble">Dribbble</label>
-                    <input type="text" name="dribbble" id="id_dribbble" maxlength="15"
-                        value="{% if form %}{{ fields.dribbble }}{% else %}{{ user.social.dribbble }}{% endif %}">
-                </div>
-                <div class="three">
                     <label for="id_github">GitHub</label>
                     <input type="text" name="github" id="id_github" maxlength="15"
                         value="{% if form %}{{ fields.github }}{% else %}{{ user.social.github }}{% endif %}">
@@ -25,40 +20,45 @@
                     <input type="text" name="instagram" id="id_instagram" maxlength="15"
                         value="{% if form %}{{ fields.instagram }}{% else %}{{ user.social.instagram }}{% endif %}">
                 </div>
-                {% if 'dribbble' in errors %}
-                    <div class="error">{{ errors['dribbble'] }}</div>
-                {% endif %}
+                <div class="three">
+                    <label for="id_linkedin">LinkedIn</label>
+                    <input type="text" name="linkedin" id="id_linkedin" maxlength="15"
+                        value="{% if form %}{{ fields.linkedin }}{% else %}{{ user.social.linkedin }}{% endif %}">
+                </div>
                 {% if 'github' in errors %}
                     <div class="error">{{ errors['github'] }}</div>
                 {% endif %}
                 {% if 'instagram' in errors %}
                     <div class="error">{{ errors['instagram'] }}</div>
                 {% endif %}
+                {% if 'linkedin' in errors %}
+                    <div class="error">{{ errors['linkedin'] }}</div>
+                {% endif %}
             </div>
             <div class="line">
-                <div class="three">
-                    <label for="id_linkedin">LinkedIn</label>
-                    <input type="text" name="linkedin" id="id_linkedin" maxlength="15"
-                        value="{% if form %}{{ fields.linkedin }}{% else %}{{ user.social.linkedin }}{% endif %}">
-                </div>
                 <div class="three">
                     <label for="id_spotify">Spotify</label>
                     <input type="text" name="spotify" id="id_spotify" maxlength="15"
                         value="{% if form %}{{ fields.spotify }}{% else %}{{ user.social.spotify }}{% endif %}">
                 </div>
                 <div class="three">
+                    <label for="id_x">X</label>
+                    <input type="text" name="x" id="id_x" maxlength="15"
+                        value="{% if form %}{{ fields.x }}{% else %}{{ user.social.x }}{% endif %}">
+                </div>
+                <div class="three">
                     <label for="id_youtube">YouTube</label>
                     <input type="text" name="youtube" id="id_youtube" maxlength="15"
                         value="{% if form %}{{ fields.youtube }}{% else %}{{ user.social.youtube }}{% endif %}">
                 </div>
-                {% if 'linkedin' in errors %}
-                    <div class="error">{{ errors['linkedin'] }}</div>
+                {% if 'spotify' in errors %}
+                    <div class="error">{{ errors['spotify'] }}</div>
+                {% endif %}
+                {% if 'x' in errors %}
+                    <div class="error">{{ errors['x'] }}</div>
                 {% endif %}
                 {% if 'youtube' in errors %}
                     <div class="error">{{ errors['youtube'] }}</div>
-                {% endif %}
-                {% if 'spotify' in errors %}
-                    <div class="error">{{ errors['spotify'] }}</div>
                 {% endif %}
             </div>
             <div class="line">
