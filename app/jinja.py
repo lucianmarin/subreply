@@ -28,7 +28,7 @@ env.filters['shortdate'] = lambda ts: timeago(utc_timestamp() - ts)
 env.filters['shorten'] = lambda txt, w: shorten(txt, w, placeholder="...")
 
 env.globals['brand'] = "Subreply"
-env.globals['v'] = 238
+env.globals['v'] = 239
 
 
 def render(page, **kwargs):

@@ -192,9 +192,9 @@ table td:nth-child(even):last-child, table th:nth-child(even):last-child { borde
 
 .score { overflow: hidden; height: 1px; position: absolute; width: 100%; top: -1px; }
 
-.score .sent { background-color: green; height: 1px; float: left; }
+.score .sent { background-color: forestgreen; height: 1px; float: left; }
 
-.score .received { background-color: purple; height: 1px; float: right; }
+.score .received { background-color: darkorange; height: 1px; float: right; }
 
 .request.upper { margin-top: -10px; }
 
