@@ -30,8 +30,12 @@
         </div>
         <div class="small">
             <b>{% if score > 0 %}+{% endif %}{{ score }}</b>
-            <a href="/{{ member }}">{{ sent }} sent</a>
-            <a href="/replies">{{ received }} received</a>
+            {% if sent %}
+                <a href="/{{ member }}">{{ sent }} sent</a>
+            {% endif %}
+            {% if received %}
+                <a href="/replies">{{ received }} received</a>
+            {% endif %}
         </div>
     </div>
 {% endif %}
