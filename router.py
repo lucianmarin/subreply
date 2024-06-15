@@ -26,8 +26,11 @@ app.add_route('/mentions', resources.MentionsResource())
 app.add_route('/replies', resources.RepliesResource())
 app.add_route('/saves', resources.SavesResource())
 
+app.add_route('/links', resources.LinksResource())
+app.add_route('/members', resources.MembersResource())
+app.add_route('/space/{name}', resources.SpaceResource())
+app.add_route('/spaces', resources.SpacesResource())
 app.add_route('/trending', resources.TrendingResource())
-app.add_route('/people', resources.PeopleResource())
 app.add_route('/discover', resources.DiscoverResource())
 
 app.add_route('/about', resources.AboutResource())
@@ -57,10 +60,6 @@ app.add_route('/incomers/destroy', resources.IncomersResource(), suffix="destroy
 
 app.add_route('/reply/{id:int}', resources.ReplyResource())
 app.add_route('/edit/{id:int}', resources.EditResource())
-app.add_route('/links', resources.LinksResource())
-app.add_route('/space/{name}', resources.SpaceResource())
-app.add_route('/spaces', resources.SpacesResource())
-
 app.add_route('/{username}/approve', resources.IncomersResource(), suffix="approve")
 app.add_route('/{username}', resources.MemberResource())
 

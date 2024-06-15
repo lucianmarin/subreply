@@ -120,6 +120,8 @@ INVALID = [
     "logout",
     "lucianmarin",
     "media",
+    "member",
+    "members",
     "mention",
     "mentioned",
     "mentions",

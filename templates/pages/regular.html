@@ -3,7 +3,7 @@
 {% block main %}
     {% if view in ['feed', 'space'] %}
         {% include "input/thread.html" %}
-    {% elif view in ['discover', 'people', 'spaces'] %}
+    {% elif view in ['discover', 'members', 'spaces'] %}
         {% include "input/query.html" %}
     {% endif %}
 
@@ -20,7 +20,7 @@
         {% endif %}
 
         {% for entry in entries %}
-            {% if view in ['incomers', 'people'] %}
+            {% if view in ['incomers', 'members'] %}
                 {% set member = entry %}
                 {% include "common/user.html" %}
             {% elif view == 'following' %}

@@ -513,7 +513,7 @@ class IncomersResource:
         raise HTTPFound('/incomers')
 
 
-class PeopleResource:
+class MembersResource:
     fields = [
         "username", "first_name", "last_name", "email",
         "description", "birthday", "location", "emoji", "website"
@@ -541,9 +541,9 @@ class PeopleResource:
         entries = self.fetch_entries(terms)
         entries, page, number = paginate(req, entries, 24)
         resp.text = render(
-            page=page, view='people', number=number, q=q,
+            page=page, view='members', number=number, q=q,
             user=req.user, entries=entries, errors={}, limit=24,
-            placeholder="Find people"
+            placeholder="Find a member"
         )
 
 
@@ -570,7 +570,7 @@ class DiscoverResource:
         resp.text = render(
             page=page, view='discover', number=number, q=q,
             user=req.user, entries=entries, errors={},
-            placeholder="Search content"
+            placeholder="Find a thread or a reply"
         )
 
 
@@ -628,7 +628,7 @@ class SpacesResource:
         resp.text = render(
             page=page, view='spaces', number=number, q=q,
             user=req.user, entries=entries, errors=errors,
-            placeholder="Find or create #space"
+            placeholder="Find or create a #space"
         )
 
 
