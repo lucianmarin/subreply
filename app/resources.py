@@ -124,12 +124,12 @@ class TxtResource:
 
     def on_get_map(self, req, resp):  # noqa
         replies = Comment.objects.exclude(parent=None).values_list('id')  # .filter(parent=None).exclude(replies=0)
-        groups = Room.objects.exclude(Q(threads=None) & Q(hashtags=None)).values_list('name')
+        spaces = Room.objects.exclude(Q(threads=None) & Q(hashtags=None)).values_list('name')
         users = User.objects.exclude(comments=None).values_list('username')
         reply_urls = [f"https://subreply.com/reply/{i}" for i, in replies]
-        group_urls = [f"https://subreply.com/group/{n}" for n, in groups]
+        space_urls = [f"https://subreply.com/space/{n}" for n, in spaces]
         user_urls = [f"https://subreply.com/{u}" for u, in users]
-        urls = sorted(reply_urls + group_urls + user_urls)
+        urls = sorted(reply_urls + space_urls + user_urls)
         resp.text = "\n".join(urls)
 
 
@@ -313,7 +313,7 @@ class EditResource:
             raise HTTPFound(f"/reply/{entry.id}")
 
 
-class GroupResource:
+class SpaceResource:
     placeholder = "Chat in #{0}"
 
     def fetch_entries(self, room):
@@ -327,7 +327,7 @@ class GroupResource:
             raise HTTPNotFound
         entries, page, number = paginate(req, self.fetch_entries(room))
         resp.text = render(
-            page=page, view='group', number=number, content='',
+            page=page, view='space', number=number, content='',
             user=req.user, entries=entries, errors={}, room=room,
             placeholder=self.placeholder.format(room)
         )
@@ -339,7 +339,7 @@ class GroupResource:
         form = FieldStorage(fp=req.stream, environ=req.env)
         content = get_content(form)
         if not content:
-            raise HTTPFound(f"/group/{name}")
+            raise HTTPFound(f"/space/{name}")
         errors = {}
         errors['content'] = valid_content(content, req.user)
         if not errors['content']:
@@ -348,7 +348,7 @@ class GroupResource:
         if errors:
             entries = self.fetch_entries(room)[:16]
             resp.text = render(
-                page='regular', view='group', number=1, content=content,
+                page='regular', view='space', number=1, content=content,
                 user=req.user, entries=entries, errors=errors, room=room,
                 placeholder=self.placeholder.format(room)
             )
@@ -369,7 +369,7 @@ class GroupResource:
                 in_room=room,
                 **extra
             )
-            raise HTTPFound(f"/group/{name}")
+            raise HTTPFound(f"/space/{name}")
 
 
 class MemberResource:
@@ -605,7 +605,7 @@ class LinksResource:
         )
 
 
-class GroupsResource:
+class SpacesResource:
     def fetch_entries(self):
         threads = Room.objects.annotate(thread=Max(
             'threads', filter=Q(threads__parent=None))
@@ -623,12 +623,12 @@ class GroupsResource:
             errors = {k: v for k, v in errors.items() if v}
             if not errors:
                 room, _ = Room.objects.get_or_create(name=q.lower())
-                raise HTTPFound(f"/group/{room}")
+                raise HTTPFound(f"/space/{room}")
         entries, page, number = paginate(req, self.fetch_entries())
         resp.text = render(
-            page=page, view='groups', number=number, q=q,
+            page=page, view='spaces', number=number, q=q,
             user=req.user, entries=entries, errors=errors,
-            placeholder="Find or create #group"
+            placeholder="Find or create #space"
         )
 
 

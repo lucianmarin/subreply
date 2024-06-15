@@ -143,6 +143,8 @@ INVALID = [
     "search",
     "settings",
     "social",
+    "space",
+    "spaces",
     "static",
     "sub",
     "sublevel",
