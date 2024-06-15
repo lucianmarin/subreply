@@ -123,13 +123,13 @@ class TxtResource:
         resp.text = "\n".join(lines)
 
     def on_get_map(self, req, resp):  # noqa
-        replies = Comments.filter(parent=None).exclude(replies=0).values_list('id').order_by('id')
+        replies = Comment.objects.values_list('id')  # .filter(parent=None).exclude(replies=0)
         groups = Room.objects.exclude(Q(threads=None) & Q(hashtags=None)).values_list('name')
         users = User.objects.exclude(comments=None).values_list('username')
         reply_urls = [f"https://subreply.com/reply/{i}" for i, in replies]
         group_urls = [f"https://subreply.com/group/{n}" for n, in groups]
         user_urls = [f"https://subreply.com/{u}" for u, in users]
-        urls = sorted(user_urls + reply_urls + group_urls)
+        urls = sorted(reply_urls + group_urls + user_urls)
         resp.text = "\n".join(urls)
 
 
