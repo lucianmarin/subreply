@@ -615,14 +615,19 @@ class SpacesResource:
 
     @before(auth_user)
     def on_get(self, req, resp):
-        q = req.params.get('q', '').strip()
+        q = req.params.get('q', '').strip().lower()
         hashtag = q[1:] if q.startswith('#') else q
         errors = {}
         if hashtag:
+            if not req.user:
+                if Room.objects.filter(name=hashtag).exists():
+                    raise HTTPFound(f"/space/{hashtag}")
+                else:
+                    raise HTTPFound("/login")
             errors['hashtag'] = valid_hashtag(hashtag)
             errors = {k: v for k, v in errors.items() if v}
             if not errors:
-                room, _ = Room.objects.get_or_create(name=q.lower())
+                room, _ = Room.objects.get_or_create(name=hashtag)
                 raise HTTPFound(f"/space/{room}")
         entries, page, number = paginate(req, self.fetch_entries())
         resp.text = render(
