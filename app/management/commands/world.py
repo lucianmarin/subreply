@@ -8,7 +8,7 @@ from collections import defaultdict
 import requests
 from django.core.management.base import BaseCommand
 
-NAME = "simplemaps_worldcities_basicv1.75.zip"
+NAME = "simplemaps_worldcities_basicv1.77.zip"
 
 
 class Command(BaseCommand):
