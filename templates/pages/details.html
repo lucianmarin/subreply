@@ -37,28 +37,28 @@
             </div>
             <div class="line">
                 <div class="three first">
+                    <label for="id_reddit">Reddit</label>
+                    <input type="text" name="reddit" id="id_reddit" maxlength="15"
+                        value="{% if form %}{{ fields.reddit }}{% else %}{{ user.social.reddit }}{% endif %}">
+                </div>
+                <div class="three">
                     <label for="id_spotify">Spotify</label>
                     <input type="text" name="spotify" id="id_spotify" maxlength="15"
                         value="{% if form %}{{ fields.spotify }}{% else %}{{ user.social.spotify }}{% endif %}">
                 </div>
-                <div class="three">
+                <div class="three last">
                     <label for="id_x">X</label>
                     <input type="text" name="x" id="id_x" maxlength="15"
                         value="{% if form %}{{ fields.x }}{% else %}{{ user.social.x }}{% endif %}">
                 </div>
-                <div class="three last">
-                    <label for="id_youtube">YouTube</label>
-                    <input type="text" name="youtube" id="id_youtube" maxlength="15"
-                        value="{% if form %}{{ fields.youtube }}{% else %}{{ user.social.youtube }}{% endif %}">
-                </div>
+                {% if 'reddit' in errors %}
+                    <div class="error">{{ errors['reddit'] }}</div>
+                {% endif %}
                 {% if 'spotify' in errors %}
                     <div class="error">{{ errors['spotify'] }}</div>
                 {% endif %}
                 {% if 'x' in errors %}
                     <div class="error">{{ errors['x'] }}</div>
-                {% endif %}
-                {% if 'youtube' in errors %}
-                    <div class="error">{{ errors['youtube'] }}</div>
                 {% endif %}
             </div>
             <div class="line">

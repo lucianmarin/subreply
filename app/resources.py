@@ -113,17 +113,12 @@ class TxtResource:
         lines = (
             "User-agent: *",
             "",
-            "User-agent: Google-Extended",
-            "User-agent: GPTBot",
-            "User-agent: PetalBot"
-            "Disallow: /",
-            "",
             "Sitemap: https://subreply.com/sitemap.txt"
         )
         resp.text = "\n".join(lines)
 
     def on_get_map(self, req, resp):  # noqa
-        replies = Comment.objects.exclude(parent=None).values_list('id')  # .filter(parent=None).exclude(replies=0)
+        replies = Comment.objects.exclude(parent=None).values_list('id')
         spaces = Room.objects.exclude(Q(threads=None) & Q(hashtags=None)).values_list('name')
         users = User.objects.exclude(comments=None).values_list('username')
         reply_urls = [f"https://subreply.com/reply/{i}" for i, in replies]
@@ -721,7 +716,7 @@ class AccountResource:
 
 
 class DetailsResource:
-    social = ['github', 'instagram', 'linkedin', 'spotify', 'x', 'youtube']
+    social = ['github', 'instagram', 'linkedin', 'reddit', 'spotify', 'x']
     phone = ['code', 'number']
     wallet = ['coin', 'id']
 
