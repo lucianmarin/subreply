@@ -123,7 +123,7 @@ class TxtResource:
         resp.text = "\n".join(lines)
 
     def on_get_map(self, req, resp):  # noqa
-        replies = Comment.objects.values_list('id')  # .filter(parent=None).exclude(replies=0)
+        replies = Comment.objects.exclude(parent=None).values_list('id')  # .filter(parent=None).exclude(replies=0)
         groups = Room.objects.exclude(Q(threads=None) & Q(hashtags=None)).values_list('name')
         users = User.objects.exclude(comments=None).values_list('username')
         reply_urls = [f"https://subreply.com/reply/{i}" for i, in replies]
@@ -380,11 +380,14 @@ class MemberResource:
     @before(auth_user)
     def on_get(self, req, resp, username):
         member = User.objects.filter(username=username.lower()).first()
+        received = Comment.objects.filter(to_user=member).count()
+        sent = Comment.objects.filter(parent=None, created_by=member).count()
         if not member:
             raise HTTPNotFound
         entries, page, number = paginate(req, self.fetch_entries(member))
         resp.text = render(
             page=page, view='member', number=number, errors={},
+            received=received, sent=sent,
             user=req.user, member=member, entries=entries
         )
 

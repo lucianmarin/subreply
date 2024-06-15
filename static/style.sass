@@ -7,13 +7,12 @@ html
     --d: 0.2s
     --white: #fff
     --whitesmoke: #f0f0f0
-    --redsmoke: #fff0f0
     --gainsboro: #e0e0e0
     --silver: #c0c0c0
     --gray: #808080
     --black: #000
-    --accent: #4060df
-    --orange: #ff2000
+    --accent: #4060e0
+    --alert: #ff4000
     -ms-text-size-adjust: 100%
     -webkit-text-size-adjust: 100%
 
@@ -32,7 +31,6 @@ html
     html
         --white: #000
         --whitesmoke: #181818
-        --redsmoke: #281818
         --gainsboro: #282828
         --silver: #404040
         --gray: #808080
@@ -199,9 +197,9 @@ table
                 color: var(--accent)
         &.red
             svg path
-                stroke: var(--orange)
+                stroke: var(--alert)
     span
-        color: var(--orange)
+        color: var(--alert)
         display: block
         font-size: var(--sup)
         font-weight: bold
@@ -269,6 +267,7 @@ table
 .entry
     border-top: var(--whitesmoke) 1px solid
     padding: 5px 0
+    position: relative
     &.indent
         margin-left: 30px
     .text
@@ -335,6 +334,10 @@ table
         color: var(--gray)
         &:hover
             color: var(--silver)
+    .sent:hover
+        color: forestgreen
+    .received:hover
+        color: darkorange
 
 .author
     color: var(--gray)
@@ -353,12 +356,6 @@ table
     b
         color: var(--silver)
         float: right
-    .here
-        color: green
-    .away
-        color: var(--orange)
-    .gone
-        color: var(--gray)
 
 .status
     color: var(--gray)
@@ -368,6 +365,21 @@ table
         color: var(--gray)
         &:hover
             color: var(--silver)
+
+.score
+    overflow: hidden
+    height: 1px
+    position: absolute
+    width: 100%
+    top: -1px
+    .sent
+        background-color: forestgreen
+        height: 1px
+        float: left
+    .received
+        background-color: darkorange
+        height: 1px
+        float: right
 
 .request
     &.upper
@@ -419,10 +431,10 @@ table
 
 .error
     clear: both
-    color: var(--orange)
+    color: var(--alert)
     font-size: var(--small)
     a
-        color: var(--orange)
+        color: var(--alert)
         font-weight: bold
 
 .about

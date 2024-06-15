@@ -19,3 +19,19 @@
         </div>
     </div>
 {% endif %}
+
+{% if received or sent %}
+    {% set total = received + sent %}
+    {% set score = sent - received %}
+    <div class="entry">
+        <div class="score">
+            <div class="received" style="width: {{ received / total * 100 }}%"></div>
+            <div class="sent" style="width: {{ sent / total * 100 }}%"></div>
+        </div>
+        <div class="small">
+            <b>{% if score > 0 %}+{% endif %}{{ score }}</b>
+            <a class="sent">{{ sent }} sent</a>
+            <a class="received">{{ received }} received</a>
+        </div>
+    </div>
+{% endif %}
