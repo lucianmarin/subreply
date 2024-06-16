@@ -164,9 +164,9 @@ table td:nth-child(even):last-child, table th:nth-child(even):last-child { borde
 
 .small a:hover { color: var(--silver); }
 
-.small .sent:hover { color: forestgreen; }
+.small .sent { color: forestgreen; }
 
-.small .received:hover { color: darkorange; }
+.small .received { color: darkorange; }
 
 .author { color: var(--gray); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
