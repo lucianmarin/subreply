@@ -29,7 +29,13 @@
             <div class="sent" style="width: {{ sent / total * 100 }}%"></div>
         </div>
         <div class="small">
-            <b>{% if score > 0 %}+{% endif %}{{ score }}</b>
+            <b>
+                {% if score %}
+                    {% if score > 0 %}+{% endif %}{{ score }}
+                {% else %}
+                    ok
+                {% endif %}
+            </b>
             <b class="sent">{{ sent }} sent</b>
             <b class="received">{{ received }} received</b>
         </div>
