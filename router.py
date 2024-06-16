@@ -30,7 +30,7 @@ app.add_route('/links', resources.LinksResource())
 app.add_route('/members', resources.MembersResource())
 app.add_route('/space/{name}', resources.SpaceResource())
 app.add_route('/spaces', resources.SpacesResource())
-app.add_route('/trending', resources.TrendingResource())
+# app.add_route('/trending', resources.TrendingResource())
 app.add_route('/discover', resources.DiscoverResource())
 
 app.add_route('/about', resources.AboutResource())

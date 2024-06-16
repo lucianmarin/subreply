@@ -64,7 +64,7 @@ class MainResource:
     def on_get(self, req, resp):  # noqa
         if req.user:
             raise HTTPFound('/feed')
-        raise HTTPFound('/trending')
+        raise HTTPFound('/discover')
 
 
 class AboutResource:
@@ -825,7 +825,7 @@ class LoginResource:
 class LogoutResource:
     def on_get(self, req, resp):  # noqa
         resp.unset_cookie('identity')
-        raise HTTPFound('/trending')
+        raise HTTPFound('/discover')
 
 
 class RegisterResource:

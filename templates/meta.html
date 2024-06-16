@@ -3,7 +3,7 @@
 <meta name="viewport" content="width=device-width, maximum-scale=1, minimum-scale=1">
 
 {% if view == 'reply' %}
-    <meta name="description" content="{{ entry.created_by.short_name }} - {{ entry.content | emojize | shorten(128) }}">
+    <meta name="description" content="{{ entry.content | emojize | shorten(128) }}">
     <meta property="article:author" content="{{ entry.created_by.short_name }}">
     <meta property="article:published_time" content="{{ entry.created_at | isoformat }}">
     {% if entry.edited_at %}
@@ -12,21 +12,13 @@
     {% if entry.at_room or entry.in_room %}
         <meta name="keywords" content="{{ entry.at_room }} {{ entry.in_room }}">
     {% endif %}
-    {% if entry.parent %}
-        <meta name="robots" content="noindex nofollow">
-    {% endif %}
 {% elif view == 'member' %}
     <meta name="description" content="{{ member.description }}">
     {% if member.emoji %}
         <meta name="keywords" content="{{ member.emoji | keywords }}">
     {% endif %}
-    {% if not entries %}
-        <meta name="robots" content="noindex nofollow">
-    {% endif %}
-{% elif view == 'trending' %}
-    <meta name="description" content="Trending threads on Subreply, a tiny but mighty social network.">
 {% else %}
-    <meta name="robots" content="noindex nofollow">
+    <meta name="description" content="Tiny, but mighty social network.">
 {% endif %}
 
 {% if view == 'member' %}
@@ -50,7 +42,7 @@
 
 <script type="text/javascript" src="/static/script.js?v={{ v }}" async defer></script>
 
-{% if view in ['feed', 'reply', 'edit', 'space'] and content %}
+{% if content and view in ['feed', 'reply', 'edit', 'space'] %}
     <script type="text/javascript">
         window.onload = function() {
             var content = document.getElementById('id_content');
