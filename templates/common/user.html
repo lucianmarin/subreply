@@ -38,7 +38,7 @@
                 ~ {{ member.birthday | age }}y old
             {% endif %}
             {% if member.location %}
-                in
+                from
                 <a href="/members?q={{ member.location | city | quote }}">
                     {{ member.location | city }}
                 </a>

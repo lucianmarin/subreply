@@ -377,12 +377,13 @@ class MemberResource:
         member = User.objects.filter(username=username.lower()).first()
         received = Comment.objects.filter(to_user=member).count()
         sent = Comment.objects.filter(created_by=member).exclude(parent=None).count()
+        score = round(sent / received * 100) if received else -1
         if not member:
             raise HTTPNotFound
         entries, page, number = paginate(req, self.fetch_entries(member))
         resp.text = render(
             page=page, view='member', number=number, errors={},
-            received=received, sent=sent,
+            received=received, sent=sent, score=score,
             user=req.user, member=member, entries=entries
         )
 
