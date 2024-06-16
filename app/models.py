@@ -73,7 +73,7 @@ class User(models.Model):
         return self.replies.filter(reply_seen_at=.0).count()
 
     @cached_property
-    def incomers(self):
+    def notif_incomers(self):
         if self.id == 1:
             return User.objects.filter(is_approved=False).count()
         return 0
