@@ -164,9 +164,9 @@ table td:nth-child(even):last-child, table th:nth-child(even):last-child { borde
 
 .small a:hover { color: var(--silver); }
 
-.small .sent { color: forestgreen; }
+.small .sent { color: var(--accent); }
 
-.small .received { color: darkorange; }
+.small .received { color: var(--gray); }
 
 .author { color: var(--gray); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
@@ -190,9 +190,9 @@ table td:nth-child(even):last-child, table th:nth-child(even):last-child { borde
 
 .score { overflow: hidden; height: 1px; position: absolute; width: 100%; top: -1px; }
 
-.score .sent { background-color: forestgreen; height: 1px; float: left; }
+.score .sent { background-color: var(--accent); height: 1px; float: left; }
 
-.score .received { background-color: darkorange; height: 1px; float: right; }
+.score .received { background-color: var(--whitesmoke); height: 1px; float: right; }
 
 .request.upper { margin-top: -10px; }
 
