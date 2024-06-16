@@ -554,7 +554,7 @@ class DiscoverResource:
         if terms:
             f = self.build_query(terms)
         else:
-            last_ids = User.objects.annotate(last=Max('comments')).values('last')
+            last_ids = User.objects.annotate(last_id=Max('comments')).values('last_id')
             f = Q(id__in=last_ids)
         return Comments.filter(f).order_by('-id').prefetch_related(PFR, PPFR)
 
@@ -603,33 +603,18 @@ class LinksResource:
 
 class SpacesResource:
     def fetch_entries(self):
-        threads = Room.objects.annotate(thread=Max(
+        last_ids = Room.objects.annotate(last_id=Max(
             'threads', filter=Q(threads__parent=None))
-        ).values('thread')
-        entries = Comments.filter(id__in=threads).order_by('-id')
+        ).values('last_id')
+        entries = Comments.filter(id__in=last_ids).order_by('-id')
         return entries.prefetch_related(PFR, PPFR)
 
     @before(auth_user)
     def on_get(self, req, resp):
-        q = req.params.get('q', '').strip().lower()
-        hashtag = q[1:] if q.startswith('#') else q
-        errors = {}
-        if hashtag:
-            if not req.user:
-                if Room.objects.filter(name=hashtag).exists():
-                    raise HTTPFound(f"/space/{hashtag}")
-                else:
-                    raise HTTPFound("/login")
-            errors['hashtag'] = valid_hashtag(hashtag)
-            errors = {k: v for k, v in errors.items() if v}
-            if not errors:
-                room, _ = Room.objects.get_or_create(name=hashtag)
-                raise HTTPFound(f"/space/{room}")
         entries, page, number = paginate(req, self.fetch_entries())
         resp.text = render(
-            page=page, view='spaces', number=number, q=q,
-            user=req.user, entries=entries, errors=errors,
-            placeholder="Find or create a #space"
+            page=page, view='spaces', number=number,
+            user=req.user, entries=entries
         )
 
 

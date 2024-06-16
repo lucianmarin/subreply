@@ -3,7 +3,7 @@
 {% block main %}
     {% if view in ['feed', 'space'] %}
         {% include "input/thread.html" %}
-    {% elif view in ['discover', 'members', 'spaces'] %}
+    {% elif view in ['discover', 'members'] %}
         {% include "input/query.html" %}
     {% endif %}
 
