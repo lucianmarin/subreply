@@ -11,38 +11,68 @@
     <div class="about">
         <div class="block">
             <p>
-                Subreply is an online platform designed to encourage meaningful connection and engagement. It eliminates distractions and clutter, allowing users to focus on meaningful conversations and content sharing.
+                Welcome to an online platform designed to encourage meaningful connection and engagement. It eliminates distractions and clutter, allowing users to focus on meaningful conversations and content sharing.
             </p>
             <p>
-                Subreply aims to reduce the impact that social apps have on your time, relationships and self-esteem, while enhancing the positive aspects of connecting with others online. The overall goal is to foster a more meaningful and intentional digital experience that encourages communication and connection.
+                <a href="/{{ sub }}">{{ sub.full_name | emojize }}</a> aims to reduce the impact that social apps have on your time, relationships and self-esteem, while enhancing the positive aspects of connecting with others online. The overall goal is to foster a more meaningful and intentional digital experience that encourages communication and connection.
             </p>
             <p>
-                Subreply can appeal to people who enjoy reading and writing, who value creativity and originality over visual, who want to express themselves freely without censorship or filters, and who want to connect with like-mined people from around the world.
+                <a href="/{{ luc }}">{{ luc.full_name | emojize }}</a> created Subreply for people who enjoy reading and writing, who value creativity and originality over visual, who want to express themselves freely without censorship or filters, and who want to connect with like-mined people from around the world.
             </p>
         </div>
 
-        <h4>Subreply has</h4>
+        <h4>Web app</h4>
+        <ul>
+            <li>
+                <svg width="16" height="16" viewBox="0 0 24 24">
+                    <path d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 010 1.971l-11.54 6.347a1.125 1.125 0 01-1.667-.985V5.653z" />
+                </svg>
+                Install on Android by <a href="https://support.google.com/chrome/answer/9658361">adding it to home screen</a> from Chrome
+            </li>
+            <li>
+                <svg width="16" height="16" viewBox="0 0 24 24">
+                    <path d="M10.5 1.5H8.25A2.25 2.25 0 006 3.75v16.5a2.25 2.25 0 002.25 2.25h7.5A2.25 2.25 0 0018 20.25V3.75a2.25 2.25 0 00-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3m-3 18.75h3" />
+                </svg>
+                Install on iPhone or iPad by <a href="https://support.apple.com/guide/iphone/bookmark-favorite-webpages-iph42ab2f3a7/ios">adding it to home screen</a> from Safari
+            </li>
+            <li>
+                <svg width="16" height="16" viewBox="0 0 24 24">
+                    <path d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                Similarly can be installed on Windows, Linux and macOS
+            </li>
+        </ul>
+
+        <h4>Tech stack and donations</h4>
         <ol>
-            <li>Simple and intuitive user interface</li>
-            <li>Ability to follow other users and engage with their content</li>
-            <li>Privacy features that allow users to control who they interact with</li>
-            <li>Ability to engage in meaningful conversations and content sharing</li>
-            <li>Focus on creating meaningful connections and engagement</li>
+            <li>High frequency <a href="https://vultr.com/?ref=8538483-6G">Vultr VPS</a> running on Ubuntu 24.04 LTS</li>
+            <li>Coded in Python 3.12 using Falcon and Django ORM.</li>
+            <li>Speed up by Gunicorn in front of Nginx, PgBouncer in front of PostgreSQL.</li>
+            <li>Icons provided by <a href="https://heroicons.dev/">Heroicons</a>, Route 159 font by <a href="https://dotcolon.net/font/route159">Sora Sagano</a></li>
+            <li><a href="http://paypal.me/lucianmarin">Donate using PayPal</a> to top up Namecheap and Vultr balances</li>
         </ol>
 
-        <h4>Subreply does not</h4>
+        <h4>Features and limitations</h4>
         <ol>
-            <li>Show you ads or sponsored content</li>
-            <li>Collect or sell your data to third parties</li>
-            <li>Use algorithms that influence what you see or do</li>
-            <li>Encourage you to compare yourself to others</li>
-            <li>Bombard you with irrelevant or harmful content</li>
+            <li>Reverse-chronological order for all feeds</li>
+            <li>Unique name handles like <a href="/{{ emo }}">{{ emo.full_name | emojize }}</a></li>
+            <li>Unique conversation view similar to a chat interface</li>
+            <li>Light and dark themes based on OS preference</li>
+            <li>Supports links, mentions, hashrefs and hashtags</li>
+            <li>Limited to ASCII characters and emojis</li>
+            <li>Limited to 640 characters per reply</li>
+            <li>Limited to one link, mention, hashref or hashtag per reply</li>
+            <li>No support for paragraphs, keeps conversation tidy</li>
+            <li>No popularity counters or instant gratification</li>
         </ol>
 
-        <div class="block">
-            <p>
-                Subreply is more than just a social network. It's a community of people who want to live more intentionally and meaningfully. Join us today and discover the benefits of minimalist social media.
-            </p>
-        </div>
+        <h4>Keeping things private</h4>
+        <ol>
+            <li>Edit or delete your replies before they are replied to</li>
+            <li>Delete received replies before they are replied to</li>
+            <li>No redistribution of any data, private or public based on GDPR</li>
+            <li>Straightforward and complete account deletion</li>
+            <li>Data export in a human readable format</li>
+        </ol>
     </div>
 {% endblock %}
