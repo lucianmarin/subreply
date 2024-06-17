@@ -24,13 +24,14 @@
     {% set total = received + sent %}
     <div class="entry">
         <div class="score">
-            <div class="received" style="width: {{ received / total * 100 }}%"></div>
-            <div class="sent" style="width: {{ sent / total * 100 }}%"></div>
+            <div class="{{ temp }}" style="width: {{ sent / total * 100 }}%"></div>
         </div>
         <div class="small">
-            <b>{% if score < 0 %}&infin;{% else %}{{ score }}&deg;{% endif %}</b>
-            <b class="sent">{{ sent }} sent</b>
-            <b class="received">{{ received }} received</b>
+            <b class="{{ temp }}">
+                {% if score < 0 %}&infin;{% else %}{{ score }}&deg;{% endif %}
+            </b>
+            <b>{{ sent }} sent</b>
+            <b>{{ received }} received</b>
         </div>
     </div>
 {% endif %}

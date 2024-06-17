@@ -334,10 +334,10 @@ table
         color: var(--gray)
         &:hover
             color: var(--silver)
-    .sent
+    .cold
         color: var(--accent)
-    .received
-        color: var(--gray)
+    .warm
+        color: var(--alert)
 
 .author
     color: var(--gray)
@@ -372,14 +372,14 @@ table
     position: absolute
     width: 100%
     top: -1px
-    .sent
-        background-color: var(--accent)
+    .warm, .cold
         height: 1px
         float: left
-    .received
-        background-color: var(--whitesmoke)
-        height: 1px
-        float: right
+    .cold
+        background-color: var(--accent)
+    .warm
+        background-color: var(--alert)
+
 
 .request
     &.upper
