@@ -55,7 +55,7 @@ def valid_content(value, user, limit=640):
         elif link == value.lower():
             return "Share more than a link"
         elif link.startswith(('http://subreply.com', 'https://subreply.com')):
-            return "Share a @mention, a #sub or a reply #id"
+            return "Share a mention, a sub or a reply id"
     elif mentions:
         mention = mentions[0]
         if user and mention == user.username:
