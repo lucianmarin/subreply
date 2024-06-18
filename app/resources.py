@@ -319,11 +319,11 @@ class SubResource:
 
     @before(auth_user)
     def on_get(self, req, resp, name):
-        if not req.user:
-            raise HTTPFound('/login')
         if valid_hashtag(name):
             raise HTTPNotFound
         room = Room.objects.filter(name=name.lower()).first()
+        if not req.user and not room:
+            raise HTTPFound('/login')
         if room:
             entries, page, number = paginate(req, self.fetch_entries(room))
         else:
