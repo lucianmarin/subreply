@@ -338,18 +338,19 @@ class SubResource:
     @before(auth_user)
     @before(login_required)
     def on_post(self, req, resp, name):
+        name = name.lower()
         form = FieldStorage(fp=req.stream, environ=req.env)
         content = get_content(form)
         if not content:
             raise HTTPFound(f"/sub/{name}")
-        room, _ = Room.objects.get_or_create(name=name.lower())
+        room = Room.objects.filter(name=name).first()
         errors = {}
         errors['content'] = valid_content(content, req.user)
         if not errors['content']:
             errors['content'] = valid_thread(content)
         errors = {k: v for k, v in errors.items() if v}
         if errors:
-            entries = self.fetch_entries(room)[:16]
+            entries = self.fetch_entries(room)[:16] if room else []
             resp.text = render(
                 page='regular', view='sub', number=1, content=content,
                 user=req.user, entries=entries, errors=errors, room=room,
@@ -362,6 +363,9 @@ class SubResource:
             extra['at_room'] = Room.objects.get_or_create(
                 name=hashtags[0].lower()
             )[0] if hashtags else None
+            extra['in_room'] = Room.objects.get_or_create(
+                name=name
+            )[0] if not room else room
             extra['at_user'] = User.objects.get(
                 username=mentions[0].lower()
             ) if mentions else None
@@ -369,7 +373,6 @@ class SubResource:
                 content=content,
                 created_at=utc_timestamp(),
                 created_by=req.user,
-                in_room=room,
                 **extra
             )
             raise HTTPFound(f"/sub/{name}")
@@ -382,7 +385,8 @@ class MemberResource:
 
     @before(auth_user)
     def on_get(self, req, resp, username):
-        member = User.objects.filter(username=username.lower()).first()
+        username = username.lower()
+        member = User.objects.filter(username=username).first()
         received = Comment.objects.filter(to_user=member).count()
         sent = Comment.objects.filter(created_by=member).exclude(parent=None).count()
         score = round(sent / received * 100) if received else -1
@@ -505,9 +509,10 @@ class IncomersResource:
 
     @before(auth_user)
     def on_get_approve(self, req, resp, username):  # noqa
+        username = username.lower()
         if not req.user.id == 1:
             raise HTTPFound('/incomers')
-        User.objects.filter(username=username.lower()).update(is_approved=True)
+        User.objects.filter(username=username).update(is_approved=True)
         raise HTTPFound('/incomers')
 
     @before(auth_user)
