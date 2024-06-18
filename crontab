@@ -2,9 +2,10 @@
 0 0 1 */1 * certbot renew --renew-hook "systemctl reload nginx"
 
 # user
-*/15 * * * * python3 subreply/manage.py email
-*/20 * * * * python3 subreply/manage.py fetch
+15 0 * * * bash sqldata/backup.sh
 
-30 0 * * * pg_dump -U postgres subreply | xz > db/subreply.sql.xz
+30 * * * * python3 logparser/parse.py logs/sub.log.gz --html subreply/static/log
+s.html --ignore subreply.com,199.247.2.88 --hide 1
 
-45 */4 * * * python3 logparser/parse.py logs/sub.log.gz --html subreply/static/logs.html --ignore "subreply.com" --hide 1
+45 * * * * python3 logparser/parse.py logs/lm.log.gz --html lm/static/logs.html
+--ignore lucianmarin.com,199.247.2.88 --hide 1

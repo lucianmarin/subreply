@@ -25,7 +25,7 @@
     <title>{{ member.full_name | emojize }} @{{ member }}</title>
 {% elif view == 'reply' %}
     <title>{{ entry.content | emojize | shorten(48) }}</title>
-{% elif view == 'space' %}
+{% elif view == 'sub' %}
     <title>{{ brand }} / #{{ room }}</title>
 {% else %}
     <title>{{ brand }} / {{ view | capitalize }}</title>
@@ -42,7 +42,7 @@
 
 <script type="text/javascript" src="/static/script.js?v={{ v }}" async defer></script>
 
-{% if content and view in ['feed', 'reply', 'edit', 'space'] %}
+{% if content and view in ['feed', 'reply', 'edit', 'sub'] %}
     <script type="text/javascript">
         window.onload = function() {
             var content = document.getElementById('id_content');

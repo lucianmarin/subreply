@@ -42,11 +42,11 @@ def valid_content(value, user, limit=640):
     elif len(links) > 1:
         return "Link a single address"
     elif len(hashtags) > 1:
-        return "Hashtag a single space"
+        return "Hashtag a single sub"
     elif hashtags:
         hashtag = hashtags[0].lower()
         if hashtag == value.lower()[1:]:
-            return "Share more than a space"
+            return "Share more than a sub"
         return valid_hashtag(hashtag)
     elif links:
         link = links[0].lower()
@@ -55,7 +55,7 @@ def valid_content(value, user, limit=640):
         elif link == value.lower():
             return "Share more than a link"
         elif link.startswith(('http://subreply.com', 'https://subreply.com')):
-            return "Share a @mention, a #space or a reply #id"
+            return "Share a @mention, a #sub or a reply #id"
     elif mentions:
         mention = mentions[0].lower()
         if user and mention == user.username:

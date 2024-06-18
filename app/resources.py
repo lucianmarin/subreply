@@ -119,12 +119,12 @@ class TxtResource:
 
     def on_get_map(self, req, resp):  # noqa
         replies = Comment.objects.exclude(parent=None).values_list('id')
-        spaces = Room.objects.exclude(Q(threads=None) & Q(hashtags=None)).values_list('name')
+        subs = Room.objects.exclude(Q(threads=None) & Q(hashtags=None)).values_list('name')
         users = User.objects.exclude(comments=None).values_list('username')
         reply_urls = [f"https://subreply.com/reply/{i}" for i, in replies]
-        space_urls = [f"https://subreply.com/space/{n}" for n, in spaces]
         user_urls = [f"https://subreply.com/{u}" for u, in users]
-        urls = sorted(reply_urls + space_urls + user_urls)
+        sub_urls = [f"https://subreply.com/sub/{n}" for n, in subs]
+        urls = sorted(reply_urls + sub_urls + user_urls)
         resp.text = "\n".join(urls)
 
 
@@ -308,7 +308,7 @@ class EditResource:
             raise HTTPFound(f"/reply/{entry.id}")
 
 
-class SpaceResource:
+class SubResource:
     placeholder = "Chat in #{0}"
 
     def fetch_entries(self, room):
@@ -322,7 +322,7 @@ class SpaceResource:
             raise HTTPNotFound
         entries, page, number = paginate(req, self.fetch_entries(room))
         resp.text = render(
-            page=page, view='space', number=number, content='',
+            page=page, view='sub', number=number, content='',
             user=req.user, entries=entries, errors={}, room=room,
             placeholder=self.placeholder.format(room)
         )
@@ -334,7 +334,7 @@ class SpaceResource:
         form = FieldStorage(fp=req.stream, environ=req.env)
         content = get_content(form)
         if not content:
-            raise HTTPFound(f"/space/{name}")
+            raise HTTPFound(f"/sub/{name}")
         errors = {}
         errors['content'] = valid_content(content, req.user)
         if not errors['content']:
@@ -343,7 +343,7 @@ class SpaceResource:
         if errors:
             entries = self.fetch_entries(room)[:16]
             resp.text = render(
-                page='regular', view='space', number=1, content=content,
+                page='regular', view='sub', number=1, content=content,
                 user=req.user, entries=entries, errors=errors, room=room,
                 placeholder=self.placeholder.format(room)
             )
@@ -364,7 +364,7 @@ class SpaceResource:
                 in_room=room,
                 **extra
             )
-            raise HTTPFound(f"/space/{name}")
+            raise HTTPFound(f"/sub/{name}")
 
 
 class MemberResource:
@@ -602,7 +602,7 @@ class LinksResource:
         )
 
 
-class SpacesResource:
+class SubsResource:
     def fetch_entries(self):
         last_ids = Room.objects.annotate(last_id=Max(
             'threads', filter=Q(threads__parent=None))
@@ -614,7 +614,7 @@ class SpacesResource:
     def on_get(self, req, resp):
         entries, page, number = paginate(req, self.fetch_entries())
         resp.text = render(
-            page=page, view='spaces', number=number,
+            page=page, view='subs', number=number,
             user=req.user, entries=entries
         )
 

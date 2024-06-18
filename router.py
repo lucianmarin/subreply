@@ -28,8 +28,8 @@ app.add_route('/saves', resources.SavesResource())
 
 app.add_route('/links', resources.LinksResource())
 app.add_route('/members', resources.MembersResource())
-app.add_route('/space/{name}', resources.SpaceResource())
-app.add_route('/spaces', resources.SpacesResource())
+app.add_route('/sub/{name}', resources.SubResource())
+app.add_route('/subs', resources.SubsResource())
 # app.add_route('/trending', resources.TrendingResource())
 app.add_route('/discover', resources.DiscoverResource())
 

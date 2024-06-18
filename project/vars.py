@@ -100,7 +100,13 @@ HEADERS = {
     'Accept': "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8"
 }
 
-INVALID = [
+RESERVED = [
+    "lm",
+    "lucianmarin",
+    "sublevel"
+]
+
+INVALID = RESERVED + [
     "about",
     "account",
     "api",
@@ -115,16 +121,14 @@ INVALID = [
     "group",
     "groups",
     "incomers",
+    "invite",
     "invites",
-    "lm",
     "login",
     "logout",
-    "lucianmarin",
     "media",
     "member",
     "members",
     "mention",
-    "mentioned",
     "mentions",
     "message",
     "messages",
@@ -141,16 +145,13 @@ INVALID = [
     "request",
     "reset",
     "save",
-    "saved",
     "saves",
     "search",
     "settings",
     "social",
-    "space",
-    "spaces",
     "static",
     "sub",
-    "sublevel",
+    "subs",
     "terms",
     "trending",
     "unlock"
