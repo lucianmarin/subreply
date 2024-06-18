@@ -44,12 +44,12 @@ def valid_content(value, user, limit=640):
     elif len(hashtags) > 1:
         return "Hashtag a single sub"
     elif hashtags:
-        hashtag = hashtags[0].lower()
+        hashtag = hashtags[0]
         if hashtag == value.lower()[1:]:
             return "Share more than a sub"
         return valid_hashtag(hashtag)
     elif links:
-        link = links[0].lower()
+        link = links[0]
         if len(link) > 240:
             return "Link can't be longer than 120 characters"
         elif link == value.lower():
@@ -57,7 +57,7 @@ def valid_content(value, user, limit=640):
         elif link.startswith(('http://subreply.com', 'https://subreply.com')):
             return "Share a @mention, a #sub or a reply #id"
     elif mentions:
-        mention = mentions[0].lower()
+        mention = mentions[0]
         if user and mention == user.username:
             return "Don't mention yourself"
         elif mention == value.lower()[1:]:
@@ -72,8 +72,8 @@ def valid_thread(value):
     duplicates = [t for t in threads if t.content.lower() == value.lower()]
     if duplicates:
         duplicate = duplicates[0]
-        err = 'Thread <a href="/reply/{1}">#{1}</a> started by <a href="/{0}">@{0}</a>'
-        return err.format(duplicate.created_by, duplicate.id)
+        err = 'Thread <a href="/reply/{0}">#{0}</a> started by <a href="/{1}">@{1}</a>'
+        return err.format(duplicate.id, duplicate.created_by)
 
 
 def valid_reply(parent, user, value, mentions):
@@ -84,11 +84,11 @@ def valid_reply(parent, user, value, mentions):
         (Q(ancestors=top_id) | Q(id=top_id)) & Q(content__iexact=value)
     ).first()
     if duplicate:
-        err = 'Duplicate of <a href="/reply/{1}">#{1}</a> by <a href="/{0}">@{0}</a>'
-        return err.format(duplicate.created_by, duplicate.id)
+        err = 'Duplicate of <a href="/reply/{0}">#{0}</a> by <a href="/{1}">@{1}</a>'
+        return err.format(duplicate.id, duplicate.created_by)
     elif parent.created_by_id == user.id:
         return "Don't reply to yourself"
-    elif len(mentions) == 1 and mentions[0].lower() == parent.created_by.username:
+    elif mentions and mentions[0] == parent.created_by.username:
         return "Don't mention the author"
 
 

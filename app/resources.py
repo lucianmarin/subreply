@@ -168,12 +168,12 @@ class FeedResource:
         else:
             hashtags, links, mentions = get_metadata(content)
             extra = {}
-            extra['link'] = links[0].lower() if links else ''
+            extra['link'] = links[0] if links else ''
             extra['at_room'] = Room.objects.get_or_create(
-                name=hashtags[0].lower()
+                name=hashtags[0]
             )[0] if hashtags else None
             extra['at_user'] = User.objects.get(
-                username=mentions[0].lower()
+                username=mentions[0]
             ) if mentions else None
             th, is_new = Comment.objects.get_or_create(
                 content=content,
@@ -233,12 +233,12 @@ class ReplyResource:
             )
         else:
             extra = {}
-            extra['link'] = links[0].lower() if links else ''
+            extra['link'] = links[0] if links else ''
             extra['at_room'] = Room.objects.get_or_create(
-                name=hashtags[0].lower()
+                name=hashtags[0]
             )[0] if hashtags else None
             extra['at_user'] = User.objects.get(
-                username=mentions[0].lower()
+                username=mentions[0]
             ) if mentions else None
             re, is_new = Comment.objects.get_or_create(
                 parent=parent,
@@ -278,9 +278,7 @@ class EditResource:
         errors['content'] = valid_content(content, req.user)
         if not errors['content']:
             if entry.parent_id:
-                errors['content'] = valid_reply(
-                    entry.parent, req.user, content, mentions
-                )
+                errors['content'] = valid_reply(entry.parent, req.user, content, mentions)
             else:
                 errors['content'] = valid_thread(content)
         errors = {k: v for k, v in errors.items() if v}
@@ -297,12 +295,12 @@ class EditResource:
             previous_at_user = entry.at_user
             entry.content = content
             entry.edited_at = utc_timestamp()
-            entry.link = links[0].lower() if links else ''
+            entry.link = links[0] if links else ''
             entry.at_room = Room.objects.get_or_create(
-                name=hashtags[0].lower()
+                name=hashtags[0]
             )[0] if hashtags else None
             entry.at_user = User.objects.get(
-                username=mentions[0].lower()
+                username=mentions[0]
             ) if mentions else None
             if previous_at_user != entry.at_user:
                 entry.mention_seen_at = .0
@@ -359,15 +357,15 @@ class SubResource:
         else:
             hashtags, links, mentions = get_metadata(content)
             extra = {}
-            extra['link'] = links[0].lower() if links else ''
+            extra['link'] = links[0] if links else ''
             extra['at_room'] = Room.objects.get_or_create(
-                name=hashtags[0].lower()
+                name=hashtags[0]
             )[0] if hashtags else None
             extra['in_room'] = Room.objects.get_or_create(
                 name=name
             )[0] if not room else room
             extra['at_user'] = User.objects.get(
-                username=mentions[0].lower()
+                username=mentions[0]
             ) if mentions else None
             th, is_new = Comment.objects.get_or_create(
                 content=content,

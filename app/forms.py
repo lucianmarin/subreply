@@ -48,18 +48,17 @@ def get_metadata(text):
         if word.startswith(('http://', 'https://')):
             protocol, separator, address = word.partition('://')
             if "." in address:
-                links.append(word)
+                links.append(word.lower())
         if word.startswith('@'):
             handle = word[1:]
             if handle and all(c in limits for c in handle):
-                mentions.append(handle)
-            elif '/' in handle:
-                username, slash, reply = handle.partition('/')
-                mentions.append(username)
+                mentions.append(handle.lower())
         if word.startswith('#'):
             handle = word[1:]
-            if handle and all(c in digits + ascii_letters for c in handle):
-                hashtags.append(handle)
+            if handle and all(c in digits for c in handle):
+                continue
+            elif handle and all(c in digits + ascii_letters for c in handle):
+                hashtags.append(handle.lower())
     return hashtags, links, mentions
 
 
