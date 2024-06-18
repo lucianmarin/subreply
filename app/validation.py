@@ -51,7 +51,7 @@ def valid_content(value, user, limit=640):
     elif links:
         link = links[0]
         if len(link) > 240:
-            return "Link can't be longer than 120 characters"
+            return "Link can't be longer than 240 characters"
         elif link == value.lower():
             return "Share more than a link"
         elif link.startswith(('http://subreply.com', 'https://subreply.com')):
