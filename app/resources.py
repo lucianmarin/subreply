@@ -319,24 +319,29 @@ class SubResource:
 
     @before(auth_user)
     def on_get(self, req, resp, name):
-        room = Room.objects.filter(name=name.lower()).first()
-        if not room:
+        if not req.user:
+            raise HTTPFound('/login')
+        if valid_hashtag(name):
             raise HTTPNotFound
-        entries, page, number = paginate(req, self.fetch_entries(room))
+        room = Room.objects.filter(name=name.lower()).first()
+        if room:
+            entries, page, number = paginate(req, self.fetch_entries(room))
+        else:
+            entries, page, number = [], 'regular', 1
         resp.text = render(
             page=page, view='sub', number=number, content='',
-            user=req.user, entries=entries, errors={}, room=room,
-            placeholder=self.placeholder.format(room)
+            user=req.user, entries=entries, errors={}, room=name,
+            placeholder=self.placeholder.format(name)
         )
 
     @before(auth_user)
     @before(login_required)
     def on_post(self, req, resp, name):
-        room = Room.objects.filter(name=name.lower()).first()
         form = FieldStorage(fp=req.stream, environ=req.env)
         content = get_content(form)
         if not content:
             raise HTTPFound(f"/sub/{name}")
+        room, _ = Room.objects.get_or_create(name=name.lower())
         errors = {}
         errors['content'] = valid_content(content, req.user)
         if not errors['content']:
@@ -517,6 +522,7 @@ class MembersResource:
         "username", "first_name", "last_name", "email",
         "description", "birthday", "location", "emoji", "website"
     ]
+    placeholder = "Find a member"
 
     def build_query(self, terms):
         query = Q()
@@ -542,11 +548,13 @@ class MembersResource:
         resp.text = render(
             page=page, view='members', number=number, q=q,
             user=req.user, entries=entries, errors={}, limit=24,
-            placeholder="Find a member"
+            placeholder=self.placeholder
         )
 
 
 class DiscoverResource:
+    placeholder = "Find a thread or a reply"
+
     def build_query(self, terms):
         query = Q()
         for term in terms:
@@ -569,7 +577,7 @@ class DiscoverResource:
         resp.text = render(
             page=page, view='discover', number=number, q=q,
             user=req.user, entries=entries, errors={},
-            placeholder="Find a thread or a reply"
+            placeholder=self.placeholder
         )
 
 
@@ -605,6 +613,8 @@ class LinksResource:
 
 
 class SubsResource:
+    placeholder = "Find or create a #sub"
+
     def fetch_entries(self):
         last_ids = Room.objects.annotate(last_id=Max(
             'threads', filter=Q(threads__parent=None))
@@ -614,10 +624,19 @@ class SubsResource:
 
     @before(auth_user)
     def on_get(self, req, resp):
+        q = req.params.get('q', '').strip().lower()
+        hashtag = q[1:] if q.startswith('#') else q
+        errors = {}
+        if hashtag:
+            errors['hashtag'] = valid_hashtag(hashtag)
+            errors = {k: v for k, v in errors.items() if v}
+            if not errors:
+                raise HTTPFound(f"/sub/{hashtag}")
         entries, page, number = paginate(req, self.fetch_entries())
         resp.text = render(
-            page=page, view='subs', number=number,
-            user=req.user, entries=entries
+            page=page, view='subs', number=number, q=q, errors=errors,
+            user=req.user, entries=entries,
+            placeholder=self.placeholder
         )
 
 
