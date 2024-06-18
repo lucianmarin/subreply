@@ -10,6 +10,6 @@ class Command(BaseCommand):
         users = User.objects.filter(comments=None).order_by('-id')
         return users.first()
 
-    def handle(self, *args, **options):  # noqa
+    def handle(self, *args, **options):
         user = self.get_user()
         user.delete()

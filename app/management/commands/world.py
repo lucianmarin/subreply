@@ -83,5 +83,5 @@ class Command(BaseCommand):
         with open('static/countries.json', 'w') as file:
             json.dump(countries, file, sort_keys=True, indent=4)
 
-    def handle(self, *args, **options):  # noqa
+    def handle(self, *args, **options):
         self.convert()

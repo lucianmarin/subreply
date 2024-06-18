@@ -1,6 +1,6 @@
 from cryptography.fernet import Fernet
 
-from project.local import DEBUG, SIGNATURE, SMTP  # noqa
+from project.local import DEBUG, SIGNATURE, SMTP
 
 ALLOWED_HOSTS = []
 AUTH_PASSWORD_VALIDATORS = []
@@ -29,3 +29,6 @@ USE_TZ = False
 
 FERNET = Fernet(SIGNATURE.encode())
 MAX_AGE = 3600 * 24 * 365
+
+DEBUG = DEBUG
+SMTP = SMTP

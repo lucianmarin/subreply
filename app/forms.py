@@ -10,8 +10,8 @@ def get_content(form, field="content"):
     value = form.getvalue(field, '')
     demojized = demojize(value)
     decoded = unidecode(demojized)
-    text = " ".join(w.strip() for w in decoded.split())
-    return to_metadata(text)
+    words = [word.strip() for word in decoded.split()]
+    return " ".join(words)
 
 
 def get_emoji(form):
@@ -60,25 +60,3 @@ def get_metadata(text):
             elif handle and all(c in digits + ascii_letters for c in handle):
                 hashtags.append(handle.lower())
     return hashtags, links, mentions
-
-
-def to_metadata(text):
-    words = []
-    for word in text.split():
-        endswith = ""
-        startswith = ""
-        if word.endswith(('.', ',', '!', '?', ':', ';')):
-            endswith = word[-1:]
-            word = word[:-1]
-        if word.endswith((')', ']', '}', "'", '"')):
-            endswith = word[-1:] + endswith
-            word = word[:-1]
-        if word.startswith(('(', '[', '{', "'", '"')):
-            startswith = word[:1]
-            word = word[1:]
-        if word.endswith("'s"):
-            endswith = word[-2:] + endswith
-            word = word[:-2]
-        word = startswith + word + endswith
-        words.append(word)
-    return " ".join(words)

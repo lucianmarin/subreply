@@ -1,5 +1,6 @@
 import re
 
+
 def markdown(input):
     lines = input.splitlines()
     output = []
@@ -44,8 +45,8 @@ class Markdown:
         self.block = ""
         self.typ = None
 
-    def render_line(self, l):
-        l_strip = l.rstrip()
+    def render_line(self, line):
+        l_strip = line.rstrip()
         # print(l_strip)
 
         # Handle pre block content/end
@@ -54,13 +55,13 @@ class Markdown:
                 self.typ = None
                 self.out.append("</pre>")
             else:
-                self.out.append(l)
+                self.out.append(line)
             return
 
         # Handle pre block start
-        if l.startswith("```") or l.startswith("~~~"):
+        if line.startswith("```") or line.startswith("~~~"):
             self.flush_block()
-            self.typ = l[0:3]
+            self.typ = line[0:3]
             self.out.append("<pre>")
             return
 
@@ -74,35 +75,35 @@ class Markdown:
             return
 
         # Handle heading
-        if l.startswith("#"):
+        if line.startswith("#"):
             self.flush_block()
             level = 0
-            while l.startswith("#"):
-                l = l[1:]
+            while line.startswith("#"):
+                line = line[1:]
                 level += 1
-            l = l.strip()
+            line = line.strip()
             level = 4  # overwrite heading
-            self.out.append("<h%d>%s</h%d>" % (level, l, level))
+            self.out.append("<h%d>%s</h%d>" % (level, line, level))
             return
 
-        if l.startswith("> "):
+        if line.startswith("> "):
             if self.typ != "bquote":
                 self.flush_block()
             self.typ = "bquote"
-            l = l[2:]
-        elif l.startswith("* "):
+            line = line[2:]
+        elif line.startswith("* "):
             self.flush_block()
             self.typ = "list"
-            l = l[2:]
+            line = line[2:]
 
         if not self.typ:
             self.typ = "para"
 
-        self.block += l
+        self.block += line
 
     def render(self, lines):
-        for l in lines:
-            self.render_line(l)
+        for line in lines:
+            self.render_line(line)
 
         # Render trailing block
         self.flush_block()

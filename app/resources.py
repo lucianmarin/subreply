@@ -48,7 +48,7 @@ class StaticResource:
         'jpg': "image/jpeg"
     }
 
-    def on_get(self, req, resp, filename):  # noqa
+    def on_get(self, req, resp, filename):
         print("load", filename)
         name, ext = filename.split('.')
         mode = 'rb' if ext in self.binary else 'r'
@@ -61,7 +61,7 @@ class StaticResource:
 
 class MainResource:
     @before(auth_user)
-    def on_get(self, req, resp):  # noqa
+    def on_get(self, req, resp):
         if req.user:
             raise HTTPFound('/feed')
         raise HTTPFound('/discover')
@@ -109,7 +109,7 @@ class EmojiResource:
 
 
 class TxtResource:
-    def on_get_bots(self, req, resp):  # noqa
+    def on_get_bots(self, req, resp):
         lines = (
             "User-agent: *",
             "",
@@ -117,7 +117,7 @@ class TxtResource:
         )
         resp.text = "\n".join(lines)
 
-    def on_get_map(self, req, resp):  # noqa
+    def on_get_map(self, req, resp):
         replies = Comment.objects.exclude(parent=None).values_list('id')
         subs = Room.objects.exclude(Q(threads=None) & Q(hashtags=None)).values_list('name')
         users = User.objects.exclude(comments=None).values_list('username')
@@ -506,7 +506,7 @@ class IncomersResource:
         )
 
     @before(auth_user)
-    def on_get_approve(self, req, resp, username):  # noqa
+    def on_get_approve(self, req, resp, username):
         username = username.lower()
         if not req.user.id == 1:
             raise HTTPFound('/incomers')
@@ -514,7 +514,7 @@ class IncomersResource:
         raise HTTPFound('/incomers')
 
     @before(auth_user)
-    def on_get_destroy(self, req, resp):  # noqa
+    def on_get_destroy(self, req, resp):
         if not req.user.id == 1:
             raise HTTPFound('/incomers')
         User.objects.filter(is_approved=False).delete()
@@ -835,7 +835,7 @@ class LoginResource:
 
 
 class LogoutResource:
-    def on_get(self, req, resp):  # noqa
+    def on_get(self, req, resp):
         resp.unset_cookie('identity')
         raise HTTPFound('/discover')
 
@@ -898,7 +898,7 @@ class UnlockResource:
             page='unlock', view='unlock', errors={}, form=form
         )
 
-    def on_get_link(self, req, resp, token):  # noqa
+    def on_get_link(self, req, resp, token):
         email = FERNET.decrypt(token.encode()).decode()
         user = User.objects.filter(email=email).first()
         token = FERNET.encrypt(str(user.id).encode()).decode()

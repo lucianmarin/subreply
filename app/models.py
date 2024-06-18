@@ -107,9 +107,9 @@ class Comment(models.Model):
     at_user = models.ForeignKey('User', on_delete=models.SET_NULL, null=True,
                                 related_name='mentions')
     in_room = models.ForeignKey('Room', on_delete=models.CASCADE, null=True,
-                             related_name='threads')
+                                related_name='threads')
     at_room = models.ForeignKey('Room', on_delete=models.SET_NULL, null=True,
-                             related_name='hashtags')
+                                related_name='hashtags')
     content = models.CharField(max_length=640, db_index=True)
     link = models.CharField(max_length=240, default='', db_index=True)
     mention_seen_at = models.FloatField(default=.0, db_index=True)
