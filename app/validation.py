@@ -18,13 +18,13 @@ def valid_hashtag(value):
     if not value:
         return "Value cannot be empty"
     elif len(value) > 15:
-        return "Hashtag is too long"
+        return "Hashtag can't be longer than 15 characters"
     elif all(c in digits for c in value):
         return "Hashtag contains only digits"
     elif not all(c in limits for c in value):
         return "Hashtag can be only alphanumeric"
     elif has_repetions(value):
-        return "Hashtag contains repetions"
+        return "Hashtag contains repeating characters"
     elif value in INVALID:
         return "Hashtag is not valid"
 
