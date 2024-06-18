@@ -319,9 +319,10 @@ class SubResource:
 
     @before(auth_user)
     def on_get(self, req, resp, name):
+        name = name.lower()
         if valid_hashtag(name):
             raise HTTPNotFound
-        room = Room.objects.filter(name=name.lower()).first()
+        room = Room.objects.filter(name=name).first()
         if not req.user and not room:
             raise HTTPFound('/login')
         if room:
