@@ -196,6 +196,8 @@ class ReplyResource:
     @before(auth_user)
     def on_get(self, req, resp, id):
         parent = Comments.filter(id=id).first()
+        if not parent:
+            raise HTTPNotFound
         duplicate = Comment.objects.filter(
             parent=parent, created_by=req.user
         ).exists() if req.user else True
