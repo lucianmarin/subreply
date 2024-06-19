@@ -12,7 +12,7 @@ NAME = "simplemaps_worldcities_basicv1.77.zip"
 
 
 class Command(BaseCommand):
-    help = "Fetch users, comments from db.json."
+    help = "Fetch cities, countries from download."
     url = "https://simplemaps.com/static/data/world-cities/basic/" + NAME
 
     def get_csv(self):

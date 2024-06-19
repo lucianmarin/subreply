@@ -2,7 +2,7 @@ from falcon.constants import MEDIA_JSON
 from falcon.hooks import before
 
 from app.hooks import auth_user
-from app.models import Comment, Relation, Save, User
+from app.models import Bond, Post, Save, User
 from app.utils import utc_timestamp
 
 
@@ -13,7 +13,7 @@ class DeleteEndpoint:
         if not req.user:
             resp.media = {'status': 'not auth'}
             return
-        entry = Comment.objects.filter(id=id).first()
+        entry = Post.objects.filter(id=id).first()
         if not entry:
             resp.media = {'status': 'not found'}
             return
@@ -34,14 +34,14 @@ class SaveEndpoint:
         if not req.user:
             resp.media = {'status': 'not auth'}
             return
-        entry = Comment.objects.filter(id=id).exclude(created_by=req.user).first()
+        entry = Post.objects.filter(id=id).exclude(created_by=req.user).first()
         if not entry:
             resp.media = {'status': 'not found'}
             return
         Save.objects.get_or_create(
             created_at=utc_timestamp(),
             created_by=req.user,
-            to_comment=entry
+            post=entry
         )
         resp.media = {'status': 'unsave'}
 
@@ -53,11 +53,11 @@ class UnsaveEndpoint:
         if not req.user:
             resp.media = {'status': 'not auth'}
             return
-        entry = Comment.objects.filter(id=id).first()
+        entry = Post.objects.filter(id=id).first()
         if not entry:
             resp.media = {'status': 'not found'}
             return
-        Save.objects.filter(created_by=req.user, to_comment=entry).delete()
+        Save.objects.filter(created_by=req.user, post=entry).delete()
         resp.media = {'status': 'save'}
 
 
@@ -72,7 +72,7 @@ class FollowEndpoint:
         if not member:
             resp.media = {'status': 'not found'}
             return
-        Relation.objects.get_or_create(
+        Bond.objects.get_or_create(
             created_at=utc_timestamp(), created_by=req.user, to_user=member
         )
         resp.media = {'status': 'unfollow'}
@@ -89,5 +89,5 @@ class UnfollowEndpoint:
         if not member:
             resp.media = {'status': 'not found'}
             return
-        Relation.objects.filter(created_by=req.user, to_user=member).delete()
+        Bond.objects.filter(created_by=req.user, to_user=member).delete()
         resp.media = {'status': 'follow'}

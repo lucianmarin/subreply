@@ -5,13 +5,13 @@ from django.core.management.base import BaseCommand
 from unidecode import unidecode
 
 from app.forms import get_metadata
-from app.models import Comment, Relation, Save, User
+from app.models import Bond, Post, Save, User
 
 
 class Command(BaseCommand):
-    help = "Fetch users, comments from db.json."
+    help = "Fetch users, posts from db.json."
     users = {}
-    comments = {}
+    posts = {}
 
     def fetch_users(self, fields, pk):
         user, is_new = User.objects.get_or_create(
@@ -29,32 +29,32 @@ class Command(BaseCommand):
         )
         self.users[pk] = user
 
-    def fetch_comments(self, fields, pk):
+    def fetch_posts(self, fields, pk):
         hashtags, links, mentions = get_metadata(fields['content'])
         at_user = None
         if mentions:
             at_user = User.objects.filter(username=mentions[0].lower()).first()
-        comment, is_new = Comment.objects.get_or_create(
+        post, is_new = Post.objects.get_or_create(
             ancestors=None,
-            parent=self.comments.get(fields['parent']),
+            parent=self.posts.get(fields['parent']),
             created_at=parse(fields['created_at']).timestamp(),
             created_by=self.users.get(fields['created_by']),
             at_user=at_user,
             content=fields['content']
         )
-        print(comment.id, pk)
-        self.comments[pk] = comment
-        comment.set_ancestors()
+        print(post.id, pk)
+        self.posts[pk] = post
+        post.set_ancestors()
 
     def fetch_likes(self, fields):
         Save.objects.get_or_create(
             created_at=parse(fields['created_at']).timestamp(),
             created_by=self.users.get(fields['created_by']),
-            to_comment=self.comments.get(fields['comment'])
+            post=self.posts.get(fields['post'])
         )
 
-    def fetch_relations(self, fields):
-        Relation.objects.get_or_create(
+    def fetch_bonds(self, fields):
+        Bond.objects.get_or_create(
             created_at=parse(fields['created_at']).timestamp(),
             created_by=self.users.get(fields['created_by']),
             to_user=self.users.get(fields['to_user'])
@@ -66,9 +66,9 @@ class Command(BaseCommand):
             for row in rows:
                 if row['model'] == "app.user":
                     self.fetch_users(row['fields'], row['pk'])
-                elif row['model'] == "app.comment":
-                    self.fetch_comments(row['fields'], row['pk'])
-                elif row['model'] == "app.commentlike":
+                elif row['model'] == "app.post":
+                    self.fetch_posts(row['fields'], row['pk'])
+                elif row['model'] == "app.postlike":
                     self.fetch_likes(row['fields'])
                 elif row['model'] == "app.relationship":
-                    self.fetch_relations(row['fields'])
+                    self.fetch_bonds(row['fields'])

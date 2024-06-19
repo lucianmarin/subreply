@@ -11,7 +11,7 @@ from strictyaml import as_document
 from app.forms import get_content, get_emoji, get_location, get_metadata, get_name
 from app.hooks import auth_user, login_required
 from app.jinja import render
-from app.models import Comment, Relation, Room, Save, User
+from app.models import Bond, Post, Room, Save, User
 from app.utils import build_hash, utc_timestamp, verify_hash
 from app.validation import (authentication, profiling, registration, valid_content,
                             valid_handle, valid_password, valid_phone, valid_reply,
@@ -19,13 +19,13 @@ from app.validation import (authentication, profiling, registration, valid_conte
 from project.settings import FERNET, MAX_AGE, SMTP
 from project.vars import UNLOCK_HTML, UNLOCK_TEXT
 
-Comments = Comment.objects.annotate(
+Posts = Post.objects.annotate(
     replies=Count('descendants')
 ).select_related('created_by', 'in_room')
 
-PPFR = Prefetch('parent', Comments)
-PFR = Prefetch('kids', Comments.order_by('-id'))
-RPFR = Prefetch('kids', Comments.prefetch_related(PFR))
+PPFR = Prefetch('parent', Posts)
+PFR = Prefetch('kids', Posts.order_by('-id'))
+RPFR = Prefetch('kids', Posts.prefetch_related(PFR))
 
 
 def paginate(req, qs, limit=16):
@@ -118,9 +118,9 @@ class TxtResource:
         resp.text = "\n".join(lines)
 
     def on_get_map(self, req, resp):
-        replies = Comment.objects.exclude(parent=None).values_list('id')
+        replies = Post.objects.exclude(parent=None).values_list('id')
         subs = Room.objects.exclude(Q(threads=None) & Q(hashtags=None)).values_list('name')
-        users = User.objects.exclude(comments=None).values_list('username')
+        users = User.objects.exclude(posts=None).values_list('username')
         reply_urls = [f"https://subreply.com/reply/{i}" for i, in replies]
         user_urls = [f"https://subreply.com/{u}" for u, in users]
         sub_urls = [f"https://subreply.com/sub/{n}" for n, in subs]
@@ -132,8 +132,8 @@ class FeedResource:
     placeholder = "What are you up to?"
 
     def fetch_entries(self, user):
-        friends = Relation.objects.filter(created_by=user).values('to_user_id')
-        entries = Comments.filter(created_by__in=friends).order_by('-id')
+        friends = Bond.objects.filter(created_by=user).values('to_user_id')
+        entries = Posts.filter(created_by__in=friends).order_by('-id')
         return entries.prefetch_related(PFR, PPFR)
 
     @before(auth_user)
@@ -175,7 +175,7 @@ class FeedResource:
             extra['at_user'] = User.objects.get(
                 username=mentions[0]
             ) if mentions else None
-            th, is_new = Comment.objects.get_or_create(
+            th, is_new = Post.objects.get_or_create(
                 content=content,
                 created_at=utc_timestamp(),
                 created_by=req.user,
@@ -186,19 +186,19 @@ class FeedResource:
 
 class ReplyResource:
     def fetch_entries(self, parent):
-        return Comments.filter(parent=parent).order_by('-id').prefetch_related(RPFR)
+        return Posts.filter(parent=parent).order_by('-id').prefetch_related(RPFR)
 
     def fetch_ancestors(self, parent):
-        return Comments.filter(
+        return Posts.filter(
             id__in=parent.ancestors.values('id')
         ).order_by('id').prefetch_related(PPFR)
 
     @before(auth_user)
     def on_get(self, req, resp, id):
-        parent = Comments.filter(id=id).first()
+        parent = Posts.filter(id=id).first()
         if not parent:
             raise HTTPNotFound
-        duplicate = Comment.objects.filter(
+        duplicate = Post.objects.filter(
             parent=parent, created_by=req.user
         ).exists() if req.user else True
         ancestors = self.fetch_ancestors(parent)
@@ -212,7 +212,7 @@ class ReplyResource:
     @before(auth_user)
     @before(login_required)
     def on_post(self, req, resp, id):
-        parent = Comments.filter(id=id).select_related('parent').first()
+        parent = Posts.filter(id=id).select_related('parent').first()
         form = FieldStorage(fp=req.stream, environ=req.env)
         content = get_content(form)
         if not content:
@@ -240,7 +240,7 @@ class ReplyResource:
             extra['at_user'] = User.objects.get(
                 username=mentions[0]
             ) if mentions else None
-            re, is_new = Comment.objects.get_or_create(
+            re, is_new = Post.objects.get_or_create(
                 parent=parent,
                 to_user=parent.created_by,
                 content=content,
@@ -257,7 +257,7 @@ class EditResource:
     @before(auth_user)
     @before(login_required)
     def on_get(self, req, resp, id):
-        entry = Comments.filter(id=id).prefetch_related(PPFR).first()
+        entry = Posts.filter(id=id).prefetch_related(PPFR).first()
         if not entry or entry.created_by != req.user or entry.replies:
             raise HTTPNotFound
         ancestors = [entry.parent] if entry.parent_id else []
@@ -270,7 +270,7 @@ class EditResource:
     @before(auth_user)
     @before(login_required)
     def on_post(self, req, resp, id):
-        entry = Comments.filter(id=id).prefetch_related(PPFR).first()
+        entry = Posts.filter(id=id).prefetch_related(PPFR).first()
         form = FieldStorage(fp=req.stream, environ=req.env)
         content = get_content(form)
         hashtags, links, mentions = get_metadata(content)
@@ -312,7 +312,7 @@ class SubResource:
     placeholder = "Chat in #{0}"
 
     def fetch_entries(self, room):
-        entries = Comments.filter(Q(in_room=room) | Q(at_room=room)).order_by('-id')
+        entries = Posts.filter(Q(in_room=room) | Q(at_room=room)).order_by('-id')
         return entries.prefetch_related(PFR, PPFR)
 
     @before(auth_user)
@@ -367,7 +367,7 @@ class SubResource:
             extra['at_user'] = User.objects.get(
                 username=mentions[0]
             ) if mentions else None
-            th, is_new = Comment.objects.get_or_create(
+            th, is_new = Post.objects.get_or_create(
                 content=content,
                 created_at=utc_timestamp(),
                 created_by=req.user,
@@ -378,15 +378,15 @@ class SubResource:
 
 class MemberResource:
     def fetch_entries(self, member):
-        entries = Comments.filter(created_by=member).order_by('-id')
+        entries = Posts.filter(created_by=member).order_by('-id')
         return entries.prefetch_related(PFR, PPFR)
 
     @before(auth_user)
     def on_get(self, req, resp, username):
         username = username.lower()
         member = User.objects.filter(username=username).first()
-        received = Comment.objects.filter(to_user=member).count()
-        sent = Comment.objects.filter(created_by=member).exclude(parent=None).count()
+        received = Post.objects.filter(to_user=member).count()
+        sent = Post.objects.filter(created_by=member).exclude(parent=None).count()
         score = round(sent / received * 100) if received else -1
         temp = "warm" if score < 0 or score >= 100 else "cold"
         if not member:
@@ -401,7 +401,7 @@ class MemberResource:
 
 class FollowingResource:
     def fetch_entries(self, user):
-        entries = Relation.objects.filter(created_by=user).exclude(to_user=user)
+        entries = Bond.objects.filter(created_by=user).exclude(to_user=user)
         return entries.order_by('-id').select_related('to_user')
 
     @before(auth_user)
@@ -416,11 +416,11 @@ class FollowingResource:
 
 class FollowersResource:
     def fetch_entries(self, user):
-        entries = Relation.objects.filter(to_user=user).exclude(created_by=user)
+        entries = Bond.objects.filter(to_user=user).exclude(created_by=user)
         return entries.order_by('-id').select_related('created_by')
 
     def clear_followers(self, user):
-        Relation.objects.filter(
+        Bond.objects.filter(
             to_user=user, seen_at=.0
         ).update(seen_at=utc_timestamp())
 
@@ -438,11 +438,11 @@ class FollowersResource:
 
 class MentionsResource:
     def fetch_entries(self, user):
-        entries = Comments.filter(at_user=user).order_by('-id')
+        entries = Posts.filter(at_user=user).order_by('-id')
         return entries.prefetch_related(PFR, PPFR)
 
     def clear_mentions(self, user):
-        Comment.objects.filter(
+        Post.objects.filter(
             at_user=user, mention_seen_at=.0
         ).update(mention_seen_at=utc_timestamp())
 
@@ -459,11 +459,11 @@ class MentionsResource:
 
 class RepliesResource:
     def fetch_entries(self, user):
-        entries = Comments.filter(to_user=user).order_by('-id')
+        entries = Posts.filter(to_user=user).order_by('-id')
         return entries.prefetch_related(PPFR)
 
     def clear_replies(self, user):
-        Comment.objects.filter(
+        Post.objects.filter(
             to_user=user, reply_seen_at=.0
         ).update(reply_seen_at=utc_timestamp())
 
@@ -480,8 +480,8 @@ class RepliesResource:
 
 class SavesResource:
     def fetch_entries(self, user):
-        saved_ids = Save.objects.filter(created_by=user).values('to_comment__id')
-        entries = Comments.filter(id__in=saved_ids).order_by('-id')
+        saved_ids = Save.objects.filter(created_by=user).values('post__id')
+        entries = Posts.filter(id__in=saved_ids).order_by('-id')
         return entries.prefetch_related(PFR, PPFR)
 
     @before(auth_user)
@@ -569,9 +569,9 @@ class DiscoverResource:
         if terms:
             f = self.build_query(terms)
         else:
-            last_ids = User.objects.annotate(last_id=Max('comments')).values('last_id')
+            last_ids = User.objects.annotate(last_id=Max('posts')).values('last_id')
             f = Q(id__in=last_ids)
-        return Comments.filter(f).order_by('-id').prefetch_related(PFR, PPFR)
+        return Posts.filter(f).order_by('-id').prefetch_related(PFR, PPFR)
 
     @before(auth_user)
     def on_get(self, req, resp):
@@ -589,10 +589,10 @@ class TrendingResource:
     limit = 24
 
     def fetch_entries(self):
-        sample = Comment.objects.filter(parent=None).exclude(
+        sample = Post.objects.filter(parent=None).exclude(
             kids=None
         ).order_by('-id').values('id')[:self.limit]
-        entries = Comments.filter(id__in=sample).order_by('-replies', '-id')
+        entries = Posts.filter(id__in=sample).order_by('-replies', '-id')
         return entries.prefetch_related(PFR)
 
     @before(auth_user)
@@ -605,7 +605,7 @@ class TrendingResource:
 
 class LinksResource:
     def fetch_entries(self, req):
-        entries = Comments.exclude(link='').order_by('-id')
+        entries = Posts.exclude(link='').order_by('-id')
         return entries.prefetch_related(PFR)
 
     @before(auth_user)
@@ -623,7 +623,7 @@ class SubsResource:
         last_ids = Room.objects.annotate(last_id=Max(
             'threads', filter=Q(threads__parent=None))
         ).values('last_id')
-        entries = Comments.filter(id__in=last_ids).order_by('-id')
+        entries = Posts.filter(id__in=last_ids).order_by('-id')
         return entries.prefetch_related(PFR, PPFR)
 
     @before(auth_user)
@@ -688,21 +688,21 @@ class AccountResource:
                 user=req.user, delete_errors=errors, form=form
             )
         else:
-            comments = Comment.objects.filter(
+            posts = Post.objects.filter(
                 created_by=req.user
             ).order_by('-id').prefetch_related('parent__created_by')
             data = []
-            for comment in comments:
+            for post in posts:
                 d = {}
-                if comment.parent:
+                if post.parent:
                     p = {}
-                    p['username'] = comment.parent.created_by.username
-                    p['content'] = comment.parent.content
+                    p['username'] = post.parent.created_by.username
+                    p['content'] = post.parent.content
                     d['parent'] = p
-                d['content'] = comment.content
-                d['created'] = comment.created_at
-                if comment.edited_at:
-                    d['edited'] = comment.edited_at
+                d['content'] = post.content
+                d['created'] = post.created_at
+                if post.edited_at:
+                    d['edited'] = post.edited_at
                 data.append(d)
             resp.content_type = "application/x-yaml"
             resp.downloadable_as = f"subreply-{username}.yaml"
@@ -888,8 +888,8 @@ class RegisterResource:
                     'location': f['location'],
                 }
             )
-            # create self relation
-            Relation.objects.get_or_create(
+            # create self bond
+            Bond.objects.get_or_create(
                 created_at=utc_timestamp(), seen_at=utc_timestamp(),
                 created_by=user, to_user=user
             )

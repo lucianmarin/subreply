@@ -3,24 +3,24 @@ from datetime import datetime
 from django.core.management.base import BaseCommand
 from django.db.models import F
 
-from app.models import Comment, Relation, Save, User
+from app.models import Bond, Post, Save, User
 
 
 class Command(BaseCommand):
-    help = "Count accounts, comments, etc."
+    help = "Count users, posts, etc."
     years = range(2014, datetime.now().year + 1)
 
     def total(self):
-        accounts = User.objects.count()
-        relations = Relation.objects.exclude(
+        users = User.objects.count()
+        bonds = Bond.objects.exclude(
             created_by_id=F('to_user_id')
         ).count()
         saves = Save.objects.count()
-        threads = Comment.objects.filter(parent=None).count()
-        replies = Comment.objects.exclude(parent=None).count()
+        threads = Post.objects.filter(parent=None).count()
+        replies = Post.objects.exclude(parent=None).count()
         print('total:')
-        print('  accounts:', accounts)
-        print('  relations:', relations)
+        print('  users:', users)
+        print('  bonds:', bonds)
         print('  saves:', saves)
         print('  threads:', threads)
         print('  replies:', replies)
@@ -32,22 +32,22 @@ class Command(BaseCommand):
             accounts = User.objects.filter(
                 created_at__gt=first_day, created_at__lt=last_day
             ).count()
-            relations = Relation.objects.filter(
+            bonds = Bond.objects.filter(
                 created_at__gt=first_day, created_at__lt=last_day
             ).exclude(created_by_id=F('to_user_id')).count()
             saves = Save.objects.filter(
                 created_at__gt=first_day, created_at__lt=last_day
             ).count()
-            threads = Comment.objects.filter(
+            threads = Post.objects.filter(
                 created_at__gt=first_day, created_at__lt=last_day,
                 parent=None
             ).count()
-            replies = Comment.objects.filter(
+            replies = Post.objects.filter(
                 created_at__gt=first_day, created_at__lt=last_day
             ).exclude(parent=None).count()
             print(f'{year}:')
             print('  accounts:', accounts)
-            print('  relations:', relations)
+            print('  bonds:', bonds)
             print('  saves:', saves)
             print('  threads:', threads)
             print('  replies:', replies)

@@ -8,7 +8,7 @@ from phonenumbers import is_possible_number, is_valid_number, parse
 from requests import head
 
 from app.forms import get_metadata
-from app.models import Comment, User
+from app.models import Post, User
 from app.utils import has_repetions, verify_hash
 from project.vars import INVALID, LATIN, MAX_YEAR, MIN_YEAR, CITIES
 
@@ -68,7 +68,7 @@ def valid_content(value, user, limit=640):
 
 def valid_thread(value):
     """Duplicate topic against old topics."""
-    threads = Comment.objects.filter(parent=None).order_by('-id')[:32]
+    threads = Post.objects.filter(parent=None).order_by('-id')[:32]
     duplicates = [t for t in threads if t.content.lower() == value.lower()]
     if duplicates:
         duplicate = duplicates[0]
@@ -80,7 +80,7 @@ def valid_reply(parent, user, value, mentions):
     """Duplicate reply against replies for topic including topic."""
     ancestors = parent.ancestors.values_list('id', flat=True)
     top_id = min(ancestors) if ancestors else parent.id
-    duplicate = Comment.objects.filter(
+    duplicate = Post.objects.filter(
         (Q(ancestors=top_id) | Q(id=top_id)) & Q(content__iexact=value)
     ).first()
     if duplicate:

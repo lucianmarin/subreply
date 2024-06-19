@@ -84,7 +84,7 @@ class User(models.Model):
 
     @cached_property
     def saves(self):
-        return self.saved.values_list('to_comment_id', flat=True)
+        return self.saved.values_list('post_id', flat=True)
 
     @cached_property
     def links(self):
@@ -93,7 +93,7 @@ class User(models.Model):
         return self.social
 
 
-class Comment(models.Model):
+class Post(models.Model):
     ancestors = models.ManyToManyField('self', related_name='descendants',
                                        symmetrical=False)
     parent = models.ForeignKey('self', on_delete=models.CASCADE, null=True,
@@ -101,7 +101,7 @@ class Comment(models.Model):
     created_at = models.FloatField(default=.0)
     edited_at = models.FloatField(default=.0)
     created_by = models.ForeignKey('User', on_delete=models.CASCADE,
-                                   related_name='comments')
+                                   related_name='posts')
     to_user = models.ForeignKey('User', on_delete=models.CASCADE, null=True,
                                 related_name='replies')
     at_user = models.ForeignKey('User', on_delete=models.SET_NULL, null=True,
@@ -134,11 +134,11 @@ class Save(models.Model):
     created_at = models.FloatField(default=.0)
     created_by = models.ForeignKey('User', on_delete=models.CASCADE,
                                    related_name='saved')
-    to_comment = models.ForeignKey('Comment', on_delete=models.CASCADE,
-                                   related_name='saved_by')
+    post = models.ForeignKey('Post', on_delete=models.CASCADE,
+                             related_name='saved_by')
 
 
-class Relation(models.Model):
+class Bond(models.Model):
     created_at = models.FloatField(default=.0)
     created_by = models.ForeignKey('User', on_delete=models.CASCADE,
                                    related_name='following')
