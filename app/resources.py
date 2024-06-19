@@ -815,7 +815,10 @@ class ProfileResource:
 
 
 class LoginResource:
+    @before(auth_user)
     def on_get(self, req, resp):
+        if req.user:
+            raise HTTPFound('/feed')
         form = FieldStorage(fp=req.stream, environ=req.env)
         resp.text = render(page='login', view='login', errors={}, form=form)
 
@@ -835,13 +838,18 @@ class LoginResource:
 
 
 class LogoutResource:
+    @before(auth_user)
+    @before(login_required)
     def on_get(self, req, resp):
         resp.unset_cookie('identity')
         raise HTTPFound('/discover')
 
 
 class RegisterResource:
+    @before(auth_user)
     def on_get(self, req, resp):
+        if req.user:
+            raise HTTPFound('/feed')
         form = FieldStorage(fp=req.stream, environ=req.env)
         resp.text = render(
             page='register', view='register',
@@ -892,7 +900,10 @@ class RegisterResource:
 
 
 class UnlockResource:
+    @before(auth_user)
     def on_get(self, req, resp):
+        if req.user:
+            raise HTTPFound('/feed')
         form = FieldStorage(fp=req.stream, environ=req.env)
         resp.text = render(
             page='unlock', view='unlock', errors={}, form=form
