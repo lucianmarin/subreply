@@ -385,16 +385,11 @@ class MemberResource:
     def on_get(self, req, resp, username):
         username = username.lower()
         member = User.objects.filter(username=username).first()
-        received = Post.objects.filter(to_user=member).count()
-        sent = Post.objects.filter(created_by=member).exclude(parent=None).count()
-        score = round(sent / received * 100) if received else -1
-        temp = "warm" if score < 0 or score >= 100 else "cold"
         if not member:
             raise HTTPNotFound
         entries, page, number = paginate(req, self.fetch_entries(member))
         resp.text = render(
             page=page, view='member', number=number, errors={},
-            received=received, sent=sent, score=score, temp=temp,
             user=req.user, member=member, entries=entries
         )
 

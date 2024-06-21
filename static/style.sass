@@ -267,7 +267,6 @@ table
 .entry
     border-top: var(--whitesmoke) 1px solid
     padding: 5px 0
-    position: relative
     &.indent
         margin-left: 30px
     .text
@@ -334,10 +333,6 @@ table
         color: var(--gray)
         &:hover
             color: var(--silver)
-    .cold
-        color: var(--accent)
-    .warm
-        color: var(--alert)
 
 .author
     color: var(--gray)
@@ -365,21 +360,6 @@ table
         color: var(--gray)
         &:hover
             color: var(--silver)
-
-.score
-    overflow: hidden
-    height: 1px
-    position: absolute
-    width: 100%
-    top: -1px
-    .warm, .cold
-        height: 1px
-        float: left
-    .cold
-        background-color: var(--accent)
-    .warm
-        background-color: var(--alert)
-
 
 .request
     &.upper
