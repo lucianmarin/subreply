@@ -118,13 +118,15 @@ class TxtResource:
         resp.text = "\n".join(lines)
 
     def on_get_map(self, req, resp):
-        replies = Post.objects.exclude(parent=None).values_list('id')
-        subs = Room.objects.exclude(Q(threads=None) & Q(hashtags=None)).values_list('name')
+        posts = Post.objects.values_list('id')
+        rooms = Room.objects.exclude(
+            Q(threads=None) & Q(hashtags=None)
+        ).values_list('name')
         users = User.objects.exclude(posts=None).values_list('username')
-        reply_urls = [f"https://subreply.com/reply/{i}" for i, in replies]
+        post_urls = [f"https://subreply.com/reply/{p}" for p, in posts]
         user_urls = [f"https://subreply.com/{u}" for u, in users]
-        sub_urls = [f"https://subreply.com/sub/{n}" for n, in subs]
-        urls = sorted(reply_urls + sub_urls + user_urls)
+        room_urls = [f"https://subreply.com/sub/{r}" for r, in rooms]
+        urls = sorted(post_urls + room_urls + user_urls)
         resp.text = "\n".join(urls)
 
 
