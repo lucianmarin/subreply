@@ -12,13 +12,11 @@ class Command(BaseCommand):
 
     def total(self):
         users = User.objects.count()
-        bonds = Bond.objects.exclude(
-            created_by_id=F('to_user_id')
-        ).count()
+        bonds = Bond.objects.exclude(created_by_id=F('to_user_id')).count()
         saves = Save.objects.count()
         threads = Post.objects.filter(parent=None).count()
         replies = Post.objects.exclude(parent=None).count()
-        print('total:')
+        print('Total:')
         print('  users:', users)
         print('  bonds:', bonds)
         print('  saves:', saves)
@@ -29,7 +27,7 @@ class Command(BaseCommand):
         for year in self.years:
             first_day = datetime(year, 1, 1).timestamp()
             last_day = datetime(year, 12, 31).timestamp()
-            accounts = User.objects.filter(
+            users = User.objects.filter(
                 created_at__gt=first_day, created_at__lt=last_day
             ).count()
             bonds = Bond.objects.filter(
@@ -39,14 +37,13 @@ class Command(BaseCommand):
                 created_at__gt=first_day, created_at__lt=last_day
             ).count()
             threads = Post.objects.filter(
-                created_at__gt=first_day, created_at__lt=last_day,
-                parent=None
+                created_at__gt=first_day, created_at__lt=last_day, parent=None
             ).count()
             replies = Post.objects.filter(
                 created_at__gt=first_day, created_at__lt=last_day
             ).exclude(parent=None).count()
             print(f'{year}:')
-            print('  accounts:', accounts)
+            print('  users:', users)
             print('  bonds:', bonds)
             print('  saves:', saves)
             print('  threads:', threads)

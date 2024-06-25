@@ -64,6 +64,7 @@ app.add_route('/{username}/approve', resources.IncomersResource(), suffix="appro
 app.add_route('/{username}', resources.MemberResource())
 
 if DEBUG:
-    app.add_route('/static/{filename}', resources.StaticResource())
+    app.add_route('/static/{filename}', resources.StaticResource("static"))
+    app.add_route('/static/openmoji/{filename}', resources.StaticResource("static/openmoji"))
 
 application = app

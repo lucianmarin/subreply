@@ -13,13 +13,14 @@ NAME = "simplemaps_worldcities_basicv1.77.zip"
 
 class Command(BaseCommand):
     help = "Fetch cities, countries from download."
-    url = "https://simplemaps.com/static/data/world-cities/basic/" + NAME
+    url = f"https://simplemaps.com/static/data/world-cities/basic/{NAME}"
 
     def get_csv(self):
+        print(f"Downloading {NAME}")
         r = requests.get(self.url, stream=True)
         c = io.BytesIO(r.content)
         with zipfile.ZipFile(c) as zip_file, zip_file.open('worldcities.csv') as file:
-            return io.StringIO(file.read().decode())
+            self.csv_file = io.StringIO(file.read().decode())
 
     def fix_country(self, name):
         replaces = [
@@ -54,10 +55,11 @@ class Command(BaseCommand):
         return name.split(" / ")[0]
 
     def convert(self):
+        print("Converting CSV file to JSON files")
         cities = defaultdict(set)
         countries = {}
-        maxim, loc = 0, ""
-        reader = csv.DictReader(self.get_csv())
+        maxim, location = 0, ""
+        reader = csv.DictReader(self.csv_file)
         for row in reader:
             country = self.fix_country(row['country'])
             city = self.fix_city(row['city_ascii'])
@@ -66,13 +68,13 @@ class Command(BaseCommand):
                 cities[country].add(city)
                 countries[row['iso2']] = country
                 if len(name) > maxim:
-                    maxim, loc = len(name), name
+                    maxim, location = len(name), name
 
-        print('max', maxim)
-        print('loc', loc)
-        print('size', sys.getsizeof(cities))
-        print('countries', len(cities.keys()))
-        print('cities', sum(len(v) for k, v in cities.items()))
+        print('Maxim', maxim, "characters")
+        print('Location', location)
+        print('Size', sys.getsizeof(self.csv_file))
+        print('Countries', len(cities.keys()))
+        print('Cities', sum(len(v) for k, v in cities.items()))
 
         for country, city_set in cities.items():
             cities[country] = sorted(city_set)
@@ -84,4 +86,5 @@ class Command(BaseCommand):
             json.dump(countries, file, sort_keys=True, indent=4)
 
     def handle(self, *args, **options):
+        self.get_csv()
         self.convert()

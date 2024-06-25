@@ -32,7 +32,7 @@ class Command(BaseCommand):
             html=JinjaTemplate(ACTIVITY_HTML),
             text=JinjaTemplate(ACTIVITY_TEXT),
             subject="Activity left unseen on Subreply",
-            mail_from=("Subreply", "noreply@lucianmarin.com")
+            mail_from=("Subreply", "subreply@outlook.com")
         )
         # send email
         response = m.send(

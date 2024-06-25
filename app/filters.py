@@ -6,6 +6,13 @@ from tldextract import extract
 from project.vars import LINKS
 
 
+def hexcode(emoji):
+    """Get hexcode for an emoji."""
+    #  rjust(4, '0') is necessary to convert "2A" to "002A"
+    codes = [hex(ord(e))[2:].upper().rjust(4, '0') for e in emoji]
+    return "-".join(codes)
+
+
 def enumerize(links):
     """Enumerate social links."""
     keys = sorted(links)  # eg. github

@@ -48,6 +48,9 @@ class StaticResource:
         'jpg': "image/jpeg"
     }
 
+    def __init__(self, path):
+        self.path = path
+
     def on_get(self, req, resp, filename):
         print("load", filename)
         name, ext = filename.split('.')
@@ -55,7 +58,7 @@ class StaticResource:
         resp.status = HTTP_200
         resp.content_type = self.mime_types[ext]
         resp.cache_control = ["max-age=3600000"]
-        with open(f'static/{filename}', mode) as f:
+        with open(f'{self.path}/{filename}', mode) as f:
             resp.text = f.read()
 
 
