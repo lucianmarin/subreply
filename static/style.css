@@ -260,6 +260,6 @@ table td:nth-child(even):last-child, table th:nth-child(even):last-child { borde
 
 @media (max-width: 594px) { .container { grid-template-columns: 0 40px calc(100% - 70px) 0; } }
 
-@font-face { font-family: "Route 159"; font-style: normal; font-weight: normal; src: url(/static/route159-regular.woff2) format("woff2"); }
+@font-face { font-family: "Route 159"; font-style: normal; font-weight: normal; src: url(/static/route159/regular.woff2) format("woff2"); }
 
-@font-face { font-family: "Route 159"; font-style: normal; font-weight: bold; src: url(/static/route159-bold.woff2) format("woff2"); }
+@font-face { font-family: "Route 159"; font-style: normal; font-weight: bold; src: url(/static/route159/bold.woff2) format("woff2"); }

@@ -48,17 +48,18 @@ class StaticResource:
         'jpg': "image/jpeg"
     }
 
-    def __init__(self, path):
-        self.path = path
+    def __init__(self, subpath=""):
+        self.path = f"static/{subpath}" if subpath else "static"
 
     def on_get(self, req, resp, filename):
-        print("load", filename)
         name, ext = filename.split('.')
-        mode = 'rb' if ext in self.binary else 'r'
         resp.status = HTTP_200
         resp.content_type = self.mime_types[ext]
         resp.cache_control = ["max-age=3600000"]
-        with open(f'{self.path}/{filename}', mode) as f:
+        filepath = f"{self.path}/{filename}"
+        mode = "rb" if ext in self.binary else "r"
+        print("load", filepath, mode)
+        with open(filepath, mode) as f:
             resp.text = f.read()
 
 
