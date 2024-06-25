@@ -7,7 +7,6 @@
     <meta name="description" content="{{ member.description }}">
     {% if member.emoji %}
         <meta name="keywords" content="{{ member.emoji | keywords }}">
-        <meta property="og:image" content="/static/openmoji/{{ member.emoji | emojize | hexcode }}.png" />
     {% endif %}
     <meta property="og:type" content="profile">
     <meta property="og:url" content="https://subreply.com/{{ member }}">
@@ -19,6 +18,9 @@
 {% elif view == 'reply' %}
     <title>{{ entry.content | emojize | shorten(60) }}</title>
     <meta name="description" content="{{ entry.content | emojize | shorten(120) }}">
+    {% if entry.created_by.emoji %}
+        <meta name="keywords" content="{{ entry.created_by.emoji | keywords }}">
+    {% endif %}
     <meta property="og:type" content="article">
     <meta property="og:url" content="https://subreply.com/reply/{{ entry.id }}">
     <meta property="article:author" content="{{ entry.created_by.short_name }}">
@@ -32,23 +34,21 @@
     {% if entry.at_room %}
         <meta property="article:tag" content="{{ entry.at_room }}">
     {% endif %}
-    {% if entry.created_by.emoji %}
-        <meta name="keywords" content="{{ entry.created_by.emoji | keywords }}">
-        <meta property="og:image" content="/static/openmoji/{{ entry.created_by.emoji | emojize | hexcode }}.png" />
-    {% endif %}
 {% elif view == 'sub' %}
     <title>{{ brand }} / #{{ room }}</title>
     <meta name="description" content="Tiny, but mighty social network.">
+    <meta name="keywords" content="{{ room }}">
     <meta property="og:type" content="article:section">
     <meta property="og:url" content="https://subreply.com/sub/{{ room }}">
-    <meta property="og:image" content="/static/256.png">
 {% else %}
     <title>{{ brand }} / {{ view | capitalize }}</title>
     <meta name="description" content="Tiny, but mighty social network.">
+    <meta name="keywords" content="{{ view }}">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://subreply.com/{{ view }}">
-    <meta property="og:image" content="/static/256.png">
 {% endif %}
+
+<meta property="og:logo" content="/static/192.png">
 
 <link rel="apple-touch-icon" type="image/png" href="/static/192.png">
 <link rel="icon" sizes="192x192" type="image/png" href="/static/192.png">
