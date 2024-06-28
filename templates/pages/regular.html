@@ -3,7 +3,7 @@
 {% block main %}
     {% if view in ['feed', 'sub'] %}
         {% include "input/thread.html" %}
-    {% elif view in ['discover', 'members', 'subs'] %}
+    {% elif view in ['discover', 'people', 'subs'] %}
         {% include "input/query.html" %}
     {% endif %}
 
@@ -11,16 +11,16 @@
         {% if view == 'member' %}
             {% include "common/user.html" %}
             {% if user %} {% include "common/status.html" %} {% endif %}
-        {% elif view == 'incomers' %}
+        {% elif view == 'arrivals' %}
             <div class="entry">
                 <div class="status">
-                    <a href="/incomers/destroy">Destroy all</a>
+                    <a href="/arrivals/destroy">Destroy all</a>
                 </div>
             </div>
         {% endif %}
 
         {% for entry in entries %}
-            {% if view in ['incomers', 'members'] %}
+            {% if view in ['arrivals', 'people'] %}
                 {% set member = entry %}
                 {% include "common/user.html" %}
             {% elif view == 'following' %}

@@ -27,7 +27,7 @@ app.add_route('/replies', resources.RepliesResource())
 app.add_route('/saves', resources.SavesResource())
 
 app.add_route('/links', resources.LinksResource())
-app.add_route('/members', resources.MembersResource())
+app.add_route('/people', resources.PeopleResource())
 app.add_route('/sub/{name}', resources.SubResource())
 app.add_route('/subs', resources.SubsResource())
 # app.add_route('/trending', resources.TrendingResource())
@@ -55,12 +55,12 @@ app.add_route('/account/export', resources.AccountResource(), suffix="export")
 app.add_route('/profile', resources.ProfileResource())
 app.add_route('/details', resources.DetailsResource())
 
-app.add_route('/incomers', resources.IncomersResource())
-app.add_route('/incomers/destroy', resources.IncomersResource(), suffix="destroy")
+app.add_route('/arrivals', resources.ArrivalsResource())
+app.add_route('/arrivals/destroy', resources.ArrivalsResource(), suffix="destroy")
 
 app.add_route('/reply/{id:int}', resources.ReplyResource())
 app.add_route('/edit/{id:int}', resources.EditResource())
-app.add_route('/{username}/approve', resources.IncomersResource(), suffix="approve")
+app.add_route('/{username}/approve', resources.ArrivalsResource(), suffix="approve")
 app.add_route('/{username}', resources.MemberResource())
 
 if DEBUG:

@@ -39,7 +39,7 @@
             {% endif %}
             {% if member.location %}
                 from
-                <a href="/members?q={{ member.location | city | quote }}">
+                <a href="/people?q={{ member.location | city | quote }}">
                     {{ member.location | city }}
                 </a>
             {% endif %}

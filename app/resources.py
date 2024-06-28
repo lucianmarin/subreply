@@ -494,40 +494,40 @@ class SavesResource:
         )
 
 
-class IncomersResource:
-    def fetch_incomers(self):
+class ArrivalsResource:
+    def fetch_users(self):
         return User.objects.filter(is_approved=False).order_by('-id')
 
     @before(auth_user)
     @before(login_required)
     def on_get(self, req, resp):
-        entries, page, number = paginate(req, self.fetch_incomers())
+        entries, page, number = paginate(req, self.fetch_users())
         resp.text = render(
-            page=page, view='incomers', number=number, user=req.user, entries=entries
+            page=page, view='arrivals', number=number, user=req.user, entries=entries
         )
 
     @before(auth_user)
     def on_get_approve(self, req, resp, username):
         username = username.lower()
         if not req.user.id == 1:
-            raise HTTPFound('/incomers')
+            raise HTTPFound('/arrivals')
         User.objects.filter(username=username).update(is_approved=True)
-        raise HTTPFound('/incomers')
+        raise HTTPFound('/arrivals')
 
     @before(auth_user)
     def on_get_destroy(self, req, resp):
         if not req.user.id == 1:
-            raise HTTPFound('/incomers')
+            raise HTTPFound('/arrivals')
         User.objects.filter(is_approved=False).delete()
-        raise HTTPFound('/incomers')
+        raise HTTPFound('/arrivals')
 
 
-class MembersResource:
+class PeopleResource:
     fields = [
         "username", "first_name", "last_name", "email",
         "description", "birthday", "location", "emoji", "website"
     ]
-    placeholder = "Find a member"
+    placeholder = "Find someone"
 
     def build_query(self, terms):
         query = Q()
@@ -551,7 +551,7 @@ class MembersResource:
         entries = self.fetch_entries(terms)
         entries, page, number = paginate(req, entries, 24)
         resp.text = render(
-            page=page, view='members', number=number, q=q,
+            page=page, view='people', number=number, q=q,
             user=req.user, entries=entries, errors={}, limit=24,
             placeholder=self.placeholder
         )
