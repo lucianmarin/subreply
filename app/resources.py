@@ -17,7 +17,7 @@ from app.validation import (authentication, profiling, registration, valid_conte
                             valid_handle, valid_password, valid_phone, valid_reply,
                             valid_thread, valid_wallet, valid_hashtag)
 from project.settings import FERNET, MAX_AGE, SMTP
-from project.vars import UNLOCK_HTML, UNLOCK_TEXT
+from project.vars import RECOVER_HTML, RECOVER_TEXT
 
 Posts = Post.objects.annotate(
     replies=Count('descendants')
@@ -127,8 +127,8 @@ class TxtResource:
             Q(threads=None) & Q(hashtags=None)
         ).values_list('name')
         users = User.objects.exclude(posts=None).values_list('username')
+        room_urls = [f"https://subreply.com/channel/{r}" for r, in rooms]
         post_urls = [f"https://subreply.com/reply/{p}" for p, in posts]
-        room_urls = [f"https://subreply.com/sub/{r}" for r, in rooms]
         user_urls = [f"https://subreply.com/{u}" for u, in users]
         urls = sorted(post_urls + room_urls + user_urls)
         resp.text = "\n".join(urls)
@@ -314,7 +314,7 @@ class EditResource:
             raise HTTPFound(f"/reply/{entry.id}")
 
 
-class SubResource:
+class ChannelResource:
     placeholder = "Chat in #{0}"
 
     def fetch_entries(self, room):
@@ -334,7 +334,7 @@ class SubResource:
         else:
             entries, page, number = [], 'regular', 1
         resp.text = render(
-            page=page, view='sub', number=number, content='',
+            page=page, view='channel', number=number, content='',
             user=req.user, entries=entries, errors={}, room=name,
             placeholder=self.placeholder.format(name)
         )
@@ -346,7 +346,7 @@ class SubResource:
         form = FieldStorage(fp=req.stream, environ=req.env)
         content = get_content(form)
         if not content:
-            raise HTTPFound(f"/sub/{name}")
+            raise HTTPFound(f"/channel/{name}")
         room = Room.objects.filter(name=name).first()
         errors = {}
         errors['content'] = valid_content(content, req.user)
@@ -356,7 +356,7 @@ class SubResource:
         if errors:
             entries = self.fetch_entries(room)[:16] if room else []
             resp.text = render(
-                page='regular', view='sub', number=1, content=content,
+                page='regular', view='channel', number=1, content=content,
                 user=req.user, entries=entries, errors=errors, room=room,
                 placeholder=self.placeholder.format(room)
             )
@@ -379,7 +379,7 @@ class SubResource:
                 created_by=req.user,
                 **extra
             )
-            raise HTTPFound(f"/sub/{name}")
+            raise HTTPFound(f"/channel/{name}")
 
 
 class MemberResource:
@@ -617,8 +617,8 @@ class LinksResource:
         )
 
 
-class SubsResource:
-    placeholder = "Find or create a #sub"
+class ChannelsResource:
+    placeholder = "Find or create a #channel"
 
     def fetch_entries(self):
         last_ids = Room.objects.annotate(last_id=Max(
@@ -636,10 +636,10 @@ class SubsResource:
             errors['hashtag'] = valid_hashtag(hashtag)
             errors = {k: v for k, v in errors.items() if v}
             if not errors:
-                raise HTTPFound(f"/sub/{hashtag}")
+                raise HTTPFound(f"/channel/{hashtag}")
         entries, page, number = paginate(req, self.fetch_entries())
         resp.text = render(
-            page=page, view='subs', number=number, q=q, errors=errors,
+            page=page, view='channels', number=number, q=q, errors=errors,
             user=req.user, entries=entries,
             placeholder=self.placeholder
         )
@@ -900,14 +900,14 @@ class RegisterResource:
             raise HTTPFound('/feed')
 
 
-class UnlockResource:
+class RecoverResource:
     @before(auth_user)
     def on_get(self, req, resp):
         if req.user:
             raise HTTPFound('/feed')
         form = FieldStorage(fp=req.stream, environ=req.env)
         resp.text = render(
-            page='unlock', view='unlock', errors={}, form=form
+            page='recover', view='recover', errors={}, form=form
         )
 
     def on_get_link(self, req, resp, token):
@@ -926,16 +926,16 @@ class UnlockResource:
             errors['email'] = "Email doesn't exist"
         if errors:
             resp.text = render(
-                page='unlock', view='unlock', errors=errors, form=form
+                page='recover', view='recover', errors=errors, form=form
             )
         else:
             # generate token
             token = FERNET.encrypt(str(user.email).encode()).decode()
             # compose email
             m = Message(
-                html=JinjaTemplate(UNLOCK_HTML),
-                text=JinjaTemplate(UNLOCK_TEXT),
-                subject="Unlock account on Subreply",
+                html=JinjaTemplate(RECOVER_HTML),
+                text=JinjaTemplate(RECOVER_TEXT),
+                subject="Recover account on Subreply",
                 mail_from=("Subreply", "subreply@outlook.com")
             )
             # send email
@@ -947,4 +947,4 @@ class UnlockResource:
             # fallback
             if response.status_code == 250:
                 raise HTTPFound('/login')
-            raise HTTPFound('/unlock')
+            raise HTTPFound('/recover')

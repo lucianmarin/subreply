@@ -79,18 +79,18 @@ ACTIVITY_TEXT = (
     "Have a sunny day!\n"
 )
 
-UNLOCK_HTML = (
+RECOVER_HTML = (
     "<html>"
     "<p>Hello,</p>"
-    "<p>Unlock your account on Subreply by going to https://subreply.com/unlock/{{ token }}</p>"
+    "<p>Recover your account on Subreply by going to https://subreply.com/recover/{{ token }}</p>"
     "<p>Your username is @{{ username }}.</p>"
     "<p>Delete this email if you didn't make such request.</p>"
     "</html>"
 )
 
-UNLOCK_TEXT = (
+RECOVER_TEXT = (
     "Hello,\n"
-    "Unlock your account on Subreply by going to https://subreply.com/unlock/{{ token }}\n"
+    "Recover your account on Subreply by going to https://subreply.com/recover/{{ token }}\n"
     "Your username is @{{ username }}.\n"
     "Delete this email if you didn't make such request.\n"
 )
@@ -111,6 +111,8 @@ INVALID = RESERVED + [
     "account",
     "api",
     "arrivals",
+    "channel",
+    "channels",
     "delete",
     "details",
     "discover",
@@ -140,6 +142,7 @@ INVALID = RESERVED + [
     "privacy",
     "profile",
     "read",
+    "recover",
     "replies",
     "reply",
     "request",
@@ -150,9 +153,6 @@ INVALID = RESERVED + [
     "settings",
     "social",
     "static",
-    "sub",
-    "subs",
     "terms",
     "trending",
-    "unlock"
 ]

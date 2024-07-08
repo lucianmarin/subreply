@@ -74,23 +74,29 @@
                 <path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
         </a>
-        <a href="/login" class="{% if view in ['login', 'unlock'] %}on{% endif %}">
-            <i>Login</i>
-            <svg width="16" height="16" viewBox="0 0 24 24">
-            {% if view == 'unlock' %}
-                <path d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z" />
-            {% else %}
-                <path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-            {% endif %}
-            </svg>
-        </a>
         <a href="/register" class="{% if view == 'register' %}on{% endif %}">
             <i>Register</i>
             <svg width="16" height="16" viewBox="0 0 24 24">
                 <path d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2" />
             </svg>
         </a>
+        <a href="/login" class="{% if view in ['login', 'recover'] %}on{% endif %}">
+            <i>Login</i>
+            <svg width="16" height="16" viewBox="0 0 24 24">
+            {% if view == 'recover' %}
+                <path d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z" />
+            {% else %}
+                <path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+            {% endif %}
+            </svg>
+        </a>
     {% endif %}
+    <a href="/channels" class="{% if view in ['channel', 'channels'] %}on{% endif %}">
+        <i>Channels</i>
+        <svg width="16" height="16" viewBox="0 0 24 24">
+            <path d="M5.25 8.25h15m-16.5 7.5h15m-1.8-13.5-3.9 19.5m-2.1-19.5-3.9 19.5" />
+        </svg>
+    </a>
     <a href="/links" class="{% if view == 'links' %}on{% endif %}">
         <i>Links</i>
         <svg width="16" height="16" viewBox="0 0 24 24">
@@ -101,12 +107,6 @@
         <i>People</i>
         <svg viewBox="0 0 24 24" width="16" height="16">
             <path d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" />
-        </svg>
-    </a>
-    <a href="/subs" class="{% if view in ['sub', 'subs'] %}on{% endif %}">
-        <i>Subs</i>
-        <svg width="16" height="16" viewBox="0 0 24 24">
-            <path d="M5.25 8.25h15m-16.5 7.5h15m-1.8-13.5-3.9 19.5m-2.1-19.5-3.9 19.5" />
         </svg>
     </a>
     <a href="/discover" class="{% if view == 'discover' %}on{% endif %}">
