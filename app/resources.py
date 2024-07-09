@@ -618,7 +618,7 @@ class LinksResource:
 
 
 class ChannelsResource:
-    placeholder = "Find or create a #channel"
+    placeholder = "Find or create a channel"
 
     def fetch_entries(self):
         last_ids = Room.objects.annotate(last_id=Max(
