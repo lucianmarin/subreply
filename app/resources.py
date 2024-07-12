@@ -939,12 +939,15 @@ class RecoverResource:
                 mail_from=("Subreply", "subreply@outlook.com")
             )
             # send email
-            response = m.send(
+            r = m.send(
                 render={"username": user, "token": token},
                 to=user.email,
                 smtp=SMTP
             )
-            # fallback
-            if response.status_code == 250:
-                raise HTTPFound('/login')
-            raise HTTPFound('/recover')
+            # callback
+            errors['email'] = "Email couldn't be delivered"
+            if r.status_code == 250:
+                errors['email'] = "Check your inbox for recovery link"
+            resp.text = render(
+                page='recover', view='recover', errors=errors, form=form
+            )
