@@ -8,7 +8,7 @@ Group=lucian
 PIDFile=/home/lucian/subreply/sub.pid
 RuntimeDirectory=gunicorn
 WorkingDirectory=/home/lucian/subreply
-ExecStart=/usr/local/bin/gunicorn router:app -c gunicorn.conf.py
+ExecStart=/home/lucian/.local/bin/gunicorn router:app -c gunicorn.conf.py
 ExecReload=/bin/kill -s HUP $MAINPID
 ExecStop=/bin/kill -s TERM $MAINPID
 PrivateTmp=true
@@ -19,4 +19,5 @@ WantedBy=default.target
 # sudo cp sub.service /etc/systemd/system/sub.service
 # sudo systemctl daemon-reload
 # sudo systemctl restart sub.service
-# sudo systemctl enable sub.service // on boot
+# start on boot
+# sudo systemctl enable sub.service
