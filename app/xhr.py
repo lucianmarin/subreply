@@ -6,9 +6,9 @@ from app.models import Bond, Post, Save, User
 from app.utils import utc_timestamp
 
 
-class DeleteCallback:
+class PostCallback:
     @before(auth_user)
-    def on_post(self, req, resp, id):
+    def on_post_delete(self, req, resp, id):
         resp.content_type = MEDIA_JSON
         if not req.user:
             resp.media = {'status': 'not auth'}
@@ -26,10 +26,8 @@ class DeleteCallback:
         entry.delete()
         resp.media = {'status': 'deleted'}
 
-
-class SaveCallback:
     @before(auth_user)
-    def on_post(self, req, resp, id):
+    def on_post_save(self, req, resp, id):
         resp.content_type = MEDIA_JSON
         if not req.user:
             resp.media = {'status': 'not auth'}
@@ -45,10 +43,8 @@ class SaveCallback:
         )
         resp.media = {'status': 'unsave'}
 
-
-class UnsaveCallback:
     @before(auth_user)
-    def on_post(self, req, resp, id):
+    def on_post_unsave(self, req, resp, id):
         resp.content_type = MEDIA_JSON
         if not req.user:
             resp.media = {'status': 'not auth'}
@@ -61,9 +57,9 @@ class UnsaveCallback:
         resp.media = {'status': 'save'}
 
 
-class FollowCallback:
+class BondCallback:
     @before(auth_user)
-    def on_post(self, req, resp, username):
+    def on_post_follow(self, req, resp, username):
         resp.content_type = MEDIA_JSON
         if not req.user:
             resp.media = {'status': 'not auth'}
@@ -78,9 +74,8 @@ class FollowCallback:
         resp.media = {'status': 'unfollow'}
 
 
-class UnfollowCallback:
     @before(auth_user)
-    def on_post(self, req, resp, username):
+    def on_post_unfollow(self, req, resp, username):
         resp.content_type = MEDIA_JSON
         if not req.user:
             resp.media = {'status': 'not auth'}
