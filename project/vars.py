@@ -155,4 +155,5 @@ INVALID = RESERVED + [
     "static",
     "terms",
     "trending",
+    "xhr"
 ]

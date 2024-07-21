@@ -35,7 +35,7 @@ function postDelete(event, call, status) {
         confirm.innerText = "yes";
         confirm.onclick = function (event) {
             event.preventDefault();
-            ajax("/api/" + call + "/" + id, "post", "json", function (data) {
+            ajax("/xhr/" + call + "/" + id, "post", "json", function (data) {
                 if (data.status == status) {
                     var state = document.createElement("b");
                     state.innerText = data.status;
@@ -65,7 +65,7 @@ function postSave(event, call) {
     var reverse = call == "save" ? "unsave" : "save";
     var element = event.currentTarget;
     var id = element.dataset.id;
-    ajax("/api/" + call + "/" + id, "post", "json", function (data) {
+    ajax("/xhr/" + call + "/" + id, "post", "json", function (data) {
         if (data.status == reverse) {
             element.innerText = data.status;
             element.onclick = function (ev) {
@@ -81,7 +81,7 @@ function postFollow(event, call) {
     var reverse = call == "follow" ? "unfollow" : "follow";
     var element = event.currentTarget;
     var username = element.dataset.username;
-    ajax("/api/" + call + "/" + username, "post", "json", function (data) {
+    ajax("/xhr/" + call + "/" + username, "post", "json", function (data) {
         if (data.status == reverse) {
             element.innerText = data.status;
             element.className = data.status == "unfollow" ? "action" : "accent";

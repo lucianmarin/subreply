@@ -1,7 +1,7 @@
 from falcon import App
 from falcon.constants import MEDIA_HTML
 
-from app import api, resources
+from app import resources, xhr
 from project.settings import DEBUG
 
 app = App(media_type=MEDIA_HTML)
@@ -13,11 +13,11 @@ app.resp_options.secure_cookies_by_default = not DEBUG
 
 app.add_route('/', resources.MainResource())
 
-app.add_route('/api/delete/{id:int}', api.DeleteEndpoint())
-app.add_route('/api/save/{id:int}', api.SaveEndpoint())
-app.add_route('/api/unsave/{id:int}', api.UnsaveEndpoint())
-app.add_route('/api/follow/{username}', api.FollowEndpoint())
-app.add_route('/api/unfollow/{username}', api.UnfollowEndpoint())
+app.add_route('/xhr/delete/{id:int}', xhr.DeleteCallback())
+app.add_route('/xhr/save/{id:int}', xhr.SaveCallback())
+app.add_route('/xhr/unsave/{id:int}', xhr.UnsaveCallback())
+app.add_route('/xhr/follow/{username}', xhr.FollowCallback())
+app.add_route('/xhr/unfollow/{username}', xhr.UnfollowCallback())
 
 app.add_route('/feed', resources.FeedResource())
 app.add_route('/following', resources.FollowingResource())
