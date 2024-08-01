@@ -29,7 +29,7 @@
             {{ member.description | parser | emojize | safe }}
         </div>
     {% endif %}
-    {% if member.website or member.birthday or member.country %}
+    {% if member.website or member.birthday or member.location %}
         <div class="status">
             {% if member.website %}
                 {{ member.website | parser | safe }}
