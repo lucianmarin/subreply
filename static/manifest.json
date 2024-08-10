@@ -19,6 +19,7 @@
     ],
     "id": "/feed",
     "start_url": "/feed",
+    "background_color": "#6060E0",
     "display": "standalone",
     "orientation": "portrait",
     "status": "ok"
