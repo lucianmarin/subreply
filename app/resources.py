@@ -15,13 +15,13 @@ from app.models import Bond, Post, Room, Save, User
 from app.utils import build_hash, utc_timestamp, verify_hash
 from app.validation import (authentication, profiling, registration, valid_content,
                             valid_handle, valid_password, valid_phone, valid_reply,
-                            valid_thread, valid_wallet, valid_hashtag)
+                            valid_thread, valid_wallet)
 from project.settings import FERNET, MAX_AGE, SMTP
 from project.vars import RECOVER_HTML, RECOVER_TEXT
 
 Posts = Post.objects.annotate(
     replies=Count('descendants')
-).select_related('created_by', 'in_room')
+).select_related('created_by')
 
 PPFR = Prefetch('parent', Posts)
 PFR = Prefetch('kids', Posts.order_by('-id'))
@@ -68,7 +68,7 @@ class MainResource:
     def on_get(self, req, resp):
         if req.user:
             raise HTTPFound('/feed')
-        raise HTTPFound('/discover')
+        raise HTTPFound('/trending')
 
 
 class AboutResource:
@@ -127,10 +127,9 @@ class TxtResource:
             Q(threads=None) & Q(hashtags=None)
         ).values_list('name')
         users = User.objects.exclude(posts=None).values_list('username')
-        room_urls = [f"https://subreply.com/channel/{r}" for r, in rooms]
         post_urls = [f"https://subreply.com/reply/{p}" for p, in posts]
         user_urls = [f"https://subreply.com/{u}" for u, in users]
-        urls = sorted(post_urls + room_urls + user_urls)
+        urls = sorted(post_urls + user_urls)
         resp.text = "\n".join(urls)
 
 
@@ -175,9 +174,7 @@ class FeedResource:
             hashtags, links, mentions = get_metadata(content)
             extra = {}
             extra['link'] = links[0] if links else ''
-            extra['at_room'] = Room.objects.get_or_create(
-                name=hashtags[0]
-            )[0] if hashtags else None
+            extra['hashtag'] = hashtags[0] if hashtags else ''
             extra['at_user'] = User.objects.get(
                 username=mentions[0]
             ) if mentions else None
@@ -240,9 +237,7 @@ class ReplyResource:
         else:
             extra = {}
             extra['link'] = links[0] if links else ''
-            extra['at_room'] = Room.objects.get_or_create(
-                name=hashtags[0]
-            )[0] if hashtags else None
+            extra['hashtag'] = hashtags[0] if hashtags else ''
             extra['at_user'] = User.objects.get(
                 username=mentions[0]
             ) if mentions else None
@@ -252,7 +247,6 @@ class ReplyResource:
                 content=content,
                 created_at=utc_timestamp(),
                 created_by=req.user,
-                in_room=parent.in_room,
                 **extra
             )
             re.set_ancestors()
@@ -296,15 +290,13 @@ class EditResource:
                 ancestors=ancestors
             )
         else:
-            fields = ['content', 'edited_at', 'link', 'at_room', 'at_user',
+            fields = ['content', 'edited_at', 'link', 'hashtag', 'at_user',
                       'mention_seen_at']
             previous_at_user = entry.at_user
             entry.content = content
             entry.edited_at = utc_timestamp()
             entry.link = links[0] if links else ''
-            entry.at_room = Room.objects.get_or_create(
-                name=hashtags[0]
-            )[0] if hashtags else None
+            entry.hashtag = hashtags[0] if hashtags else ''
             entry.at_user = User.objects.get(
                 username=mentions[0]
             ) if mentions else None
@@ -312,74 +304,6 @@ class EditResource:
                 entry.mention_seen_at = .0
             entry.save(update_fields=fields)
             raise HTTPFound(f"/reply/{entry.id}")
-
-
-class ChannelResource:
-    placeholder = "Chat in #{0}"
-
-    def fetch_entries(self, room):
-        entries = Posts.filter(Q(in_room=room) | Q(at_room=room)).order_by('-id')
-        return entries.prefetch_related(PFR, PPFR)
-
-    @before(auth_user)
-    def on_get(self, req, resp, name):
-        name = name.lower()
-        if valid_hashtag(name):
-            raise HTTPNotFound
-        room = Room.objects.filter(name=name).first()
-        if not req.user and not room:
-            raise HTTPFound('/login')
-        if room:
-            entries, page, number = paginate(req, self.fetch_entries(room))
-        else:
-            entries, page, number = [], 'regular', 1
-        resp.text = render(
-            page=page, view='channel', number=number, content='',
-            user=req.user, entries=entries, errors={}, room=name,
-            placeholder=self.placeholder.format(name)
-        )
-
-    @before(auth_user)
-    @before(login_required)
-    def on_post(self, req, resp, name):
-        name = name.lower()
-        form = FieldStorage(fp=req.stream, environ=req.env)
-        content = get_content(form)
-        if not content:
-            raise HTTPFound(f"/channel/{name}")
-        room = Room.objects.filter(name=name).first()
-        errors = {}
-        errors['content'] = valid_content(content, req.user)
-        if not errors['content']:
-            errors['content'] = valid_thread(content)
-        errors = {k: v for k, v in errors.items() if v}
-        if errors:
-            entries = self.fetch_entries(room)[:16] if room else []
-            resp.text = render(
-                page='regular', view='channel', number=1, content=content,
-                user=req.user, entries=entries, errors=errors, room=room,
-                placeholder=self.placeholder.format(room)
-            )
-        else:
-            hashtags, links, mentions = get_metadata(content)
-            extra = {}
-            extra['link'] = links[0] if links else ''
-            extra['at_room'] = Room.objects.get_or_create(
-                name=hashtags[0]
-            )[0] if hashtags else None
-            extra['in_room'] = Room.objects.get_or_create(
-                name=name
-            )[0] if not room else room
-            extra['at_user'] = User.objects.get(
-                username=mentions[0]
-            ) if mentions else None
-            th, is_new = Post.objects.get_or_create(
-                content=content,
-                created_at=utc_timestamp(),
-                created_by=req.user,
-                **extra
-            )
-            raise HTTPFound(f"/channel/{name}")
 
 
 class MemberResource:
@@ -479,7 +403,7 @@ class RepliesResource:
             self.clear_replies(req.user)
 
 
-class SavesResource:
+class SavedResource:
     def fetch_entries(self, user):
         saved_ids = Save.objects.filter(created_by=user).values('post__id')
         entries = Posts.filter(id__in=saved_ids).order_by('-id')
@@ -490,7 +414,7 @@ class SavesResource:
     def on_get(self, req, resp):
         entries, page, number = paginate(req, self.fetch_entries(req.user))
         resp.text = render(
-            page=page, view='saves', number=number, user=req.user, entries=entries
+            page=page, view='saved', number=number, user=req.user, entries=entries
         )
 
 
@@ -614,34 +538,6 @@ class LinksResource:
         entries, page, number = paginate(req, self.fetch_entries(req))
         resp.text = render(
             page=page, view='links', number=number, user=req.user, entries=entries
-        )
-
-
-class ChannelsResource:
-    placeholder = "Find or create a channel"
-
-    def fetch_entries(self):
-        last_ids = Room.objects.annotate(last_id=Max(
-            'threads', filter=Q(threads__parent=None))
-        ).values('last_id')
-        entries = Posts.filter(id__in=last_ids).order_by('-id')
-        return entries.prefetch_related(PFR, PPFR)
-
-    @before(auth_user)
-    def on_get(self, req, resp):
-        q = req.params.get('q', '').strip().lower()
-        hashtag = q[1:] if q.startswith('#') else q
-        errors = {}
-        if hashtag:
-            errors['hashtag'] = valid_hashtag(hashtag)
-            errors = {k: v for k, v in errors.items() if v}
-            if not errors:
-                raise HTTPFound(f"/channel/{hashtag}")
-        entries, page, number = paginate(req, self.fetch_entries())
-        resp.text = render(
-            page=page, view='channels', number=number, q=q, errors=errors,
-            user=req.user, entries=entries,
-            placeholder=self.placeholder
         )
 
 
@@ -843,7 +739,7 @@ class LogoutResource:
     @before(login_required)
     def on_get(self, req, resp):
         resp.unset_cookie('identity')
-        raise HTTPFound('/discover')
+        raise HTTPFound('/trending')
 
 
 class RegisterResource:

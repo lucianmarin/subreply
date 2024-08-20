@@ -111,8 +111,6 @@ INVALID = RESERVED + [
     "account",
     "api",
     "arrivals",
-    "channel",
-    "channels",
     "delete",
     "details",
     "discover",
@@ -148,12 +146,14 @@ INVALID = RESERVED + [
     "request",
     "reset",
     "save",
+    "saved",
     "saves",
     "search",
     "settings",
     "social",
     "static",
     "terms",
+    "threads",
     "trending",
     "xhr"
 ]
