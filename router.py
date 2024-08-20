@@ -1,7 +1,7 @@
 from falcon import App
 from falcon.constants import MEDIA_HTML
 
-from app import api, resources, xhr
+from app import resources, xhr
 from project.settings import DEBUG
 
 app = App(media_type=MEDIA_HTML)
@@ -12,14 +12,6 @@ app.req_options.strip_url_path_trailing_slash = True
 app.resp_options.secure_cookies_by_default = not DEBUG
 
 app.add_route('/', resources.MainResource())
-
-# app.add_route('/api/auth', api.AuthEndpoint())
-# app.add_route('/api/feed', api.FeedEndpoint())
-# app.add_route('/api/post', api.PostEndpoint())
-# app.add_route('/api/save', api.SaveEndpoint())
-# app.add_route('/api/bond', api.BondEndpoint())
-# app.add_route('/api/room', api.RoomEndpoint())
-# app.add_route('/api/user', api.UserEndpoint())
 
 app.add_route('/xhr/delete/{id:int}', xhr.PostCallback(), suffix="delete")
 app.add_route('/xhr/save/{id:int}', xhr.PostCallback(), suffix="save")

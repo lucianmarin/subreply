@@ -11,7 +11,7 @@ from strictyaml import as_document
 from app.forms import get_content, get_emoji, get_location, get_metadata, get_name
 from app.hooks import auth_user, login_required
 from app.jinja import render
-from app.models import Bond, Post, Room, Save, User
+from app.models import Bond, Post, Save, User
 from app.utils import build_hash, utc_timestamp, verify_hash
 from app.validation import (authentication, profiling, registration, valid_content,
                             valid_handle, valid_password, valid_phone, valid_reply,
@@ -123,9 +123,6 @@ class TxtResource:
 
     def on_get_map(self, req, resp):
         posts = Post.objects.values_list('id')
-        rooms = Room.objects.exclude(
-            Q(threads=None) & Q(hashtags=None)
-        ).values_list('name')
         users = User.objects.exclude(posts=None).values_list('username')
         post_urls = [f"https://subreply.com/reply/{p}" for p, in posts]
         user_urls = [f"https://subreply.com/{u}" for u, in users]
