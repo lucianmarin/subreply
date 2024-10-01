@@ -33,7 +33,6 @@ class User(models.Model):
     website = models.CharField(max_length=120, default='')
 
     phone = models.JSONField(default=dict)
-    wallet = models.JSONField(default=dict)
     social = models.JSONField(default=dict)
 
     class Meta:

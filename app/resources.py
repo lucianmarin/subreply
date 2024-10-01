@@ -622,15 +622,14 @@ class AccountResource:
 
 
 class DetailsResource:
-    social = ['github', 'instagram', 'linkedin', 'reddit', 'spotify', 'x']
+    social = ['github', 'instagram', 'linkedin', 'reddit', 'paypal', 'spotify', 'x']
     phone = ['code', 'number']
-    wallet = ['coin', 'id']
 
-    def update(self, form, d, fields, is_lower=False):
+    def update(self, form, d, fields):
         for field in fields:
             value = form.getvalue(field, '').strip()
             if value:
-                d[field] = value.lower() if is_lower else value
+                d[field] = value.lower()
 
     @before(auth_user)
     @before(login_required)
@@ -645,14 +644,12 @@ class DetailsResource:
     def on_post(self, req, resp):
         form = FieldStorage(fp=req.stream, environ=req.env)
         f, s, p, w = {}, {}, {}, {}
-        self.update(form, s, self.social, True)
+        self.update(form, s, self.social)
         self.update(form, p, self.phone)
-        self.update(form, w, self.wallet)
         errors = {}
         for field, value in s.items():
             errors[field] = valid_handle(value)
         errors['phone'] = valid_phone(p.get('code', ''), p.get('number', ''))
-        errors['wallet'] = valid_wallet(w.get('coin', ''), w.get('id', ''))
         errors = {k: v for k, v in errors.items() if v}
         if errors:
             f.update(p)
@@ -666,7 +663,7 @@ class DetailsResource:
             req.user.phone = p
             req.user.social = s
             req.user.wallet = w
-            req.user.save(update_fields=['phone', 'social', 'wallet'])
+            req.user.save(update_fields=['phone', 'social'])
             raise HTTPFound(f"/{req.user}")
 
 
