@@ -11,11 +11,11 @@ from strictyaml import as_document
 from app.forms import get_content, get_emoji, get_location, get_metadata, get_name
 from app.hooks import auth_user, login_required
 from app.jinja import render
-from app.models import Bond, Post, Save, User
+from app.models import Bond, Post, Save, User, Text
 from app.utils import build_hash, utc_timestamp, verify_hash
 from app.validation import (authentication, profiling, registration, valid_content,
                             valid_handle, valid_password, valid_phone, valid_reply,
-                            valid_thread, valid_wallet)
+                            valid_thread)
 from project.settings import FERNET, MAX_AGE, SMTP
 from project.vars import RECOVER_HTML, RECOVER_TEXT
 
@@ -536,6 +536,77 @@ class LinksResource:
         resp.text = render(
             page=page, view='links', number=number, user=req.user, entries=entries
         )
+
+
+class ChatResource:
+    def fetch_entries(self, req):
+        entries = Text.objects.filter(
+            to_user=req.user
+        ).order_by('created_by_id', '-id').distinct('created_by_id')
+        return entries.select_related('created_by')
+
+    @before(auth_user)
+    @before(login_required)
+    def on_get(self, req, resp):
+        entries, page, number = paginate(req, self.fetch_entries(req))
+        resp.text = render(
+            page=page, view='chat', number=number,
+            user=req.user, entries=entries
+        )
+
+
+class TextResource:
+    def fetch_entries(self, req, member):
+        entries = Text.objects.filter(
+            Q(created_by=req.user.id, to_user=member.id) | Q(created_by=member.id, to_user=req.user.id)
+        ).order_by('-id')
+        return entries.select_related('created_by', 'to_user')
+
+    def clear_messages(self, req, member):
+        Text.objects.filter(
+            created_by=member, to_user=req.user, seen_at=.0
+        ).update(seen_at=utc_timestamp())
+
+    @before(auth_user)
+    @before(login_required)
+    def on_get(self, req, resp, username):
+        member = User.objects.filter(username=username.lower()).first()
+        if not member:
+            raise HTTPNotFound
+        entries, page, number = paginate(req, self.fetch_entries(req, member))
+        resp.text = render(
+            page=page, view='text', number=number, user=req.user, errors={},
+            entries=entries, member=member
+        )
+        if req.user.received.filter(created_by=member, seen_at=.0).count():
+            self.clear_messages(req, member)
+
+    @before(auth_user)
+    @before(login_required)
+    def on_post(self, req, resp, username):
+        member = User.objects.filter(username=username.lower()).first()
+        form = FieldStorage(fp=req.stream, environ=req.env)
+        content = get_content(form)
+        if not content:
+            raise HTTPFound(f"/at/{username}")
+        errors = {}
+        errors['content'] = valid_content(content, req.user)
+        errors = {k: v for k, v in errors.items() if v}
+        if errors:
+            entries, page, number = paginate(req, self.fetch_entries(req, member))
+            resp.text = render(
+                page=page, view='message', number=number, user=req.user,
+                member=member, entries=entries, content=content, errors=errors
+            )
+        else:
+            msg, is_new = Text.objects.get_or_create(
+                to_user=member,
+                content=content,
+                created_at=utc_timestamp(),
+                created_by=req.user,
+                seen_at=utc_timestamp() if member == req.user else .0
+            )
+            raise HTTPFound(f"/at/{username}")
 
 
 class AccountResource:

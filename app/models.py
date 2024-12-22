@@ -78,6 +78,10 @@ class User(models.Model):
         return 0
 
     @cached_property
+    def notif_messages(self):
+        return self.received.filter(seen_at=.0).count()
+
+    @cached_property
     def follows(self):
         return self.following.values_list('to_user_id', flat=True)
 
@@ -141,3 +145,11 @@ class Bond(models.Model):
     to_user = models.ForeignKey('User', on_delete=models.CASCADE,
                                 related_name='followers')
     seen_at = models.FloatField(default=.0, db_index=True)
+
+
+class Text(models.Model):
+    content = models.CharField(max_length=640)
+    created_by = models.ForeignKey('User', on_delete=models.CASCADE, related_name='sent')
+    to_user = models.ForeignKey('User', on_delete=models.CASCADE, related_name='received')
+    created_at = models.FloatField(default=.0)
+    seen_at = models.FloatField(default=.0)

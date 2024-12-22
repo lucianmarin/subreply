@@ -13,6 +13,7 @@ app.resp_options.secure_cookies_by_default = not DEBUG
 
 app.add_route('/', resources.MainResource())
 
+app.add_route('/xhr/unsend/{id:int}', xhr.TextCallback(), suffix="unsend")
 app.add_route('/xhr/delete/{id:int}', xhr.PostCallback(), suffix="delete")
 app.add_route('/xhr/save/{id:int}', xhr.PostCallback(), suffix="save")
 app.add_route('/xhr/unsave/{id:int}', xhr.PostCallback(), suffix="unsave")
@@ -23,6 +24,7 @@ app.add_route('/feed', resources.FeedResource())
 app.add_route('/following', resources.FollowingResource())
 app.add_route('/followers', resources.FollowersResource())
 app.add_route('/mentions', resources.MentionsResource())
+app.add_route('/messages', resources.ChatResource())
 app.add_route('/replies', resources.RepliesResource())
 app.add_route('/saved', resources.SavedResource())
 
@@ -58,6 +60,7 @@ app.add_route('/arrivals/destroy', resources.ArrivalsResource(), suffix="destroy
 
 app.add_route('/reply/{id:int}', resources.ReplyResource())
 app.add_route('/edit/{id:int}', resources.EditResource())
+app.add_route('/at/{username}', resources.TextResource())
 app.add_route('/{username}/approve', resources.ArrivalsResource(), suffix="approve")
 app.add_route('/{username}', resources.MemberResource())
 

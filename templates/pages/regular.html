@@ -3,6 +3,8 @@
 {% block main %}
     {% if view in ['feed'] %}
         {% include "input/thread.html" %}
+    {% elif view == 'text' %}
+        {% include "input/message.html" %}
     {% elif view in ['discover', 'people'] %}
         {% include "input/query.html" %}
     {% endif %}
@@ -29,6 +31,10 @@
             {% elif view == 'followers' %}
                 {% set member = entry.created_by %}
                 {% include "common/user.html" %}
+            {% elif view == 'chat' %}
+                {% include "common/chat.html" %}
+            {% elif view == 'text' %}
+                {% include "common/text.html" %}
             {% else %}
                 {% with prev=loop.previtem %}
                     {% include "common/stream.html" %}

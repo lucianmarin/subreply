@@ -2,7 +2,7 @@ from falcon.constants import MEDIA_JSON
 from falcon.hooks import before
 
 from app.hooks import auth_user
-from app.models import Bond, Post, Save, User
+from app.models import Bond, Post, Save, User, Text
 from app.utils import utc_timestamp
 
 
@@ -86,3 +86,21 @@ class BondCallback:
             return
         Bond.objects.filter(created_by=req.user, to_user=member).delete()
         resp.media = {'status': 'follow'}
+
+
+class TextCallback:
+    @before(auth_user)
+    def on_post_unsend(self, req, resp, id):
+        resp.content_type = MEDIA_JSON
+        if not req.user:
+            resp.media = {'status': 'not auth'}
+            return
+        entry = Text.objects.filter(id=id).first()
+        if not entry:
+            resp.media = {'status': 'not found'}
+            return
+        if req.user.id != entry.created_by_id:
+            resp.media = {'status': 'not valid'}
+            return
+        entry.delete()
+        resp.media = {'status': 'unsent'}

@@ -111,6 +111,8 @@ INVALID = RESERVED + [
     "account",
     "api",
     "arrivals",
+    "at",
+    "chat",
     "delete",
     "details",
     "discover",

@@ -172,7 +172,7 @@ table td:nth-child(even):last-child, table th:nth-child(even):last-child { borde
 
 .author b { color: var(--silver); float: right; }
 
-.status { color: var(--gray); font-size: var(--small); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.status { color: var(--gray); font-size: var(--small); }
 
 .status a { color: var(--gray); }
 
