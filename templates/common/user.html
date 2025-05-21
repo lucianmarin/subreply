@@ -9,7 +9,7 @@
             {{ member.full_name | emojize }}
         </a>
         {% if view == 'member' %}
-            <a class="done" href="/{{ member }}">@{{ member }}</a>
+            <a class="done" href="/at/{{ member }}">@{{ member }}</a>
         {% endif %}
         {% if user %}
             <i>&bull;</i>

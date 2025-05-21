@@ -12,7 +12,7 @@
     <div class="list">
         {% if view == 'member' %}
             {% include "common/user.html" %}
-            {% if user %} {% include "common/status.html" %} {% endif %}
+            {% include "common/status.html" %}
         {% elif view == 'arrivals' %}
             <div class="entry">
                 <div class="status">

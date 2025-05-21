@@ -1,9 +1,10 @@
-<div class="entry">
-    <div class="status">
-        Chat with <a href="/at/{{ member}}">@{{ member}}</a>.
-        {% if member.links %}Also on {{ member.links | enumerize | safe }}.{% endif %}
+{% if member.links %}
+    <div class="entry">
+        <div class="status">
+            Also on {{ member.links | enumerize | safe }}.
+        </div>
     </div>
-</div>
+{% endif %}
 
 {% if user.id == 1 and not member.is_approved %}
     <div class="entry">
