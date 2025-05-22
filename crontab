@@ -4,8 +4,4 @@
 # user
 15 0 * * * bash sqldata/backup.sh
 
-30 * * * * python3 logparser/parse.py logs/sub.log.gz --html subreply/static/log
-s.html --ignore subreply.com,199.247.2.88 --hide 1
-
-45 * * * * python3 logparser/parse.py logs/lm.log.gz --html lm/static/logs.html
---ignore lucianmarin.com,199.247.2.88 --hide 1
+30 * * * * logparser/venv/bin/python3 logparser/parse.py logs/sub.log.gz --html subreply/static/logs.html --skip subreply.com,199.247.2.88 --lowest 1
