@@ -24,7 +24,7 @@ app.add_route('/feed', resources.FeedResource())
 app.add_route('/following', resources.FollowingResource())
 app.add_route('/followers', resources.FollowersResource())
 app.add_route('/mentions', resources.MentionsResource())
-app.add_route('/messages', resources.ChatResource())
+app.add_route('/messages', resources.InboxResource())
 app.add_route('/replies', resources.RepliesResource())
 app.add_route('/saved', resources.SavedResource())
 
@@ -60,7 +60,7 @@ app.add_route('/arrivals/destroy', resources.ArrivalsResource(), suffix="destroy
 
 app.add_route('/reply/{id:int}', resources.ReplyResource())
 app.add_route('/edit/{id:int}', resources.EditResource())
-app.add_route('/at/{username}', resources.TextResource())
+app.add_route('/message/{username}', resources.MessageResource())
 app.add_route('/{username}/approve', resources.ArrivalsResource(), suffix="approve")
 app.add_route('/{username}', resources.MemberResource())
 

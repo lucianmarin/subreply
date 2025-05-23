@@ -8,7 +8,7 @@
         <a class="handle" href="/{{ member }}">
             {{ member.full_name | emojize }}
         </a>
-        <a class="done" href="/at/{{ member }}">@{{ member }}</a>
+        <a class="done" href="/message/{{ member }}">@{{ member }}</a>
         {% if user %}
             <i>&bull;</i>
             {% if not member.is_approved and user.id == 1 %}

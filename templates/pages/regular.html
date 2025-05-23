@@ -31,10 +31,10 @@
             {% elif view == 'followers' %}
                 {% set member = entry.created_by %}
                 {% include "common/user.html" %}
-            {% elif view == 'chat' %}
-                {% include "common/chat.html" %}
-            {% elif view == 'text' %}
-                {% include "common/text.html" %}
+            {% elif view == 'inbox' %}
+                {% include "common/inbox.html" %}
+            {% elif view == 'message' %}
+                {% include "common/message.html" %}
             {% else %}
                 {% with prev=loop.previtem %}
                     {% include "common/stream.html" %}

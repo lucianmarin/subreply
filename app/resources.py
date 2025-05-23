@@ -538,7 +538,7 @@ class LinksResource:
         )
 
 
-class ChatResource:
+class InboxResource:
     def fetch_entries(self, req):
         entries = Text.objects.filter(
             to_user=req.user
@@ -550,12 +550,12 @@ class ChatResource:
     def on_get(self, req, resp):
         entries, page, number = paginate(req, self.fetch_entries(req))
         resp.text = render(
-            page=page, view='chat', number=number,
+            page=page, view='inbox', number=number,
             user=req.user, entries=entries
         )
 
 
-class TextResource:
+class MessageResource:
     def fetch_entries(self, req, member):
         entries = Text.objects.filter(
             Q(created_by=req.user.id, to_user=member.id) | Q(created_by=member.id, to_user=req.user.id)
@@ -575,7 +575,7 @@ class TextResource:
             raise HTTPNotFound
         entries, page, number = paginate(req, self.fetch_entries(req, member))
         resp.text = render(
-            page=page, view='text', number=number, user=req.user, errors={},
+            page=page, view='message', number=number, user=req.user, errors={},
             entries=entries, member=member
         )
         if req.user.received.filter(created_by=member, seen_at=.0).count():
@@ -588,7 +588,7 @@ class TextResource:
         form = FieldStorage(fp=req.stream, environ=req.env)
         content = get_content(form)
         if not content:
-            raise HTTPFound(f"/at/{username}")
+            raise HTTPFound(f"/message/{username}")
         errors = {}
         errors['content'] = valid_content(content, req.user)
         errors = {k: v for k, v in errors.items() if v}
@@ -606,7 +606,7 @@ class TextResource:
                 created_by=req.user,
                 seen_at=utc_timestamp() if member == req.user else .0
             )
-            raise HTTPFound(f"/at/{username}")
+            raise HTTPFound(f"/message/{username}")
 
 
 class AccountResource:
