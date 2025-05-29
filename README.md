@@ -5,21 +5,18 @@ Tiny, but mighty social network. Create an account at [subreply.com](https://sub
 ## Install
 
 ```shell
-pip install -r requirements.txt
+pip3 install -r requirements.txt
+python3 manage.py migrate
 ```
 
-Generate `SIGNATURE` for `project/local.py`:
+Create `project/local.py` file and generate `SIGNATURE` for it:
 
 ```python
 from cryptography.fernet import Fernet
 SIGNATURE = Fernet.generate_key()
 ```
 
-## Speed
+## Coding
 
-The target is 50ms or lower for each page request.
-
-## Code
-
-- clean code only
-- easy to read, easy to modify
+- speed of 50ms or lower for each page request
+- clean code: easy to read, easy to modify
