@@ -128,6 +128,8 @@ table td:nth-child(even):last-child, table th:nth-child(even):last-child { borde
 
 .load a:hover { color: var(--silver); }
 
+.load b { color: var(--gray); }
+
 .inline { opacity: 0.5; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 .inline .name { font-weight: bold; }
