@@ -669,6 +669,7 @@ class AccountResource:
                 if post.edited_at:
                     d['edited'] = post.edited_at
                 data.append(d)
+            data = data if data else ""
             resp.content_type = "application/x-yaml"
             resp.downloadable_as = f"subreply-{username}.yaml"
             resp.text = as_document(data).as_yaml()
