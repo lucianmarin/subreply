@@ -10,7 +10,7 @@ html { --sup: 8px; --tiny: 10px; --small: 13px; --regular: 14px; --radius: 6px; 
 
 body { background-color: var(--white); color: var(--black); cursor: default; }
 
-body.home { background-color: var(--accent); }
+body.home { background-color: #4060e0; }
 
 a { color: var(--black); cursor: pointer; text-decoration: none; transition: color var(--d); }
 
@@ -66,7 +66,7 @@ table td:nth-child(even):last-child, table th:nth-child(even):last-child { borde
 
 .screen .nav { margin-top: 128px; color: white; opacity: 0.5; font-size: var(--small); }
 
-.screen .nav a { color: white; border-bottom: var(--accent) 2px solid; transition: border-color var(--d); }
+.screen .nav a { color: white; border-bottom: #4060e0 2px solid; transition: border-color var(--d); }
 
 .screen .nav a:hover { border-bottom: white 2px solid; }
 
