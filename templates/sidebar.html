@@ -77,6 +77,12 @@
             </a>
         {% endif %}
     {% else %}
+        <a href="/">
+            <i>Home</i>
+            <svg width="16" height="16" viewBox="0 0 24 24">
+                <path d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+        </a>
         <a href="/about" class="{% if view in ['about', 'emoji'] %}on{% endif %}">
             <i>About</i>
             <svg width="16" height="16" viewBox="0 0 24 24">

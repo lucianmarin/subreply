@@ -10,6 +10,8 @@ html { --sup: 8px; --tiny: 10px; --small: 13px; --regular: 14px; --radius: 6px; 
 
 body { background-color: var(--white); color: var(--black); cursor: default; }
 
+body.home { background-color: var(--accent); }
+
 a { color: var(--black); cursor: pointer; text-decoration: none; transition: color var(--d); }
 
 b, i, u { font-style: normal; font-weight: normal; text-decoration: none; }
@@ -53,6 +55,20 @@ table td:nth-child(odd), table th:nth-child(odd) { text-align: center; width: 30
 table td:nth-child(even), table th:nth-child(even) { width: calc(50% - 30px); overflow-wrap: break-word; word-break: break-all; }
 
 table td:nth-child(even):last-child, table th:nth-child(even):last-child { border-right: 0 none; }
+
+.screen { width: 320px; margin: 0 auto; text-align: center; }
+
+.screen h1 { font-size: 24px; font-weight: normal; line-height: 30px; color: white; }
+
+.screen h2 { font-size: 14px; line-height: 30px; color: white; }
+
+.screen img { margin: 0 auto; }
+
+.screen .nav { margin-top: 128px; color: white; opacity: 0.5; font-size: var(--small); }
+
+.screen .nav a { color: white; border-bottom: var(--accent) 2px solid; transition: border-color var(--d); }
+
+.screen .nav a:hover { border-bottom: white 2px solid; }
 
 .container { display: grid; grid-column-gap: 10px; grid-template-columns: auto 150px 525px auto; }
 
