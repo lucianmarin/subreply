@@ -92,7 +92,7 @@ class User(models.Model):
     @cached_property
     def links(self):
         if self.phone:
-            self.social['phone'] = self.phone['code'] + self.phone['number']
+            self.social['telephone'] = self.phone['code'] + self.phone['number']
         return self.social
 
 
