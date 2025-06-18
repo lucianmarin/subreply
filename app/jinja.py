@@ -29,10 +29,11 @@ env.filters['shortdate'] = lambda ts: timeago(utc_timestamp() - ts)
 env.filters['shorten'] = lambda txt, w: shorten(txt, w, placeholder="...")
 
 env.globals['brand'] = "Subreply"
-env.globals['v'] = 252
+env.globals['v'] = 253
 
 
 def render(page, **kwargs):
-    print('\n---', page, kwargs.get('view', ''))
+    if DEBUG:
+        print('\n---', page, kwargs.get('view', ''))
     template = env.get_template(f'pages/{page}.html')
     return template.render(**kwargs)

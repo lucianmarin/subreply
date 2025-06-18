@@ -68,7 +68,7 @@ class MainResource:
     def on_get(self, req, resp):
         if req.user:
             raise HTTPFound('/feed')
-        resp.text = render(page='main', view='main')
+        raise HTTPFound('/trending')
 
 
 class AboutResource:
