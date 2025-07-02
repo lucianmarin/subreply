@@ -415,32 +415,14 @@ class SavedResource:
         )
 
 
-class ArrivalsResource:
-    def fetch_users(self):
-        return User.objects.filter(is_approved=False).order_by('-id')
-
+class DestroyResource:
     @before(auth_user)
     @before(login_required)
-    def on_get(self, req, resp):
-        entries, page, number = paginate(req, self.fetch_users())
-        resp.text = render(
-            page=page, view='arrivals', number=number, user=req.user, entries=entries
-        )
-
-    @before(auth_user)
-    def on_get_approve(self, req, resp, username):
-        username = username.lower()
+    def on_get(self, req, resp, username):
         if not req.user.id == 1:
-            raise HTTPFound('/arrivals')
-        User.objects.filter(username=username).update(is_approved=True)
-        raise HTTPFound('/arrivals')
-
-    @before(auth_user)
-    def on_get_destroy(self, req, resp):
-        if not req.user.id == 1:
-            raise HTTPFound('/arrivals')
-        User.objects.filter(is_approved=False).delete()
-        raise HTTPFound('/arrivals')
+            raise HTTPFound('/people')
+        User.objects.filter(username=username.lower()).delete()
+        raise HTTPFound('/people')
 
 
 class PeopleResource:
@@ -462,7 +444,7 @@ class PeopleResource:
 
     def fetch_entries(self, terms):
         q = self.build_query(terms)
-        qs = User.objects.filter(q).exclude(is_approved=False)
+        qs = User.objects.filter(q)
         return qs.order_by('id') if terms else qs.order_by('-id')
 
     @before(auth_user)

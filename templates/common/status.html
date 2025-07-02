@@ -1,16 +1,20 @@
-<div class="entry">
-    <div class="status">
-        Message <a href="/message/{{ member }}">@{{ member }}</a>.
-        {% if member.links %}
-            Also on {{ member.links | enumerize | safe }}.
-        {% endif %}
-    </div>
-</div>
-
-{% if user.id == 1 and not member.is_approved %}
+{% if user or member.links %}
     <div class="entry">
         <div class="status">
-            {{ member.email }}
+            {% if user %}
+                Message <a href="/message/{{ member }}">@{{ member }}</a>.
+            {% endif %}
+            {% if member.links %}
+                Also on {{ member.links | enumerize | safe }}.
+            {% endif %}
+        </div>
+    </div>
+{% endif %}
+
+{% if user.id == 1 and member.id != 1 %}
+    <div class="entry">
+        <div class="status">
+            {{ member.email }} &mdash; <a href="/{{ member }}/destroy">destroy</a>
         </div>
     </div>
 {% endif %}

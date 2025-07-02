@@ -2,11 +2,7 @@
     <form enctype="multipart/form-data" method="post" autocomplete="off">
         {% if blocked %}
             <div class="placeholder">
-                Please wait for {{ user.first_name }} to respond
-            </div>
-        {% elif not user.is_approved %}
-            <div class="placeholder">
-                Improve your <a href="/options">profile</a> to get approved
+                Please wait for @{{ member }} to respond
             </div>
         {% else %}
             <textarea name="content" id="id_content" autofocus

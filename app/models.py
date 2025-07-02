@@ -24,7 +24,6 @@ class User(models.Model):
     password = models.CharField(max_length=80)
 
     created_at = models.FloatField(default=.0)
-    is_approved = models.BooleanField(default=False)
 
     emoji = models.CharField(max_length=80, default='')
     birthday = models.CharField(max_length=10, default='')
@@ -70,12 +69,6 @@ class User(models.Model):
     @cached_property
     def notif_replies(self):
         return self.replies.filter(reply_seen_at=.0).count()
-
-    @cached_property
-    def notif_arrivals(self):
-        if self.id == 1:
-            return User.objects.filter(is_approved=False).count()
-        return 0
 
     @cached_property
     def notif_messages(self):

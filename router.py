@@ -54,13 +54,10 @@ app.add_route('/account/export', resources.AccountResource(), suffix="export")
 app.add_route('/profile', resources.ProfileResource())
 app.add_route('/details', resources.DetailsResource())
 
-app.add_route('/arrivals', resources.ArrivalsResource())
-app.add_route('/arrivals/destroy', resources.ArrivalsResource(), suffix="destroy")
-
 app.add_route('/reply/{id:int}', resources.ReplyResource())
 app.add_route('/edit/{id:int}', resources.EditResource())
 app.add_route('/message/{username}', resources.MessageResource())
-app.add_route('/{username}/approve', resources.ArrivalsResource(), suffix="approve")
+app.add_route('/{username}/destroy', resources.DestroyResource())
 app.add_route('/{username}', resources.MemberResource())
 
 if DEBUG:
