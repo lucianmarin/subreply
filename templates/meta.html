@@ -46,6 +46,10 @@
 
 <meta property="og:logo" content="/static/192.png">
 
+{% if view == 'member' and member.username == 'lucian' %}
+    <link rel="me" href="https://mastodon.social/@lucianmarin">
+{% endif %}
+
 <link rel="apple-touch-icon" type="image/png" href="/static/192.png">
 <link rel="icon" sizes="192x192" type="image/png" href="/static/192.png">
 
