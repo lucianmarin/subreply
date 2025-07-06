@@ -429,7 +429,7 @@ class PeopleResource:
         "username", "first_name", "last_name", "email",
         "description", "birthday", "location", "emoji", "website"
     ]
-    placeholder = "Find someone"
+    placeholder = "Find people"
 
     def build_query(self, terms):
         query = Q()
@@ -460,7 +460,7 @@ class PeopleResource:
 
 
 class DiscoverResource:
-    placeholder = "Find a thread or a reply"
+    placeholder = "Search content"
 
     def build_query(self, terms):
         query = Q()
@@ -521,9 +521,10 @@ class LinksResource:
 
 class InboxResource:
     def fetch_entries(self, req):
-        entries = Text.objects.filter(
+        distinct = Text.objects.filter(
             to_user=req.user
         ).order_by('created_by_id', '-id').distinct('created_by_id')
+        entries = Text.objects.filter(id__in=distinct).order_by('-id')
         return entries.select_related('created_by')
 
     @before(auth_user)
@@ -555,9 +556,12 @@ class MessageResource:
         if not member:
             raise HTTPNotFound
         entries, page, number = paginate(req, self.fetch_entries(req, member))
+        forward = Text.objects.filter(created_by=req.user, to_user=member).exists()
+        backward = Text.objects.filter(created_by=member, to_user=req.user).exists()
+        blocked = True if forward and not backward else False
         resp.text = render(
             page=page, view='message', number=number, user=req.user, errors={},
-            entries=entries, member=member
+            entries=entries, member=member, blocked=blocked
         )
         if req.user.received.filter(created_by=member, seen_at=.0).count():
             self.clear_messages(req, member)
