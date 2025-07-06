@@ -36,6 +36,8 @@
     <meta name="description" content="Tiny, but mighty social network.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://subreply.com/">
+{% elif view == 'message' %}
+    <title>Message @{{ member }}</title>
 {% else %}
     <title>{{ brand }} / {{ view | capitalize }}</title>
     <meta name="description" content="Tiny, but mighty social network.">
