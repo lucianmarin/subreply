@@ -61,45 +61,6 @@ LATIN += "ȠȡȢȣȤȥȦȧȨȩȪȫȬȭȮȯ"
 LATIN += "ȰȱȲȳȴȵȶȷȸȹȺȻȼȽȾȿ"
 LATIN += "ɀɁɂɃɄɅɆɇɈɉɊɋɌɍɎɏ"
 
-ACTIVITY_HTML = (
-    "<html>"
-    "<p>Hello,</p>"
-    "<p>You got a couple of {{ notifs }} left unseen on your Subreply account.</p>"
-    "<p>Login from https://subreply.com/login to check them out. Your username is @{{ username }}.</p>"
-    "<p>You won't be emailed again in couple of months if there's no activity on your account.</p>"
-    "<p>Have a sunny day!</p>"
-    "</html>"
-)
-
-ACTIVITY_TEXT = (
-    "Hello,\n"
-    "You got a couple of {{ notifs }} left unseen on your Subreply account.\n"
-    "Login from https://subreply.com/login to check them out. Your username is @{{ username }}.\n"
-    "You won't be emailed again in couple of months if there's no activity on your account.\n"
-    "Have a sunny day!\n"
-)
-
-RECOVER_HTML = (
-    "<html>"
-    "<p>Hello,</p>"
-    "<p>Recover your account on Subreply by going to https://subreply.com/recover/{{ token }}</p>"
-    "<p>Your username is @{{ username }}.</p>"
-    "<p>Delete this email if you didn't make such request.</p>"
-    "</html>"
-)
-
-RECOVER_TEXT = (
-    "Hello,\n"
-    "Recover your account on Subreply by going to https://subreply.com/recover/{{ token }}\n"
-    "Your username is @{{ username }}.\n"
-    "Delete this email if you didn't make such request.\n"
-)
-
-HEADERS = {
-    'User-Agent': "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/12.0 Safari/605.1.15",
-    'Accept': "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8"
-}
-
 RESERVED = [
     "lm",
     "lucianmarin",

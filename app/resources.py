@@ -17,7 +17,6 @@ from app.validation import (authentication, profiling, registration, valid_conte
                             valid_handle, valid_password, valid_phone, valid_reply,
                             valid_thread)
 from project.settings import FERNET, MAX_AGE, SMTP
-from project.vars import RECOVER_HTML, RECOVER_TEXT
 
 Posts = Post.objects.annotate(
     replies=Count('descendants')
@@ -875,23 +874,19 @@ class RecoverResource:
         else:
             # generate token
             token = FERNET.encrypt(str(user.email).encode()).decode()
-            # compose email
-            m = Message(
-                html=JinjaTemplate(RECOVER_HTML),
-                text=JinjaTemplate(RECOVER_TEXT),
-                subject="Recover account on Subreply",
-                mail_from=("Subreply", "subreply@outlook.com")
-            )
-            # send email
-            r = m.send(
-                render={"username": user, "token": token},
-                to=user.email,
-                smtp=SMTP
+            # compose message
+            admin = User.objects.get(id=1)
+            m, is_new = Text.objects.get_or_create(
+                content=f"Send https://subreply.com/recover/{token} to {user.email}.",
+                created_at=utc_timestamp(),
+                created_by=user,
+                to_user=admin
             )
             # callback
-            errors['email'] = "Email couldn't be delivered"
-            if r.status_code == 250:
-                errors['email'] = "Check your inbox for recovery link"
+            if is_new:
+                errors['email'] = "Please wait for your recovery link"
+            else:
+                errors['email'] = "Message couldn't be sent"
             resp.text = render(
                 page='recover', view='recover', errors=errors, form=form
             )
