@@ -251,6 +251,7 @@ class ReplyResource:
                 content=content,
                 created_at=utc_timestamp(),
                 created_by=req.user,
+                in_room=parent.in_room,
                 **extra
             )
             re.set_ancestors()
