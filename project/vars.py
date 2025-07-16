@@ -63,6 +63,7 @@ LATIN += "ɀɁɂɃɄɅɆɇɈɉɊɋɌɍɎɏ"
 
 RESERVED = [
     "lm",
+    "lucian",
     "lucianmarin",
     "sublevel"
 ]
@@ -73,6 +74,8 @@ INVALID = RESERVED + [
     "api",
     "arrivals",
     "at",
+    "channel",
+    "channels",
     "chat",
     "delete",
     "details",

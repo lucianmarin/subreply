@@ -28,9 +28,18 @@
     {% if entry.edited_at %}
         <meta property="article:modified_time" content="{{ entry.edited_at | isoformat }}">
     {% endif %}
-    {% if entry.hashtag %}
-        <meta property="article:tag" content="{{ entry.hashtag }}">
+    {% if entry.in_room %}
+        <meta property="article:section" content="{{ entry.in_room }}">
     {% endif %}
+    {% if entry.at_room %}
+        <meta property="article:tag" content="{{ entry.at_room }}">
+    {% endif %}
+{% elif view == 'channel' %}
+    <title>{{ brand }} / #{{ room }}</title>
+    <meta name="description" content="Tiny, but mighty social network.">
+    <meta name="keywords" content="{{ room }}">
+    <meta property="og:type" content="article:section">
+    <meta property="og:url" content="https://subreply.com/channel/{{ room }}">
 {% elif view == 'main' %}
     <title>{{ brand }}</title>
     <meta name="description" content="Tiny, but mighty social network.">
@@ -60,7 +69,7 @@
 
 <script type="text/javascript" src="/static/script.js?v={{ v }}" async defer></script>
 
-{% if content and view in ['feed', 'reply', 'edit'] %}
+{% if content and view in ['feed', 'reply', 'edit', 'channel'] %}
     <script type="text/javascript">
         window.onload = function() {
             var content = document.getElementById('id_content');

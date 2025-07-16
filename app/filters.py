@@ -128,7 +128,7 @@ def parser(text):
             if handle and all(c in digits for c in handle):
                 word = f'<a href="/reply/{handle}" rel="bookmark">#{handle}</a>'
             elif handle and all(c in digits + ascii_letters for c in handle):
-                word = f'<a href="/discover?q=%23{handle}" rel="tag">#{handle}</a>'
+                word = f'<a href="/channel/{handle}" rel="tag">#{handle}</a>'
         # wrap word
         word = startswith + word + endswith
         words.append(word)
