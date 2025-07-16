@@ -11,7 +11,7 @@ from strictyaml import as_document
 from app.forms import get_content, get_emoji, get_location, get_metadata, get_name
 from app.hooks import auth_user, login_required
 from app.jinja import render
-from app.models import Bond, Post, Room, Save, User, Text
+from app.models import Bond, Chat, Post, Room, Save, User
 from app.utils import build_hash, utc_timestamp, verify_hash
 from app.validation import (authentication, profiling, registration, valid_content,
                             valid_handle, valid_hashtag, valid_password, valid_phone, valid_reply,
@@ -627,10 +627,10 @@ class ChannelsResource:
 
 class InboxResource:
     def fetch_entries(self, req):
-        distinct = Text.objects.filter(
+        distinct = Chat.objects.filter(
             to_user=req.user
         ).order_by('created_by_id', '-id').distinct('created_by_id')
-        entries = Text.objects.filter(id__in=distinct).order_by('-id')
+        entries = Chat.objects.filter(id__in=distinct).order_by('-id')
         return entries.select_related('created_by')
 
     @before(auth_user)
@@ -645,13 +645,13 @@ class InboxResource:
 
 class MessageResource:
     def fetch_entries(self, req, member):
-        entries = Text.objects.filter(
+        entries = Chat.objects.filter(
             Q(created_by=req.user.id, to_user=member.id) | Q(created_by=member.id, to_user=req.user.id)
         ).order_by('-id')
         return entries.select_related('created_by', 'to_user')
 
     def clear_messages(self, req, member):
-        Text.objects.filter(
+        Chat.objects.filter(
             created_by=member, to_user=req.user, seen_at=.0
         ).update(seen_at=utc_timestamp())
 
@@ -662,8 +662,8 @@ class MessageResource:
         if not member:
             raise HTTPNotFound
         entries, page, number = paginate(req, self.fetch_entries(req, member))
-        forward = Text.objects.filter(created_by=req.user, to_user=member).exists()
-        backward = Text.objects.filter(created_by=member, to_user=req.user).exists()
+        forward = Chat.objects.filter(created_by=req.user, to_user=member).exists()
+        backward = Chat.objects.filter(created_by=member, to_user=req.user).exists()
         blocked = True if forward and not backward else False
         resp.text = render(
             page=page, view='message', number=number, user=req.user, errors={},
@@ -690,7 +690,7 @@ class MessageResource:
                 member=member, entries=entries, content=content, errors=errors
             )
         else:
-            msg, is_new = Text.objects.get_or_create(
+            msg, is_new = Chat.objects.get_or_create(
                 to_user=member,
                 content=content,
                 created_at=utc_timestamp(),
@@ -986,7 +986,7 @@ class RecoverResource:
             token = FERNET.encrypt(str(user.email).encode()).decode()
             # compose message
             admin = User.objects.get(id=1)
-            m, is_new = Text.objects.get_or_create(
+            m, is_new = Chat.objects.get_or_create(
                 content=f"Send https://subreply.com/recover/{token} to {user.email}.",
                 created_at=utc_timestamp(),
                 created_by=user,

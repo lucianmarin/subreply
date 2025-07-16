@@ -2,7 +2,7 @@ from falcon.constants import MEDIA_JSON
 from falcon.hooks import before
 
 from app.hooks import auth_user
-from app.models import Bond, Post, Save, User, Text
+from app.models import Bond, Chat, Post, Save, User
 from app.utils import utc_timestamp
 
 
@@ -95,7 +95,7 @@ class TextCallback:
         if not req.user:
             resp.media = {'status': 'not auth'}
             return
-        entry = Text.objects.filter(id=id).first()
+        entry = Chat.objects.filter(id=id).first()
         if not entry:
             resp.media = {'status': 'not found'}
             return
