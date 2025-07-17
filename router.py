@@ -27,8 +27,6 @@ app.add_route('/messages', resources.InboxResource())
 app.add_route('/replies', resources.RepliesResource())
 app.add_route('/saved', resources.SavedResource())
 
-app.add_route('/channel/{name}', resources.ChannelResource())
-app.add_route('/channels', resources.ChannelsResource())
 # app.add_route('/links', resources.LinksResource())
 app.add_route('/people', resources.PeopleResource())
 app.add_route('/trending', resources.TrendingResource())
