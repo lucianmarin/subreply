@@ -2,8 +2,12 @@
     <div class="author">
         {% if view in ['following', 'followers'] %}
             <b>{{ entry.created_at | shortdate }}</b>
-        {% else %}
-            <b>{{ member.created_at | shortdate }}</b>
+        {% elif view == "member" %}
+            {% if user == member %}
+                <a class="right" href="/add">ADD</a>
+            {% elif user %}
+                <a class="right" href="/{{ member }}/message">MSG</a>
+            {% endif %}
         {% endif %}
         <a class="handle" href="/{{ member }}">
             {{ member.full_name | emojize }}

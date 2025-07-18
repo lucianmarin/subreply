@@ -11,6 +11,11 @@ with open(ROOT / 'static/countries.json') as file:
 
 MIN_YEAR, MAX_YEAR = 1918, 2018
 
+TYPES = [
+    "work", "education", "project", "license", "certification",
+    "course", "publication", "award", "cause", "volunteer"
+]
+
 LINKS = {
     'dribbble': '<a href="https://dribbble.com/{0}">Dribbble</a>',
     'github': '<a href="https://github.com/{0}">GitHub</a>',

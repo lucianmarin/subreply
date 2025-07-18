@@ -195,14 +195,14 @@ def valid_email(value, user_id=0):
 def valid_description(value, user_id=0):
     if value:
         user = User.objects.filter(id=user_id).first()
-        return valid_content(value, user, limit=120)
+        return valid_content(value, user, limit=240)
 
 
 def valid_website(value, user_id=0):
     if value:
         duplicate = User.objects.filter(website=value).exclude(id=user_id).first()
-        if len(value) > 120:
-            return "Website can't be longer than 120 characters"
+        if len(value) > 240:
+            return "Website can't be longer than 240 characters"
         elif len(value) != len(value.encode()):
             return "Website should use ASCII characters"
         elif not value.startswith(('http://', 'https://')):
@@ -328,11 +328,70 @@ def valid_wallet(coin, id):
         return "ID or IBAN must be only digits and letters"
 
 
+def valid_date(value, delimiter="-"):
+    if value:
+        CUR_YEAR = date.today().year
+        CUR_MONTH = date.today().month
+        years = [str(y) for y in range(MIN_YEAR, CUR_YEAR + 1)]
+        zeroes = [str(z).zfill(2) for z in range(1, 10)]
+        months = zeroes + [str(m) for m in range(10, 13)]
+        if value.count(delimiter) != 1:
+            return "Date has an invalid format"
+        elif len(value) > 7:
+            return "Date is too long"
+        elif value.count(delimiter) == 1:
+            year, month = value.split(delimiter)
+            if year not in years:
+                return "Year is not between {0}-{1}".format(MIN_YEAR, CUR_YEAR)
+            elif month not in months:
+                return "Month is not between 01-12"
+            elif year == str(CUR_YEAR) and int(month) > CUR_MONTH:
+                return "Date is in the future"
+
+
+def valid_start(value):
+    if not value:
+        return "Date cannnot be empty"
+    else:
+        return valid_date(value)
+
+
+def valid_end(end, start):
+    try:
+        s = int(start.replace('-', ''))
+        e = int(end.replace('-', ''))
+    except:
+        s, e = 0, 0
+    if e < s:
+        return "Dates are reversed"
+    else:
+        return valid_date(end)
+
+
+def valid_work(value):
+    if not value:
+        return "Value cannot be emtpy"
+    elif emoji_count(value):
+        return "Value contains emoji"
+
+
 def changing(user, current, password1, password2):
     errors = {}
     if not verify_hash(current, user.password):
         errors['current'] = "Password doesn't match"
     errors['password'] = valid_password(password1, password2)
+    return {k: v for k, v in errors.items() if v}
+
+
+def working(f, user):
+    errors = {}
+    errors['title'] = valid_work(f['title'])
+    errors['entity'] = valid_work(f['entity'])
+    errors['start_date'] = valid_start(f['start_date'])
+    errors['end_date'] = valid_end(f['end_date'], f['start_date'])
+    errors['location'] = valid_location(f['location'])
+    errors['description'] = valid_content(f['description'], user=user)
+    errors['link'] = valid_website(f['link'], user_id=user.id)
     return {k: v for k, v in errors.items() if v}
 
 
@@ -351,7 +410,7 @@ def profiling(f, user_id):
     errors['description'] = valid_description(
         f['description'], user_id=user_id
     )
-    errors['website'] = valid_website(f['website'], user_id=user_id)
+    errors['link'] = valid_website(f['website'], user_id=0)
     return {k: v for k, v in errors.items() if v}
 
 

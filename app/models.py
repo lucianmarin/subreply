@@ -28,8 +28,8 @@ class User(models.Model):
     emoji = models.CharField(max_length=80, default='')
     birthday = models.CharField(max_length=10, default='')
     location = models.CharField(max_length=60, default='')
-    description = models.CharField(max_length=120, default='')
-    website = models.CharField(max_length=120, default='')
+    description = models.CharField(max_length=240, default='')
+    website = models.CharField(max_length=240, default='')
 
     phone = models.JSONField(default=dict)
     social = models.JSONField(default=dict)
@@ -146,3 +146,36 @@ class Chat(models.Model):
     to_user = models.ForeignKey('User', on_delete=models.CASCADE, related_name='received')
     created_at = models.FloatField(default=.0)
     seen_at = models.FloatField(default=.0)
+
+
+class Work(models.Model):
+    created_at = models.FloatField(default=.0)
+    edited_at = models.FloatField(default=.0)
+    created_by = models.ForeignKey('User', on_delete=models.CASCADE,
+                                   related_name='works')
+    title = models.CharField(max_length=60)
+    entity = models.CharField(max_length=60)
+    start_date = models.IntegerField(default=0, db_index=True)
+    end_date = models.IntegerField(default=0, db_index=True)
+    location = models.CharField(max_length=60, default='')
+    link = models.CharField(max_length=240, default='')
+    description = models.CharField(max_length=640, default='')
+
+    @cached_property
+    def start_year(self):
+        return int(str(self.start_date)[:4])
+
+    @cached_property
+    def start_month(self):
+        return int(str(self.start_date)[4:])
+
+    @cached_property
+    def end_year(self):
+        return int(str(self.end_date)[:4]) if self.end_date else 0
+
+    @cached_property
+    def end_month(self):
+        return int(str(self.end_date)[4:]) if self.end_date else 0
+
+    def __str__(self):
+        return self.title + " at " + self.entity

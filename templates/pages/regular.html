@@ -13,12 +13,9 @@
         {% if view == 'member' %}
             {% include "common/user.html" %}
             {% include "common/status.html" %}
-        {% elif view == 'arrivals' %}
-            <div class="entry">
-                <div class="status">
-                    <a href="/arrivals/destroy">Destroy all</a>
-                </div>
-            </div>
+            {% for work in works %}
+                {% include "common/work.html" %}
+            {% endfor %}
         {% endif %}
 
         {% for entry in entries %}

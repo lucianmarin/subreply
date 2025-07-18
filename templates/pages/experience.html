@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block main %}
+    <div class="title">
+        {% if view == 'update' %}
+            <a href="/update/{{ entry.id}}" class="on">{{ view | capitalize }} experience</a>
+        {% else %}
+            <a href="/add" class="on">{{ view | capitalize }} experience</a>
+        {% endif %}
+    </div>
+
+    <div class="register">
+        <form enctype="multipart/form-data" method="post" autocomplete="off">
+            <div class="line">
+                <div class="left">
+                    <label for="id_title">Title<i>*</i></label>
+                    <input type="text" name="title" id="id_title"
+                        maxlength="60" value="{% if form %}{{ fields.title }}{% elif entry %}{{ entry.title }}{% endif %}">
+                </div>
+                <div class="right">
+                    <label for="id_entity">Entity name<i>*</i></label>
+                    <input type="text" name="entity" id="id_entity"
+                        maxlength="60" value="{% if form %}{{ fields.entity }}{% elif entry %}{{ entry.entity }}{% endif %}">
+                </div>
+                {% if 'title' in errors %}
+                    <div class="error">{{ errors['title'] }}</div>
+                {% endif %}
+                {% if 'entity' in errors %}
+                    <div class="error">{{ errors['entity'] }}</div>
+                {% endif %}
+            </div>
+            <div class="line">
+                <div class="left">
+                    <div class="left">
+                        <label for="id_start_date">Start date<i>*</i></label>
+                        <input type="text" name="start_date" id="id_start_date"
+                            maxlength="10" placeholder="Y-M"
+                            value="{% if form %}{{ fields.start_date }}{% elif entry %}{{ entry.start_year }}-{% if entry.start_month < 10 %}0{% endif %}{{ entry.start_month }}{% endif %}">
+                    </div>
+                    <div class="right">
+                        <label for="id_end_date">End date</label>
+                        <input type="text" name="end_date" id="id_end_date"
+                            maxlength="10" placeholder="Y-M"
+                            value="{% if form %}{{ fields.end_date }}{% elif entry.end_date %}{{ entry.end_year }}-{% if entry.end_month < 10 %}0{% endif %}{{ entry.end_month}}{% endif %}">
+                    </div>
+                </div>
+                <div class="right">
+                    <label for="id_location">Location</label>
+                    <input type="text" name="location" id="id_location"
+                        maxlength="60" placeholder="City, Country"
+                        value="{% if form %}{{ fields.location }}{% elif entry %}{{ entry.location }}{% endif %}">
+                </div>
+                {% if 'start_date' in errors %}
+                    <div class="error">{{ errors['start_date'] }}</div>
+                {% endif %}
+                {% if 'end_date' in errors %}
+                    <div class="error">{{ errors['end_date'] }}</div>
+                {% endif %}
+                {% if 'location' in errors %}
+                    <div class="error">{{ errors['location'] }}</div>
+                {% endif %}
+            </div>
+            <div class="line">
+                <label for="id_link">Link</label>
+                <input type="text" name="link" id="id_link" maxlength="240"
+                    placeholder="https://"
+                    value="{% if form %}{{ fields.link }}{% elif entry %}{{ entry.link }}{% endif %}">
+                {% if 'link' in errors %}
+                    <div class="error">{{ errors['link'] }}</div>
+                {% endif %}
+            </div>
+            <div class="line">
+                <label for="id_description">Description<i>*</i></label>
+                <input type="text" name="description" id="id_description" maxlength="640"
+                    value="{% if form %}{{ fields.description }}{% elif entry %}{{ entry.description }}{% endif %}">
+                {% if 'description' in errors %}
+                    <div class="error">{{ errors['description'] }}</div>
+                {% endif %}
+            </div>
+            <div class="line">
+                <input type="submit" value="{{ view | capitalize }}">
+            </div>
+        </form>
+    </div>
+{% endblock %}

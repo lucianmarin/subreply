@@ -1,8 +1,6 @@
 from cgi import FieldStorage
 
 from django.db.models import Count, Prefetch, Q, Max
-from emails import Message
-from emails.template import JinjaTemplate
 from emoji import demojize, EMOJI_DATA
 from falcon import HTTPFound, HTTPNotFound, before
 from falcon.status_codes import HTTP_200
@@ -11,12 +9,12 @@ from strictyaml import as_document
 from app.forms import get_content, get_emoji, get_location, get_metadata, get_name
 from app.hooks import auth_user, login_required
 from app.jinja import render
-from app.models import Bond, Chat, Post, Save, User
+from app.models import Bond, Chat, Post, Save, User, Work
 from app.utils import build_hash, utc_timestamp, verify_hash
-from app.validation import (authentication, profiling, registration, valid_content,
-                            valid_handle, valid_hashtag, valid_password, valid_phone, valid_reply,
-                            valid_thread)
-from project.settings import FERNET, MAX_AGE, SMTP
+from app.validation import (authentication, working, profiling, registration,
+                            valid_content, valid_handle, valid_password, valid_phone,
+                            valid_reply, valid_thread)
+from project.settings import FERNET, MAX_AGE
 
 Posts = Post.objects.annotate(
     replies=Count('descendants')
@@ -287,8 +285,6 @@ class EditResource:
                 ancestors=ancestors
             )
         else:
-            fields = ['content', 'edited_at', 'link', 'hashtag', 'at_user',
-                      'mention_seen_at']
             previous_at_user = entry.at_user
             entry.content = content
             entry.edited_at = utc_timestamp()
@@ -299,7 +295,7 @@ class EditResource:
             ) if mentions else None
             if previous_at_user != entry.at_user:
                 entry.mention_seen_at = .0
-            entry.save(update_fields=fields)
+            entry.save()
             raise HTTPFound(f"/reply/{entry.id}")
 
 
@@ -315,9 +311,10 @@ class MemberResource:
         if not member:
             raise HTTPNotFound
         entries, page, number = paginate(req, self.fetch_entries(member))
+        works = Work.objects.filter(created_by=member).order_by('-start_date', 'end_date')
         resp.text = render(
             page=page, view='member', number=number, errors={},
-            user=req.user, member=member, entries=entries
+            user=req.user, member=member, entries=entries, works=works
         )
 
 
@@ -595,6 +592,86 @@ class MessageResource:
             raise HTTPFound(f"/message/{username}")
 
 
+class AddResource:
+    @before(auth_user)
+    @before(login_required)
+    def on_get(self, req, resp):
+        form = FieldStorage(fp=req.stream, environ=req.env)
+        entry = Work.objects.none()
+        resp.text = render(
+            page='experience', view='add', user=req.user, form=form, errors={}, entry=entry
+        )
+
+    @before(auth_user)
+    @before(login_required)
+    def on_post(self, req, resp):
+        form = FieldStorage(fp=req.stream, environ=req.env)
+        f = {}
+        f['title'] = form.getvalue('title', '').strip()
+        f['entity'] = form.getvalue('entity', '').strip()
+        f['start_date'] = form.getvalue('start_date', '').strip()
+        f['end_date'] = form.getvalue('end_date', '').strip()
+        f['location'] = get_location(form)
+        f['link'] = form.getvalue('link', '').strip().lower()
+        f['description'] = get_content(form, 'description')
+        errors = working(f, req.user)
+        if errors:
+            resp.text = render(
+                page='experience', view='add',
+                user=req.user, errors=errors, form=form, fields=f
+            )
+        else:
+            f['start_date'] = int(f['start_date'].replace('-', ''))
+            f['end_date'] = int(f['end_date'].replace('-', '')) if f['end_date'] else 0
+            work, _ = Work.objects.get_or_create(
+                created_by=req.user,
+                created_at=utc_timestamp(),
+                defaults=f
+            )
+            raise HTTPFound('/{0}'.format(req.user))
+
+
+class UpdateResource:
+    @before(auth_user)
+    @before(login_required)
+    def on_get(self, req, resp, id):
+        form = FieldStorage(fp=req.stream, environ=req.env)
+        entry = Work.objects.get(id=id)
+        resp.text = render(
+            page='experience', view='update', user=req.user, form=form, errors={}, entry=entry
+        )
+
+    @before(auth_user)
+    @before(login_required)
+    def on_post(self, req, resp, id):
+        form = FieldStorage(fp=req.stream, environ=req.env)
+        entry = Work.objects.get(id=id)
+        f = {}
+        f['title'] = form.getvalue('title', '').strip()
+        f['entity'] = form.getvalue('entity', '').strip()
+        f['start_date'] = form.getvalue('start_date', '').strip()
+        f['end_date'] = form.getvalue('end_date', '').strip()
+        f['location'] = get_location(form)
+        f['link'] = form.getvalue('link', '').strip().lower()
+        f['description'] = get_content(form, 'description')
+        errors = working(f, req.user)
+        if errors:
+            resp.text = render(
+                page='experience', view='update',
+                user=req.user, errors=errors, form=form, fields=f, entry=entry
+            )
+        else:
+            entry.title = f['title']
+            entry.entity = f['entity']
+            entry.start_date = int(f['start_date'].replace('-', ''))
+            entry.end_date = int(f['end_date'].replace('-', '')) if f['end_date'] else 0
+            entry.location = f['location']
+            entry.link = f['link']
+            entry.description = f['description']
+            entry.save()
+            raise HTTPFound('/{0}'.format(req.user))
+
+
 class AccountResource:
     @before(auth_user)
     @before(login_required)
@@ -701,7 +778,7 @@ class DetailsResource:
     @before(login_required)
     def on_post(self, req, resp):
         form = FieldStorage(fp=req.stream, environ=req.env)
-        f, s, p, w = {}, {}, {}, {}
+        f, s, p = {}, {}, {}, {}
         self.update(form, s, self.social)
         self.update(form, p, self.phone)
         errors = {}
@@ -712,7 +789,6 @@ class DetailsResource:
         if errors:
             f.update(p)
             f.update(s)
-            f.update(w)
             resp.text = render(
                 page='details', view='details', fields=f,
                 user=req.user, errors=errors, form=form
@@ -720,7 +796,6 @@ class DetailsResource:
         else:
             req.user.phone = p
             req.user.social = s
-            req.user.wallet = w
             req.user.save(update_fields=['phone', 'social'])
             raise HTTPFound(f"/{req.user}")
 

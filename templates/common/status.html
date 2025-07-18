@@ -1,15 +1,11 @@
-{% if user or member.links %}
-    <div class="entry">
-        <div class="status">
-            {% if user %}
-                Message <a href="/message/{{ member }}">@{{ member }}</a>.
-            {% endif %}
-            {% if member.links %}
-                Also on {{ member.links | enumerize | safe }}.
-            {% endif %}
-        </div>
+<div class="entry">
+    <div class="status">
+        Joined <b>{{ member.created_at | shortdate }}</b> ago.
+        {% if member.links %}
+            Also on {{ member.links | enumerize | safe }}.
+        {% endif %}
     </div>
-{% endif %}
+</div>
 
 {% if user.id == 1 and member.id != 1 %}
     <div class="entry">

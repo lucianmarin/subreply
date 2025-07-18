@@ -12,6 +12,7 @@ app.resp_options.secure_cookies_by_default = not DEBUG
 
 app.add_route('/', resources.MainResource())
 
+app.add_route('/xhr/erase/{id:int}', xhr.WorkCallback(), suffix="erase")
 app.add_route('/xhr/unsend/{id:int}', xhr.TextCallback(), suffix="unsend")
 app.add_route('/xhr/delete/{id:int}', xhr.PostCallback(), suffix="delete")
 app.add_route('/xhr/save/{id:int}', xhr.PostCallback(), suffix="save")
@@ -54,9 +55,12 @@ app.add_route('/account/export', resources.AccountResource(), suffix="export")
 app.add_route('/profile', resources.ProfileResource())
 app.add_route('/details', resources.DetailsResource())
 
+app.add_route('/add', resources.AddResource())
+
+app.add_route('/update/{id:int}', resources.UpdateResource())
 app.add_route('/reply/{id:int}', resources.ReplyResource())
 app.add_route('/edit/{id:int}', resources.EditResource())
-app.add_route('/message/{username}', resources.MessageResource())
+app.add_route('/{username}/message', resources.MessageResource())
 app.add_route('/{username}/destroy', resources.DestroyResource())
 app.add_route('/{username}', resources.MemberResource())
 

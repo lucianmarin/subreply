@@ -2,7 +2,7 @@ from falcon.constants import MEDIA_JSON
 from falcon.hooks import before
 
 from app.hooks import auth_user
-from app.models import Bond, Chat, Post, Save, User
+from app.models import Bond, Chat, Post, Save, User, Work
 from app.utils import utc_timestamp
 
 
@@ -104,3 +104,18 @@ class TextCallback:
             return
         entry.delete()
         resp.media = {'status': 'unsent'}
+
+
+class WorkCallback:
+    @before(auth_user)
+    def on_post_erase(self, req, resp, id):
+        resp.content_type = MEDIA_JSON
+        if not req.user:
+            resp.media = {'status': 'not auth'}
+            return
+        entry = Work.objects.filter(id=id).first()
+        if not entry:
+            resp.media = {'status': 'not found'}
+            return
+        entry.delete()
+        resp.media = {'status': 'erased'}

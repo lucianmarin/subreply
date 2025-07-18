@@ -1,0 +1,36 @@
+<div class="entry">
+    <div class="content">
+        <span class="date">
+            {% if work.start_date == work.end_date %}
+                {{ work.start_month }}.{{ work.start_year }}
+            {% elif work.end_date %}
+                {{ work.start_month }}.{{ work.start_year }}
+                -
+                {{ work.end_month }}.{{ work.end_year }}
+            {% else %}
+                {{ work.start_month }}.{{ work.start_year }}
+                -
+                now
+            {% endif %}
+        </span>
+        {% if work.link %}
+            <a class="name">{{ work.title }}</a>
+        {% else %}
+            {{ work.title }}
+        {% endif %}
+        at {{ work.entity }}
+    </div>
+    <div class="content">
+        {% if work.location %}{{ work.location }} &mdash;{% endif %}
+        {{ work.description }}
+    </div>
+    {% if user %}
+        <div class="small">
+            <b>&nbsp;</b>
+            <a href="/update/{{ work.id }}">update</a>
+            <a onclick="postDelete(event, 'erase', 'erased')" data-id="{{ work.id }}">
+                erase
+            </a>
+        </div>
+    {% endif %}
+</div>
