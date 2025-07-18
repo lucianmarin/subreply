@@ -5,7 +5,6 @@ from django.db.models import Q
 from dns.resolver import query as dns_query
 from emoji import EMOJI_DATA, emoji_count
 from phonenumbers import is_possible_number, is_valid_number, parse
-from requests import head
 
 from app.forms import get_metadata
 from app.models import Post, User
@@ -209,14 +208,6 @@ def valid_website(value, user_id=0):
             return "Website hasn't a valid http(s) address"
         elif duplicate:
             return f'Website is used by @{duplicate}'
-        else:
-            try:
-                headers = head(value, allow_redirects=True, timeout=5).headers
-            except Exception as e:
-                headers = {}
-                print(e)
-            if 'text/html' not in headers.get('Content-Type', '').lower():
-                return "Website isn't a valid HTML page"
 
 
 def valid_password(value1, value2):
