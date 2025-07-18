@@ -30,7 +30,8 @@ def get_location(form, delimiter=", "):
 
 def get_name(form, field):
     value = form.getvalue(f'{field}_name', '')
-    return "-".join(w.strip().capitalize() for w in value.split())
+    words = [word.strip() for word in value.split()]
+    return " ".join(words)
 
 
 def get_metadata(text):

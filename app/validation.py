@@ -3,14 +3,14 @@ from string import ascii_letters, ascii_uppercase, digits
 
 from django.db.models import Q
 from dns.resolver import query as dns_query
-from emoji import EMOJI_DATA
+from emoji import EMOJI_DATA, emoji_count
 from phonenumbers import is_possible_number, is_valid_number, parse
 from requests import head
 
 from app.forms import get_metadata
 from app.models import Post, User
 from app.utils import has_repetions, verify_hash
-from project.vars import INVALID, LATIN, MAX_YEAR, MIN_YEAR, CITIES
+from project.vars import INVALID, MAX_YEAR, MIN_YEAR, CITIES
 
 
 def valid_hashtag(value):
@@ -118,14 +118,14 @@ def valid_username(value, user_id=0):
         return "Username contains repeating characters"
     elif "__" in value:
         return "Username contains consecutive underscores"
-    elif value in INVALID:
+    elif value in INVALID and user_id != 1:
         return "Username is invalid"
     elif User.objects.filter(username=value).exclude(id=user_id).exists():
         return "Username is already taken"
 
 
 def valid_handle(value):
-    limits = digits + ascii_letters + "_-"
+    limits = digits + ascii_letters + "_.-"
     if len(value) > 15:
         return "Handle can't be longer than 15 characters"
     elif not all(c in limits for c in value):
@@ -134,7 +134,7 @@ def valid_handle(value):
 
 def valid_id(value):
     if len(value) > 15:
-        return "Handle can't be longer than 15 characters"
+        return "ID can't be longer than 15 characters"
     elif not all(c in digits for c in value):
         return "ID can be only numeric"
 
@@ -142,27 +142,23 @@ def valid_id(value):
 def valid_first_name(value):
     if not value:
         return "First name can't be blank"
-    elif len(value) > 15:
-        return "First name can't be longer than 15 characters"
     elif len(value) == 1:
         return "First name is just too short"
-    elif not all(c in LATIN for c in value):
-        return "First name should use Latin characters"
+    elif len(value) > 15:
+        return "First name can't be longer than 15 characters"
+    elif emoji_count(value):
+        return "First name cotains emoji"
     elif has_repetions(value):
         return "First name contains repeating characters"
-    elif value.count('-') > 1 or value.startswith('-') or value.endswith('-'):
-        return "Only one double-name is allowed"
 
 
 def valid_last_name(value):
     if len(value) > 15:
         return "Last name can't be longer than 15 characters"
-    elif not all(c in LATIN for c in value):
-        return "Last name should use Latin characters"
+    elif emoji_count(value):
+        return "First name cotains emoji"
     elif value and has_repetions(value):
         return "Last name contains repeating characters"
-    elif value.count('-') > 1 or value.startswith('-') or value.endswith('-'):
-        return "Only one double-name is allowed"
 
 
 def valid_full_name(emoji, first_name, last_name, user_id=0):
