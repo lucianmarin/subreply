@@ -8,7 +8,7 @@
         <input type="text" id="id_query" name="q" value="{{ q | emojize }}"
             maxlength="120" placeholder="{{ placeholder }}">
         {% for name, error in errors.items() %}
-            <div class="error">{{ error | safe }}</div>
+            <div class="error">{{ error }}</div>
         {% endfor %}
     </form>
 </div>

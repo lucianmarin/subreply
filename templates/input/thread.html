@@ -12,7 +12,7 @@
                 >{{ content | emojize }}</textarea>
         {% endif %}
         {% for name, error in errors.items() %}
-            <div class="error">{{ error | safe }}</div>
+            <div class="error">{{ error }}</div>
         {% endfor %}
     </form>
 </div>

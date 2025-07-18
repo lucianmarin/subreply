@@ -72,7 +72,7 @@ def valid_thread(value):
     duplicates = [t for t in threads if t.content.lower() == value.lower()]
     if duplicates:
         duplicate = duplicates[0]
-        err = 'Thread <a href="/reply/{0}">#{0}</a> started by <a href="/{1}">@{1}</a>'
+        err = 'Thread #{0} started by @{1}'
         return err.format(duplicate.id, duplicate.created_by)
 
 
@@ -84,7 +84,7 @@ def valid_reply(parent, user, value, mentions):
         (Q(ancestors=top_id) | Q(id=top_id)) & Q(content__iexact=value)
     ).first()
     if duplicate:
-        err = 'Duplicate of <a href="/reply/{0}">#{0}</a> by <a href="/{1}">@{1}</a>'
+        err = 'Duplicate of #{0} by @{1}'
         return err.format(duplicate.id, duplicate.created_by)
     elif parent.created_by_id == user.id:
         return "Don't reply to yourself"
@@ -208,7 +208,7 @@ def valid_website(value, user_id=0):
         elif not value.startswith(('http://', 'https://')):
             return "Website hasn't a valid http(s) address"
         elif duplicate:
-            return f'Website is used by <a href="/{duplicate}">@{duplicate}</a>'
+            return f'Website is used by @{duplicate}'
         else:
             try:
                 headers = head(value, allow_redirects=True, timeout=5).headers
