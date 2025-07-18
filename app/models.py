@@ -156,7 +156,7 @@ class Work(models.Model):
     title = models.CharField(max_length=60)
     entity = models.CharField(max_length=60)
     start_date = models.IntegerField(default=0, db_index=True)
-    end_date = models.IntegerField(default=0, db_index=True)
+    end_date = models.IntegerField(default=None, null=True, db_index=True)
     location = models.CharField(max_length=60, default='')
     link = models.CharField(max_length=240, default='')
     description = models.CharField(max_length=640, default='')

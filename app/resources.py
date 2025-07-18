@@ -1,6 +1,6 @@
 from cgi import FieldStorage
 
-from django.db.models import Count, Prefetch, Q, Max
+from django.db.models import Count, F, Prefetch, Q, Max
 from emoji import demojize, EMOJI_DATA
 from falcon import HTTPFound, HTTPNotFound, before
 from falcon.status_codes import HTTP_200
@@ -311,7 +311,9 @@ class MemberResource:
         if not member:
             raise HTTPNotFound
         entries, page, number = paginate(req, self.fetch_entries(member))
-        works = Work.objects.filter(created_by=member).order_by('-start_date', 'end_date')
+        works = Work.objects.filter(created_by=member).order_by(
+            F('end_date').desc(nulls_first=True), '-start_date'
+        )
         resp.text = render(
             page=page, view='member', number=number, errors={},
             user=req.user, member=member, entries=entries, works=works
@@ -622,7 +624,7 @@ class AddResource:
             )
         else:
             f['start_date'] = int(f['start_date'].replace('-', ''))
-            f['end_date'] = int(f['end_date'].replace('-', '')) if f['end_date'] else 0
+            f['end_date'] = int(f['end_date'].replace('-', '')) if f['end_date'] else None
             work, _ = Work.objects.get_or_create(
                 created_by=req.user,
                 created_at=utc_timestamp(),
@@ -666,7 +668,7 @@ class UpdateResource:
             entry.title = f['title']
             entry.entity = f['entity']
             entry.start_date = int(f['start_date'].replace('-', ''))
-            entry.end_date = int(f['end_date'].replace('-', '')) if f['end_date'] else 0
+            entry.end_date = int(f['end_date'].replace('-', '')) if f['end_date'] else None
             entry.location = f['location']
             entry.link = f['link']
             entry.description = f['description']
