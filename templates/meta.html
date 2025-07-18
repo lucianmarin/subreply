@@ -60,10 +60,17 @@
 
 <script type="text/javascript" src="/static/script.js?v={{ v }}" async defer></script>
 
-{% if content and view in ['feed', 'reply', 'edit'] %}
+{% if view in ['feed', 'reply', 'edit'] %}
     <script type="text/javascript">
         window.onload = function() {
             var content = document.getElementById('id_content');
+            expand(content);
+        };
+    </script>
+{% elif view in ['profile', 'add', 'update'] %}
+    <script type="text/javascript">
+        window.onload = function() {
+            var content = document.getElementById('id_description');
             expand(content);
         };
     </script>

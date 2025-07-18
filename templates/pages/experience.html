@@ -71,8 +71,10 @@
             </div>
             <div class="line">
                 <label for="id_description">Description</label>
-                <input type="text" name="description" id="id_description" maxlength="640"
-                    value="{% if form %}{{ fields.description }}{% elif entry %}{{ entry.description }}{% endif %}">
+                <textarea name="description" id="id_description"
+                    rows="3" cols="60" maxlength="720"
+                    oninput="expand(this)" onkeydown="send(event)"
+                    >{% if form %}{{ fields.description | emojize }}{% elif entry %}{{ entry.description | emojize }}{% endif %}</textarea>
                 {% if 'description' in errors %}
                     <div class="error">{{ errors['description'] }}</div>
                 {% endif %}

@@ -665,13 +665,11 @@ class UpdateResource:
                 user=req.user, errors=errors, form=form, fields=f, entry=entry
             )
         else:
-            entry.title = f['title']
-            entry.entity = f['entity']
-            entry.start_date = int(f['start_date'].replace('-', ''))
-            entry.end_date = int(f['end_date'].replace('-', '')) if f['end_date'] else None
-            entry.location = f['location']
-            entry.link = f['link']
-            entry.description = f['description']
+            f['start_date'] = int(f['start_date'].replace('-', ''))
+            f['end_date'] = int(f['end_date'].replace('-', '')) if f['end_date'] else None
+            for field, value in f.items():
+                if getattr(entry, field, '') != value:
+                    setattr(entry, field, value)
             entry.save()
             raise HTTPFound('/{0}'.format(req.user))
 

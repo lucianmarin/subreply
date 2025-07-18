@@ -190,7 +190,9 @@ def valid_email(value, user_id=0):
 
 
 def valid_description(value, user_id=0):
+    print(value)
     if value:
+        print(value)
         user = User.objects.filter(id=user_id).first()
         return valid_content(value, user, limit=240)
 
@@ -399,7 +401,7 @@ def profiling(f, user_id):
     errors['description'] = valid_description(
         f['description'], user_id=user_id
     )
-    errors['link'] = valid_website(f['website'], user_id=0)
+    errors['website'] = valid_website(f['website'], user_id=user_id)
     return {k: v for k, v in errors.items() if v}
 
 
