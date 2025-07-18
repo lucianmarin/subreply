@@ -14,7 +14,7 @@
             {% endif %}
         </span>
         {% if work.link %}
-            <a class="name">{{ work.title }}</a>
+            <a class="name" href="{{ work.link }}">{{ work.title }}</a>
         {% else %}
             {{ work.title }}
         {% endif %}
