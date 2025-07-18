@@ -93,6 +93,13 @@ function postFollow(event, call) {
     });
 }
 
+function toggle(event) {
+    event.preventDefault();
+    var element = event.currentTarget;
+    var desc = element.parentElement.nextElementSibling;
+    desc.classList.toggle("none");
+}
+
 function expand(element, limit = 640, padding = 10) {
     element.style.height = "auto";
     element.style.height = element.scrollHeight - padding + "px";

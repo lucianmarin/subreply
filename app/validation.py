@@ -30,9 +30,7 @@ def valid_hashtag(value):
 
 def valid_content(value, user, limit=640):
     hashtags, links, mentions = get_metadata(value)
-    if not value:
-        return "Value cannot be emtpy"
-    elif len(value) > limit:
+    if len(value) > limit:
         return f"Share fewer than {limit} characters"
     elif len(value) != len(value.encode()):
         return "Only ASCII characters are allowed"

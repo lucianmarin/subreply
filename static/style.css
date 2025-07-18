@@ -150,7 +150,15 @@ table td:nth-child(even):last-child, table th:nth-child(even):last-child { borde
 
 .content b { color: var(--silver); }
 
-.content .date { color: var(--silver); float: right; font-size: var(--small); }
+.position .name { color: var(--black); font-weight: bold; }
+
+.position .name:hover { color: var(--gray); }
+
+.position .date { color: var(--silver); float: right; font-size: var(--small); }
+
+.description { font-size: var(--small); }
+
+.none { display: none; }
 
 .small { font-size: var(--small); overflow: hidden; }
 
