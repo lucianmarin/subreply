@@ -362,8 +362,8 @@ def valid_end(end, start):
 def valid_work(value):
     if not value:
         return "Value cannot be emtpy"
-    elif emoji_count(value):
-        return "Value contains emoji"
+    elif len(value) != len(value.encode()):
+        return "Only ASCII characters are allowed"
 
 
 def changing(user, current, password1, password2):
