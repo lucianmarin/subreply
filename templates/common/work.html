@@ -24,7 +24,7 @@
         {% if work.location %}{{ work.location }} &mdash;{% endif %}
         {{ work.description }}
     </div>
-    {% if user %}
+    {% if user and user == member %}
         <div class="small">
             <b>&nbsp;</b>
             <a href="/update/{{ work.id }}">update</a>

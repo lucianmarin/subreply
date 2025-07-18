@@ -637,6 +637,8 @@ class UpdateResource:
     def on_get(self, req, resp, id):
         form = FieldStorage(fp=req.stream, environ=req.env)
         entry = Work.objects.get(id=id)
+        if not entry or entry.created_by != req.user:
+            raise HTTPNotFound
         resp.text = render(
             page='experience', view='update', user=req.user, form=form, errors={}, entry=entry
         )
