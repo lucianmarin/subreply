@@ -23,8 +23,9 @@
     <div class="sublist none">
         <div class="description">
             {% if work.location %}{{ work.location }}{% else %}Remote{% endif %}
-            &mdash;
-            {{ work.description }}
+            {% if work.description %}
+                &mdash; {{ work.description }}
+            {% endif %}
         </div>
         {% if user and user == member %}
             <div class="small">
