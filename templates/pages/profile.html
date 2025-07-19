@@ -91,7 +91,7 @@
             <div class="line">
                 <label for="id_description">Description</label>
                 <textarea name="description" id="id_description"
-                    rows="2" cols="60" maxlength="320"
+                    rows="2" cols="60" maxlength="240"
                     oninput="expand(this)" onkeydown="send(event)"
                     >{% if form %}{{ fields.description | emojize }}{% else %}{{ user.description | emojize }}{% endif %}</textarea>
                 {% if 'description' in errors %}
