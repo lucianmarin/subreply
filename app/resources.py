@@ -599,6 +599,9 @@ class AddResource:
     @before(login_required)
     def on_get(self, req, resp):
         form = FieldStorage(fp=req.stream, environ=req.env)
+        count = Work.objects.filter(created_by=req.user).count()
+        if count == 8:
+            raise HTTPFound(f"/{req.user}")
         entry = Work.objects.none()
         resp.text = render(
             page='experience', view='add', user=req.user, form=form, errors={}, entry=entry
