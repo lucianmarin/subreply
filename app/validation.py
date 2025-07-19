@@ -197,17 +197,17 @@ def valid_description(value, user_id=0):
         return valid_content(value, user, limit=240)
 
 
-def valid_website(value, user_id=0):
+def valid_link(value, user_id=0):
     if value:
-        duplicate = User.objects.filter(website=value).exclude(id=user_id).first()
+        duplicate = User.objects.filter(link=value).exclude(id=user_id).first()
         if len(value) > 240:
-            return "Website can't be longer than 240 characters"
+            return "Link can't be longer than 240 characters"
         elif len(value) != len(value.encode()):
-            return "Website should use ASCII characters"
+            return "Link should use ASCII characters"
         elif not value.startswith(('http://', 'https://')):
-            return "Website hasn't a valid http(s) address"
+            return "Link hasn't a valid http(s) address"
         elif duplicate:
-            return f'Website is used by @{duplicate}'
+            return f'Link is used by @{duplicate}'
 
 
 def valid_password(value1, value2):
@@ -382,7 +382,7 @@ def working(f, user):
     errors['end_date'] = valid_end(f['end_date'], f['start_date'])
     errors['location'] = valid_location(f['location'])
     errors['description'] = valid_content(f['description'], user=user)
-    errors['link'] = valid_website(f['link'], user_id=user.id)
+    errors['link'] = valid_link(f['link'], user_id=user.id)
     return {k: v for k, v in errors.items() if v}
 
 
@@ -398,10 +398,10 @@ def profiling(f, user_id):
     errors['emoji'] = valid_emoji(f['emoji'])
     errors['birthday'] = valid_birthday(f['birthday'])
     errors['location'] = valid_location(f['location'])
+    errors['link'] = valid_link(f['link'], user_id=user_id)
     errors['description'] = valid_description(
         f['description'], user_id=user_id
     )
-    errors['website'] = valid_website(f['website'], user_id=user_id)
     return {k: v for k, v in errors.items() if v}
 
 

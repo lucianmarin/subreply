@@ -80,12 +80,12 @@
                 {% endif %}
             </div>
             <div class="line">
-                <label for="id_website">Website</label>
-                <input type="text" name="website" id="id_website" maxlength="240"
+                <label for="id_link">Link</label>
+                <input type="text" name="link" id="id_link" maxlength="240"
                     placeholder="https://"
-                    value="{% if form %}{{ fields.website }}{% else %}{{ user.website }}{% endif %}">
-                {% if 'website' in errors %}
-                    <div class="error">{{ errors['website'] }}</div>
+                    value="{% if form %}{{ fields.link }}{% else %}{{ user.link }}{% endif %}">
+                {% if 'link' in errors %}
+                    <div class="error">{{ errors['link'] }}</div>
                 {% endif %}
             </div>
             <div class="line">

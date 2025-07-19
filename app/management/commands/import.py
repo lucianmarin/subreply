@@ -23,8 +23,8 @@ class Command(BaseCommand):
             joined_at=parse(fields['date_joined']).timestamp(),
             seen_at=parse(fields['last_login']).timestamp(),
             country=fields['location'],
-            bio=unidecode(fields['bio'])[:120],
-            website=unidecode(fields['website'])[:120],
+            description=unidecode(fields['description'])[:120],
+            link=unidecode(fields['link'])[:120],
             remote_addr="0.0.0.0"
         )
         self.users[pk] = user

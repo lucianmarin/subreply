@@ -4,9 +4,9 @@
             <b>{{ entry.created_at | shortdate }}</b>
         {% elif view == "member" %}
             {% if user == member %}
-                <a class="right" href="/add">ADD</a>
+                <a class="right" href="/add">Add</a>
             {% elif user %}
-                <a class="right" href="/{{ member }}/message">MSG</a>
+                <a class="right" href="/{{ member }}/message">Msg</a>
             {% endif %}
         {% endif %}
         <a class="handle" href="/{{ member }}">
@@ -29,10 +29,10 @@
             {{ member.description | parser | emojize | safe }}
         </div>
     {% endif %}
-    {% if member.website or member.birthday or member.location %}
+    {% if member.link or member.birthday or member.location %}
         <div class="status">
-            {% if member.website %}
-                {{ member.website | parser | safe }}
+            {% if member.link %}
+                {{ member.link | parser | safe }}
             {% endif %}
             {% if member.birthday %}
                 ~ {{ member.birthday | age }}y old

@@ -427,7 +427,7 @@ class DestroyResource:
 class PeopleResource:
     fields = [
         "username", "first_name", "last_name", "email",
-        "description", "birthday", "location", "emoji", "website"
+        "description", "birthday", "location", "emoji", "link"
     ]
     placeholder = "Find people"
 
@@ -827,8 +827,8 @@ class ProfileResource:
         f['emoji'] = get_emoji(form)
         f['birthday'] = form.getvalue('birthday', '').strip()
         f['location'] = get_location(form)
+        f['link'] = form.getvalue('link', '').strip().lower()
         f['description'] = get_content(form, 'description')
-        f['website'] = form.getvalue('website', '').strip().lower()
         errors = profiling(f, req.user.id)
         if errors:
             resp.text = render(

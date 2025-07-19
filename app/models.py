@@ -28,8 +28,8 @@ class User(models.Model):
     emoji = models.CharField(max_length=80, default='')
     birthday = models.CharField(max_length=10, default='')
     location = models.CharField(max_length=60, default='')
+    link = models.CharField(max_length=240, default='')
     description = models.CharField(max_length=240, default='')
-    website = models.CharField(max_length=240, default='')
 
     phone = models.JSONField(default=dict)
     social = models.JSONField(default=dict)
