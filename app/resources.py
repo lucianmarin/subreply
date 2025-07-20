@@ -617,7 +617,7 @@ class MessageResource:
         form = FieldStorage(fp=req.stream, environ=req.env)
         content = get_content(form)
         if not content:
-            raise HTTPFound(f"/message/{username}")
+            raise HTTPFound(f"/{username}/message")
         errors = {}
         errors['content'] = valid_content(content, req.user)
         errors = {k: v for k, v in errors.items() if v}
@@ -635,7 +635,7 @@ class MessageResource:
                 created_by=req.user,
                 seen_at=utc_timestamp() if member == req.user else .0
             )
-            raise HTTPFound(f"/message/{username}")
+            raise HTTPFound(f"/{username}/message")
 
 
 class AddResource:
