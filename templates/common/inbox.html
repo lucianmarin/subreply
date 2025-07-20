@@ -7,7 +7,7 @@
     </div>
     <div class="small">
         <b>{{ entry.created_at | shortdate }}</b>
-        <a href="/message/{{ entry.created_by }}">message</a>
+        <a href="/{{ entry.created_by }}/message">message</a>
         <b>{% if not entry.seen_at %}un{% endif %}read</b>
     </div>
 </div>
