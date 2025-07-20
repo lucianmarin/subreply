@@ -16,7 +16,14 @@ from cryptography.fernet import Fernet
 SIGNATURE = Fernet.generate_key()
 ```
 
-## Coding
+Launch the app at http://localhost:8000 with:
 
-- speed of 50ms or lower for each page request
-- clean code: easy to read, easy to modify
+```shell
+gunicorn router:app
+```
+
+## Styleguide
+
+- easy to read, easy to modify
+- no useless abstractions
+- speed of 50ms or lower for each request
