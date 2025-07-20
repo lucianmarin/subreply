@@ -1,7 +1,7 @@
 from falcon import App
 from falcon.constants import MEDIA_HTML
 
-from app import resources, xhr
+from app import api, resources, xhr
 from project.settings import DEBUG
 
 app = App(media_type=MEDIA_HTML)
@@ -12,6 +12,8 @@ app.resp_options.secure_cookies_by_default = not DEBUG
 
 app.add_route('/', resources.MainResource())
 
+app.add_route('/api/feed', api.FeedEndpoint())
+
 app.add_route('/xhr/erase/{id:int}', xhr.WorkCallback(), suffix="erase")
 app.add_route('/xhr/unsend/{id:int}', xhr.TextCallback(), suffix="unsend")
 app.add_route('/xhr/delete/{id:int}', xhr.PostCallback(), suffix="delete")
@@ -21,12 +23,15 @@ app.add_route('/xhr/follow/{username}', xhr.BondCallback(), suffix="follow")
 app.add_route('/xhr/unfollow/{username}', xhr.BondCallback(), suffix="unfollow")
 
 app.add_route('/feed', resources.FeedResource())
-app.add_route('/following', resources.FollowingResource())
+# app.add_route('/following', resources.FollowingResource())
 app.add_route('/followers', resources.FollowersResource())
 app.add_route('/mentions', resources.MentionsResource())
 app.add_route('/messages', resources.InboxResource())
 app.add_route('/replies', resources.RepliesResource())
 app.add_route('/saved', resources.SavedResource())
+
+app.add_route('/sub/{hashtag}', resources.FeedResource(), suffix="sub")
+app.add_route('/channels', resources.ChannelsResource())
 
 # app.add_route('/links', resources.LinksResource())
 app.add_route('/people', resources.PeopleResource())
