@@ -1,6 +1,6 @@
 # Subreply
 
-Tiny, but mighty social network. Create an account at [subreply.com](https://subreply.com/).
+Tiny, but mighty social network. Create an account at https://subreply.com.
 
 ## Install
 
