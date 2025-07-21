@@ -18,11 +18,7 @@
     {% if kids %}
         <div class="sublist">
             {% for entry in kids %}
-                {% if loop.revindex == 1 %}
-                    {% include "common/entry.html" %}
-                {% else %}
-                    {% include "common/inline.html" %}
-                {% endif %}
+                {% include "common/inline.html" %}
             {% endfor %}
         </div>
     {% endif %}

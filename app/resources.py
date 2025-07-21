@@ -140,7 +140,7 @@ class FeedResource:
     def on_get(self, req, resp):
         entries, page, number = paginate(req, self.fetch_entries(req.user))
         resp.text = render(
-            page=page, view='feed', number=number, content="",
+            page=page, view='feed', number=number, content='',
             user=req.user, entries=entries, errors={},
             placeholder=self.placeholder
         )
