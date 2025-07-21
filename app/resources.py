@@ -797,7 +797,7 @@ class DetailsResource:
     @before(login_required)
     def on_post(self, req, resp):
         form = FieldStorage(fp=req.stream, environ=req.env)
-        f, s, p = {}, {}, {}, {}
+        f, s, p = {}, {}, {}
         self.update(form, s, self.social)
         self.update(form, p, self.phone)
         errors = {}

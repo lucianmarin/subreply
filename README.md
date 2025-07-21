@@ -24,6 +24,13 @@ gunicorn router:app
 
 ## Styleguide
 
-- easy to read, easy to modify
+- easy to read and easy to modify
 - no useless abstractions
 - speed of 50ms or lower for each request
+
+
+## License
+
+- ideal to use as internal social network in any organization
+- easy to install and easy to maintain 
+- cost depends on level of support needed 
