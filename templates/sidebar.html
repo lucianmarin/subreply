@@ -6,13 +6,19 @@
                 <path d="M13 10V3L4 14h7v7l9-11h-7z" />
             </svg>
         </a>
+        <a href="/following" class="{% if view == 'following' %}on{% endif %}">
+            <i>Following</i>
+            <svg width="16" height="16" viewBox="0 0 24 24">
+                <path d="M3 4.5h14.25M3 9h9.75M3 13.5h5.25m5.25-.75L17.25 9m0 0L21 12.75M17.25 9v12" />
+            </svg>
+        </a>
         <a href="/followers" class="{% if view == 'followers' %}on{% elif user.notif_followers %}red{% endif %}">
             <i>Followers</i>
             {% if user.notif_followers %}
                 <span>{{ user.notif_followers | cap }}</span>
             {% endif %}
             <svg width="16" height="16" viewBox="0 0 24 24">
-                <path d="M18 7.5v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.125a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0ZM3 19.235v-.11a6.375 6.375 0 0 1 12.75 0v.109A12.318 12.318 0 0 1 9.374 21c-2.331 0-4.512-.645-6.374-1.766Z" />
+                <path d="M3 4.5h14.25M3 9h9.75M3 13.5h9.75m4.5-4.5v12m0 0l-3.75-3.75M17.25 21L21 17.25" />
             </svg>
         </a>
         <a href="/mentions" class="{% if view == 'mentions' %}on{% elif user.notif_mentions %}red{% endif %}">
@@ -84,12 +90,6 @@
             </svg>
         </a>
     {% endif %}
-    <a href="/channels" class="{% if view in ['channel', 'channels'] %}on{% endif %}">
-        <i>Channels</i>
-        <svg width="16" height="16" viewBox="0 0 24 24">
-            <path d="M5.25 8.25h15m-16.5 7.5h15m-1.8-13.5-3.9 19.5m-2.1-19.5-3.9 19.5" />
-        </svg>
-    </a>
     <a href="/people" class="{% if view == 'people' %}on{% endif %}">
         <i>People</i>
         <svg viewBox="0 0 24 24" width="16" height="16">
