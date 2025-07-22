@@ -120,7 +120,7 @@ class TxtResource:
 
     def on_get_map(self, req, resp):
         posts = Post.objects.values_list('id')
-        subs = Post.objects.distinct('hashtag').values_list('hashtag')
+        subs = Post.objects.exclude(hashtag='').values_list('hashtag')
         users = User.objects.exclude(posts=None).values_list('username')
         post_urls = [f"https://subreply.com/reply/{p}" for p, in posts]
         sub_urls = [f"https://subreply.com/sub/{s}" for s, in subs]
