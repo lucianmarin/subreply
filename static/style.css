@@ -168,6 +168,8 @@ table td:nth-child(even):last-child, table th:nth-child(even):last-child { borde
 
 .small a:hover { color: var(--silver); }
 
+.small a.done { color: var(--silver); }
+
 .small a.right { color: var(--silver); float: right; margin-right: 0; }
 
 .author { color: var(--gray); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }

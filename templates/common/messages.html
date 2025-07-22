@@ -6,8 +6,12 @@
         {{ entry.content | parser | emojize | safe }}
     </div>
     <div class="small">
-        <b>{{ entry.created_at | shortdate }}</b>
+        <a class="right" href="/{{ entry.created_by }}/message">
+            {{ entry.created_at | shortdate }}
+        </a>
         <a href="/{{ entry.created_by }}/message">message</a>
-        <b>{% if not entry.seen_at %}un{% endif %}read</b>
+        <a class="done" href="/{{ entry.created_by }}/message">
+            {% if not entry.seen_at %}un{% endif %}read
+        </a>
     </div>
 </div>
