@@ -119,15 +119,15 @@ class TxtResource:
         resp.text = "\n".join(lines)
 
     def on_get_map(self, req, resp):
-        threads = Post.objects.filter(parent=None).exclude(kids=None).values_list('id')
-        replies = Post.objects.exclude(parent=None).values_list('id')
-        posts = threads.union(replies)
-        subs = Post.objects.distinct('hashtag').values_list('hashtag')
+        threads = Post.objects.filter(parent=None).annotate(Count('kids')).exclude(kids__count=0)
+        replies = Post.objects.exclude(parent=None)
+        posts = threads.union(replies).values_list('id')
+        subs = Post.objects.values_list('hashtag').distinct()
         users = User.objects.exclude(posts=None).values_list('username')
-        post_urls = [f"https://subreply.com/reply/{p}" for p, in posts]
+        posts_urls = [f"https://subreply.com/reply/{p}" for p, in posts]
         sub_urls = [f"https://subreply.com/sub/{s}" for s, in subs]
         user_urls = [f"https://subreply.com/{u}" for u, in users]
-        urls = sorted(post_urls + sub_urls + user_urls)
+        urls = sorted(posts_urls + sub_urls + user_urls)
         resp.text = "\n".join(urls)
 
 
