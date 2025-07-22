@@ -538,7 +538,9 @@ class TrendingResource:
 
 class ChannelsResource:
     def fetch_entries(self):
-        last_ids = Post.objects.exclude(hashtag='').values('hashtag').annotate(last_id=Max('id')).values('last_id')
+        last_ids = Post.objects.exclude(
+            hashtag=''
+        ).values('hashtag').annotate(last_id=Max('id')).values('last_id')
         entries = Posts.filter(id__in=last_ids).order_by('-id')
         return entries.prefetch_related(PFR, PPFR)
 
@@ -566,10 +568,10 @@ class LinksResource:
 
 class MessagesResource:
     def fetch_entries(self, req):
-        distinct = Chat.objects.filter(
+        last_ids = Chat.objects.filter(
             to_user=req.user
-        ).order_by('created_by_id', '-id').distinct('created_by_id')
-        entries = Chat.objects.filter(id__in=distinct).order_by('-id')
+        ).values('created_by_id').annotate(last_id=Max('id')).values('last_id')
+        entries = Chat.objects.filter(id__in=last_ids).order_by('-id')
         return entries.select_related('created_by')
 
     @before(auth_user)
