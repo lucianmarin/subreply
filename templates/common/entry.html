@@ -6,10 +6,10 @@
         {{ entry.content | parser | emojize | safe }}
     </div>
     <div class="small">
-        <b>
+        <a class="right" href="/reply/{{ entry.id }}">
             {% if entry.edited_at %}&middot;&middot;&middot;{% endif %}
             {{ entry.created_at | shortdate }}
-        </b>
+        </a>
         <a href="/reply/{{ entry.id }}">
             {% if not entry.replies %}
                 reply{% elif entry.replies == 1 %}1 reply{% else %}{{ entry.replies }} replies

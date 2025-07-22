@@ -338,18 +338,16 @@ table
 .small
     font-size: var(--small)
     overflow: hidden
-    a, b
-        float: left
-        margin-right: 10px
-        &:first-child
-            float: right
-            margin-right: 0
-    b
-        color: var(--silver)
     a
         color: var(--gray)
+        float: left
+        margin-right: 10px
         &:hover
             color: var(--silver)
+        &.right
+            color: var(--silver)
+            float: right
+            margin-right: 0
 
 .author
     color: var(--gray)
@@ -365,13 +363,11 @@ table
     .accent, .handle
         &:hover
             color: var(--gray)
-    b
-        color: var(--silver)
-        float: right
     .right
-        font-size: var(--tiny)
         color: var(--silver)
         float: right
+    .caps
+        font-size: var(--tiny)
         text-transform: uppercase
 
 .status

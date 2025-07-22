@@ -164,15 +164,11 @@ table td:nth-child(even):last-child, table th:nth-child(even):last-child { borde
 
 .small { font-size: var(--small); overflow: hidden; }
 
-.small a, .small b { float: left; margin-right: 10px; }
-
-.small a:first-child, .small b:first-child { float: right; margin-right: 0; }
-
-.small b { color: var(--silver); }
-
-.small a { color: var(--gray); }
+.small a { color: var(--gray); float: left; margin-right: 10px; }
 
 .small a:hover { color: var(--silver); }
+
+.small a.right { color: var(--silver); float: right; margin-right: 0; }
 
 .author { color: var(--gray); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
@@ -186,9 +182,9 @@ table td:nth-child(even):last-child, table th:nth-child(even):last-child { borde
 
 .author .accent:hover, .author .handle:hover { color: var(--gray); }
 
-.author b { color: var(--silver); float: right; }
+.author .right { color: var(--silver); float: right; }
 
-.author .right { font-size: var(--tiny); color: var(--silver); float: right; text-transform: uppercase; }
+.author .caps { font-size: var(--tiny); text-transform: uppercase; }
 
 .status { color: var(--gray); font-size: var(--small); }
 
