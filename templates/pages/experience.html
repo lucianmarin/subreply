@@ -2,6 +2,7 @@
 
 {% block main %}
     <div class="title">
+        <a href="/{{ user }}">Profile</a>
         {% if view == 'update' %}
             <a href="/update/{{ entry.id}}" class="on">{{ view | capitalize }} experience</a>
         {% else %}
