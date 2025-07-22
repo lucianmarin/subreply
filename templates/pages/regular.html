@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block main %}
-    {% if view  == 'feed' %}
+    {% if view  in ['feed', 'channel'] %}
         {% include "input/thread.html" %}
     {% elif view == 'message' %}
         {% include "input/message.html" %}
@@ -28,10 +28,10 @@
             {% elif view == 'followers' %}
                 {% set member = entry.created_by %}
                 {% include "common/user.html" %}
-            {% elif view == 'inbox' %}
-                {% include "common/inbox.html" %}
             {% elif view == 'message' %}
                 {% include "common/message.html" %}
+            {% elif view == 'messages' %}
+                {% include "common/messages.html" %}
             {% else %}
                 {% with prev=loop.previtem %}
                     {% include "common/stream.html" %}

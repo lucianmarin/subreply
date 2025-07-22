@@ -24,9 +24,13 @@ app.add_route('/feed', resources.FeedResource())
 app.add_route('/following', resources.FollowingResource())
 app.add_route('/followers', resources.FollowersResource())
 app.add_route('/mentions', resources.MentionsResource())
-app.add_route('/messages', resources.InboxResource())
+app.add_route('/messages', resources.MessagesResource())
 app.add_route('/replies', resources.RepliesResource())
 app.add_route('/saved', resources.SavedResource())
+
+app.add_route('/sub/{hashtag}', resources.FeedResource(), suffix="sub")
+app.add_route('/channels', resources.ChannelsResource())
+
 
 # app.add_route('/links', resources.LinksResource())
 app.add_route('/people', resources.PeopleResource())

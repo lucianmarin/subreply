@@ -4,6 +4,8 @@ Tiny, but mighty social network. Create an account at https://subreply.com.
 
 ## Install
 
+Install PostgreSQL server at 6432 port and `createdb subreply` then:
+
 ```shell
 pip3 install -r requirements.txt
 python3 manage.py migrate
@@ -32,5 +34,5 @@ gunicorn router:app
 ## License
 
 - ideal to use as internal social network in any organization
-- easy to install and easy to maintain 
-- cost depends on level of support needed 
+- easy to install and easy to maintain
+- cost depends on level of support needed
