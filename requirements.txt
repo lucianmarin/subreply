@@ -2,7 +2,6 @@ cryptography
 django
 django-extensions
 dnspython
-emails
 emoji
 falcon
 gunicorn
