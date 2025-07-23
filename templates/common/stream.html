@@ -18,7 +18,11 @@
     {% if kids %}
         <div class="sublist">
             {% for entry in kids %}
-                {% include "common/entry.html" %}
+                {% if kids | count > 7 %}
+                    {% include "common/inline.html" %}
+                {% else %}
+                    {% include "common/entry.html" %}
+                {% endif %}
             {% endfor %}
         </div>
     {% endif %}
