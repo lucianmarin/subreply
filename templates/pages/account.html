@@ -36,8 +36,8 @@
                 <label for="id_username">Username<i>*</i></label>
                 <input type="text" name="username" id="id_username"
                     value="{% if form %}{{ form.username }}{% endif %}">
-                {% if 'username' in delete_errors %}
-                    <div class="error">{{ delete_errors['username'] }}</div>
+                {% if 'username' in export_errors %}
+                    <div class="error">{{ export_errors['username'] }}</div>
                 {% endif %}
             </div>
             <div class="line">

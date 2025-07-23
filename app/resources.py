@@ -261,8 +261,8 @@ class ReplyResource:
             ancestors = self.fetch_ancestors(parent)
             entries = self.fetch_entries(parent)
             resp.text = render(
-                page='reply', view='reply',
-                user=req.user, entry=parent, content=content, errors=errors,
+                page='reply', view='reply', content=content,
+                user=req.user, entry=parent, errors=errors,
                 entries=entries, ancestors=ancestors, duplicate=False
             )
         else:
@@ -293,9 +293,8 @@ class EditResource:
             raise HTTPNotFound
         ancestors = [entry.parent] if entry.parent_id else []
         resp.text = render(
-            page='edit', view='edit',
-            user=req.user, entry=entry, content=entry.content, errors={},
-            ancestors=ancestors
+            page='edit', view='edit', content=entry.content,
+            user=req.user, entry=entry, errors={}, ancestors=ancestors
         )
 
     @before(auth_user)
@@ -316,9 +315,8 @@ class EditResource:
         if errors:
             ancestors = [entry.parent] if entry.parent_id else []
             resp.text = render(
-                page='edit', view='edit',
-                user=req.user, entry=entry, content=content, errors=errors,
-                ancestors=ancestors
+                page='edit', view='edit', content=content,
+                user=req.user, entry=entry, errors=errors, ancestors=ancestors
             )
         else:
             previous_at_user = entry.at_user
@@ -366,8 +364,8 @@ class FollowingResource:
     def on_get(self, req, resp):
         entries, page, number = paginate(req, self.fetch_entries(req.user), 24)
         resp.text = render(
-            page=page, view='following', number=number, user=req.user,
-            entries=entries, limit=24
+            page=page, view='following', number=number,
+            user=req.user, entries=entries, limit=24
         )
 
 
@@ -386,8 +384,8 @@ class FollowersResource:
     def on_get(self, req, resp):
         entries, page, number = paginate(req, self.fetch_entries(req.user), 24)
         resp.text = render(
-            page=page, view='followers', number=number, user=req.user,
-            entries=entries, limit=24
+            page=page, view='followers', number=number,
+            user=req.user, entries=entries, limit=24
         )
         if req.user.notif_followers:
             self.clear_followers(req.user)
@@ -408,7 +406,8 @@ class MentionsResource:
     def on_get(self, req, resp):
         entries, page, number = paginate(req, self.fetch_entries(req.user))
         resp.text = render(
-            page=page, view='mentions', number=number, user=req.user, entries=entries
+            page=page, view='mentions', number=number,
+            user=req.user, entries=entries
         )
         if req.user.notif_mentions:
             self.clear_mentions(req.user)
@@ -429,7 +428,8 @@ class RepliesResource:
     def on_get(self, req, resp):
         entries, page, number = paginate(req, self.fetch_entries(req.user))
         resp.text = render(
-            page=page, view='replies', number=number, user=req.user, entries=entries
+            page=page, view='replies', number=number,
+            user=req.user, entries=entries
         )
         if req.user.notif_replies:
             self.clear_replies(req.user)
@@ -446,7 +446,8 @@ class SavedResource:
     def on_get(self, req, resp):
         entries, page, number = paginate(req, self.fetch_entries(req.user))
         resp.text = render(
-            page=page, view='saved', number=number, user=req.user, entries=entries
+            page=page, view='saved', number=number,
+            user=req.user, entries=entries
         )
 
 
@@ -538,7 +539,8 @@ class TrendingResource:
     def on_get(self, req, resp):
         entries, page, number = paginate(req, self.fetch_entries())
         resp.text = render(
-            page=page, view='trending', number=number, user=req.user, entries=entries
+            page=page, view='trending', number=number,
+            user=req.user, entries=entries
         )
 
 
@@ -568,7 +570,8 @@ class LinksResource:
     def on_get(self, req, resp):
         entries, page, number = paginate(req, self.fetch_entries(req))
         resp.text = render(
-            page=page, view='links', number=number, user=req.user, entries=entries
+            page=page, view='links', number=number,
+            user=req.user, entries=entries
         )
 
 
@@ -675,8 +678,8 @@ class AddResource:
         errors = working(f, req.user)
         if errors:
             resp.text = render(
-                page='experience', view='add',
-                user=req.user, errors=errors, form=form
+                page='experience', view='add', user=req.user,
+                errors=errors, form=form
             )
         else:
             f['start_date'] = int(f['start_date'].replace('-', ''))
@@ -736,7 +739,7 @@ class AccountResource:
     def on_get(self, req, resp):
         resp.text = render(
             page='account', view='account', user=req.user,
-            form={}, change_errors={}, delete_errors={}
+            change_errors={}, export_errors={}, delete_errors={}, form={}
         )
 
     @before(auth_user)
@@ -750,8 +753,8 @@ class AccountResource:
         errors = {k: v for k, v in errors.items() if v}
         if errors:
             resp.text = render(
-                page='account', view='account',
-                user=req.user, change_errors=errors, form=form
+                page='account', view='account', user=req.user,
+                change_errors=errors, form=form
             )
         else:
             req.user.password = build_hash(password1)
@@ -769,8 +772,8 @@ class AccountResource:
             errors['username'] = "Username doesn't match"
         if errors:
             resp.text = render(
-                page='account', view='account',
-                user=req.user, delete_errors=errors, form=form
+                page='account', view='account', user=req.user,
+                export_errors=errors, form=form
             )
         else:
             posts = Post.objects.filter(
@@ -804,8 +807,8 @@ class AccountResource:
             errors['confirm'] = "Password doesn't match"
         if errors:
             resp.text = render(
-                page='account', view='account',
-                user=req.user, delete_errors=errors, form=form
+                page='account', view='account', user=req.user,
+                delete_errors=errors, form=form
             )
         else:
             req.user.delete()
