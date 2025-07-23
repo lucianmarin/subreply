@@ -9,7 +9,7 @@ from phonenumbers import is_possible_number, is_valid_number, parse
 from app.forms import get_metadata
 from app.models import Post, User
 from app.utils import has_repetions, verify_hash
-from project.vars import INVALID, MAX_YEAR, MIN_YEAR, CITIES
+from project.vars import INVALID, MAX_YEAR, MIN_YEAR, CITIES, LATIN
 
 
 def valid_hashtag(value):
@@ -24,8 +24,6 @@ def valid_hashtag(value):
         return "Hashtag can be only alphanumeric"
     elif has_repetions(value):
         return "Hashtag contains repeating characters"
-    elif value in INVALID:
-        return "Hashtag is not valid"
 
 
 def valid_content(value, user, limit=640):
@@ -147,6 +145,8 @@ def valid_first_name(value):
         return "First name cotains emoji"
     elif has_repetions(value):
         return "First name contains repeating characters"
+    elif not all(c in LATIN for c in value):
+        return "First name should use Latin characters"
 
 
 def valid_last_name(value):
@@ -156,6 +156,8 @@ def valid_last_name(value):
         return "First name cotains emoji"
     elif value and has_repetions(value):
         return "Last name contains repeating characters"
+    elif not all(c in LATIN for c in value):
+        return "First name should use Latin characters"
 
 
 def valid_full_name(emoji, first_name, last_name, user_id=0):
