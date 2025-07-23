@@ -18,7 +18,7 @@ form, input, img, label { display: block; }
 
 body, label, input, select, textarea { font-family: "Route 159", sans-serif; font-size: var(--regular); line-height: 20px; }
 
-code { font-size: var(--small); }
+code { color: var(--accent); font-size: var(--small); }
 
 label { color: var(--black); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 

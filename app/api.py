@@ -5,6 +5,7 @@ from django.db.models import Count, F, Prefetch, Q, Max
 from app.hooks import auth_required, auth_user
 from app.models import Bond, Chat, Post, Save, User, Work
 from app.serializers import build_entry, build_user
+from app.validation import authentication
 from project.settings import FERNET
 
 Posts = Post.objects.annotate(
@@ -20,6 +21,20 @@ def paginate(req, qs, limit=16):
     number = int(p) if p.isdecimal() and int(p) else 0
     index = (number - 1) * limit
     return qs[index:index + limit], number
+
+
+class LoginEndpoint:
+    def on_post(self, req, resp):
+        resp.content_type = MEDIA_JSON
+        form = req.get_media()
+        username = form.get('username', '')
+        password = form.get('password', '')
+        errors, user = authentication(username, password)
+        if errors:
+            resp.media = errors
+        else:
+            token = FERNET.encrypt(str(user.id).encode())
+            resp.media = {"token": token.decode()}
 
 
 class FeedEndpoint:

@@ -13,6 +13,7 @@ app.resp_options.secure_cookies_by_default = not DEBUG
 app.add_route('/', resources.MainResource())
 
 app.add_route('/api', resources.APIResource())
+app.add_route('/api/login', api.LoginEndpoint())
 app.add_route('/api/feed', api.FeedEndpoint())
 
 app.add_route('/xhr/erase/{id:int}', xhr.WorkCallback(), suffix="erase")
