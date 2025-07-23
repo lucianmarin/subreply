@@ -166,6 +166,8 @@ table td:nth-child(even):last-child, table th:nth-child(even):last-child { borde
 
 .small { font-size: var(--small); overflow: hidden; }
 
+.small b { color: var(--silver); float: left; }
+
 .small a { color: var(--gray); float: left; margin-right: 10px; }
 
 .small a:hover { color: var(--silver); }
