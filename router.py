@@ -1,7 +1,7 @@
 from falcon import App
 from falcon.constants import MEDIA_HTML
 
-from app import resources, xhr
+from app import api, resources, xhr
 from project.settings import DEBUG
 
 app = App(media_type=MEDIA_HTML)
@@ -11,6 +11,8 @@ app.req_options.strip_url_path_trailing_slash = True
 app.resp_options.secure_cookies_by_default = not DEBUG
 
 app.add_route('/', resources.MainResource())
+
+app.add_route('/api/feed', api.FeedEndpoint())
 
 app.add_route('/xhr/erase/{id:int}', xhr.WorkCallback(), suffix="erase")
 app.add_route('/xhr/unsend/{id:int}', xhr.TextCallback(), suffix="unsend")

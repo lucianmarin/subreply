@@ -3,7 +3,6 @@ from cgi import FieldStorage
 from django.db.models import Count, F, Prefetch, Q, Max
 from emoji import demojize, EMOJI_DATA
 from falcon import HTTPFound, HTTPNotFound, before
-from falcon.status_codes import HTTP_200
 from strictyaml import as_document
 
 from app.forms import get_content, get_emoji, get_location, get_metadata, get_name
@@ -50,7 +49,6 @@ class StaticResource:
 
     def on_get(self, req, resp, filename):
         name, ext = filename.split('.')
-        resp.status = HTTP_200
         resp.content_type = self.mime_types[ext]
         resp.cache_control = ["max-age=3600000"]
         filepath = f"{self.path}/{filename}"
