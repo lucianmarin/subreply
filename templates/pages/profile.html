@@ -8,17 +8,17 @@
     </div>
 
     <div class="request">
-        <form enctype="multipart/form-data" method="post" autocomplete="off">
+        <form method="post" autocomplete="off">
             <div class="line">
                 <div class="left">
                     <label for="id_username">Username<i>*</i></label>
                     <input type="text" name="username" id="id_username" maxlength="15"
-                        value="{% if form %}{{ fields.username }}{% else %}{{ user.username }}{% endif %}">
+                        value="{% if form %}{{ form.username }}{% else %}{{ user.username }}{% endif %}">
                 </div>
                 <div class="right">
                     <label for="id_email">Email address<i>*</i></label>
                     <input type="email" name="email" id="id_email" maxlength="120"
-                        value="{% if form %}{{ fields.email }}{% else %}{{ user.email }}{% endif %}">
+                        value="{% if form %}{{ form.email }}{% else %}{{ user.email }}{% endif %}">
                 </div>
                 {% if 'username' in errors %}
                     <div class="error">{{ errors['username'] }}</div>
@@ -31,12 +31,12 @@
                 <div class="left">
                     <label for="id_first_name">First name<i>*</i></label>
                     <input type="text" name="first_name" id="id_first_name" maxlength="15"
-                        value="{% if form %}{{ fields.first_name }}{% else %}{{ user.first_name }}{% endif %}">
+                        value="{% if form %}{{ form.first_name }}{% else %}{{ user.first_name }}{% endif %}">
                 </div>
                 <div class="right">
                     <label for="id_last_name">Last name</label>
                     <input type="text" name="last_name" id="id_last_name" maxlength="15"
-                        value="{% if form %}{{ fields.last_name }}{% else %}{{ user.last_name }}{% endif %}">
+                        value="{% if form %}{{ form.last_name }}{% else %}{{ user.last_name }}{% endif %}">
                 </div>
                 {% if 'first_name' in errors %}
                     <div class="error">{{ errors['first_name'] }}</div>
@@ -54,20 +54,20 @@
                         <label for="id_emoji">Emoji</label>
                         <input type="text" name="emoji" id="id_emoji"
                             maxlength="10" placeholder=":)"
-                            value="{% if form %}{{ fields.emoji | emojize }}{% else %}{{ user.emoji | emojize }}{% endif %}">
+                            value="{% if form %}{{ form.emoji | emojize }}{% else %}{{ user.emoji | emojize }}{% endif %}">
                     </div>
                     <div class="two">
                         <label for="id_birthday">Birthday</label>
                         <input type="text" name="birthday" id="id_birthday"
                             maxlength="10" placeholder="Y-M-D"
-                            value="{% if form %}{{ fields.birthday }}{% else %}{{ user.birthday }}{% endif %}">
+                            value="{% if form %}{{ form.birthday }}{% else %}{{ user.birthday }}{% endif %}">
                     </div>
                 </div>
                 <div class="right">
                     <label for="id_location">Location</label>
                     <input type="text" name="location" id="id_location"
                         maxlength="60" placeholder="City, Country"
-                        value="{% if form %}{{ fields.location }}{% else %}{{ user.location }}{% endif %}">
+                        value="{% if form %}{{ form.location }}{% else %}{{ user.location }}{% endif %}">
                 </div>
                 {% if 'emoji' in errors %}
                     <div class="error">{{ errors['emoji'] }}</div>
@@ -83,7 +83,7 @@
                 <label for="id_link">Link</label>
                 <input type="text" name="link" id="id_link" maxlength="240"
                     placeholder="https://"
-                    value="{% if form %}{{ fields.link }}{% else %}{{ user.link }}{% endif %}">
+                    value="{% if form %}{{ form.link }}{% else %}{{ user.link }}{% endif %}">
                 {% if 'link' in errors %}
                     <div class="error">{{ errors['link'] }}</div>
                 {% endif %}
@@ -93,7 +93,7 @@
                 <textarea name="description" id="id_description"
                     rows="2" cols="60" maxlength="240"
                     oninput="expand(this)" onkeydown="send(event)"
-                    >{% if form %}{{ fields.description | emojize }}{% else %}{{ user.description | emojize }}{% endif %}</textarea>
+                    >{% if form %}{{ form.description | emojize }}{% else %}{{ user.description | emojize }}{% endif %}</textarea>
                 {% if 'description' in errors %}
                     <div class="error">{{ errors['description'] }}</div>
                 {% endif %}

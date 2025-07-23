@@ -8,17 +8,17 @@
     </div>
 
     <div class="request">
-        <form action="/account/change" enctype="multipart/form-data" method="post" autocomplete="off">
+        <form action="/account/change" method="post" autocomplete="off">
             <div class="line">
                 <div class="left">
                     <label for="id_password1">New password<i>*</i></label>
                     <input type="password" name="password1" id="id_password1"
-                        value="{{ form.getvalue('password1', '') }}">
+                        value="{% if form %}{{ form.password1 }}{% endif %}">
                 </div>
                 <div class="right">
                     <label for="id_password2">Confirm password<i>*</i></label>
                     <input type="password" name="password2" id="id_password2"
-                        value="{{ form.getvalue('password2', '') }}">
+                        value="{% if form %}{{ form.password2 }}{% endif %}">
                 </div>
                 {% if 'password' in change_errors %}
                     <div class="error">{{ change_errors['password'] }}</div>
@@ -31,11 +31,11 @@
     </div>
 
     <div class="request upper">
-        <form action="/account/export" enctype="multipart/form-data" method="post" autocomplete="off">
+        <form action="/account/export" method="post" autocomplete="off">
             <div class="line">
                 <label for="id_username">Username<i>*</i></label>
                 <input type="text" name="username" id="id_username"
-                    value="{{ form.getvalue('username', '') }}">
+                    value="{% if form %}{{ form.username }}{% endif %}">
                 {% if 'username' in delete_errors %}
                     <div class="error">{{ delete_errors['username'] }}</div>
                 {% endif %}
@@ -47,11 +47,11 @@
     </div>
 
     <div class="request upper">
-        <form action="/account/delete" enctype="multipart/form-data" method="post" autocomplete="off">
+        <form action="/account/delete" method="post" autocomplete="off">
             <div class="line">
                 <label for="id_confirm">Confirm password<i>*</i></label>
                 <input type="password" name="confirm" id="id_confirm"
-                    value="{{ form.getvalue('confirm', '') }}">
+                    value="{% if form %}{{ form.confirm }}{% endif %}">
                 {% if 'confirm' in delete_errors %}
                     <div class="error">{{ delete_errors['confirm'] }}</div>
                 {% endif %}

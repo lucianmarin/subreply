@@ -7,17 +7,17 @@
     </div>
 
     <div class="login">
-        <form enctype="multipart/form-data" method="post">
+        <form method="post">
             <div class="line">
                 <div class="left">
                     <label for="id_username">Username or email<i>*</i></label>
                     <input type="text" name="username" id="id_username"
-                        value="{{ form.getvalue('username', '') }}">
+                        value="{% if form %}{{ form.username }}{% endif %}">
                 </div>
                 <div class="right">
                     <label for="id_password">Password<i>*</i></label>
                     <input type="password" name="password" id="id_password"
-                        value="{{ form.getvalue('password', '') }}">
+                        value="{% if form %}{{ form.password }}{% endif %}">
                 </div>
                 {% if 'username' in errors %}
                     <div class="error">{{ errors['username'] }}</div>

@@ -1,5 +1,3 @@
-from cgi import FieldStorage
-
 from django.db.models import Count, F, Prefetch, Q, Max
 from emoji import demojize, EMOJI_DATA
 from falcon import HTTPFound, HTTPNotFound, before
@@ -204,7 +202,7 @@ class FeedResource:
     @before(auth_user)
     @before(login_required)
     def on_post(self, req, resp):
-        form = FieldStorage(fp=req.stream, environ=req.env)
+        form = req.get_media()
         content = get_content(form)
         if not content:
             raise HTTPFound('/feed')
@@ -213,7 +211,7 @@ class FeedResource:
     @before(auth_user)
     @before(login_required)
     def on_post_sub(self, req, resp, hashtag):
-        form = FieldStorage(fp=req.stream, environ=req.env)
+        form = req.get_media()
         content = get_content(form)
         if not content:
             raise HTTPFound(f'/sub/{hashtag}')
@@ -249,7 +247,7 @@ class ReplyResource:
     @before(login_required)
     def on_post(self, req, resp, id):
         parent = Posts.filter(id=id).select_related('parent').first()
-        form = FieldStorage(fp=req.stream, environ=req.env)
+        form = req.get_media()
         content = get_content(form)
         if not content:
             raise HTTPFound(f"/reply/{id}")
@@ -304,7 +302,7 @@ class EditResource:
     @before(login_required)
     def on_post(self, req, resp, id):
         entry = Posts.filter(id=id).prefetch_related(PPFR).first()
-        form = FieldStorage(fp=req.stream, environ=req.env)
+        form = req.get_media()
         content = get_content(form)
         hashtags, links, mentions = get_metadata(content)
         errors = {}
@@ -625,7 +623,7 @@ class MessageResource:
     @before(login_required)
     def on_post(self, req, resp, username):
         member = User.objects.filter(username=username.lower()).first()
-        form = FieldStorage(fp=req.stream, environ=req.env)
+        form = req.get_media()
         content = get_content(form)
         if not content:
             raise HTTPFound(f"/{username}/message")
@@ -653,32 +651,32 @@ class AddResource:
     @before(auth_user)
     @before(login_required)
     def on_get(self, req, resp):
-        form = FieldStorage(fp=req.stream, environ=req.env)
         count = Work.objects.filter(created_by=req.user).count()
         if count == 8:
             raise HTTPFound(f"/{req.user}")
         entry = Work.objects.none()
         resp.text = render(
-            page='experience', view='add', user=req.user, form=form, errors={}, entry=entry
+            page='experience', view='add', user=req.user,
+            form={}, errors={}, entry=entry
         )
 
     @before(auth_user)
     @before(login_required)
     def on_post(self, req, resp):
-        form = FieldStorage(fp=req.stream, environ=req.env)
+        form = req.get_media()
         f = {}
-        f['title'] = form.getvalue('title', '').strip()
-        f['entity'] = form.getvalue('entity', '').strip()
-        f['start_date'] = form.getvalue('start_date', '').strip()
-        f['end_date'] = form.getvalue('end_date', '').strip()
+        f['title'] = form.get('title', '').strip()
+        f['entity'] = form.get('entity', '').strip()
+        f['start_date'] = form.get('start_date', '').strip()
+        f['end_date'] = form.get('end_date', '').strip()
         f['location'] = get_location(form)
-        f['link'] = form.getvalue('link', '').strip().lower()
+        f['link'] = form.get('link', '').strip().lower()
         f['description'] = get_content(form, 'description')
         errors = working(f, req.user)
         if errors:
             resp.text = render(
                 page='experience', view='add',
-                user=req.user, errors=errors, form=form, fields=f
+                user=req.user, errors=errors, form=form
             )
         else:
             f['start_date'] = int(f['start_date'].replace('-', ''))
@@ -695,32 +693,32 @@ class UpdateResource:
     @before(auth_user)
     @before(login_required)
     def on_get(self, req, resp, id):
-        form = FieldStorage(fp=req.stream, environ=req.env)
         entry = Work.objects.get(id=id)
         if not entry or entry.created_by != req.user:
             raise HTTPNotFound
         resp.text = render(
-            page='experience', view='update', user=req.user, form=form, errors={}, entry=entry
+            page='experience', view='update', user=req.user,
+            form={}, errors={}, entry=entry
         )
 
     @before(auth_user)
     @before(login_required)
     def on_post(self, req, resp, id):
-        form = FieldStorage(fp=req.stream, environ=req.env)
+        form = req.get_media()
         entry = Work.objects.get(id=id)
         f = {}
-        f['title'] = form.getvalue('title', '').strip()
-        f['entity'] = form.getvalue('entity', '').strip()
-        f['start_date'] = form.getvalue('start_date', '').strip()
-        f['end_date'] = form.getvalue('end_date', '').strip()
+        f['title'] = form.get('title', '').strip()
+        f['entity'] = form.get('entity', '').strip()
+        f['start_date'] = form.get('start_date', '').strip()
+        f['end_date'] = form.get('end_date', '').strip()
         f['location'] = get_location(form)
-        f['link'] = form.getvalue('link', '').strip().lower()
+        f['link'] = form.get('link', '').strip().lower()
         f['description'] = get_content(form, 'description')
         errors = working(f, req.user)
         if errors:
             resp.text = render(
-                page='experience', view='update',
-                user=req.user, errors=errors, form=form, fields=f, entry=entry
+                page='experience', view='update', user=req.user,
+                errors=errors, form=form, entry=entry
             )
         else:
             f['start_date'] = int(f['start_date'].replace('-', ''))
@@ -736,18 +734,17 @@ class AccountResource:
     @before(auth_user)
     @before(login_required)
     def on_get(self, req, resp):
-        form = FieldStorage(fp=req.stream, environ=req.env)
         resp.text = render(
-            page='account', view='account', user=req.user, form=form,
-            change_errors={}, delete_errors={}
+            page='account', view='account', user=req.user,
+            form={}, change_errors={}, delete_errors={}
         )
 
     @before(auth_user)
     @before(login_required)
     def on_post_change(self, req, resp):
-        form = FieldStorage(fp=req.stream, environ=req.env)
-        password1 = form.getvalue('password1', '')
-        password2 = form.getvalue('password2', '')
+        form = req.get_media()
+        password1 = form.get('password1', '')
+        password2 = form.get('password2', '')
         errors = {}
         errors['password'] = valid_password(password1, password2)
         errors = {k: v for k, v in errors.items() if v}
@@ -765,8 +762,8 @@ class AccountResource:
     @before(auth_user)
     @before(login_required)
     def on_post_export(self, req, resp):
-        form = FieldStorage(fp=req.stream, environ=req.env)
-        username = form.getvalue('username', '').strip().lower()
+        form = req.get_media()
+        username = form.get('username', '').strip().lower()
         errors = {}
         if req.user.username != username:
             errors['username'] = "Username doesn't match"
@@ -800,8 +797,8 @@ class AccountResource:
     @before(auth_user)
     @before(login_required)
     def on_post_delete(self, req, resp):
-        form = FieldStorage(fp=req.stream, environ=req.env)
-        confirm = form.getvalue('confirm', '')
+        form = req.get_media()
+        confirm = form.get('confirm', '')
         errors = {}
         if not verify_hash(confirm, req.user.password):
             errors['confirm'] = "Password doesn't match"
@@ -822,22 +819,22 @@ class DetailsResource:
 
     def update(self, form, d, fields):
         for field in fields:
-            value = form.getvalue(field, '').strip()
+            value = form.get(field, '').strip()
             if value:
                 d[field] = value.lower()
 
     @before(auth_user)
     @before(login_required)
     def on_get(self, req, resp):
-        form = FieldStorage(fp=req.stream, environ=req.env)
         resp.text = render(
-            page='details', view='details', user=req.user, form=form, errors={}
+            page='details', view='details', user=req.user,
+            errors={}, form={}
         )
 
     @before(auth_user)
     @before(login_required)
     def on_post(self, req, resp):
-        form = FieldStorage(fp=req.stream, environ=req.env)
+        form = req.get_media()
         f, s, p = {}, {}, {}
         self.update(form, s, self.social)
         self.update(form, p, self.phone)
@@ -850,8 +847,8 @@ class DetailsResource:
             f.update(p)
             f.update(s)
             resp.text = render(
-                page='details', view='details', fields=f,
-                user=req.user, errors=errors, form=form
+                page='details', view='details', user=req.user,
+                errors=errors, form=form
             )
         else:
             req.user.phone = p
@@ -864,31 +861,29 @@ class ProfileResource:
     @before(auth_user)
     @before(login_required)
     def on_get(self, req, resp):
-        form = FieldStorage(fp=req.stream, environ=req.env)
         resp.text = render(
-            page='profile', view='profile',
-            user=req.user, errors={}, form=form
+            page='profile', view='profile', user=req.user, errors={}, form={}
         )
 
     @before(auth_user)
     @before(login_required)
     def on_post(self, req, resp):
-        form = FieldStorage(fp=req.stream, environ=req.env)
+        form = req.get_media()
         f = {}
-        f['username'] = form.getvalue('username', '').strip().lower()
-        f['email'] = form.getvalue('email', '').strip().lower()
+        f['username'] = form.get('username', '').strip().lower()
+        f['email'] = form.get('email', '').strip().lower()
         f['first_name'] = get_name(form, 'first')
         f['last_name'] = get_name(form, 'last')
         f['emoji'] = get_emoji(form)
-        f['birthday'] = form.getvalue('birthday', '').strip()
+        f['birthday'] = form.get('birthday', '').strip()
         f['location'] = get_location(form)
-        f['link'] = form.getvalue('link', '').strip().lower()
+        f['link'] = form.get('link', '').strip().lower()
         f['description'] = get_content(form, 'description')
         errors = profiling(f, req.user.id)
         if errors:
             resp.text = render(
-                page='profile', view='profile',
-                user=req.user, errors=errors, form=form, fields=f
+                page='profile', view='profile', user=req.user,
+                errors=errors, form=form
             )
         else:
             for field, value in f.items():
@@ -903,13 +898,12 @@ class LoginResource:
     def on_get(self, req, resp):
         if req.user:
             raise HTTPFound('/feed')
-        form = FieldStorage(fp=req.stream, environ=req.env)
-        resp.text = render(page='login', view='login', errors={}, form=form)
+        resp.text = render(page='login', view='login', errors={}, form={})
 
     def on_post(self, req, resp):
-        form = FieldStorage(fp=req.stream, environ=req.env)
-        username = form.getvalue('username', '').strip().lower()
-        password = form.getvalue('password', '')
+        form = req.get_media()
+        username = form.get('username', '').strip().lower()
+        password = form.get('password', '')
         errors, user = authentication(username, password)
         if errors:
             resp.text = render(
@@ -934,29 +928,26 @@ class RegisterResource:
     def on_get(self, req, resp):
         if req.user:
             raise HTTPFound('/feed')
-        form = FieldStorage(fp=req.stream, environ=req.env)
         resp.text = render(
-            page='register', view='register',
-            errors={}, form=form, fields={}
+            page='register', view='register', errors={}, form={}
         )
 
     def on_post(self, req, resp):
-        form = FieldStorage(fp=req.stream, environ=req.env)
+        form = req.get_media()
         f = {}
-        f['username'] = form.getvalue('username', '').strip().lower()
-        f['email'] = form.getvalue('email', '').strip().lower()
-        f['password1'] = form.getvalue('password1', '')
-        f['password2'] = form.getvalue('password2', '')
+        f['username'] = form.get('username', '').strip().lower()
+        f['email'] = form.get('email', '').strip().lower()
+        f['password1'] = form.get('password1', '')
+        f['password2'] = form.get('password2', '')
         f['first_name'] = get_name(form, 'first')
         f['last_name'] = get_name(form, 'last')
         f['emoji'] = get_emoji(form)
-        f['birthday'] = form.getvalue('birthday', '').strip()
-        f['location'] = form.getvalue('location', '')
+        f['birthday'] = form.get('birthday', '').strip()
+        f['location'] = form.get('location', '')
         errors = registration(f)
         if errors:
             resp.text = render(
-                page='register', view='register',
-                errors=errors, form=form, fields=f
+                page='register', view='register', errors=errors, form=form
             )
         else:
             user, is_new = User.objects.get_or_create(
@@ -988,9 +979,8 @@ class RecoverResource:
     def on_get(self, req, resp):
         if req.user:
             raise HTTPFound('/feed')
-        form = FieldStorage(fp=req.stream, environ=req.env)
         resp.text = render(
-            page='recover', view='recover', errors={}, form=form
+            page='recover', view='recover', errors={}, form={}
         )
 
     def on_get_link(self, req, resp, token):
@@ -1001,8 +991,8 @@ class RecoverResource:
         raise HTTPFound('/feed')
 
     def on_post(self, req, resp):
-        form = FieldStorage(fp=req.stream, environ=req.env)
-        email = form.getvalue('email', '').strip().lower()
+        form = req.get_media()
+        email = form.get('email', '').strip().lower()
         errors = {}
         user = User.objects.filter(email=email).first()
         if not user:

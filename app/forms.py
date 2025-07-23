@@ -7,7 +7,7 @@ from project.vars import COUNTRIES
 
 
 def get_content(form, field="content"):
-    value = form.getvalue(field, '')
+    value = form.get(field, '')
     demojized = demojize(value)
     decoded = unidecode(demojized)
     words = [word.strip() for word in decoded.split()]
@@ -15,12 +15,12 @@ def get_content(form, field="content"):
 
 
 def get_emoji(form):
-    value = form.getvalue('emoji', '').strip()
+    value = form.get('emoji', '').strip()
     return demojize(value)
 
 
 def get_location(form, delimiter=", "):
-    location = form.getvalue('location', '').strip()
+    location = form.get('location', '').strip()
     if delimiter in location:
         city, country = location.split(delimiter)
         country = COUNTRIES.get(country, country)
@@ -29,7 +29,7 @@ def get_location(form, delimiter=", "):
 
 
 def get_name(form, field):
-    value = form.getvalue(f'{field}_name', '')
+    value = form.get(f'{field}_name', '')
     words = [word.strip() for word in value.split()]
     return " ".join(words)
 

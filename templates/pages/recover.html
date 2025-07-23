@@ -7,11 +7,11 @@
     </div>
 
     <div class="login">
-        <form enctype="multipart/form-data" method="post">
+        <form method="post">
             <div class="line">
                 <label for="id_email">Email address<i>*</i></label>
                 <input type="text" name="email" id="id_email"
-                    value="{{ form.getvalue('email', '') }}">
+                    value="{% if form %}{{ form.email }}{% endif %}">
                 {% if 'email' in errors %}
                     <div class="error">{{ errors['email'] }}</div>
                 {% endif %}

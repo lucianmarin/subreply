@@ -6,17 +6,17 @@
     </div>
 
     <div class="register">
-        <form enctype="multipart/form-data" method="post" autocomplete="off">
+        <form method="post" autocomplete="off">
             <div class="line">
                 <div class="left">
                     <label for="id_username">Username<i>*</i></label>
                     <input type="text" name="username" id="id_username"
-                        maxlength="15" value="{% if form %}{{ fields.username }}{% endif %}">
+                        maxlength="15" value="{% if form %}{{ form.username }}{% endif %}">
                 </div>
                 <div class="right">
                     <label for="id_email">Email address<i>*</i></label>
                     <input type="email" name="email" id="id_email"
-                        maxlength="120" value="{% if form %}{{ fields.email }}{% endif %}">
+                        maxlength="120" value="{% if form %}{{ form.email }}{% endif %}">
                 </div>
                 {% if 'username' in errors %}
                     <div class="error">{{ errors['username'] }}</div>
@@ -29,12 +29,12 @@
                 <div class="left">
                     <label for="id_password1">Password<i>*</i></label>
                     <input type="password" name="password1" id="id_password1"
-                        maxlength="120" value="{% if form %}{{ fields.password1 }}{% endif %}">
+                        maxlength="120" value="{% if form %}{{ form.password1 }}{% endif %}">
                 </div>
                 <div class="right">
                     <label for="id_password2">Password confirmation<i>*</i></label>
                     <input type="password" name="password2" id="id_password2"
-                        maxlength="120" value="{% if form %}{{ fields.password2 }}{% endif %}">
+                        maxlength="120" value="{% if form %}{{ form.password2 }}{% endif %}">
                 </div>
                 {% if 'password' in errors %}
                     <div class="error">{{ errors['password'] }}</div>
@@ -44,12 +44,12 @@
                 <div class="left">
                     <label for="id_first_name">First name<i>*</i></label>
                     <input type="text" name="first_name" id="id_first_name"
-                        maxlength="15" value="{% if form %}{{ fields.first_name }}{% endif %}">
+                        maxlength="15" value="{% if form %}{{ form.first_name }}{% endif %}">
                 </div>
                 <div class="right">
                     <label for="id_last_name">Last name</label>
                     <input type="text" name="last_name" id="id_last_name"
-                        maxlength="15" value="{% if form %}{{ fields.last_name }}{% endif %}">
+                        maxlength="15" value="{% if form %}{{ form.last_name }}{% endif %}">
                 </div>
                 {% if 'first_name' in errors %}
                     <div class="error">{{ errors['first_name'] }}</div>
@@ -67,20 +67,20 @@
                         <label for="id_emoji">Emoji</label>
                         <input type="text" name="emoji" id="id_emoji"
                             maxlength="10" placeholder=":)"
-                            value="{% if form %}{{ fields.emoji | emojize }}{% endif %}">
+                            value="{% if form %}{{ form.emoji | emojize }}{% endif %}">
                     </div>
                     <div class="two">
                         <label for="id_birthday">Birthday</label>
                         <input type="text" name="birthday" id="id_birthday"
                             maxlength="10" placeholder="Y-M-D"
-                            value="{% if form %}{{ fields.birthday }}{% endif %}">
+                            value="{% if form %}{{ form.birthday }}{% endif %}">
                     </div>
                 </div>
                 <div class="right">
                     <label for="id_location">Location</label>
                     <input type="text" name="location" id="id_location"
                         maxlength="60" placeholder="City, Country"
-                        value="{% if form %}{{ fields.location }}{% endif %}">
+                        value="{% if form %}{{ form.location }}{% endif %}">
                 </div>
                 {% if 'emoji' in errors %}
                     <div class="error">{{ errors['emoji'] }}</div>

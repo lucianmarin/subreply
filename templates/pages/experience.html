@@ -11,17 +11,17 @@
     </div>
 
     <div class="register">
-        <form enctype="multipart/form-data" method="post" autocomplete="off">
+        <form method="post" autocomplete="off">
             <div class="line">
                 <div class="left">
                     <label for="id_title">Title<i>*</i></label>
                     <input type="text" name="title" id="id_title"
-                        maxlength="60" value="{% if form %}{{ fields.title }}{% elif entry %}{{ entry.title }}{% endif %}">
+                        maxlength="60" value="{% if form %}{{ form.title }}{% elif entry %}{{ entry.title }}{% endif %}">
                 </div>
                 <div class="right">
                     <label for="id_entity">Entity name<i>*</i></label>
                     <input type="text" name="entity" id="id_entity"
-                        maxlength="60" value="{% if form %}{{ fields.entity }}{% elif entry %}{{ entry.entity }}{% endif %}">
+                        maxlength="60" value="{% if form %}{{ form.entity }}{% elif entry %}{{ entry.entity }}{% endif %}">
                 </div>
                 {% if 'title' in errors %}
                     <div class="error">{{ errors['title'] }}</div>
@@ -36,20 +36,20 @@
                         <label for="id_start_date">Start date<i>*</i></label>
                         <input type="text" name="start_date" id="id_start_date"
                             maxlength="10" placeholder="Y-M"
-                            value="{% if form %}{{ fields.start_date }}{% elif entry %}{{ entry.start_year }}-{% if entry.start_month < 10 %}0{% endif %}{{ entry.start_month }}{% endif %}">
+                            value="{% if form %}{{ form.start_date }}{% elif entry %}{{ entry.start_year }}-{% if entry.start_month < 10 %}0{% endif %}{{ entry.start_month }}{% endif %}">
                     </div>
                     <div class="right">
                         <label for="id_end_date">End date</label>
                         <input type="text" name="end_date" id="id_end_date"
                             maxlength="10" placeholder="Y-M"
-                            value="{% if form %}{{ fields.end_date }}{% elif entry.end_date %}{{ entry.end_year }}-{% if entry.end_month < 10 %}0{% endif %}{{ entry.end_month}}{% endif %}">
+                            value="{% if form %}{{ form.end_date }}{% elif entry.end_date %}{{ entry.end_year }}-{% if entry.end_month < 10 %}0{% endif %}{{ entry.end_month}}{% endif %}">
                     </div>
                 </div>
                 <div class="right">
                     <label for="id_location">Location</label>
                     <input type="text" name="location" id="id_location"
                         maxlength="60" placeholder="City, Country"
-                        value="{% if form %}{{ fields.location }}{% elif entry %}{{ entry.location }}{% endif %}">
+                        value="{% if form %}{{ form.location }}{% elif entry %}{{ entry.location }}{% endif %}">
                 </div>
                 {% if 'start_date' in errors %}
                     <div class="error">{{ errors['start_date'] }}</div>
@@ -65,7 +65,7 @@
                 <label for="id_link">Link</label>
                 <input type="text" name="link" id="id_link" maxlength="240"
                     placeholder="https://"
-                    value="{% if form %}{{ fields.link }}{% elif entry %}{{ entry.link }}{% endif %}">
+                    value="{% if form %}{{ form.link }}{% elif entry %}{{ entry.link }}{% endif %}">
                 {% if 'link' in errors %}
                     <div class="error">{{ errors['link'] }}</div>
                 {% endif %}
@@ -75,7 +75,7 @@
                 <textarea name="description" id="id_description"
                     rows="3" cols="60" maxlength="720"
                     oninput="expand(this)" onkeydown="send(event)"
-                    >{% if form %}{{ fields.description | emojize }}{% elif entry %}{{ entry.description | emojize }}{% endif %}</textarea>
+                    >{% if form %}{{ form.description | emojize }}{% elif entry %}{{ entry.description | emojize }}{% endif %}</textarea>
                 {% if 'description' in errors %}
                     <div class="error">{{ errors['description'] }}</div>
                 {% endif %}
