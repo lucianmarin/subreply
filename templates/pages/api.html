@@ -25,11 +25,25 @@
         <h4>GET Endpoints</h4>
         <ul>
             <li><code>/api/feed</code></li>
+            <li><code>/api/sub/{hashtag}</code></li>
+            <li><code>/api/reply/{id:int}</code></li>
+            <li><code>/api/following</code></li>
+            <li><code>/api/followers</code></li>
+            <li><code>/api/mentions</code></li>
+            <li><code>/api/replies</code></li>
+            <li><code>/api/saved</code></li>
+            <li><code>/api/people</code></li>
+            <li><code>/api/discover</code></li>
+            <li><code>/api/trending</code></li>
+            <li><code>/api/channels</code></li>
+            <li><code>/api/messages</code></li>
+            <li><code>/api/{username}</code></li>
+            <li><code>/api/{username}/message</code></li>
         </ul>
 
         <h4>POST Endpoints</h4>
         <ul>
-            <li><code>/api/login</code> - username, password params return token</li>
+            <li><code>/api/login</code> - username, password params returns token</li>
         </ul>
     </div>
 {% endblock %}

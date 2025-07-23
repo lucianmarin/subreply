@@ -561,20 +561,6 @@ class ChannelsResource:
         )
 
 
-class LinksResource:
-    def fetch_entries(self, req):
-        entries = Posts.exclude(link='').order_by('-id')
-        return entries.prefetch_related(PFR)
-
-    @before(auth_user)
-    def on_get(self, req, resp):
-        entries, page, number = paginate(req, self.fetch_entries(req))
-        resp.text = render(
-            page=page, view='links', number=number,
-            user=req.user, entries=entries
-        )
-
-
 class MessagesResource:
     def fetch_entries(self, req):
         last_ids = Chat.objects.filter(
