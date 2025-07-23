@@ -66,6 +66,14 @@ class MainResource:
         raise HTTPFound('/trending')
 
 
+class APIResource:
+    @before(auth_user)
+    def on_get(self, req, resp):
+        resp.text = render(
+            page='api', view='api', user=req.user
+        )
+
+
 class AboutResource:
     @before(auth_user)
     def on_get(self, req, resp):

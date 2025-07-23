@@ -12,6 +12,7 @@ app.resp_options.secure_cookies_by_default = not DEBUG
 
 app.add_route('/', resources.MainResource())
 
+app.add_route('/api', resources.APIResource())
 app.add_route('/api/feed', api.FeedEndpoint())
 
 app.add_route('/xhr/erase/{id:int}', xhr.WorkCallback(), suffix="erase")
@@ -32,7 +33,6 @@ app.add_route('/saved', resources.SavedResource())
 
 app.add_route('/sub/{hashtag}', resources.FeedResource(), suffix="sub")
 app.add_route('/channels', resources.ChannelsResource())
-
 
 # app.add_route('/links', resources.LinksResource())
 app.add_route('/people', resources.PeopleResource())

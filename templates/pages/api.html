@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block main %}
+    <div class="title">
+        <a href="/about">About</a>
+        <a href="/api" class="on">API</a>
+        <a href="/emoji">Emoji</a>
+        <a href="/privacy">Privacy</a>
+        <a href="/terms">Terms</a>
+    </div>
+
+    <div class="about">
+        <div class="block">
+            <p>
+                API should be used to build clients for iOS, Android and other platforms. Bearer token authentication is supported initialy.
+            </p>
+            <p>
+                You authenticate by getting a token from <code>/api/login</code> POST endpoint then setting the Bearer header for following requests.
+            </p>
+            <p>
+                You can paginate a GET endpoint using <code>?p=number</code> parameter.
+            </p>
+        </div>
+
+        <h4>GET Endpoints</h4>
+        <ul>
+            <li><code>/api/feed</code></li>
+        </ul>
+
+        <h4>POST Endpoints</h4>
+        <ul>
+            <li>Work in progress.</li>
+        </ul>
+    </div>
+{% endblock %}
