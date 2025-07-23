@@ -1,11 +1,12 @@
+from emoji import emojize
+from app.filters import timeago
+from app.utils import utc_timestamp
+
+
 def build_user(user):
     data = {
-        "id": user.id,
-        "created_at": user.created_at,
         "username": user.username,
-        "first_name": user.first_name,
-        "last_name": user.last_name,
-        "emoji": user.emoji
+        "full_name": emojize(user.full_name)
     }
     return data
 
@@ -13,9 +14,12 @@ def build_user(user):
 def build_entry(entry, parent=False):
     data = {
         "id": entry.id,
-        "content": entry.content,
-        "created_by": build_user(entry.created_by)
+        "content": emojize(entry.content),
+        "created_by": build_user(entry.created_by),
+        "timestamp": timeago(utc_timestamp() - entry.created_at)
     }
     if parent:
         data['parent'] = build_entry(entry.parent) if entry.parent else {}
+    if not entry.parent:
+        data['kids'] = [build_entry(kid) for kid in entry.kids.all()]
     return data
