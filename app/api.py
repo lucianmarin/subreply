@@ -33,8 +33,8 @@ class LoginEndpoint:
         if errors:
             resp.media = errors
         else:
-            token = FERNET.encrypt(str(user.id).encode())
-            resp.media = {"token": token.decode()}
+            token = FERNET.encrypt(str(user.id).encode()).decode()
+            resp.media = {"token": token}
 
 
 class FeedEndpoint:

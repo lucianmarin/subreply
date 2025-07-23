@@ -913,8 +913,8 @@ class LoginResource:
                 page='login', view='login', errors=errors, form=form
             )
         else:
-            token = FERNET.encrypt(str(user.id).encode())
-            resp.set_cookie('identity', token.decode(), path="/", max_age=MAX_AGE)
+            token = FERNET.encrypt(str(user.id).encode()).decode()
+            resp.set_cookie('identity', token, path="/", max_age=MAX_AGE)
             raise HTTPFound('/feed')
 
 
