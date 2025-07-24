@@ -113,7 +113,7 @@ class PostEndpoint:
             ) if mentions else None
             re, is_new = Post.objects.get_or_create(
                 parent=parent,
-                to_user=parent.created_by,
+                to_user=parent.created_by if parent else None,
                 content=content,
                 created_at=utc_timestamp(),
                 created_by=req.user,
