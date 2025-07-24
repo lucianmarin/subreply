@@ -13,7 +13,19 @@ app.resp_options.secure_cookies_by_default = not DEBUG
 app.add_route('/', resources.MainResource())
 
 app.add_route('/api', resources.APIResource())
+# post
 app.add_route('/api/login', api.LoginEndpoint())
+app.add_route('/api/register', api.RegisterEndpoint())
+# app.add_route('/api/post', api.PostEndpoint())
+# app.add_route('/api/add', api.AddEndpoint())
+# patch
+# app.add_route('/api/edit/{id:int}', api.EditEndpoint())
+# app.add_route('/api/update/{id:int}', api.UpdateEndpoint())
+# app.add_route('/api/profile', api.ProfileEndpoint())
+# delete
+# app.add_route('/api/delete/{id:int}', api.DeleteEndpoint())
+# app.add_route('/api/erase/{id:int}', api.EraseEndpoint())
+# get
 app.add_route('/api/feed', api.FeedEndpoint())
 app.add_route('/api/sub/{hashtag}', api.ChannelEndpoint())
 app.add_route('/api/reply/{id:int}', api.ReplyEndpoint())

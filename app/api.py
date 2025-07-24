@@ -4,10 +4,12 @@ from falcon.hooks import before
 from falcon.constants import MEDIA_JSON
 from django.db.models import Count, F, Prefetch, Q, Max
 
+from app.forms import get_content, get_emoji, get_location, get_metadata, get_name
 from app.hooks import auth_required, auth_user
 from app.models import Bond, Chat, Post, Save, User, Work
 from app.serializers import build_entry, build_user, build_chat, build_work
-from app.validation import authentication
+from app.utils import build_hash, utc_timestamp, verify_hash
+from app.validation import authentication, registration
 from project.settings import FERNET
 
 Posts = Post.objects.annotate(
@@ -27,16 +29,65 @@ def paginate(req, qs, limit=16):
 
 class LoginEndpoint:
     def on_post(self, req, resp):
-        resp.content_type = MEDIA_JSON
         form = req.get_media()
         username = form.get('username', '')
         password = form.get('password', '')
         errors, user = authentication(username, password)
+        resp.content_type = MEDIA_JSON
         if errors:
             resp.media = errors
         else:
             token = FERNET.encrypt(str(user.id).encode()).decode()
-            resp.media = {"token": token}
+            resp.media = {
+                "token": token,
+                "user": build_user(user)
+            }
+
+
+class RegisterEndpoint:
+    @before(auth_user)
+    @before(auth_required)
+    def on_post(self, req, resp):
+        form = req.get_media()
+        f = {}
+        f['username'] = form.get('username', '').strip().lower()
+        f['email'] = form.get('email', '').strip().lower()
+        f['password1'] = form.get('password1', '')
+        f['password2'] = form.get('password2', '')
+        f['first_name'] = get_name(form, 'first')
+        f['last_name'] = get_name(form, 'last')
+        f['emoji'] = get_emoji(form)
+        f['birthday'] = form.get('birthday', '').strip()
+        f['location'] = form.get('location', '')
+        errors = registration(f)
+        resp.content_type = MEDIA_JSON
+        if errors:
+            resp.media = errors
+        else:
+            user, is_new = User.objects.get_or_create(
+                username=f['username'],
+                defaults={
+                    'created_at': utc_timestamp(),
+                    'password': build_hash(f['password1']),
+                    'email': f['email'],
+                    'first_name': f['first_name'],
+                    'last_name': f['last_name'],
+                    'emoji': f['emoji'],
+                    'birthday': f['birthday'],
+                    'location': f['location'],
+                }
+            )
+            # create self bond
+            Bond.objects.get_or_create(
+                created_at=utc_timestamp(), seen_at=utc_timestamp(),
+                created_by=user, to_user=user
+            )
+            # generate token
+            token = FERNET.encrypt(str(user.id).encode()).decode()
+            resp.media = {
+                "token": token,
+                "user": build_user(user)
+            }
 
 
 class FeedEndpoint:
