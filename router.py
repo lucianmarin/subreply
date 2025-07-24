@@ -16,7 +16,8 @@ app.add_route('/api', resources.APIResource())
 # post
 app.add_route('/api/login', api.LoginEndpoint())
 app.add_route('/api/register', api.RegisterEndpoint())
-# app.add_route('/api/post', api.PostEndpoint())
+app.add_route('/api/post', api.PostEndpoint())
+# app.add_route('/api/{username}/send', api.SendEndpoint())
 # app.add_route('/api/add', api.AddEndpoint())
 # patch
 # app.add_route('/api/edit/{id:int}', api.EditEndpoint())
@@ -40,7 +41,7 @@ app.add_route('/api/trending', api.TrendingEndpoint())
 app.add_route('/api/channels', api.ChannelsEndpoint())
 app.add_route('/api/messages', api.MessagesEndpoint())
 app.add_route('/api/{username}', api.MemberEndpoint())
-app.add_route('/api/{username}/message', api.MessageEndpoint())
+app.add_route('/api/{username}/chat', api.ChatEndpoint())
 
 app.add_route('/xhr/erase/{id:int}', xhr.WorkCallback(), suffix="erase")
 app.add_route('/xhr/unsend/{id:int}', xhr.TextCallback(), suffix="unsend")

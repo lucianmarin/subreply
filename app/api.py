@@ -9,7 +9,8 @@ from app.hooks import auth_required, auth_user
 from app.models import Bond, Chat, Post, Save, User, Work
 from app.serializers import build_entry, build_user, build_chat, build_work
 from app.utils import build_hash, utc_timestamp, verify_hash
-from app.validation import authentication, registration
+from app.validation import (authentication, registration, valid_content, valid_reply,
+                            valid_thread)
 from project.settings import FERNET
 
 Posts = Post.objects.annotate(
@@ -90,6 +91,40 @@ class RegisterEndpoint:
             }
 
 
+class PostEndpoint:
+    def on_post(self, req, resp):
+        form = req.get_media()
+        parent = Posts.filter(id=form.get('parent', 0)).first()
+        content = get_content(form)
+        hashtags, links, mentions = get_metadata(content)
+        errors = {}
+        errors['content'] = valid_content(content, req.user)
+        if not errors['content']:
+            errors['content'] = valid_thread(content)
+        if not errors['content']:
+            errors['content'] = valid_reply(parent, req.user, content, mentions)
+        resp.content_type = MEDIA_JSON
+        if errors:
+            resp.media = errors
+        else:
+            extra = {}
+            extra['link'] = links[0] if links else ''
+            extra['hashtag'] = hashtags[0] if hashtags else ''
+            extra['at_user'] = User.objects.get(
+                username=mentions[0]
+            ) if mentions else None
+            re, is_new = Post.objects.get_or_create(
+                parent=parent,
+                to_user=parent.created_by,
+                content=content,
+                created_at=utc_timestamp(),
+                created_by=req.user,
+                **extra
+            )
+            re.set_ancestors()
+            resp.media = build_entry(re, parents=True)
+
+
 class FeedEndpoint:
     def fetch_entries(self, user):
         friends = Bond.objects.filter(created_by=user).values('to_user_id')
@@ -103,7 +138,7 @@ class FeedEndpoint:
         entries, page = paginate(req, self.fetch_entries(req.user))
         resp.media = {
             "page": page,
-            "entries": [build_entry(entry, parent=True) for entry in entries]
+            "entries": [build_entry(entry, parents=True) for entry in entries]
         }
 
 
@@ -118,7 +153,7 @@ class ChannelEndpoint:
         entries, page = paginate(req, self.fetch_entries(hashtag))
         resp.media = {
             "page": page,
-            "entries": [build_entry(entry, parent=True) for entry in entries]
+            "entries": [build_entry(entry, parents=True) for entry in entries]
         }
 
 
@@ -142,7 +177,7 @@ class ReplyEndpoint:
         resp.media = {
             "entry": build_entry(parent),
             "ancestors": [build_entry(entry) for entry in ancestors],
-            "entries": [build_entry(entry, parent=True) for entry in entries]
+            "entries": [build_entry(entry, parents=True) for entry in entries]
         }
 
 
@@ -165,7 +200,7 @@ class MemberEndpoint:
         resp.media = {
             "page": page,
             "member": build_user(member),
-            "entries": [build_entry(entry, parent=True) for entry in entries],
+            "entries": [build_entry(entry, parents=True) for entry in entries],
             "works": [build_work(work) for work in works]
         }
 
@@ -214,7 +249,7 @@ class MentionsEndpoint:
         resp.content_type = MEDIA_JSON
         resp.media = {
             "page": page,
-            "entries": [build_entry(entry, parent=True) for entry in entries]
+            "entries": [build_entry(entry, parents=True) for entry in entries]
         }
 
 
@@ -247,7 +282,7 @@ class SavedEndpoint:
         resp.content_type = MEDIA_JSON
         resp.media = {
             "page": page,
-            "entries": [build_entry(entry, parent=True) for entry in entries]
+            "entries": [build_entry(entry, parents=True) for entry in entries]
         }
 
 
@@ -307,7 +342,7 @@ class DiscoverEndpoint:
         resp.content_type = MEDIA_JSON
         resp.media = {
             "page": page,
-            "entries": [build_entry(entry, parent=True) for entry in entries]
+            "entries": [build_entry(entry, parents=True) for entry in entries]
         }
 
 
@@ -327,7 +362,7 @@ class TrendingEndpoint:
         resp.content_type = MEDIA_JSON
         resp.media = {
             "page": page,
-            "entries": [build_entry(entry, parent=True) for entry in entries]
+            "entries": [build_entry(entry, parents=True) for entry in entries]
         }
 
 
@@ -345,7 +380,7 @@ class ChannelsEndpoint:
         resp.content_type = MEDIA_JSON
         resp.media = {
             "page": page,
-            "entries": [build_entry(entry, parent=True) for entry in entries]
+            "entries": [build_entry(entry, parents=True) for entry in entries]
         }
 
 
@@ -368,7 +403,7 @@ class MessagesEndpoint:
         }
 
 
-class MessageEndpoint:
+class ChatEndpoint:
     def fetch_entries(self, req, member):
         entries = Chat.objects.filter(
             Q(created_by=req.user.id, to_user=member.id) | Q(created_by=member.id, to_user=req.user.id)

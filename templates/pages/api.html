@@ -36,13 +36,18 @@
             <li><code>/api/channels</code></li>
             <li><code>/api/messages</code></li>
             <li><code>/api/{username}</code></li>
-            <li><code>/api/{username}/message</code></li>
+            <li><code>/api/{username}/chat</code></li>
         </ul>
 
         <h4>POST Endpoints</h4>
         <ul>
-            <li><code>/api/login</code> - username, password params returns token and user</li>
-            <li><code>/api/register</code> - username*, email*, password1*, password2*, email*, first_name, last_name, emoji, birthday, location params returns token and user</li>
+            <li><code>/api/login</code> &mdash; username*, password* params returns token and user</li>
+            <li><code>/api/register</code> &mdash; username*, email*, password1*, password2*, email*, first_name, last_name, emoji, birthday, location params returns token and user</li>
+            <li><code>/api/post</code> &mdash; parent, content* params returns post details</li>
         </ul>
+
+        <h4>PATCH Endpoints</h4>
+
+        <h4>DELETE Endpoints</h4>
     </div>
 {% endblock %}

@@ -11,14 +11,14 @@ def build_user(user):
     return data
 
 
-def build_entry(entry, parent=False):
+def build_entry(entry, parents=False):
     data = {
         "id": entry.id,
         "content": emojize(entry.content),
         "created_by": build_user(entry.created_by),
         "timestamp": timeago(utc_timestamp() - entry.created_at)
     }
-    if parent:
+    if parents:
         data['parent'] = build_entry(entry.parent) if entry.parent else {}
     if not entry.parent:
         data['kids'] = [build_entry(kid) for kid in entry.kids.all()]
