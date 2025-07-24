@@ -40,6 +40,7 @@ app.add_route('/api/discover', api.DiscoverEndpoint())
 app.add_route('/api/trending', api.TrendingEndpoint())
 app.add_route('/api/channels', api.ChannelsEndpoint())
 app.add_route('/api/messages', api.MessagesEndpoint())
+app.add_route('/api/notifications', api.NotificationsEndpoint())
 app.add_route('/api/{username}', api.MemberEndpoint())
 app.add_route('/api/{username}/chat', api.ChatEndpoint())
 

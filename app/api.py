@@ -46,8 +46,6 @@ class LoginEndpoint:
 
 
 class RegisterEndpoint:
-    @before(auth_user)
-    @before(auth_required)
     def on_post(self, req, resp):
         form = req.get_media()
         f = {}
@@ -400,6 +398,19 @@ class MessagesEndpoint:
         resp.media = {
             "page": page,
             "entries": [build_chat(entry) for entry in entries]
+        }
+
+
+class NotificationsEndpoint:
+    @before(auth_user)
+    @before(auth_required)
+    def on_get(self, req, resp):
+        resp.content_type = MEDIA_JSON
+        resp.media = {
+            'followers': req.user.notif_followers,
+            'mentions': req.user.notif_mentions,
+            'replies': req.user.notif_replies,
+            'messages': req.user.notif_messages
         }
 
 
