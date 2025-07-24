@@ -401,20 +401,7 @@ class MessagesEndpoint:
         }
 
 
-class NotificationsEndpoint:
-    @before(auth_user)
-    @before(auth_required)
-    def on_get(self, req, resp):
-        resp.content_type = MEDIA_JSON
-        resp.media = {
-            'followers': req.user.notif_followers,
-            'mentions': req.user.notif_mentions,
-            'replies': req.user.notif_replies,
-            'messages': req.user.notif_messages
-        }
-
-
-class ChatEndpoint:
+class MessageEndpoint:
     def fetch_entries(self, req, member):
         entries = Chat.objects.filter(
             Q(created_by=req.user.id, to_user=member.id) | Q(created_by=member.id, to_user=req.user.id)
@@ -432,4 +419,17 @@ class ChatEndpoint:
         resp.media = {
             "page": page,
             "entries": [build_chat(entry) for entry in entries]
+        }
+
+
+class NotificationsEndpoint:
+    @before(auth_user)
+    @before(auth_required)
+    def on_get(self, req, resp):
+        resp.content_type = MEDIA_JSON
+        resp.media = {
+            'followers': req.user.notif_followers,
+            'mentions': req.user.notif_mentions,
+            'replies': req.user.notif_replies,
+            'messages': req.user.notif_messages
         }
