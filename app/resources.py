@@ -154,7 +154,7 @@ class FeedResource:
         entries, page, number = paginate(req, self.fetch_feed(req.user))
         resp.text = render(
             page=page, view='feed', number=number, content='',
-            user=req.user, entries=entries, errors={},
+            user=req.user, entries=entries, errors={}, hashtag='',
             placeholder=self.place_feed
         )
 
@@ -163,11 +163,11 @@ class FeedResource:
         entries, page, number = paginate(req, self.fetch_sub(hashtag))
         resp.text = render(
             page=page, view='channel', number=number, content="",
-            user=req.user, entries=entries, errors={},
+            user=req.user, entries=entries, errors={}, hashtag=hashtag,
             placeholder=self.place_sub.format(hashtag)
         )
 
-    def post(self, req, resp, content, placeholder):
+    def post(self, req, resp, content, hashtag, placeholder):
         errors = {}
         errors['content'] = valid_content(content, req.user)
         if not errors['content']:
@@ -178,7 +178,7 @@ class FeedResource:
             resp.text = render(
                 page='regular', view='feed', content=content, number=1,
                 user=req.user, entries=entries, errors=errors,
-                placeholder=placeholder
+                hashtag=hashtag, placeholder=placeholder
             )
         else:
             hashtags, links, mentions = get_metadata(content)
@@ -206,7 +206,7 @@ class FeedResource:
         content = get_content(form)
         if not content:
             raise HTTPFound('/feed')
-        self.post(req, resp, content, self.place_feed)
+        self.post(req, resp, content, '', self.place_feed)
 
     @before(auth_user)
     @before(login_required)
@@ -215,7 +215,7 @@ class FeedResource:
         content = get_content(form)
         if not content:
             raise HTTPFound(f'/sub/{hashtag}')
-        self.post(req, resp, content, self.place_sub.format(hashtag))
+        self.post(req, resp, content, hashtag, self.place_sub.format(hashtag))
 
 
 class ReplyResource:

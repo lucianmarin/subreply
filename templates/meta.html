@@ -31,13 +31,13 @@
     {% if entry.hashtag %}
         <meta property="article:tag" content="{{ entry.hashtag }}">
     {% endif %}
-{% elif view == 'main' %}
-    <title>{{ brand }}</title>
-    <meta name="description" content="Tiny, but mighty social network.">
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://subreply.com/">
 {% elif view == 'message' %}
     <title>Message @{{ member }}</title>
+{% elif view == 'channel' %}
+    <title>{{ brand }} / #{{ hashtag }}</title>
+    <meta name="description" content="Tiny, but mighty social network.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://subreply.com/sub/{{ hashtag }}">
 {% else %}
     <title>{{ brand }} / {{ view | capitalize }}</title>
     <meta name="description" content="Tiny, but mighty social network.">
