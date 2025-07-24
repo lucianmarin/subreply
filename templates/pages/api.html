@@ -12,12 +12,10 @@
     <div class="about">
         <div class="block">
             <p>
-                API should be used to build clients for iOS, Android and other platforms. Bearer token authentication is supported initialy.
+                API should be used to build clients for iOS, Android and other platforms. Clients should have their own branding starting with "sub" prefix: Subchat, Sublevel, Subversion, etc. Clients can provide additional features like image support, language translation to and from English, etc.
             </p>
             <p>
-                You authenticate by getting a token from <code>/api/login</code> endpoint then setting the Bearer header for following requests.
-            </p>
-            <p>
+                You can authenticate by getting a token from <code>/api/login</code> endpoint then setting the Bearer header for following requests.
                 You can paginate a GET endpoint using <code>?p=number</code> parameter.
             </p>
         </div>
