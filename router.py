@@ -1,36 +1,33 @@
 from falcon import App
 from falcon.constants import MEDIA_HTML
 
-from app import api, resources, xhr
+from app import api, resources
 from project.settings import DEBUG
 
 app = App(media_type=MEDIA_HTML)
-
 app.req_options.strip_url_path_trailing_slash = True
-
 app.resp_options.secure_cookies_by_default = not DEBUG
 
 app.add_route('/', resources.MainResource())
 
-app.add_route('/api', resources.APIResource())
 # post
 app.add_route('/api/login', api.LoginEndpoint())
 app.add_route('/api/register', api.RegisterEndpoint())
 app.add_route('/api/post', api.PostEndpoint())
-# app.add_route('/api/save', api.SaveEndpoint())
-# app.add_route('/api/follow', api.FollowEndpoint())
-# app.add_route('/api/send', api.SendEndpoint())
+# app.add_route('/api/send/{username}', api.SendEndpoint())
 # app.add_route('/api/add', api.AddEndpoint())
+# actions
+app.add_route('/api/erase/{id:int}', api.EraseEndpoint())
+app.add_route('/api/unsend/{id:int}', api.UnsendEndpoint())
+app.add_route('/api/delete/{id:int}', api.DeleteEndpoint())
+app.add_route('/api/save/{id:int}', api.SaveEndpoint())
+app.add_route('/api/unsave/{id:int}', api.UnsaveEndpoint())
+app.add_route('/api/follow/{username}', api.FollowEndpoint())
+app.add_route('/api/unfollow/{username}', api.UnfollowEndpoint())
 # patch
 # app.add_route('/api/edit/{id:int}', api.EditEndpoint())
 # app.add_route('/api/update/{id:int}', api.UpdateEndpoint())
 # app.add_route('/api/profile', api.ProfileEndpoint())
-# delete
-# app.add_route('/api/delete', api.DeleteEndpoint())
-# app.add_route('/api/erase', api.EraseEndpoint())
-# app.add_route('/api/unsend', api.UnsendEndpoint())
-# app.add_route('/api/unsave', api.UnsaveEndpoint())
-# app.add_route('/api/unfollow', api.UnfollowEndpoint())
 # get
 app.add_route('/api/feed', api.FeedEndpoint())
 app.add_route('/api/sub/{hashtag}', api.ChannelEndpoint())
@@ -46,16 +43,8 @@ app.add_route('/api/trending', api.TrendingEndpoint())
 app.add_route('/api/channels', api.ChannelsEndpoint())
 app.add_route('/api/messages', api.MessagesEndpoint())
 app.add_route('/api/notifications', api.NotificationsEndpoint())
+app.add_route('/api/chat/{username}', api.ChatEndpoint())
 app.add_route('/api/{username}', api.MemberEndpoint())
-app.add_route('/api/{username}/message', api.MessageEndpoint())
-
-app.add_route('/xhr/erase/{id:int}', xhr.WorkCallback(), suffix="erase")
-app.add_route('/xhr/unsend/{id:int}', xhr.TextCallback(), suffix="unsend")
-app.add_route('/xhr/delete/{id:int}', xhr.PostCallback(), suffix="delete")
-app.add_route('/xhr/save/{id:int}', xhr.PostCallback(), suffix="save")
-app.add_route('/xhr/unsave/{id:int}', xhr.PostCallback(), suffix="unsave")
-app.add_route('/xhr/follow/{username}', xhr.BondCallback(), suffix="follow")
-app.add_route('/xhr/unfollow/{username}', xhr.BondCallback(), suffix="unfollow")
 
 app.add_route('/feed', resources.FeedResource())
 app.add_route('/following', resources.FollowingResource())
@@ -73,6 +62,7 @@ app.add_route('/trending', resources.TrendingResource())
 app.add_route('/discover', resources.DiscoverResource())
 
 app.add_route('/about', resources.AboutResource())
+app.add_route('/api', resources.APIResource())
 app.add_route('/terms', resources.AboutResource(), suffix="terms")
 app.add_route('/privacy', resources.AboutResource(), suffix="privacy")
 app.add_route('/emoji', resources.EmojiResource())

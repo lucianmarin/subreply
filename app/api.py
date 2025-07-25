@@ -401,7 +401,7 @@ class MessagesEndpoint:
         }
 
 
-class MessageEndpoint:
+class ChatEndpoint:
     def fetch_entries(self, req, member):
         entries = Chat.objects.filter(
             Q(created_by=req.user.id, to_user=member.id) | Q(created_by=member.id, to_user=req.user.id)
@@ -433,3 +433,109 @@ class NotificationsEndpoint:
             'replies': req.user.notif_replies,
             'messages': req.user.notif_messages
         }
+
+
+class DeleteEndpoint:
+    @before(auth_user)
+    @before(auth_required)
+    def on_post(self, req, resp, id):
+        resp.content_type = MEDIA_JSON
+        entry = Post.objects.filter(id=id).first()
+        if not entry:
+            resp.media = {'status': 'not found'}
+            return
+        valid_ids = [
+            entry.created_by_id, entry.parent.created_by_id
+        ] if entry.parent_id else [entry.created_by_id]
+        if req.user.id not in valid_ids:
+            resp.media = {'status': 'not valid'}
+            return
+        entry.delete()
+        resp.media = {'status': 'deleted'}
+
+
+class SaveEndpoint:
+    @before(auth_user)
+    @before(auth_required)
+    def on_post(self, req, resp, id):
+        resp.content_type = MEDIA_JSON
+        entry = Post.objects.filter(id=id).exclude(created_by=req.user).first()
+        if not entry:
+            resp.media = {'status': 'not found'}
+            return
+        Save.objects.get_or_create(
+            created_at=utc_timestamp(),
+            created_by=req.user,
+            post=entry
+        )
+        resp.media = {'status': 'unsave'}
+
+
+class UnsaveEndpoint:
+    @before(auth_user)
+    @before(auth_required)
+    def on_post(self, req, resp, id):
+        resp.content_type = MEDIA_JSON
+        entry = Post.objects.filter(id=id).first()
+        if not entry:
+            resp.media = {'status': 'not found'}
+            return
+        Save.objects.filter(created_by=req.user, post=entry).delete()
+        resp.media = {'status': 'save'}
+
+
+class FollowEndpoint:
+    @before(auth_user)
+    @before(auth_required)
+    def on_post(self, req, resp, username):
+        resp.content_type = MEDIA_JSON
+        member = User.objects.filter(username=username.lower()).first()
+        if not member:
+            resp.media = {'status': 'not found'}
+            return
+        Bond.objects.get_or_create(
+            created_at=utc_timestamp(), created_by=req.user, to_user=member
+        )
+        resp.media = {'status': 'unfollow'}
+
+
+class UnfollowEndpoint:
+    @before(auth_user)
+    @before(auth_required)
+    def on_post(self, req, resp, username):
+        resp.content_type = MEDIA_JSON
+        member = User.objects.filter(username=username.lower()).first()
+        if not member:
+            resp.media = {'status': 'not found'}
+            return
+        Bond.objects.filter(created_by=req.user, to_user=member).delete()
+        resp.media = {'status': 'follow'}
+
+
+class UnsendEndpoint:
+    @before(auth_user)
+    @before(auth_required)
+    def on_post(self, req, resp, id):
+        resp.content_type = MEDIA_JSON
+        entry = Chat.objects.filter(id=id).first()
+        if not entry:
+            resp.media = {'status': 'not found'}
+            return
+        if req.user.id != entry.created_by_id:
+            resp.media = {'status': 'not valid'}
+            return
+        entry.delete()
+        resp.media = {'status': 'unsent'}
+
+
+class EraseEndpoint:
+    @before(auth_user)
+    @before(auth_required)
+    def on_post(self, req, resp, id):
+        resp.content_type = MEDIA_JSON
+        entry = Work.objects.filter(id=id).first()
+        if not entry:
+            resp.media = {'status': 'not found'}
+            return
+        entry.delete()
+        resp.media = {'status': 'erased'}

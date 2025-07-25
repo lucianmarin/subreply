@@ -37,7 +37,7 @@
             <li><code>/api/messages</code></li>
             <li><code>/api/notifications</code></li>
             <li><code>/api/{username}</code></li>
-            <li><code>/api/{username}/message</code></li>
+            <li><code>/api/chat/{username}</code></li>
         </ul>
 
         <h4>POST Endpoints</h4>
@@ -45,10 +45,17 @@
             <li><code>/api/login</code> &mdash; username*, password* params returns token and user</li>
             <li><code>/api/register</code> &mdash; username*, email*, password1*, password2*, email*, first_name, last_name, emoji, birthday, location params returns token and user</li>
             <li><code>/api/post</code> &mdash; parent, content* params returns post details</li>
+
+        <h4>POST Actions</h4>
+            <li><code>/api/erase/{id:int}</code></li>
+            <li><code>/api/unsend/{id:int}</code></li>
+            <li><code>/api/delete/{id:int}</code></li>
+            <li><code>/api/save/{id:int}</code></li>
+            <li><code>/api/unsave/{id:int}</code></li>
+            <li><code>/api/follow/{username}</code></li>
+            <li><code>/api/unfollow/{username}</code></li>
         </ul>
 
-        <h4>PATCH Endpoints</h4>
-
-        <h4>DELETE Endpoints</h4>
+        <h4>PUT Endpoints</h4>
     </div>
 {% endblock %}
