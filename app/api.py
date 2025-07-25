@@ -97,9 +97,9 @@ class PostEndpoint:
         hashtags, links, mentions = get_metadata(content)
         errors = {}
         errors['content'] = valid_content(content, req.user)
-        if not errors['content']:
+        if not errors['content'] and not parent:
             errors['content'] = valid_thread(content)
-        if not errors['content']:
+        if not errors['content'] and parent:
             errors['content'] = valid_reply(parent, req.user, content, mentions)
         resp.content_type = MEDIA_JSON
         if errors:
