@@ -36,7 +36,7 @@ class LoginEndpoint:
         errors, user = authentication(username, password)
         resp.content_type = MEDIA_JSON
         if errors:
-            resp.media = errors
+            resp.media = {'errors': errors}
         else:
             token = FERNET.encrypt(str(user.id).encode()).decode()
             resp.media = {
@@ -61,7 +61,7 @@ class RegisterEndpoint:
         errors = registration(f)
         resp.content_type = MEDIA_JSON
         if errors:
-            resp.media = errors
+            resp.media = {'errors': errors}
         else:
             user, is_new = User.objects.get_or_create(
                 username=f['username'],
@@ -90,10 +90,16 @@ class RegisterEndpoint:
 
 
 class PostEndpoint:
+    @before(auth_user)
+    @before(auth_required)
     def on_post(self, req, resp):
+        resp.content_type = MEDIA_JSON
         form = req.get_media()
         parent = Posts.filter(id=form.get('parent', 0)).first()
         content = get_content(form)
+        if not content:
+            resp.media = {'error': 'content parameter is empty'}
+            return
         hashtags, links, mentions = get_metadata(content)
         errors = {}
         errors['content'] = valid_content(content, req.user)
@@ -101,9 +107,9 @@ class PostEndpoint:
             errors['content'] = valid_thread(content)
         if not errors['content'] and parent:
             errors['content'] = valid_reply(parent, req.user, content, mentions)
-        resp.content_type = MEDIA_JSON
+        errors = {k: v for k, v in errors.items() if v}
         if errors:
-            resp.media = errors
+            resp.media = {'errors': errors}
         else:
             extra = {}
             extra['link'] = links[0] if links else ''
@@ -150,6 +156,7 @@ class ReplyEndpoint:
         ).order_by('id').prefetch_related(PPFR)
 
     @before(auth_user)
+    @before(auth_required)
     def on_get(self, req, resp, id):
         parent = Posts.filter(id=id).first()
         if not parent:
@@ -170,6 +177,7 @@ class MemberEndpoint:
         return entries.prefetch_related(PFR, PPFR)
 
     @before(auth_user)
+    @before(auth_required)
     def on_get(self, req, resp, username):
         username = username.lower()
         member = User.objects.filter(username=username).first()
@@ -291,6 +299,7 @@ class PeopleEndpoint:
         return qs.order_by('id') if terms else qs.order_by('-id')
 
     @before(auth_user)
+    @before(auth_required)
     def on_get(self, req, resp):
         q = demojize(req.params.get('q', '').strip())
         terms = [t.strip() for t in q.split() if t.strip()]
@@ -318,6 +327,7 @@ class DiscoverEndpoint:
         return Posts.filter(f).order_by('-id').prefetch_related(PFR, PPFR)
 
     @before(auth_user)
+    @before(auth_required)
     def on_get(self, req, resp):
         q = demojize(req.params.get('q', '').strip())
         terms = [t.strip() for t in q.split() if t.strip()]
@@ -340,6 +350,7 @@ class TrendingEndpoint:
         return entries.prefetch_related(PFR)
 
     @before(auth_user)
+    @before(auth_required)
     def on_get(self, req, resp):
         entries, page = paginate(req, self.fetch_entries())
         resp.content_type = MEDIA_JSON
