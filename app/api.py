@@ -140,21 +140,6 @@ class FeedEndpoint:
         }
 
 
-class ChannelEndpoint:
-    def fetch_entries(self, hashtag):
-        entries = Posts.filter(hashtag=hashtag).order_by('-id')
-        return entries.prefetch_related(PFR, PPFR)
-
-    @before(auth_user)
-    def on_get(self, req, resp, hashtag):
-        resp.content_type = MEDIA_JSON
-        entries, page = paginate(req, self.fetch_entries(hashtag))
-        resp.media = {
-            "page": page,
-            "entries": [build_entry(entry, parents=True) for entry in entries]
-        }
-
-
 class ReplyEndpoint:
     def fetch_entries(self, parent):
         return Posts.filter(parent=parent).order_by('-id').prefetch_related(RPFR)

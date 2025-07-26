@@ -31,7 +31,6 @@ app.add_route('/api/unfollow/{username}', api.UnfollowEndpoint())
 # app.add_route('/api/details', api.DetailsEndpoint())
 # get
 app.add_route('/api/feed', api.FeedEndpoint())
-app.add_route('/api/sub/{hashtag}', api.ChannelEndpoint())
 app.add_route('/api/reply/{id:int}', api.ReplyEndpoint())
 app.add_route('/api/following', api.FollowingEndpoint())
 app.add_route('/api/followers', api.FollowersEndpoint())
