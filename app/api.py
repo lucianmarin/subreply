@@ -299,7 +299,6 @@ class PeopleEndpoint:
         return qs.order_by('id') if terms else qs.order_by('-id')
 
     @before(auth_user)
-    @before(auth_required)
     def on_get(self, req, resp):
         q = demojize(req.params.get('q', '').strip())
         terms = [t.strip() for t in q.split() if t.strip()]
@@ -327,15 +326,15 @@ class DiscoverEndpoint:
         return Posts.filter(f).order_by('-id').prefetch_related(PFR, PPFR)
 
     @before(auth_user)
-    @before(auth_required)
     def on_get(self, req, resp):
         q = demojize(req.params.get('q', '').strip())
         terms = [t.strip() for t in q.split() if t.strip()]
         entries, page = paginate(req, self.fetch_entries(terms))
+        saves = req.user.saves if req.user else []
         resp.content_type = MEDIA_JSON
         resp.media = {
             "page": page,
-            "entries": [build_entry(entry, req.user.saves, parents=True) for entry in entries]
+            "entries": [build_entry(entry, saves, parents=True) for entry in entries]
         }
 
 
@@ -350,13 +349,13 @@ class TrendingEndpoint:
         return entries.prefetch_related(PFR)
 
     @before(auth_user)
-    @before(auth_required)
     def on_get(self, req, resp):
         entries, page = paginate(req, self.fetch_entries())
+        saves = req.user.saves if req.user else []
         resp.content_type = MEDIA_JSON
         resp.media = {
             "page": page,
-            "entries": [build_entry(entry, req.user.saves, parents=True) for entry in entries]
+            "entries": [build_entry(entry, saves, parents=True) for entry in entries]
         }
 
 
