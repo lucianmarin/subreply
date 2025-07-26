@@ -17,21 +17,21 @@ TYPES = [
 ]
 
 LINKS = {
-    'dribbble': '<a href="https://dribbble.com/{0}">Dribbble</a>',
-    'github': '<a href="https://github.com/{0}">GitHub</a>',
-    'instagram': '<a href="https://instagram.com/{0}">Instagram</a>',
-    'linkedin': '<a href="https://linkedin.com/in/{0}">LinkedIn</a>',
-    'patreon': '<a href="https://patreon.com/{0}">Patreon</a>',
-    'paypal': '<a href="https://paypal.me/{0}">PayPal</a>',
-    'pinboard': '<a href="https://pinboard.in/u:{0}/">Pinboard</a>',
-    'reddit': '<a href="https://reddit.com/u/{0}">Reddit</a>',
-    'soundcloud': '<a href="https://soundcloud.com/{0}">SoundCloud</a>',
-    'spotify': '<a href="https://open.spotify.com/user/{0}">Spotify</a>',
-    'telegram': '<a href="https://t.me/{0}">Telegram</a>',
-    'telephone': '<a href="tel:{0}">Telephone</a>',
-    'twitter': '<a href="https://twitter.com/{0}">Twitter</a>',
-    'x': '<a href="https://x.com/{0}">X</a>',
-    'youtube': '<a href="https://youtube.com/@{0}">YouTube</a>'
+    'dribbble': '<a href="https://dribbble.com/{0}" rel="me">Dribbble</a>',
+    'github': '<a href="https://github.com/{0}" rel="me">GitHub</a>',
+    'instagram': '<a href="https://instagram.com/{0}" rel="me">Instagram</a>',
+    'linkedin': '<a href="https://linkedin.com/in/{0}" rel="me">LinkedIn</a>',
+    'patreon': '<a href="https://patreon.com/{0}" rel="me">Patreon</a>',
+    'paypal': '<a href="https://paypal.me/{0}" rel="me">PayPal</a>',
+    'pinboard': '<a href="https://pinboard.in/u:{0}/" rel="me">Pinboard</a>',
+    'reddit': '<a href="https://reddit.com/u/{0}" rel="me">Reddit</a>',
+    'soundcloud': '<a href="https://soundcloud.com/{0}" rel="me">SoundCloud</a>',
+    'spotify': '<a href="https://open.spotify.com/user/{0}" rel="me">Spotify</a>',
+    'telegram': '<a href="https://t.me/{0}" rel="me">Telegram</a>',
+    'telephone': '<a href="tel:{0}" rel="me">Telephone</a>',
+    'twitter': '<a href="https://twitter.com/{0}" rel="me">Twitter</a>',
+    'x': '<a href="https://x.com/{0}" rel="me">X</a>',
+    'youtube': '<a href="https://youtube.com/@{0}" rel="me">YouTube</a>'
 }
 
 RESERVED = [
