@@ -126,7 +126,7 @@ class PostEndpoint:
                 **extra
             )
             re.set_ancestors()
-            resp.media = build_entry(re, parents=True)
+            resp.media = build_entry(re, [], parents=True)
 
 
 class FeedEndpoint:
@@ -142,7 +142,7 @@ class FeedEndpoint:
         entries, page = paginate(req, self.fetch_entries(req.user))
         resp.media = {
             "page": page,
-            "entries": [build_entry(entry, parents=True) for entry in entries]
+            "entries": [build_entry(entry, req.user.saves, parents=True) for entry in entries]
         }
 
 
@@ -165,9 +165,9 @@ class ReplyEndpoint:
         entries = self.fetch_entries(parent)
         resp.content_type = MEDIA_JSON
         resp.media = {
-            "entry": build_entry(parent),
-            "ancestors": [build_entry(entry) for entry in ancestors],
-            "entries": [build_entry(entry, parents=True) for entry in entries]
+            "entry": build_entry(parent, req.user.saves),
+            "ancestors": [build_entry(entry, req.user.saves) for entry in ancestors],
+            "entries": [build_entry(entry, req.user.saves, parents=True) for entry in entries]
         }
 
 
@@ -191,7 +191,7 @@ class MemberEndpoint:
         resp.media = {
             "page": page,
             "member": build_user(member),
-            "entries": [build_entry(entry, parents=True) for entry in entries],
+            "entries": [build_entry(entry, req.user.saves, parents=True) for entry in entries],
             "works": [build_work(work) for work in works]
         }
 
@@ -240,7 +240,7 @@ class MentionsEndpoint:
         resp.content_type = MEDIA_JSON
         resp.media = {
             "page": page,
-            "entries": [build_entry(entry, parents=True) for entry in entries]
+            "entries": [build_entry(entry, req.user.saves, parents=True) for entry in entries]
         }
 
 
@@ -256,7 +256,7 @@ class RepliesEndpoint:
         resp.content_type = MEDIA_JSON
         resp.media = {
             "page": page,
-            "entries": [build_entry(entry) for entry in entries]
+            "entries": [build_entry(entry, req.user.saves) for entry in entries]
         }
 
 
@@ -273,7 +273,7 @@ class SavedEndpoint:
         resp.content_type = MEDIA_JSON
         resp.media = {
             "page": page,
-            "entries": [build_entry(entry, parents=True) for entry in entries]
+            "entries": [build_entry(entry, req.user.saves, parents=True) for entry in entries]
         }
 
 
@@ -335,7 +335,7 @@ class DiscoverEndpoint:
         resp.content_type = MEDIA_JSON
         resp.media = {
             "page": page,
-            "entries": [build_entry(entry, parents=True) for entry in entries]
+            "entries": [build_entry(entry, req.user.saves, parents=True) for entry in entries]
         }
 
 
@@ -356,7 +356,7 @@ class TrendingEndpoint:
         resp.content_type = MEDIA_JSON
         resp.media = {
             "page": page,
-            "entries": [build_entry(entry, parents=True) for entry in entries]
+            "entries": [build_entry(entry, req.user.saves, parents=True) for entry in entries]
         }
 
 

@@ -22,5 +22,4 @@ def login_required(req, resp, resource, params):
 
 def auth_required(req, resp, resource, params):
     if not req.user:
-        resp.content_type = MEDIA_JSON
-        raise HTTPError("Login required")
+        raise HTTPError('Login required')
