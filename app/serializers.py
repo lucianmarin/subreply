@@ -19,8 +19,8 @@ def build_entry(entry, saves, parents=False):
         "saved": entry.id in saves,
         "timestamp": timeago(utc_timestamp() - entry.created_at)
     }
-    if parents and entry.parent:
-        data['parent'] = build_entry(entry.parent, saves)
+    if parents:
+        data['parent'] = build_entry(entry.parent, saves) if entry.parent else None
     if not entry.parent:
         data['kids'] = [build_entry(kid, saves) for kid in entry.kids.all()]
     return data
