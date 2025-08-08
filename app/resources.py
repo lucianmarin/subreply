@@ -56,14 +56,6 @@ class StaticResource:
             resp.text = f.read()
 
 
-class MainResource:
-    @before(auth_user)
-    def on_get(self, req, resp):
-        if req.user:
-            raise HTTPFound('/feed')
-        raise HTTPFound('/trending')
-
-
 class APIResource:
     @before(auth_user)
     def on_get(self, req, resp):
@@ -143,10 +135,15 @@ class FeedResource:
         entries = Posts.filter(created_by__in=friends).order_by('-id')
         return entries.prefetch_related(PFR, PPFR)
 
+    def fetch_public(self):
+        return Posts.order_by('-id').prefetch_related(PFR, PPFR)
+
     @before(auth_user)
-    @before(login_required)
     def on_get(self, req, resp):
-        entries, page, number = paginate(req, self.fetch_entries(req.user))
+        if req.user:
+            entries, page, number = paginate(req, self.fetch_entries(req.user))
+        else:
+            entries, page, number = paginate(req, self.fetch_public())
         resp.text = render(
             page=page, view='feed', number=number, content='',
             user=req.user, entries=entries, errors={},
@@ -159,7 +156,7 @@ class FeedResource:
         form = req.get_media()
         content = get_content(form)
         if not content:
-            raise HTTPFound('/feed')
+            raise HTTPFound('/')
         errors = {}
         errors['content'] = valid_content(content, req.user)
         if not errors['content']:
@@ -186,7 +183,7 @@ class FeedResource:
                 created_by=req.user,
                 **extra
             )
-            raise HTTPFound('/feed')
+            raise HTTPFound('/')
 
 
 class ReplyResource:
@@ -840,7 +837,7 @@ class LoginResource:
     @before(auth_user)
     def on_get(self, req, resp):
         if req.user:
-            raise HTTPFound('/feed')
+            raise HTTPFound('/')
         resp.text = render(page='login', view='login', errors={}, form={})
 
     def on_post(self, req, resp):
@@ -855,7 +852,7 @@ class LoginResource:
         else:
             token = FERNET.encrypt(str(user.id).encode()).decode()
             resp.set_cookie('identity', token, path="/", max_age=MAX_AGE)
-            raise HTTPFound('/feed')
+            raise HTTPFound('/')
 
 
 class LogoutResource:
@@ -870,7 +867,7 @@ class RegisterResource:
     @before(auth_user)
     def on_get(self, req, resp):
         if req.user:
-            raise HTTPFound('/feed')
+            raise HTTPFound('/')
         resp.text = render(
             page='register', view='register', errors={}, form={}
         )
@@ -914,14 +911,14 @@ class RegisterResource:
             # set id cookie
             token = FERNET.encrypt(str(user.id).encode()).decode()
             resp.set_cookie('identity', token, path="/", max_age=MAX_AGE)
-            raise HTTPFound('/feed')
+            raise HTTPFound('/')
 
 
 class RecoverResource:
     @before(auth_user)
     def on_get(self, req, resp):
         if req.user:
-            raise HTTPFound('/feed')
+            raise HTTPFound('/')
         resp.text = render(
             page='recover', view='recover', errors={}, form={}
         )
@@ -931,7 +928,7 @@ class RecoverResource:
         user = User.objects.filter(email=email).first()
         token = FERNET.encrypt(str(user.id).encode()).decode()
         resp.set_cookie('identity', token, path="/", max_age=MAX_AGE)
-        raise HTTPFound('/feed')
+        raise HTTPFound('/')
 
     def on_post(self, req, resp):
         form = req.get_media()

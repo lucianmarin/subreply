@@ -8,8 +8,6 @@ app = App(media_type=MEDIA_HTML)
 app.req_options.strip_url_path_trailing_slash = True
 app.resp_options.secure_cookies_by_default = not DEBUG
 
-app.add_route('/', resources.MainResource())
-
 # post
 app.add_route('/api/login', api.LoginEndpoint())
 app.add_route('/api/register', api.RegisterEndpoint())
@@ -45,7 +43,7 @@ app.add_route('/api/notifications', api.NotificationsEndpoint())
 app.add_route('/api/chat/{username}', api.ChatEndpoint())
 app.add_route('/api/{username}', api.MemberEndpoint())
 
-app.add_route('/feed', resources.FeedResource())
+app.add_route('/', resources.FeedResource())
 app.add_route('/following', resources.FollowingResource())
 app.add_route('/followers', resources.FollowersResource())
 app.add_route('/mentions', resources.MentionsResource())
