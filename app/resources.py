@@ -750,7 +750,7 @@ class AccountResource:
         else:
             req.user.delete()
             resp.unset_cookie('identity')
-            raise HTTPFound('/trending')
+            raise HTTPFound('/')
 
 
 class DetailsResource:
@@ -860,7 +860,7 @@ class LogoutResource:
     @before(login_required)
     def on_get(self, req, resp):
         resp.unset_cookie('identity')
-        raise HTTPFound('/trending')
+        raise HTTPFound('/')
 
 
 class RegisterResource:
