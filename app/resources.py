@@ -56,14 +56,6 @@ class StaticResource:
             resp.text = f.read()
 
 
-class APIResource:
-    @before(auth_user)
-    def on_get(self, req, resp):
-        resp.text = render(
-            page='api', view='api', user=req.user
-        )
-
-
 class AboutResource:
     @before(auth_user)
     def on_get(self, req, resp):
@@ -88,20 +80,19 @@ class AboutResource:
             page='privacy', view='about', user=req.user
         )
 
-
-class EmojiResource:
     @before(auth_user)
-    def on_get(self, req, resp):
-        codes = [v['en'] for v in EMOJI_DATA.values()]
-        shortcodes = set()
-        for c in codes:
-            if c.count('_') < 2 and '-' not in c and '’' not in c and c.islower():
-                shortcodes.add(c)
-        shortcodes = sorted(shortcodes)
-        odds = [s for i, s in enumerate(shortcodes) if i % 2 == 0]
-        evens = [s for i, s in enumerate(shortcodes) if i % 2 == 1]
+    def on_get_api(self, req, resp):
         resp.text = render(
-            page='emoji', view='emoji', user=req.user, rows=zip(evens, odds)
+            page='api', view='about', user=req.user
+        )
+
+    @before(auth_user)
+    def on_get_directory(self, req, resp):
+        users = User.objects.exclude(posts=None).order_by('-id').values_list('emoji', 'username')
+        odds = [s for i, s in enumerate(users) if i % 2 == 0]
+        evens = [s for i, s in enumerate(users) if i % 2 == 1]
+        resp.text = render(
+            page='directory', view='about', user=req.user, users=zip(evens, odds)
         )
 
 
@@ -127,6 +118,16 @@ class TxtResource:
         resp.text = "\n".join(urls)
 
 
+class IntroResource:
+    @before(auth_user)
+    def on_get(self, req, resp):
+        if req.user:
+            raise HTTPFound('/feed')
+        resp.text = render(
+            page='intro', view='intro', user=req.user
+        )
+
+
 class FeedResource:
     placeholder = "What are you up to?"
 
@@ -135,15 +136,10 @@ class FeedResource:
         entries = Posts.filter(created_by__in=friends).order_by('-id')
         return entries.prefetch_related(PFR, PPFR)
 
-    def fetch_public(self):
-        return Posts.order_by('-id').prefetch_related(PFR, PPFR)
-
     @before(auth_user)
+    @before(login_required)
     def on_get(self, req, resp):
-        if req.user:
-            entries, page, number = paginate(req, self.fetch_entries(req.user))
-        else:
-            entries, page, number = paginate(req, self.fetch_public())
+        entries, page, number = paginate(req, self.fetch_entries(req.user))
         resp.text = render(
             page=page, view='feed', number=number, content='',
             user=req.user, entries=entries, errors={},
@@ -425,7 +421,7 @@ class DestroyResource:
     def on_get(self, req, resp, username):
         if not req.user.id == 1:
             raise HTTPFound('/people')
-        User.objects.filter(username=username.lower()).delete()
+        User.objects.filter(username=username).delete()
         raise HTTPFound('/people')
 
 
@@ -452,6 +448,7 @@ class PeopleResource:
         return qs.order_by('id') if terms else qs.order_by('-id')
 
     @before(auth_user)
+    @before(login_required)
     def on_get(self, req, resp):
         q = demojize(req.params.get('q', '').strip())
         terms = [t.strip() for t in q.split() if t.strip()]
@@ -482,6 +479,7 @@ class DiscoverResource:
         return Posts.filter(f).order_by('-id').prefetch_related(PFR, PPFR)
 
     @before(auth_user)
+    @before(login_required)
     def on_get(self, req, resp):
         q = demojize(req.params.get('q', '').strip())
         terms = [t.strip() for t in q.split() if t.strip()]
@@ -837,7 +835,7 @@ class LoginResource:
     @before(auth_user)
     def on_get(self, req, resp):
         if req.user:
-            raise HTTPFound('/')
+            raise HTTPFound('/feed')
         resp.text = render(page='login', view='login', errors={}, form={})
 
     def on_post(self, req, resp):
@@ -867,7 +865,7 @@ class RegisterResource:
     @before(auth_user)
     def on_get(self, req, resp):
         if req.user:
-            raise HTTPFound('/')
+            raise HTTPFound('/feed')
         resp.text = render(
             page='register', view='register', errors={}, form={}
         )
@@ -918,7 +916,7 @@ class RecoverResource:
     @before(auth_user)
     def on_get(self, req, resp):
         if req.user:
-            raise HTTPFound('/')
+            raise HTTPFound('/feed')
         resp.text = render(
             page='recover', view='recover', errors={}, form={}
         )
@@ -928,7 +926,7 @@ class RecoverResource:
         user = User.objects.filter(email=email).first()
         token = FERNET.encrypt(str(user.id).encode()).decode()
         resp.set_cookie('identity', token, path="/", max_age=MAX_AGE)
-        raise HTTPFound('/')
+        raise HTTPFound('/feed')
 
     def on_post(self, req, resp):
         form = req.get_media()

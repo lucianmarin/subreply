@@ -56,6 +56,28 @@ table td:nth-child(even), table th:nth-child(even) { width: calc(50% - 30px); ov
 
 table td:nth-child(even):last-child, table th:nth-child(even):last-child { border-right: 0 none; }
 
+.home { background-color: #6060e0; }
+
+.intro { width: 280px; margin: 0 auto; }
+
+.intro img { margin: 20px 92px; }
+
+.intro h2, .intro h4 { color: white; margin: 10px 0; text-align: center; }
+
+.intro a { color: white; }
+
+.intro .account { color: white; font-size: var(--small); margin: 40px 0; text-align: center; text-transform: uppercase; }
+
+.intro .account a { text-decoration: none; }
+
+.intro .account a:hover { text-decoration: underline; }
+
+.intro .linked { color: white; font-size: var(--small); margin: 20px 0; text-align: center; }
+
+.intro .linked a { text-decoration: underline; }
+
+.intro .linked a:hover { text-decoration: none; }
+
 .container { display: grid; grid-column-gap: 10px; grid-template-columns: auto 150px 525px auto; }
 
 .container > div { min-height: 100vh; }

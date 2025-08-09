@@ -1,11 +1,7 @@
 <div class="entry">
     <div class="author">
         {% if view == "member" %}
-            {% if user == member %}
-                <a class="right caps" href="/add">Add</a>
-            {% elif user %}
-                <a class="right caps" href="/{{ member }}/message">Message</a>
-            {% endif %}
+            <a class="right caps" href="/{{ member }}/message">Message</a>
         {% else %}
             <a class="right" href="/{{ member }}">{{ entry.created_at | shortdate }}</b>
         {% endif %}

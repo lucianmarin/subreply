@@ -13,9 +13,6 @@
         {% if view == 'member' %}
             {% include "common/user.html" %}
             {% include "common/status.html" %}
-            {% for work in works %}
-                {% include "common/work.html" %}
-            {% endfor %}
         {% endif %}
 
         {% for entry in entries %}

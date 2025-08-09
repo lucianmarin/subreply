@@ -299,6 +299,7 @@ class PeopleEndpoint:
         return qs.order_by('id') if terms else qs.order_by('-id')
 
     @before(auth_user)
+    @before(auth_required)
     def on_get(self, req, resp):
         q = demojize(req.params.get('q', '').strip())
         terms = [t.strip() for t in q.split() if t.strip()]
@@ -326,6 +327,7 @@ class DiscoverEndpoint:
         return Posts.filter(f).order_by('-id').prefetch_related(PFR, PPFR)
 
     @before(auth_user)
+    @before(auth_required)
     def on_get(self, req, resp):
         q = demojize(req.params.get('q', '').strip())
         terms = [t.strip() for t in q.split() if t.strip()]
@@ -378,7 +380,7 @@ class MessagesEndpoint:
         }
 
 
-class ChatEndpoint:
+class MessageEndpoint:
     def fetch_entries(self, req, member):
         entries = Chat.objects.filter(
             Q(created_by=req.user.id, to_user=member.id) | Q(created_by=member.id, to_user=req.user.id)

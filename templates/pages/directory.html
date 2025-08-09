@@ -4,7 +4,7 @@
     <div class="title">
         <a href="/about">About</a>
         <a href="/api">API</a>
-        <a href="/emoji" class="on">Emoji</a>
+        <a href="/directory" class="on">Directory</a>
         <a href="/privacy">Privacy</a>
         <a href="/terms">Terms</a>
     </div>
@@ -13,15 +13,15 @@
         <table>
             <tr>
                 <th>:)</th>
-                <th>Shortcode</th>
+                <th>Username</th>
                 <th>;)</th>
-                <th>Shortcode</th>
+                <th>Username</th>
             </tr>
-            {% for row in rows %}
+            {% for user in users %}
                 <tr>
-                    {% for shortcode in row %}
-                        <td>{{ shortcode | emojize }}</td>
-                        <td>{{ shortcode }}</td>
+                    {% for emoji, username in user %}
+                        <td>{{ emoji | emojize }}</td>
+                        <td><a href="/{{ username }}">@{{ username }}</a></td>
                     {% endfor %}
                 </tr>
             {% endfor %}
