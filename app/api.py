@@ -401,6 +401,26 @@ class MessageEndpoint:
         }
 
 
+class ChannelsEndpoint:
+    def fetch_entries(self):
+        last_ids = Post.objects.exclude(
+            hashtag=''
+        ).values('hashtag').annotate(last_id=Max('id')).values('last_id')
+        entries = Posts.filter(id__in=last_ids).order_by('-id')
+        return entries.prefetch_related(PFR, PPFR)
+
+    @before(auth_user)
+    @before(auth_required)
+    def on_get(self, req, resp):
+        entries, page = paginate(req, self.fetch_entries())
+        resp.content_type = MEDIA_JSON
+        resp.media = {
+            "page": page,
+            "entries": [build_entry(entry, parents=True) for entry in entries]
+        }
+
+# INFO
+
 class NotificationsEndpoint:
     @before(auth_user)
     @before(auth_required)
@@ -413,6 +433,7 @@ class NotificationsEndpoint:
             'messages': req.user.notif_messages
         }
 
+# ACTIONS
 
 class DeleteEndpoint:
     @before(auth_user)

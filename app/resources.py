@@ -128,31 +128,39 @@ class IntroResource:
         )
 
 
-class FeedResource:
-    placeholder = "What are you up to?"
+class MainResource:
+    place_feed = "What are you up to?"
+    place_sub = "Chat in #{0}"
 
-    def fetch_entries(self, user):
+    def fetch_feed(self, user):
         friends = Bond.objects.filter(created_by=user).values('to_user_id')
         entries = Posts.filter(created_by__in=friends).order_by('-id')
         return entries.prefetch_related(PFR, PPFR)
 
-    @before(auth_user)
-    @before(login_required)
-    def on_get(self, req, resp):
-        entries, page, number = paginate(req, self.fetch_entries(req.user))
-        resp.text = render(
-            page=page, view='feed', number=number, content='',
-            user=req.user, entries=entries, errors={},
-            placeholder=self.placeholder
-        )
+    def fetch_sub(self, hashtag):
+        entries = Posts.filter(hashtag=hashtag).order_by('-id')
+        return entries.prefetch_related(PFR, PPFR)
 
     @before(auth_user)
     @before(login_required)
-    def on_post(self, req, resp):
-        form = req.get_media()
-        content = get_content(form)
-        if not content:
-            raise HTTPFound('/')
+    def on_get_feed(self, req, resp):
+        entries, page, number = paginate(req, self.fetch_feed(req.user))
+        resp.text = render(
+            page=page, view='feed', number=number, content='',
+            user=req.user, entries=entries, errors={}, hashtag='',
+            placeholder=self.place_feed
+        )
+
+    @before(auth_user)
+    def on_get_sub(self, req, resp, hashtag):
+        entries, page, number = paginate(req, self.fetch_sub(hashtag))
+        resp.text = render(
+            page=page, view='channel', number=number, content="",
+            user=req.user, entries=entries, errors={}, hashtag=hashtag,
+            placeholder=self.place_sub.format(hashtag)
+        )
+
+    def post(self, req, resp, content, hashtag, placeholder):
         errors = {}
         errors['content'] = valid_content(content, req.user)
         if not errors['content']:
@@ -163,7 +171,7 @@ class FeedResource:
             resp.text = render(
                 page='regular', view='feed', content=content, number=1,
                 user=req.user, entries=entries, errors=errors,
-                placeholder=self.placeholder
+                hashtag=hashtag, placeholder=placeholder
             )
         else:
             hashtags, links, mentions = get_metadata(content)
@@ -179,7 +187,27 @@ class FeedResource:
                 created_by=req.user,
                 **extra
             )
+            if th.hashtag:
+                raise HTTPFound(f'/sub/{th.hashtag}')
             raise HTTPFound('/')
+
+    @before(auth_user)
+    @before(login_required)
+    def on_post_feed(self, req, resp):
+        form = req.get_media()
+        content = get_content(form)
+        if not content:
+            raise HTTPFound('/')
+        self.post(req, resp, content, '', self.place_feed)
+
+    @before(auth_user)
+    @before(login_required)
+    def on_post_sub(self, req, resp, hashtag):
+        form = req.get_media()
+        content = get_content(form)
+        if not content:
+            raise HTTPFound(f'/sub/{hashtag}')
+        self.post(req, resp, content, hashtag, self.place_sub.format(hashtag))
 
 
 class ReplyResource:
@@ -583,6 +611,24 @@ class MessageResource:
                 seen_at=utc_timestamp() if member == req.user else .0
             )
             raise HTTPFound(f"/{username}/message")
+
+
+class ChannelsResource:
+    def fetch_entries(self):
+        last_ids = Post.objects.exclude(
+            hashtag=''
+        ).values('hashtag').annotate(last_id=Max('id')).values('last_id')
+        entries = Posts.filter(id__in=last_ids).order_by('-id')
+        return entries.prefetch_related(PFR, PPFR)
+
+    @before(auth_user)
+    @before(login_required)
+    def on_get(self, req, resp):
+        entries, page, number = paginate(req, self.fetch_entries())
+        resp.text = render(
+            page=page, view='channels', number=number,
+            user=req.user, entries=entries,
+        )
 
 
 class AddResource:

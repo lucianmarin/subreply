@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block main %}
-    {% if view == 'feed' %}
+    {% if view in ['feed', 'channel'] %}
         {% include "input/thread.html" %}
     {% elif view == 'message' %}
         {% include "input/message.html" %}
