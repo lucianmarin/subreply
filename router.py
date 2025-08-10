@@ -8,6 +8,8 @@ app = App(media_type=MEDIA_HTML)
 app.req_options.strip_url_path_trailing_slash = True
 app.resp_options.secure_cookies_by_default = not DEBUG
 
+app.add_route('/', resources.MainResource())
+
 # post
 app.add_route('/api/login', api.LoginEndpoint())
 app.add_route('/api/register', api.RegisterEndpoint())
@@ -15,7 +17,6 @@ app.add_route('/api/post', api.PostEndpoint())
 # app.add_route('/api/{username}/send', api.SendEndpoint())
 # app.add_route('/api/add', api.AddEndpoint())
 # actions
-app.add_route('/api/erase/{id:int}', api.EraseEndpoint())
 app.add_route('/api/unsend/{id:int}', api.UnsendEndpoint())
 app.add_route('/api/delete/{id:int}', api.DeleteEndpoint())
 app.add_route('/api/save/{id:int}', api.SaveEndpoint())
@@ -44,9 +45,8 @@ app.add_route('/api/{username}/message', api.MessageEndpoint())
 app.add_route('/api/{username}/posts', api.MemberEndpoint())
 # app.add_route('/api/{username}/info', api.InfoEndpoint())
 
-app.add_route('/', resources.IntroResource())
-app.add_route('/feed', resources.MainResource(), suffix="feed")
-app.add_route('/sub/{hashtag}', resources.MainResource(), suffix="sub")
+app.add_route('/feed', resources.FeedResource())
+app.add_route('/sub/{hashtag}', resources.FeedResource(), suffix="sub")
 app.add_route('/following', resources.FollowingResource())
 app.add_route('/followers', resources.FollowersResource())
 app.add_route('/mentions', resources.MentionsResource())
@@ -81,9 +81,6 @@ app.add_route('/account/export', resources.AccountResource(), suffix="export")
 app.add_route('/profile', resources.ProfileResource())
 app.add_route('/details', resources.DetailsResource())
 
-app.add_route('/add', resources.AddResource())
-
-app.add_route('/update/{id:int}', resources.UpdateResource())
 app.add_route('/reply/{id:int}', resources.ReplyResource())
 app.add_route('/edit/{id:int}', resources.EditResource())
 app.add_route('/{username}/message', resources.MessageResource())

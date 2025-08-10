@@ -6,7 +6,7 @@ from django.db.models import Count, F, Prefetch, Q, Max
 
 from app.forms import get_content, get_emoji, get_location, get_metadata, get_name
 from app.hooks import auth_required, auth_user
-from app.models import Bond, Chat, Post, Save, User, Work
+from app.models import Bond, Chat, Post, Save, User
 from app.serializers import build_entry, build_user, build_chat, build_work
 from app.utils import build_hash, utc_timestamp, verify_hash
 from app.validation import (authentication, registration, valid_content, valid_reply,
@@ -526,16 +526,3 @@ class UnsendEndpoint:
             return
         entry.delete()
         resp.media = {'status': 'unsent'}
-
-
-class EraseEndpoint:
-    @before(auth_user)
-    @before(auth_required)
-    def on_post(self, req, resp, id):
-        resp.content_type = MEDIA_JSON
-        entry = Work.objects.filter(id=id).first()
-        if not entry:
-            resp.media = {'status': 'not found'}
-            return
-        entry.delete()
-        resp.media = {'status': 'erased'}

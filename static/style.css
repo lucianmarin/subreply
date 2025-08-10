@@ -42,10 +42,6 @@ svg path { fill: none; stroke: var(--black); }
 
 table { border-spacing: 0px; font-size: var(--small); line-height: 15px; margin: 10px 0; width: 100%; }
 
-table a { color: var(--accent); }
-
-table a:hover { color: var(--gray); }
-
 table th { color: var(--silver); font-weight: normal; text-align: left; padding-bottom: 6px; }
 
 table td { border-top: var(--whitesmoke) 1px solid; padding: 6px 0; }
@@ -174,18 +170,6 @@ table td:nth-child(even):last-child, table th:nth-child(even):last-child { borde
 
 .content b { color: var(--silver); }
 
-.position { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-
-.position .name { color: var(--black); font-weight: bold; }
-
-.position .name:hover { color: var(--gray); }
-
-.position .date { color: var(--silver); float: right; font-size: var(--small); }
-
-.description { font-size: var(--small); }
-
-.none { display: none; }
-
 .small { font-size: var(--small); overflow: hidden; }
 
 .small b { color: var(--silver); float: left; }
@@ -260,7 +244,7 @@ table td:nth-child(even):last-child, table th:nth-child(even):last-child { borde
 
 .error a { color: var(--alert); font-weight: bold; }
 
-.about a { font-weight: bold; }
+.about a { color: var(--accent); }
 
 .about a:hover { color: var(--gray); }
 

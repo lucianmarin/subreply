@@ -1,12 +1,12 @@
 from django.db.models import Count, F, Prefetch, Q, Max
-from emoji import demojize, EMOJI_DATA
+from emoji import demojize
 from falcon import HTTPFound, HTTPNotFound, before
 from strictyaml import as_document
 
 from app.forms import get_content, get_emoji, get_location, get_metadata, get_name
 from app.hooks import auth_user, login_required
 from app.jinja import render
-from app.models import Bond, Chat, Post, Save, User, Work
+from app.models import Bond, Chat, Post, Save, User
 from app.utils import build_hash, utc_timestamp, verify_hash
 from app.validation import (authentication, working, profiling, registration,
                             valid_content, valid_handle, valid_password, valid_phone,
@@ -54,6 +54,14 @@ class StaticResource:
         print("load", filepath, mode)
         with open(filepath, mode) as f:
             resp.text = f.read()
+
+
+class MainResource:
+    @before(auth_user)
+    def on_get(self, req, resp):
+        if req.user:
+            raise HTTPFound('/feed')
+        raise HTTPFound('/discover')
 
 
 class AboutResource:
@@ -128,7 +136,7 @@ class IntroResource:
         )
 
 
-class MainResource:
+class FeedResource:
     place_feed = "What are you up to?"
     place_sub = "Chat in #{0}"
 
@@ -143,7 +151,7 @@ class MainResource:
 
     @before(auth_user)
     @before(login_required)
-    def on_get_feed(self, req, resp):
+    def on_get(self, req, resp):
         entries, page, number = paginate(req, self.fetch_feed(req.user))
         resp.text = render(
             page=page, view='feed', number=number, content='',
@@ -193,7 +201,7 @@ class MainResource:
 
     @before(auth_user)
     @before(login_required)
-    def on_post_feed(self, req, resp):
+    def on_post(self, req, resp):
         form = req.get_media()
         content = get_content(form)
         if not content:
@@ -476,7 +484,6 @@ class PeopleResource:
         return qs.order_by('id') if terms else qs.order_by('-id')
 
     @before(auth_user)
-    @before(login_required)
     def on_get(self, req, resp):
         q = demojize(req.params.get('q', '').strip())
         terms = [t.strip() for t in q.split() if t.strip()]
@@ -507,7 +514,6 @@ class DiscoverResource:
         return Posts.filter(f).order_by('-id').prefetch_related(PFR, PPFR)
 
     @before(auth_user)
-    @before(login_required)
     def on_get(self, req, resp):
         q = demojize(req.params.get('q', '').strip())
         terms = [t.strip() for t in q.split() if t.strip()]
@@ -516,25 +522,6 @@ class DiscoverResource:
             page=page, view='discover', number=number, q=q,
             user=req.user, entries=entries, errors={},
             placeholder=self.placeholder
-        )
-
-
-class TrendingResource:
-    limit = 24
-
-    def fetch_entries(self):
-        sample = Post.objects.filter(parent=None).exclude(
-            kids=None
-        ).order_by('-id').values('id')[:self.limit]
-        entries = Posts.filter(id__in=sample).order_by('-replies', '-id')
-        return entries.prefetch_related(PFR)
-
-    @before(auth_user)
-    def on_get(self, req, resp):
-        entries, page, number = paginate(req, self.fetch_entries())
-        resp.text = render(
-            page=page, view='trending', number=number,
-            user=req.user, entries=entries
         )
 
 
@@ -622,96 +609,12 @@ class ChannelsResource:
         return entries.prefetch_related(PFR, PPFR)
 
     @before(auth_user)
-    @before(login_required)
     def on_get(self, req, resp):
         entries, page, number = paginate(req, self.fetch_entries())
         resp.text = render(
             page=page, view='channels', number=number,
             user=req.user, entries=entries,
         )
-
-
-class AddResource:
-    @before(auth_user)
-    @before(login_required)
-    def on_get(self, req, resp):
-        count = Work.objects.filter(created_by=req.user).count()
-        if count == 8:
-            raise HTTPFound(f"/{req.user}")
-        entry = Work.objects.none()
-        resp.text = render(
-            page='experience', view='add', user=req.user,
-            form={}, errors={}, entry=entry
-        )
-
-    @before(auth_user)
-    @before(login_required)
-    def on_post(self, req, resp):
-        form = req.get_media()
-        f = {}
-        f['title'] = form.get('title', '').strip()
-        f['entity'] = form.get('entity', '').strip()
-        f['start_date'] = form.get('start_date', '').strip()
-        f['end_date'] = form.get('end_date', '').strip()
-        f['location'] = get_location(form)
-        f['link'] = form.get('link', '').strip().lower()
-        f['description'] = get_content(form, 'description')
-        errors = working(f, req.user)
-        if errors:
-            resp.text = render(
-                page='experience', view='add', user=req.user,
-                errors=errors, form=form
-            )
-        else:
-            f['start_date'] = int(f['start_date'].replace('-', ''))
-            f['end_date'] = int(f['end_date'].replace('-', '')) if f['end_date'] else None
-            work, _ = Work.objects.get_or_create(
-                created_by=req.user,
-                created_at=utc_timestamp(),
-                defaults=f
-            )
-            raise HTTPFound('/{0}'.format(req.user))
-
-
-class UpdateResource:
-    @before(auth_user)
-    @before(login_required)
-    def on_get(self, req, resp, id):
-        entry = Work.objects.get(id=id)
-        if not entry or entry.created_by != req.user:
-            raise HTTPNotFound
-        resp.text = render(
-            page='experience', view='update', user=req.user,
-            form={}, errors={}, entry=entry
-        )
-
-    @before(auth_user)
-    @before(login_required)
-    def on_post(self, req, resp, id):
-        form = req.get_media()
-        entry = Work.objects.get(id=id)
-        f = {}
-        f['title'] = form.get('title', '').strip()
-        f['entity'] = form.get('entity', '').strip()
-        f['start_date'] = form.get('start_date', '').strip()
-        f['end_date'] = form.get('end_date', '').strip()
-        f['location'] = get_location(form)
-        f['link'] = form.get('link', '').strip().lower()
-        f['description'] = get_content(form, 'description')
-        errors = working(f, req.user)
-        if errors:
-            resp.text = render(
-                page='experience', view='update', user=req.user,
-                errors=errors, form=form, entry=entry
-            )
-        else:
-            f['start_date'] = int(f['start_date'].replace('-', ''))
-            f['end_date'] = int(f['end_date'].replace('-', '')) if f['end_date'] else None
-            for field, value in f.items():
-                if getattr(entry, field, '') != value:
-                    setattr(entry, field, value)
-            entry.save()
-            raise HTTPFound('/{0}'.format(req.user))
 
 
 class AccountResource:
@@ -794,7 +697,7 @@ class AccountResource:
         else:
             req.user.delete()
             resp.unset_cookie('identity')
-            raise HTTPFound('/')
+            raise HTTPFound('/discover')
 
 
 class DetailsResource:
@@ -896,7 +799,7 @@ class LoginResource:
         else:
             token = FERNET.encrypt(str(user.id).encode()).decode()
             resp.set_cookie('identity', token, path="/", max_age=MAX_AGE)
-            raise HTTPFound('/')
+            raise HTTPFound('/feed')
 
 
 class LogoutResource:
@@ -904,7 +807,7 @@ class LogoutResource:
     @before(login_required)
     def on_get(self, req, resp):
         resp.unset_cookie('identity')
-        raise HTTPFound('/')
+        raise HTTPFound('/discover')
 
 
 class RegisterResource:

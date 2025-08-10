@@ -129,10 +129,6 @@ table
     line-height: 15px
     margin: 10px 0
     width: 100%
-    a
-        color: var(--accent)
-        &:hover
-            color: var(--gray)
     th
         color: var(--silver)
         font-weight: normal
@@ -355,24 +351,6 @@ table
     b
         color: var(--silver)
 
-.position
-    @include dots
-    .name
-        color: var(--black)
-        font-weight: bold
-        &:hover
-            color: var(--gray)
-    .date
-        color: var(--silver)
-        float: right
-        font-size: var(--small)
-
-.description
-    font-size: var(--small)
-
-.none
-    display: none
-
 .small
     font-size: var(--small)
     overflow: hidden
@@ -479,7 +457,7 @@ table
 
 .about
     a
-        font-weight: bold
+        color: var(--accent)
         &:hover
             color: var(--gray)
     h4
