@@ -345,12 +345,9 @@ class MemberResource:
         if not member:
             raise HTTPNotFound
         entries, page, number = paginate(req, self.fetch_entries(member))
-        works = Work.objects.filter(created_by=member).order_by(
-            F('end_date').desc(nulls_first=True), '-start_date'
-        )
         resp.text = render(
             page=page, view='member', number=number, errors={},
-            user=req.user, member=member, entries=entries, works=works
+            user=req.user, member=member, entries=entries
         )
 
 

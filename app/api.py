@@ -184,15 +184,11 @@ class MemberEndpoint:
         if not member:
             raise HTTPNotFound
         entries, page = paginate(req, self.fetch_entries(member))
-        works = Work.objects.filter(created_by=member).order_by(
-            F('end_date').desc(nulls_first=True), '-start_date'
-        )
         resp.content_type = MEDIA_JSON
         resp.media = {
             "page": page,
             "member": build_user(member),
-            "entries": [build_entry(entry, req.user.saves, parents=True) for entry in entries],
-            "works": [build_work(work) for work in works]
+            "entries": [build_entry(entry, req.user.saves, parents=True) for entry in entries]
         }
 
 
