@@ -2,8 +2,6 @@
 
 Tiny, but mighty social network. Create an account at https://subreply.com.
 
-X and Threads are filled with spam. Instagram and TikTok are filled with crappy videos. Facebook and LinkedIn shouldn't even be mentioned because of shady things they do. Protocol based social media Bluesky, Mastodon, Nostr are all gimmicky at best. Subreply is the only sane social network that doesn't waste your time.
-
 ## Install
 
 Install PostgreSQL server at 6432 port and `createdb subreply` then:
