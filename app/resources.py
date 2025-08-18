@@ -97,8 +97,8 @@ class AboutResource:
     @before(auth_user)
     def on_get_directory(self, req, resp):
         users = User.objects.exclude(posts=None).order_by('-id').values_list('emoji', 'username')
-        odds = [s for i, s in enumerate(users) if i % 2 == 0]
-        evens = [s for i, s in enumerate(users) if i % 2 == 1]
+        odds = [u for i, u in enumerate(users) if i % 2 == 0]
+        evens = [u for i, u in enumerate(users) if i % 2 == 1]
         resp.text = render(
             page='directory', view='about', user=req.user, users=zip(evens, odds)
         )
