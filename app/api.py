@@ -334,6 +334,27 @@ class DiscoverEndpoint:
         }
 
 
+class TrendingEndpoint:
+    limit = 24
+
+    def fetch_entries(self):
+        sample = Post.objects.filter(parent=None).exclude(
+            kids=None
+        ).order_by('-id').values('id')[:self.limit]
+        entries = Posts.filter(id__in=sample).order_by('-replies', '-id')
+        return entries.prefetch_related(PFR)
+
+    @before(auth_user)
+    def on_get(self, req, resp):
+        entries, page = paginate(req, self.fetch_entries())
+        saves = req.user.saves if req.user else []
+        resp.content_type = MEDIA_JSON
+        resp.media = {
+            "page": page,
+            "entries": [build_entry(entry, saves, parents=True) for entry in entries]
+        }
+
+
 class MessagesEndpoint:
     def fetch_entries(self, req):
         last_ids = Chat.objects.filter(
@@ -371,24 +392,6 @@ class MessageEndpoint:
         resp.media = {
             "page": page,
             "entries": [build_chat(entry) for entry in entries]
-        }
-
-
-class ChannelsEndpoint:
-    def fetch_entries(self):
-        last_ids = Post.objects.exclude(
-            hashtag=''
-        ).values('hashtag').annotate(last_id=Max('id')).values('last_id')
-        entries = Posts.filter(id__in=last_ids).order_by('-id')
-        return entries.prefetch_related(PFR, PPFR)
-
-    @before(auth_user)
-    def on_get(self, req, resp):
-        entries, page = paginate(req, self.fetch_entries())
-        resp.content_type = MEDIA_JSON
-        resp.media = {
-            "page": page,
-            "entries": [build_entry(entry, parents=True) for entry in entries]
         }
 
 # INFO
