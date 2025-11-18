@@ -26,20 +26,6 @@ def build_entry(entry, saves, parents=False):
     return data
 
 
-def build_work(entry):
-    data = {
-        "id": entry.id,
-        "title": entry.title,
-        "entity": entry.entity,
-        "start_date": entry.start_date,
-        "end_date": entry.end_date,
-        "location": entry.location,
-        "link": entry.link,
-        "description": emojize(entry.description)
-    }
-    return data
-
-
 def build_chat(entry):
     data = {
         "id": entry.id,
