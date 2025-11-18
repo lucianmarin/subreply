@@ -2,13 +2,13 @@ from emoji import demojize
 from falcon import HTTPNotFound
 from falcon.hooks import before
 from falcon.constants import MEDIA_JSON
-from django.db.models import Count, F, Prefetch, Q, Max
+from django.db.models import Count, Prefetch, Q, Max
 
-from app.forms import get_content, get_emoji, get_location, get_metadata, get_name
+from app.forms import get_content, get_emoji, get_metadata, get_name
 from app.hooks import auth_required, auth_user
 from app.models import Bond, Chat, Post, Save, User
-from app.serializers import build_entry, build_user, build_chat, build_work
-from app.utils import build_hash, utc_timestamp, verify_hash
+from app.serializers import build_entry, build_user, build_chat
+from app.utils import build_hash, utc_timestamp
 from app.validation import (authentication, registration, valid_content, valid_reply,
                             valid_thread)
 from project.settings import FERNET
