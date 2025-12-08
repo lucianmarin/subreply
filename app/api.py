@@ -129,6 +129,22 @@ class PostEndpoint:
             resp.media = build_entry(re, [], parents=True)
 
 
+class SendEndpoint:
+    @before(auth_user)
+    @before(auth_required)
+    def on_post(self, req, resp, username):
+        resp.content_type = MEDIA_JSON
+        form = req.get_media()
+        msg, is_new = Chat.objects.get_or_create(
+            to_user=User.objects.get(username=username),
+            content=form.get('content', ''),
+            created_at=utc_timestamp(),
+            created_by=req.user,
+            seen_at=utc_timestamp() if member == req.user else .0
+        )
+        resp.media = build_chat(msg)
+
+
 class FeedEndpoint:
     def fetch_entries(self, user):
         friends = Bond.objects.filter(created_by=user).values('to_user_id')

@@ -4,11 +4,10 @@ from app.utils import utc_timestamp
 
 
 def build_user(user):
-    data = {
+    return {
         "username": user.username,
         "full_name": emojize(user.full_name)
     }
-    return data
 
 
 def build_entry(entry, saves, parents=False):
@@ -27,11 +26,10 @@ def build_entry(entry, saves, parents=False):
 
 
 def build_chat(entry):
-    data = {
+    return {
         "id": entry.id,
         "content": emojize(entry.content),
         "created_by": build_user(entry.created_by),
         "to_user": build_user(entry.to_user),
         "timestamp": timeago(utc_timestamp() - entry.created_at)
     }
-    return data
