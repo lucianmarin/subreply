@@ -135,9 +135,11 @@ class SendEndpoint:
     def on_post(self, req, resp, username):
         resp.content_type = MEDIA_JSON
         form = req.get_media()
+        member = User.objects.get(username=username)
+        content = form.get('content', '')
         msg, is_new = Chat.objects.get_or_create(
-            to_user=User.objects.get(username=username),
-            content=form.get('content', ''),
+            to_user=member,
+            content=content,
             created_at=utc_timestamp(),
             created_by=req.user,
             seen_at=utc_timestamp() if member == req.user else .0
