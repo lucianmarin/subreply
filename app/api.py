@@ -92,7 +92,7 @@ class RegisterEndpoint:
 class ProfileEndpoint:
     @before(auth_user)
     @before(auth_required)
-    def on_post(self, req, resp):
+    def on_patch(self, req, resp):
         resp.content_type = MEDIA_JSON
         form = req.get_media()
         f = {}
@@ -128,7 +128,7 @@ class DetailsEndpoint:
 
     @before(auth_user)
     @before(auth_required)
-    def on_post(self, req, resp):
+    def on_patch(self, req, resp):
         resp.content_type = MEDIA_JSON
         form = req.get_media()
         s, p = {}, {}
@@ -490,7 +490,7 @@ class NotificationsEndpoint:
 class EditEndpoint:
     @before(auth_user)
     @before(auth_required)
-    def on_post(self, req, resp, id):
+    def on_patch(self, req, resp, id):
         resp.content_type = MEDIA_JSON
         entry = Posts.filter(id=id).prefetch_related(PPFR).first()
         if not entry:
