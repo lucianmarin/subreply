@@ -4,13 +4,13 @@ from falcon.hooks import before
 from falcon.constants import MEDIA_JSON
 from django.db.models import Count, Prefetch, Q, Max
 
-from app.forms import get_content, get_emoji, get_metadata, get_name
+from app.forms import get_content, get_emoji, get_metadata, get_name, get_location
 from app.hooks import auth_required, auth_user
 from app.models import Bond, Chat, Post, Save, User
 from app.serializers import build_entry, build_user, build_chat
 from app.utils import build_hash, utc_timestamp
 from app.validation import (authentication, registration, valid_content, valid_reply,
-                            valid_thread)
+                            valid_thread, profiling, valid_handle, valid_phone)
 from project.settings import FERNET
 
 Posts = Post.objects.annotate(
@@ -87,6 +87,65 @@ class RegisterEndpoint:
                 "token": token,
                 "user": build_user(user)
             }
+
+
+class ProfileEndpoint:
+    @before(auth_user)
+    @before(auth_required)
+    def on_post(self, req, resp):
+        resp.content_type = MEDIA_JSON
+        form = req.get_media()
+        f = {}
+        f['username'] = form.get('username', '').strip().lower()
+        f['email'] = form.get('email', '').strip().lower()
+        f['first_name'] = get_name(form, 'first')
+        f['last_name'] = get_name(form, 'last')
+        f['emoji'] = get_emoji(form)
+        f['birthday'] = form.get('birthday', '').strip()
+        f['location'] = get_location(form)
+        f['link'] = form.get('link', '').strip().lower()
+        f['description'] = get_content(form, 'description')
+        errors = profiling(f, req.user.id)
+        if errors:
+            resp.media = {'errors': errors}
+        else:
+            for field, value in f.items():
+                if getattr(req.user, field, '') != value:
+                    setattr(req.user, field, value)
+            req.user.save()
+            resp.media = {'user': build_user(req.user)}
+
+
+class DetailsEndpoint:
+    social_fields = ['github', 'instagram', 'linkedin', 'reddit', 'paypal', 'spotify', 'x']
+    phone_fields = ['code', 'number']
+
+    def update(self, form, d, fields):
+        for field in fields:
+            value = form.get(field, '').strip()
+            if value:
+                d[field] = value.lower()
+
+    @before(auth_user)
+    @before(auth_required)
+    def on_post(self, req, resp):
+        resp.content_type = MEDIA_JSON
+        form = req.get_media()
+        s, p = {}, {}
+        self.update(form, s, self.social_fields)
+        self.update(form, p, self.phone_fields)
+        errors = {}
+        for field, value in s.items():
+            errors[field] = valid_handle(value)
+        errors['phone'] = valid_phone(p.get('code', ''), p.get('number', ''))
+        errors = {k: v for k, v in errors.items() if v}
+        if errors:
+            resp.media = {'errors': errors}
+        else:
+            req.user.phone = p
+            req.user.social = s
+            req.user.save(update_fields=['phone', 'social'])
+            resp.media = {'user': build_user(req.user)}
 
 
 class PostEndpoint:

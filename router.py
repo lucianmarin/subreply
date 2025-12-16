@@ -24,8 +24,8 @@ app.add_route('/api/follow/{username}', api.FollowEndpoint())
 app.add_route('/api/unfollow/{username}', api.UnfollowEndpoint())
 # patch
 app.add_route('/api/edit/{id:int}', api.EditEndpoint())
-# app.add_route('/api/profile', api.ProfileEndpoint())
-# app.add_route('/api/details', api.DetailsEndpoint())
+app.add_route('/api/profile', api.ProfileEndpoint())
+app.add_route('/api/details', api.DetailsEndpoint())
 # get
 app.add_route('/api/feed', api.FeedEndpoint())
 app.add_route('/api/reply/{id:int}', api.ReplyEndpoint())
