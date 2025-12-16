@@ -23,7 +23,7 @@ app.add_route('/api/unsave/{id:int}', api.UnsaveEndpoint())
 app.add_route('/api/follow/{username}', api.FollowEndpoint())
 app.add_route('/api/unfollow/{username}', api.UnfollowEndpoint())
 # patch
-# app.add_route('/api/edit/{id:int}', api.EditEndpoint())
+app.add_route('/api/edit/{id:int}', api.EditEndpoint())
 # app.add_route('/api/profile', api.ProfileEndpoint())
 # app.add_route('/api/details', api.DetailsEndpoint())
 # get

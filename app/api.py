@@ -428,6 +428,47 @@ class NotificationsEndpoint:
 
 # ACTIONS
 
+class EditEndpoint:
+    @before(auth_user)
+    @before(auth_required)
+    def on_post(self, req, resp, id):
+        resp.content_type = MEDIA_JSON
+        entry = Posts.filter(id=id).prefetch_related(PPFR).first()
+        if not entry:
+            resp.media = {'status': 'not found'}
+            return
+        # only author can edit and entries with replies cannot be edited
+        if req.user.id != entry.created_by_id or entry.replies:
+            resp.media = {'status': 'not valid'}
+            return
+
+        form = req.get_media()
+        content = get_content(form)
+        hashtags, links, mentions = get_metadata(content)
+        errors = {}
+        errors['content'] = valid_content(content, req.user)
+        if not errors['content']:
+            if entry.parent_id:
+                errors['content'] = valid_reply(entry.parent, req.user, content, mentions)
+            else:
+                errors['content'] = valid_thread(content)
+        errors = {k: v for k, v in errors.items() if v}
+        if errors:
+            resp.media = {'errors': errors}
+            return
+
+        previous_at_user = entry.at_user
+        entry.content = content
+        entry.edited_at = utc_timestamp()
+        entry.link = links[0] if links else ''
+        entry.hashtag = hashtags[0] if hashtags else ''
+        entry.at_user = User.objects.get(username=mentions[0]) if mentions else None
+        if previous_at_user != entry.at_user:
+            entry.mention_seen_at = .0
+        entry.save()
+        resp.media = build_entry(entry, req.user.saves)
+
+
 class DeleteEndpoint:
     @before(auth_user)
     @before(auth_required)
