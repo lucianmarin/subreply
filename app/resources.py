@@ -8,7 +8,7 @@ from app.hooks import auth_user, login_required
 from app.jinja import render
 from app.models import Bond, Chat, Post, Save, User
 from app.utils import build_hash, utc_timestamp, verify_hash
-from app.validation import (authentication, working, profiling, registration,
+from app.validation import (authentication, profiling, registration,
                             valid_content, valid_handle, valid_password, valid_phone,
                             valid_reply, valid_thread)
 from project.settings import FERNET, MAX_AGE

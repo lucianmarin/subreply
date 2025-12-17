@@ -376,18 +376,6 @@ def changing(user, current, password1, password2):
     return {k: v for k, v in errors.items() if v}
 
 
-def working(f, user):
-    errors = {}
-    errors['title'] = valid_work(f['title'])
-    errors['entity'] = valid_work(f['entity'])
-    errors['start_date'] = valid_start(f['start_date'])
-    errors['end_date'] = valid_end(f['end_date'], f['start_date'])
-    errors['location'] = valid_location(f['location'])
-    errors['description'] = valid_content(f['description'], user=user)
-    errors['link'] = valid_link(f['link'], user_id=user.id)
-    return {k: v for k, v in errors.items() if v}
-
-
 def profiling(f, user_id):
     errors = {}
     errors['username'] = valid_username(f['username'], user_id=user_id)
