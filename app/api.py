@@ -290,6 +290,11 @@ class FollowersEndpoint:
         entries = Bond.objects.filter(to_user=user).exclude(created_by=user)
         return entries.order_by('-id').select_related('created_by')
 
+    def clear_followers(self, user):
+        Bond.objects.filter(
+            to_user=user, seen_at=.0
+        ).update(seen_at=utc_timestamp())
+
     @before(auth_user)
     @before(auth_required)
     def on_get(self, req, resp):
@@ -299,12 +304,19 @@ class FollowersEndpoint:
             "page": page,
             "entries": [build_user(entry.created_by) for entry in entries]
         }
+        if req.user.notif_followers:
+            self.clear_followers(req.user)
 
 
 class MentionsEndpoint:
     def fetch_entries(self, user):
         entries = Posts.filter(at_user=user).order_by('-id')
         return entries.prefetch_related(PFR, PPFR)
+
+    def clear_mentions(self, user):
+        Post.objects.filter(
+            at_user=user, mention_seen_at=.0
+        ).update(mention_seen_at=utc_timestamp())
 
     @before(auth_user)
     @before(auth_required)
@@ -315,12 +327,19 @@ class MentionsEndpoint:
             "page": page,
             "entries": [build_entry(entry, req.user.saves, parents=True) for entry in entries]
         }
+        if req.user.notif_mentions:
+            self.clear_mentions(req.user)
 
 
 class RepliesEndpoint:
     def fetch_entries(self, user):
         entries = Posts.filter(to_user=user).order_by('-id')
         return entries.prefetch_related(PPFR)
+
+    def clear_replies(self, user):
+        Post.objects.filter(
+            to_user=user, reply_seen_at=.0
+        ).update(reply_seen_at=utc_timestamp())
 
     @before(auth_user)
     @before(auth_required)
@@ -331,6 +350,8 @@ class RepliesEndpoint:
             "page": page,
             "entries": [build_entry(entry, req.user.saves) for entry in entries]
         }
+        if req.user.notif_replies:
+            self.clear_replies(req.user)
 
 
 class SavedEndpoint:
@@ -458,6 +479,11 @@ class MessageEndpoint:
         ).order_by('-id')
         return entries.select_related('created_by', 'to_user')
 
+    def clear_messages(self, req, member):
+        Chat.objects.filter(
+            created_by=member, to_user=req.user, seen_at=.0
+        ).update(seen_at=utc_timestamp())
+
     @before(auth_user)
     @before(auth_required)
     def on_get(self, req, resp, username):
@@ -470,6 +496,8 @@ class MessageEndpoint:
             "page": page,
             "entries": [build_chat(entry) for entry in entries]
         }
+        if req.user.received.filter(created_by=member, seen_at=.0).count():
+            self.clear_messages(req, member)
 
 # INFO
 
