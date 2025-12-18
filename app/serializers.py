@@ -6,7 +6,17 @@ from app.utils import utc_timestamp
 def build_user(user):
     return {
         "username": user.username,
-        "full_name": emojize(user.full_name)
+        "full_name": emojize(user.full_name),
+        "first_name": user.first_name,
+        "last_name": user.last_name,
+        "created_at": user.created_at,
+        "emoji": user.emoji,
+        "birthday": user.birthday,
+        "location": user.location,
+        "link": user.link,
+        "description": user.description,
+        "phone": user.phone,
+        "social": user.social,
     }
 
 
