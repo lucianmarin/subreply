@@ -436,8 +436,8 @@ class TrendingEndpoint:
     limit = 24
 
     def fetch_entries(self):
-        sample = Post.objects.filter(parent=None).exclude(
-            kids=None
+        sample = Post.objects.filter(parent=None).filter(
+            kids__isnull=False
         ).order_by('-id').values('id')[:self.limit]
         entries = Posts.filter(id__in=sample).order_by('-replies', '-id')
         return entries.prefetch_related(PFR)

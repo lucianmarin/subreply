@@ -8,7 +8,7 @@ from phonenumbers import is_possible_number, is_valid_number, parse
 
 from app.forms import get_metadata
 from app.models import Post, User
-from app.utils import has_repetions, verify_hash
+from app.utils import has_repetitions, verify_hash
 from project.vars import INVALID, MAX_YEAR, MIN_YEAR, CITIES, LATIN
 
 
@@ -22,7 +22,7 @@ def valid_hashtag(value):
         return "Hashtag contains only digits"
     elif not all(c in limits for c in value):
         return "Hashtag can be only alphanumeric"
-    elif has_repetions(value):
+    elif has_repetitions(value):
         return "Hashtag contains repeating characters"
 
 
@@ -109,7 +109,7 @@ def valid_username(value, user_id=0):
         return "Username can't be longer than 15 characters"
     elif not all(c in limits for c in value):
         return "Username can be only alphanumeric"
-    elif has_repetions(value):
+    elif has_repetitions(value):
         return "Username contains repeating characters"
     elif "__" in value:
         return "Username contains consecutive underscores"
@@ -142,8 +142,8 @@ def valid_first_name(value):
     elif len(value) > 15:
         return "First name can't be longer than 15 characters"
     elif emoji_count(value):
-        return "First name cotains emoji"
-    elif has_repetions(value):
+        return "First name contains emoji"
+    elif has_repetitions(value):
         return "First name contains repeating characters"
     elif not all(c in LATIN for c in value):
         return "First name should use Latin characters"
@@ -153,8 +153,8 @@ def valid_last_name(value):
     if len(value) > 15:
         return "Last name can't be longer than 15 characters"
     elif emoji_count(value):
-        return "First name cotains emoji"
-    elif value and has_repetions(value):
+        return "Last name contains emoji"
+    elif value and has_repetitions(value):
         return "Last name contains repeating characters"
     elif not all(c in LATIN for c in value):
         return "First name should use Latin characters"
@@ -184,17 +184,14 @@ def valid_email(value, user_id=0):
         handle, domain = value.split('@', 1)
         try:
             has_mx = bool(dns_query(domain, 'MX'))
-        except Exception as e:
+        except Exception:
             has_mx = False
-            print(e)
         if not has_mx:
             return "Email can't be sent to this address"
 
 
 def valid_description(value, user_id=0):
-    print(value)
     if value:
-        print(value)
         user = User.objects.filter(id=user_id).first()
         return valid_content(value, user, limit=240)
 
@@ -248,8 +245,7 @@ def valid_birthday(value, delimiter="-"):
             else:
                 try:
                     _ = date(int(year), int(month), int(day))
-                except Exception as e:
-                    print(e)
+                except Exception:
                     return "Birthday is invalid"
         elif value.count(delimiter):
             year, month = value.split(delimiter)
@@ -344,7 +340,7 @@ def valid_date(value, delimiter="-"):
 
 def valid_start(value):
     if not value:
-        return "Date cannnot be empty"
+        return "Date cannot be empty"
     else:
         return valid_date(value)
 
@@ -363,7 +359,7 @@ def valid_end(end, start):
 
 def valid_work(value):
     if not value:
-        return "Value cannot be emtpy"
+        return "Value cannot be empty"
     elif len(value) != len(value.encode()):
         return "Only ASCII characters are allowed"
 

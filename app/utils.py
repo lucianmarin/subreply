@@ -5,7 +5,7 @@ from random import choice
 from string import ascii_letters, ascii_lowercase, digits
 
 
-def has_repetions(word, n=3):
+def has_repetitions(word, n=3):
     return any(char * n in word for char in word)
 
 
