@@ -53,7 +53,7 @@ class StaticResource:
         mode = "rb" if ext in self.binary else "r"
         print("load", filepath, mode)
         with open(filepath, mode) as f:
-            resp.text = f.read()
+            resp.media = f.read()
 
 
 class MainResource:
