@@ -42,15 +42,17 @@ class User(models.Model):
 
     @cached_property
     def full_name(self):
-        if len(self.last_name) == 1:
-            self.last_name += "."
-        return f"{self.emoji} {self.first_name} {self.last_name}".strip()
+        last_name = self.last_name
+        if len(last_name) == 1:
+            last_name += "."
+        return f"{self.emoji} {self.first_name} {last_name}".strip()
 
     @cached_property
     def short_name(self):
-        if len(self.last_name) == 1:
-            self.last_name += "."
-        return f"{self.first_name} {self.last_name}".strip()
+        last_name = self.last_name
+        if len(last_name) == 1:
+            last_name += "."
+        return f"{self.first_name} {last_name}".strip()
 
     @cached_property
     def abbr_name(self):
@@ -84,9 +86,10 @@ class User(models.Model):
 
     @cached_property
     def links(self):
+        social = self.social.copy()
         if self.phone:
-            self.social['telephone'] = self.phone['code'] + self.phone['number']
-        return self.social
+            social['telephone'] = self.phone['code'] + self.phone['number']
+        return social
 
 
 class Post(models.Model):
@@ -120,7 +123,11 @@ class Post(models.Model):
         return [self.parent] + self.parent.get_ancestors()
 
     def set_ancestors(self):
-        self.ancestors.set(self.get_ancestors())
+        # self.ancestors.set(self.get_ancestors())
+        if self.parent:
+            self.ancestors.set(list(self.parent.ancestors.all()) + [self.parent])
+        else:
+            self.ancestors.clear()
 
 
 class Save(models.Model):

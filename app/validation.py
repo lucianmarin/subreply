@@ -63,7 +63,9 @@ def valid_content(value, user, limit=640):
 
 def valid_thread(value):
     """Duplicate topic against old topics."""
-    threads = Post.objects.filter(parent=None).order_by('-id')[:32]
+    threads = Post.objects.filter(
+        parent=None
+    ).select_related('created_by').order_by('-id')[:32]
     duplicates = [t for t in threads if t.content.lower() == value.lower()]
     if duplicates:
         duplicate = duplicates[0]
@@ -77,7 +79,7 @@ def valid_reply(parent, user, value, mentions):
     top_id = min(ancestors) if ancestors else parent.id
     duplicate = Post.objects.filter(
         (Q(ancestors=top_id) | Q(id=top_id)) & Q(content__iexact=value)
-    ).first()
+    ).select_related('created_by').first()
     if duplicate:
         err = 'Duplicate of #{0} by @{1}'
         return err.format(duplicate.id, duplicate.created_by)

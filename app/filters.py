@@ -16,14 +16,12 @@ def hexcode(emoji):
 def enumerize(links):
     """Enumerate social links."""
     keys = sorted(links)  # eg. github
-    holder = ""
-    for key in keys[:-2]:
-        holder += LINKS[key].format(links[key]) + ", "
-    for index, key in enumerate(keys[-2:]):
-        holder += LINKS[key].format(links[key])
-        if not index and len(keys) > 1:
-            holder += " and "
-    return holder
+    parts = []
+    for key in keys:
+        parts.append(LINKS[key].format(links[key]))
+    if len(parts) > 1:
+        return ", ".join(parts[:-1]) + " and " + parts[-1]
+    return "".join(parts)
 
 
 def hostname(value):
