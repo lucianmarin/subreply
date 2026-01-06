@@ -1,5 +1,5 @@
 from datetime import date
-from string import ascii_letters, ascii_uppercase, digits
+from string import ascii_letters, digits
 
 from django.db.models import Q
 from dns.resolver import query as dns_query
@@ -302,23 +302,6 @@ def valid_phone(code, number):
             return "Number is invalid"
 
 
-def valid_wallet(coin, id):
-    if not coin and not id:
-        return
-    elif not coin:
-        return "Coin or currency is needed"
-    elif not id:
-        return "ID or IBAN is needed"
-    elif len(coin) > 5:
-        return "Coin or currency is too long"
-    elif len(id) < 15 or len(id) > 95:
-        return "ID or IBAN between 15 and 95"
-    elif not all(c in ascii_uppercase for c in coin):
-        return "Coin or currency must be in uppercase letters"
-    elif not all(c in digits + ascii_letters for c in id):
-        return "ID or IBAN must be only digits and letters"
-
-
 def valid_date(value, delimiter="-"):
     if value:
         CUR_YEAR = date.today().year
@@ -338,32 +321,6 @@ def valid_date(value, delimiter="-"):
                 return "Month is not between 01-12"
             elif year == str(CUR_YEAR) and int(month) > CUR_MONTH:
                 return "Date is in the future"
-
-
-def valid_start(value):
-    if not value:
-        return "Date cannot be empty"
-    else:
-        return valid_date(value)
-
-
-def valid_end(end, start):
-    try:
-        s = int(start.replace('-', ''))
-        e = int(end.replace('-', ''))
-    except:
-        s, e = 0, 0
-    if e < s:
-        return "Dates are reversed"
-    else:
-        return valid_date(end)
-
-
-def valid_work(value):
-    if not value:
-        return "Value cannot be empty"
-    elif len(value) != len(value.encode()):
-        return "Only ASCII characters are allowed"
 
 
 def changing(user, current, password1, password2):

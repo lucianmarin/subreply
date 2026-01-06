@@ -1,4 +1,4 @@
-from django.db.models import Count, F, Prefetch, Q, Max
+from django.db.models import Count, Prefetch, Q, Max
 from emoji import demojize
 from falcon import HTTPFound, HTTPNotFound, before
 from strictyaml import as_document

@@ -1,4 +1,4 @@
-from falcon import HTTPFound, HTTPError, MEDIA_JSON
+from falcon import HTTPFound, HTTPError
 
 from app.models import User
 from project.settings import FERNET
