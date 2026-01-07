@@ -20,6 +20,7 @@ Posts = Post.objects.annotate(
 PPFR = Prefetch('parent', Posts)
 PFR = Prefetch('kids', Posts.order_by('-id'))
 RPFR = Prefetch('kids', Posts.prefetch_related(PFR))
+RPFR3 = Prefetch('kids', Posts.prefetch_related(RPFR))
 
 def paginate(req, qs, limit=16):
     p = req.params.get('p', '1').strip()
@@ -225,7 +226,7 @@ class FeedEndpoint:
 
 class ReplyEndpoint:
     def fetch_entries(self, parent):
-        return Posts.filter(parent=parent).order_by('-id').prefetch_related(RPFR)
+        return Posts.filter(parent=parent).order_by('-id').prefetch_related(RPFR3)
 
     def fetch_ancestors(self, parent):
         return Posts.filter(

@@ -1,6 +1,6 @@
 from cryptography.fernet import Fernet
 
-from project.local import DEBUG, SIGNATURE, SMTP
+from project.local import DEBUG, SIGNATURE
 
 ALLOWED_HOSTS = []
 AUTH_PASSWORD_VALIDATORS = []
@@ -35,4 +35,3 @@ FERNET = Fernet(SIGNATURE.encode())
 MAX_AGE = 3600 * 24 * 365
 
 DEBUG = DEBUG
-SMTP = SMTP
