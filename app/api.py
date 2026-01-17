@@ -30,11 +30,11 @@ def paginate(req, qs, limit=16):
 
 
 class LoginEndpoint:
-    def on_post(self, req, resp):
-        form = req.get_media()
+    async def on_post(self, req, resp):
+        form = await req.get_media()
         username = form.get('username', '')
         password = form.get('password', '')
-        errors, user = authentication(username, password)
+        errors, user = await authentication(username, password)
         resp.content_type = MEDIA_JSON
         if errors:
             resp.media = {'errors': errors}
@@ -47,8 +47,8 @@ class LoginEndpoint:
 
 
 class RegisterEndpoint:
-    def on_post(self, req, resp):
-        form = req.get_media()
+    async def on_post(self, req, resp):
+        form = await req.get_media()
         f = {}
         f['username'] = form.get('username', '').strip().lower()
         f['email'] = form.get('email', '').strip().lower()
@@ -59,12 +59,12 @@ class RegisterEndpoint:
         f['emoji'] = get_emoji(form)
         f['birthday'] = form.get('birthday', '').strip()
         f['location'] = form.get('location', '')
-        errors = registration(f)
+        errors = await registration(f)
         resp.content_type = MEDIA_JSON
         if errors:
             resp.media = {'errors': errors}
         else:
-            user, is_new = User.objects.get_or_create(
+            user, is_new = await User.objects.aget_or_create(
                 username=f['username'],
                 defaults={
                     'created_at': utc_timestamp(),
@@ -78,7 +78,7 @@ class RegisterEndpoint:
                 }
             )
             # create self bond
-            Bond.objects.get_or_create(
+            await Bond.objects.aget_or_create(
                 created_at=utc_timestamp(), seen_at=utc_timestamp(),
                 created_by=user, to_user=user
             )
@@ -93,9 +93,9 @@ class RegisterEndpoint:
 class ProfileEndpoint:
     @before(auth_user)
     @before(auth_required)
-    def on_patch(self, req, resp):
+    async def on_patch(self, req, resp):
         resp.content_type = MEDIA_JSON
-        form = req.get_media()
+        form = await req.get_media()
         f = {}
         f['username'] = form.get('username', '').strip().lower()
         f['email'] = form.get('email', '').strip().lower()
@@ -106,14 +106,14 @@ class ProfileEndpoint:
         f['location'] = get_location(form)
         f['link'] = form.get('link', '').strip().lower()
         f['description'] = get_content(form, 'description')
-        errors = profiling(f, req.user.id)
+        errors = await profiling(f, req.user.id)
         if errors:
             resp.media = {'errors': errors}
         else:
             for field, value in f.items():
                 if getattr(req.user, field, '') != value:
                     setattr(req.user, field, value)
-            req.user.save()
+            await req.user.asave()
             resp.media = {'user': build_user(req.user)}
 
 
@@ -129,9 +129,9 @@ class DetailsEndpoint:
 
     @before(auth_user)
     @before(auth_required)
-    def on_patch(self, req, resp):
+    async def on_patch(self, req, resp):
         resp.content_type = MEDIA_JSON
-        form = req.get_media()
+        form = await req.get_media()
         s, p = {}, {}
         self.update(form, s, self.social_fields)
         self.update(form, p, self.phone_fields)
@@ -145,28 +145,28 @@ class DetailsEndpoint:
         else:
             req.user.phone = p
             req.user.social = s
-            req.user.save(update_fields=['phone', 'social'])
+            await req.user.asave(update_fields=['phone', 'social'])
             resp.media = {'user': build_user(req.user)}
 
 
 class PostEndpoint:
     @before(auth_user)
     @before(auth_required)
-    def on_post(self, req, resp):
+    async def on_post(self, req, resp):
         resp.content_type = MEDIA_JSON
-        form = req.get_media()
-        parent = Posts.filter(id=form.get('parent', 0)).first()
+        form = await req.get_media()
+        parent = await Posts.filter(id=form.get('parent', 0)).afirst()
         content = get_content(form)
         if not content:
             resp.media = {'error': 'content parameter is empty'}
             return
         hashtags, links, mentions = get_metadata(content)
         errors = {}
-        errors['content'] = valid_content(content, req.user)
+        errors['content'] = await valid_content(content, req.user)
         if not errors['content'] and not parent:
-            errors['content'] = valid_thread(content)
+            errors['content'] = await valid_thread(content)
         if not errors['content'] and parent:
-            errors['content'] = valid_reply(parent, req.user, content, mentions)
+            errors['content'] = await valid_reply(parent, req.user, content, mentions)
         errors = {k: v for k, v in errors.items() if v}
         if errors:
             resp.media = {'errors': errors}
@@ -174,10 +174,10 @@ class PostEndpoint:
             extra = {}
             extra['link'] = links[0] if links else ''
             extra['hashtag'] = hashtags[0] if hashtags else ''
-            extra['at_user'] = User.objects.get(
+            extra['at_user'] = await User.objects.aget(
                 username=mentions[0]
             ) if mentions else None
-            re, is_new = Post.objects.get_or_create(
+            re, is_new = await Post.objects.aget_or_create(
                 parent=parent,
                 to_user=parent.created_by if parent else None,
                 content=content,
@@ -186,18 +186,19 @@ class PostEndpoint:
                 **extra
             )
             re.set_ancestors()
+            await re.asave()
             resp.media = build_entry(re, [], parents=True)
 
 
 class SendEndpoint:
     @before(auth_user)
     @before(auth_required)
-    def on_post(self, req, resp, username):
+    async def on_post(self, req, resp, username):
         resp.content_type = MEDIA_JSON
-        form = req.get_media()
-        member = User.objects.get(username=username)
+        form = await req.get_media()
+        member = await User.objects.aget(username=username)
         content = form.get('content', '')
-        msg, is_new = Chat.objects.get_or_create(
+        msg, is_new = await Chat.objects.aget_or_create(
             to_user=member,
             content=content,
             created_at=utc_timestamp(),
@@ -215,9 +216,10 @@ class FeedEndpoint:
 
     @before(auth_user)
     @before(auth_required)
-    def on_get(self, req, resp):
+    async def on_get(self, req, resp):
         resp.content_type = MEDIA_JSON
-        entries, page = paginate(req, self.fetch_entries(req.user))
+        entries_qs, page = paginate(req, self.fetch_entries(req.user))
+        entries = [e async for e in entries_qs]
         resp.media = {
             "page": page,
             "entries": [build_entry(entry, req.user.saves, parents=True) for entry in entries]
@@ -235,12 +237,12 @@ class ReplyEndpoint:
 
     @before(auth_user)
     @before(auth_required)
-    def on_get(self, req, resp, id):
-        parent = Posts.filter(id=id).first()
+    async def on_get(self, req, resp, id):
+        parent = await Posts.filter(id=id).afirst()
         if not parent:
             raise HTTPNotFound
-        ancestors = self.fetch_ancestors(parent)
-        entries = self.fetch_entries(parent)
+        ancestors = [a async for a in self.fetch_ancestors(parent)]
+        entries = [e async for e in self.fetch_entries(parent)]
         resp.content_type = MEDIA_JSON
         resp.media = {
             "entry": build_entry(parent, req.user.saves),
@@ -256,12 +258,13 @@ class MemberEndpoint:
 
     @before(auth_user)
     @before(auth_required)
-    def on_get(self, req, resp, username):
+    async def on_get(self, req, resp, username):
         username = username.lower()
-        member = User.objects.filter(username=username).first()
+        member = await User.objects.filter(username=username).afirst()
         if not member:
             raise HTTPNotFound
-        entries, page = paginate(req, self.fetch_entries(member))
+        entries_qs, page = paginate(req, self.fetch_entries(member))
+        entries = [e async for e in entries_qs]
         resp.content_type = MEDIA_JSON
         resp.media = {
             "page": page,
@@ -277,8 +280,9 @@ class FollowingEndpoint:
 
     @before(auth_user)
     @before(auth_required)
-    def on_get(self, req, resp):
-        entries, page = paginate(req, self.fetch_entries(req.user), 24)
+    async def on_get(self, req, resp):
+        entries_qs, page = paginate(req, self.fetch_entries(req.user), 24)
+        entries = [e async for e in entries_qs]
         resp.content_type = MEDIA_JSON
         resp.media = {
             "page": page,
@@ -291,22 +295,23 @@ class FollowersEndpoint:
         entries = Bond.objects.filter(to_user=user).exclude(created_by=user)
         return entries.order_by('-id').select_related('created_by')
 
-    def clear_followers(self, user):
-        Bond.objects.filter(
+    async def clear_followers(self, user):
+        await Bond.objects.filter(
             to_user=user, seen_at=.0
-        ).update(seen_at=utc_timestamp())
+        ).aupdate(seen_at=utc_timestamp())
 
     @before(auth_user)
     @before(auth_required)
-    def on_get(self, req, resp):
-        entries, page = paginate(req, self.fetch_entries(req.user), 24)
+    async def on_get(self, req, resp):
+        entries_qs, page = paginate(req, self.fetch_entries(req.user), 24)
+        entries = [e async for e in entries_qs]
         resp.content_type = MEDIA_JSON
         resp.media = {
             "page": page,
             "entries": [build_user(entry.created_by) for entry in entries]
         }
         if req.user.notif_followers:
-            self.clear_followers(req.user)
+            await self.clear_followers(req.user)
 
 
 class MentionsEndpoint:
@@ -314,22 +319,23 @@ class MentionsEndpoint:
         entries = Posts.filter(at_user=user).order_by('-id')
         return entries.prefetch_related(PFR, PPFR)
 
-    def clear_mentions(self, user):
-        Post.objects.filter(
+    async def clear_mentions(self, user):
+        await Post.objects.filter(
             at_user=user, mention_seen_at=.0
-        ).update(mention_seen_at=utc_timestamp())
+        ).aupdate(mention_seen_at=utc_timestamp())
 
     @before(auth_user)
     @before(auth_required)
-    def on_get(self, req, resp):
-        entries, page = paginate(req, self.fetch_entries(req.user))
+    async def on_get(self, req, resp):
+        entries_qs, page = paginate(req, self.fetch_entries(req.user))
+        entries = [e async for e in entries_qs]
         resp.content_type = MEDIA_JSON
         resp.media = {
             "page": page,
             "entries": [build_entry(entry, req.user.saves, parents=True) for entry in entries]
         }
         if req.user.notif_mentions:
-            self.clear_mentions(req.user)
+            await self.clear_mentions(req.user)
 
 
 class RepliesEndpoint:
@@ -337,22 +343,23 @@ class RepliesEndpoint:
         entries = Posts.filter(to_user=user).order_by('-id')
         return entries.prefetch_related(PPFR)
 
-    def clear_replies(self, user):
-        Post.objects.filter(
+    async def clear_replies(self, user):
+        await Post.objects.filter(
             to_user=user, reply_seen_at=.0
-        ).update(reply_seen_at=utc_timestamp())
+        ).aupdate(reply_seen_at=utc_timestamp())
 
     @before(auth_user)
     @before(auth_required)
-    def on_get(self, req, resp):
-        entries, page = paginate(req, self.fetch_entries(req.user))
+    async def on_get(self, req, resp):
+        entries_qs, page = paginate(req, self.fetch_entries(req.user))
+        entries = [e async for e in entries_qs]
         resp.content_type = MEDIA_JSON
         resp.media = {
             "page": page,
             "entries": [build_entry(entry, req.user.saves) for entry in entries]
         }
         if req.user.notif_replies:
-            self.clear_replies(req.user)
+            await self.clear_replies(req.user)
 
 
 class SavedEndpoint:
@@ -363,8 +370,9 @@ class SavedEndpoint:
 
     @before(auth_user)
     @before(auth_required)
-    def on_get(self, req, resp):
-        entries, page = paginate(req, self.fetch_entries(req.user))
+    async def on_get(self, req, resp):
+        entries_qs, page = paginate(req, self.fetch_entries(req.user))
+        entries = [e async for e in entries_qs]
         resp.content_type = MEDIA_JSON
         resp.media = {
             "page": page,
@@ -394,10 +402,12 @@ class PeopleEndpoint:
         return qs.order_by('id') if terms else qs.order_by('-id')
 
     @before(auth_user)
-    def on_get(self, req, resp):
+    @before(auth_required)
+    async def on_get(self, req, resp):
         q = demojize(req.params.get('q', '').strip())
         terms = [t.strip() for t in q.split() if t.strip()]
-        entries, page = paginate(req, self.fetch_entries(terms), 24)
+        entries_qs, page = paginate(req, self.fetch_entries(terms), 24)
+        entries = [e async for e in entries_qs]
         resp.content_type = MEDIA_JSON
         resp.media = {
             "page": page,
@@ -412,19 +422,20 @@ class DiscoverEndpoint:
             query &= Q(content__icontains=term)
         return query
 
-    def fetch_entries(self, terms):
+    async def fetch_entries(self, terms):
         if terms:
             f = self.build_query(terms)
         else:
-            last_ids = User.objects.annotate(last_id=Max('posts')).values('last_id')
+            last_ids = [u['last_id'] async for u in User.objects.annotate(last_id=Max('posts')).values('last_id')]
             f = Q(id__in=last_ids)
         return Posts.filter(f).order_by('-id').prefetch_related(PFR, PPFR)
 
     @before(auth_user)
-    def on_get(self, req, resp):
+    async def on_get(self, req, resp):
         q = demojize(req.params.get('q', '').strip())
         terms = [t.strip() for t in q.split() if t.strip()]
-        entries, page = paginate(req, self.fetch_entries(terms))
+        entries_qs, page = paginate(req, await self.fetch_entries(terms))
+        entries = [e async for e in entries_qs]
         saves = req.user.saves if req.user else []
         resp.content_type = MEDIA_JSON
         resp.media = {
@@ -436,16 +447,17 @@ class DiscoverEndpoint:
 class TrendingEndpoint:
     limit = 24
 
-    def fetch_entries(self):
-        sample = Post.objects.filter(parent=None).filter(
+    async def fetch_entries(self):
+        sample = [p['id'] async for p in Post.objects.filter(parent=None).filter(
             kids__isnull=False
-        ).order_by('-id').values('id')[:self.limit]
+        ).order_by('-id').values('id')[:self.limit]]
         entries = Posts.filter(id__in=sample).order_by('-replies', '-id')
         return entries.prefetch_related(PFR)
 
     @before(auth_user)
-    def on_get(self, req, resp):
-        entries, page = paginate(req, self.fetch_entries())
+    async def on_get(self, req, resp):
+        entries_qs, page = paginate(req, await self.fetch_entries())
+        entries = [e async for e in entries_qs]
         saves = req.user.saves if req.user else []
         resp.content_type = MEDIA_JSON
         resp.media = {
@@ -464,8 +476,9 @@ class MessagesEndpoint:
 
     @before(auth_user)
     @before(auth_required)
-    def on_get(self, req, resp):
-        entries, page = paginate(req, self.fetch_entries(req))
+    async def on_get(self, req, resp):
+        entries_qs, page = paginate(req, self.fetch_entries(req))
+        entries = [e async for e in entries_qs]
         resp.content_type = MEDIA_JSON
         resp.media = {
             "page": page,
@@ -480,32 +493,33 @@ class MessageEndpoint:
         ).order_by('-id')
         return entries.select_related('created_by', 'to_user')
 
-    def clear_messages(self, req, member):
-        Chat.objects.filter(
+    async def clear_messages(self, req, member):
+        await Chat.objects.filter(
             created_by=member, to_user=req.user, seen_at=.0
-        ).update(seen_at=utc_timestamp())
+        ).aupdate(seen_at=utc_timestamp())
 
     @before(auth_user)
     @before(auth_required)
-    def on_get(self, req, resp, username):
-        member = User.objects.filter(username=username.lower()).first()
+    async def on_get(self, req, resp, username):
+        member = await User.objects.filter(username=username.lower()).afirst()
         if not member:
             raise HTTPNotFound
-        entries, page = paginate(req, self.fetch_entries(req, member))
+        entries_qs, page = paginate(req, self.fetch_entries(req, member))
+        entries = [e async for e in entries_qs]
         resp.content_type = MEDIA_JSON
         resp.media = {
             "page": page,
             "entries": [build_chat(entry) for entry in entries]
         }
-        if req.user.received.filter(created_by=member, seen_at=.0).count():
-            self.clear_messages(req, member)
+        if await req.user.received.filter(created_by=member, seen_at=.0).acount():
+            await self.clear_messages(req, member)
 
 # INFO
 
 class NotificationsEndpoint:
     @before(auth_user)
     @before(auth_required)
-    def on_get(self, req, resp):
+    async def on_get(self, req, resp):
         resp.content_type = MEDIA_JSON
         resp.media = {
             'followers': req.user.notif_followers,
@@ -519,9 +533,9 @@ class NotificationsEndpoint:
 class EditEndpoint:
     @before(auth_user)
     @before(auth_required)
-    def on_patch(self, req, resp, id):
+    async def on_patch(self, req, resp, id):
         resp.content_type = MEDIA_JSON
-        entry = Posts.filter(id=id).prefetch_related(PPFR).first()
+        entry = await Posts.filter(id=id).prefetch_related(PPFR).afirst()
         if not entry:
             resp.media = {'status': 'not found'}
             return
@@ -530,16 +544,16 @@ class EditEndpoint:
             resp.media = {'status': 'not valid'}
             return
 
-        form = req.get_media()
+        form = await req.get_media()
         content = get_content(form)
         hashtags, links, mentions = get_metadata(content)
         errors = {}
-        errors['content'] = valid_content(content, req.user)
+        errors['content'] = await valid_content(content, req.user)
         if not errors['content']:
             if entry.parent_id:
-                errors['content'] = valid_reply(entry.parent, req.user, content, mentions)
+                errors['content'] = await valid_reply(entry.parent, req.user, content, mentions)
             else:
-                errors['content'] = valid_thread(content)
+                errors['content'] = await valid_thread(content)
         errors = {k: v for k, v in errors.items() if v}
         if errors:
             resp.media = {'errors': errors}
@@ -550,19 +564,19 @@ class EditEndpoint:
         entry.edited_at = utc_timestamp()
         entry.link = links[0] if links else ''
         entry.hashtag = hashtags[0] if hashtags else ''
-        entry.at_user = User.objects.get(username=mentions[0]) if mentions else None
+        entry.at_user = await User.objects.aget(username=mentions[0]) if mentions else None
         if previous_at_user != entry.at_user:
             entry.mention_seen_at = .0
-        entry.save()
+        await entry.asave()
         resp.media = build_entry(entry, req.user.saves)
 
 
 class DeleteEndpoint:
     @before(auth_user)
     @before(auth_required)
-    def on_post(self, req, resp, id):
+    async def on_post(self, req, resp, id):
         resp.content_type = MEDIA_JSON
-        entry = Post.objects.filter(id=id).first()
+        entry = await Post.objects.filter(id=id).afirst()
         if not entry:
             resp.media = {'status': 'not found'}
             return
@@ -572,20 +586,20 @@ class DeleteEndpoint:
         if req.user.id not in valid_ids:
             resp.media = {'status': 'not valid'}
             return
-        entry.delete()
+        await entry.adelete()
         resp.media = {'status': 'deleted'}
 
 
 class SaveEndpoint:
     @before(auth_user)
     @before(auth_required)
-    def on_post(self, req, resp, id):
+    async def on_post(self, req, resp, id):
         resp.content_type = MEDIA_JSON
-        entry = Post.objects.filter(id=id).exclude(created_by=req.user).first()
+        entry = await Post.objects.filter(id=id).exclude(created_by=req.user).afirst()
         if not entry:
             resp.media = {'status': 'not found'}
             return
-        Save.objects.get_or_create(
+        await Save.objects.aget_or_create(
             created_at=utc_timestamp(),
             created_by=req.user,
             post=entry
@@ -596,26 +610,26 @@ class SaveEndpoint:
 class UnsaveEndpoint:
     @before(auth_user)
     @before(auth_required)
-    def on_post(self, req, resp, id):
+    async def on_post(self, req, resp, id):
         resp.content_type = MEDIA_JSON
-        entry = Post.objects.filter(id=id).first()
+        entry = await Post.objects.filter(id=id).afirst()
         if not entry:
             resp.media = {'status': 'not found'}
             return
-        Save.objects.filter(created_by=req.user, post=entry).delete()
+        await Save.objects.filter(created_by=req.user, post=entry).adelete()
         resp.media = {'status': 'save'}
 
 
 class FollowEndpoint:
     @before(auth_user)
     @before(auth_required)
-    def on_post(self, req, resp, username):
+    async def on_post(self, req, resp, username):
         resp.content_type = MEDIA_JSON
-        member = User.objects.filter(username=username.lower()).first()
+        member = await User.objects.filter(username=username.lower()).afirst()
         if not member:
             resp.media = {'status': 'not found'}
             return
-        Bond.objects.get_or_create(
+        await Bond.objects.aget_or_create(
             created_at=utc_timestamp(), created_by=req.user, to_user=member
         )
         resp.media = {'status': 'unfollow'}
@@ -624,27 +638,27 @@ class FollowEndpoint:
 class UnfollowEndpoint:
     @before(auth_user)
     @before(auth_required)
-    def on_post(self, req, resp, username):
+    async def on_post(self, req, resp, username):
         resp.content_type = MEDIA_JSON
-        member = User.objects.filter(username=username.lower()).first()
+        member = await User.objects.filter(username=username.lower()).afirst()
         if not member:
             resp.media = {'status': 'not found'}
             return
-        Bond.objects.filter(created_by=req.user, to_user=member).delete()
+        await Bond.objects.filter(created_by=req.user, to_user=member).adelete()
         resp.media = {'status': 'follow'}
 
 
 class UnsendEndpoint:
     @before(auth_user)
     @before(auth_required)
-    def on_post(self, req, resp, id):
+    async def on_post(self, req, resp, id):
         resp.content_type = MEDIA_JSON
-        entry = Chat.objects.filter(id=id).first()
+        entry = await Chat.objects.filter(id=id).afirst()
         if not entry:
             resp.media = {'status': 'not found'}
             return
         if req.user.id != entry.created_by_id:
             resp.media = {'status': 'not valid'}
             return
-        entry.delete()
+        await entry.adelete()
         resp.media = {'status': 'unsent'}

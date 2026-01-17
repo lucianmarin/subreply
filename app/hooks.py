@@ -4,7 +4,7 @@ from app.models import User
 from project.settings import FERNET
 
 
-def auth_user(req, resp, resource, params):
+async def auth_user(req, resp, resource, params):
     token = req.headers.get('AUTHORIZATION', '').replace('Bearer ', '')
     token = token if token else req.cookies.get('identity', '')
     try:
@@ -12,14 +12,20 @@ def auth_user(req, resp, resource, params):
     except Exception as e:
         print(e)
         identity = 0
-    req.user = User.objects.filter(id=identity).first()
+    req.user = await User.objects.filter(id=identity).afirst()
+    req.user.notif_followers = await req.user.followers.filter(seen_at=.0).acount()
+    req.user.notif_mentions = await req.user.mentions.filter(mention_seen_at=.0).acount()
+    req.user.notif_replies = await req.user.replies.filter(reply_seen_at=.0).acount()
+    req.user.notif_messages = await req.user.received.filter(seen_at=.0).acount()
+    req.user.follows = [f async for f in req.user.following.values_list('to_user_id', flat=True)]
+    req.user.saves = [s async for s in req.user.saved.values_list('post_id', flat=True)]
 
 
-def login_required(req, resp, resource, params):
+async def login_required(req, resp, resource, params):
     if not req.user:
         raise HTTPFound('/login')
 
 
-def auth_required(req, resp, resource, params):
+async def auth_required(req, resp, resource, params):
     if not req.user:
         raise HTTPError('Login required')

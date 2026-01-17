@@ -45,7 +45,7 @@ class StaticResource:
     def __init__(self, subpath=""):
         self.path = f"static/{subpath}" if subpath else "static"
 
-    def on_get(self, req, resp, filename):
+    async def on_get(self, req, resp, filename):
         name, ext = filename.split('.')
         resp.content_type = self.mime_types[ext]
         resp.cache_control = ["max-age=3600000"]
@@ -58,7 +58,7 @@ class StaticResource:
 
 class MainResource:
     @before(auth_user)
-    def on_get(self, req, resp):
+    async def on_get(self, req, resp):
         if req.user:
             raise HTTPFound('/feed')
         raise HTTPFound('/discover')
@@ -66,46 +66,46 @@ class MainResource:
 
 class AboutResource:
     @before(auth_user)
-    def on_get(self, req, resp):
-        luc = User.objects.get(id=1)
-        sub = User.objects.get(id=2)
-        emo = User.objects.exclude(
+    async def on_get(self, req, resp):
+        luc = await User.objects.aget(id=1)
+        sub = await User.objects.aget(id=2)
+        emo = await User.objects.exclude(
             id__in=[1, 2]
-        ).exclude(emoji="").order_by("?").first()
-        resp.text = render(
+        ).exclude(emoji="").order_by("?").afirst()
+        resp.text = await render(
             page='about', view='about', user=req.user, luc=luc, sub=sub, emo=emo
         )
 
     @before(auth_user)
-    def on_get_terms(self, req, resp):
-        resp.text = render(
+    async def on_get_terms(self, req, resp):
+        resp.text = await render(
             page='terms', view='about', user=req.user
         )
 
     @before(auth_user)
-    def on_get_privacy(self, req, resp):
-        resp.text = render(
+    async def on_get_privacy(self, req, resp):
+        resp.text = await render(
             page='privacy', view='about', user=req.user
         )
 
     @before(auth_user)
-    def on_get_api(self, req, resp):
-        resp.text = render(
+    async def on_get_api(self, req, resp):
+        resp.text = await render(
             page='api', view='about', user=req.user
         )
 
     @before(auth_user)
-    def on_get_directory(self, req, resp):
-        users = User.objects.exclude(posts=None).order_by('-id').values_list('emoji', 'username')
+    async def on_get_directory(self, req, resp):
+        users = [u async for u in User.objects.exclude(posts=None).order_by('-id').values_list('emoji', 'username')]
         odds = [u for i, u in enumerate(users) if i % 2 == 0]
         evens = [u for i, u in enumerate(users) if i % 2 == 1]
-        resp.text = render(
+        resp.text = await render(
             page='directory', view='about', user=req.user, users=zip(evens, odds)
         )
 
 
 class TxtResource:
-    def on_get_bots(self, req, resp):
+    async def on_get_bots(self, req, resp):
         lines = (
             "User-agent: *",
             "",
@@ -113,25 +113,25 @@ class TxtResource:
         )
         resp.text = "\n".join(lines)
 
-    def on_get_map(self, req, resp):
+    async def on_get_map(self, req, resp):
         threads = Post.objects.filter(parent=None).annotate(Count('kids')).exclude(kids__count=0)
         replies = Post.objects.exclude(parent=None)
-        posts = threads.union(replies).values_list('id')
-        subs = Post.objects.values_list('hashtag').distinct()
-        users = User.objects.exclude(posts=None).values_list('username')
+        posts = [p async for p in threads.union(replies).values_list('id')]
+        subs = [s async for s in Post.objects.values_list('hashtag').distinct()]
+        users = [u async for u in User.objects.exclude(posts=None).values_list('username')]
         posts_urls = [f"https://subreply.com/reply/{p}" for p, in posts]
         sub_urls = [f"https://subreply.com/sub/{s}" for s, in subs]
-        user_urls = [f"https://subreply.com/{u}" for u, in users]
+        user_urls = [f"https://subreply.com/{s}" for s, in users]
         urls = sorted(posts_urls + sub_urls + user_urls)
         resp.text = "\n".join(urls)
 
 
 class IntroResource:
     @before(auth_user)
-    def on_get(self, req, resp):
+    async def on_get(self, req, resp):
         if req.user:
             raise HTTPFound('/feed')
-        resp.text = render(
+        resp.text = await render(
             page='intro', view='intro', user=req.user
         )
 
@@ -146,9 +146,9 @@ class FeedResource:
 
     @before(auth_user)
     @before(login_required)
-    def on_get(self, req, resp):
+    async def on_get(self, req, resp):
         entries, page, number = paginate(req, self.fetch_entries(req.user))
-        resp.text = render(
+        resp.text = await render(
             page=page, view='feed', number=number, content='',
             user=req.user, entries=entries, errors={},
             placeholder=self.placeholder
@@ -156,19 +156,19 @@ class FeedResource:
 
     @before(auth_user)
     @before(login_required)
-    def on_post(self, req, resp):
-        form = req.get_media()
+    async def on_post(self, req, resp):
+        form = await req.get_media()
         content = get_content(form)
         if not content:
             raise HTTPFound('/')
         errors = {}
-        errors['content'] = valid_content(content, req.user)
+        errors['content'] = await valid_content(content, req.user)
         if not errors['content']:
-            errors['content'] = valid_thread(content)
+            errors['content'] = await valid_thread(content)
         errors = {k: v for k, v in errors.items() if v}
         if errors:
             entries = self.fetch_entries(req.user)[:16]
-            resp.text = render(
+            resp.text = await render(
                 page='regular', view='feed', content=content, number=1,
                 user=req.user, entries=entries, errors=errors,
                 placeholder=self.placeholder
@@ -178,10 +178,11 @@ class FeedResource:
             extra = {}
             extra['link'] = links[0] if links else ''
             extra['hashtag'] = hashtags[0] if hashtags else ''
-            extra['at_user'] = User.objects.get(
-                username=mentions[0]
-            ) if mentions else None
-            th, is_new = Post.objects.get_or_create(
+            if mentions:
+                extra['at_user'] = await User.objects.aget(username=mentions[0])
+            else:
+                extra['at_user'] = None
+            th, is_new = await Post.objects.aget_or_create(
                 content=content,
                 created_at=utc_timestamp(),
                 created_by=req.user,
@@ -200,16 +201,16 @@ class ReplyResource:
         ).order_by('id').prefetch_related(PPFR)
 
     @before(auth_user)
-    def on_get(self, req, resp, id):
-        parent = Posts.filter(id=id).first()
+    async def on_get(self, req, resp, id):
+        parent = await Posts.filter(id=id).afirst()
         if not parent:
             raise HTTPNotFound
-        duplicate = Post.objects.filter(
+        duplicate = await Post.objects.filter(
             parent=parent, created_by=req.user
-        ).exists() if req.user else True
+        ).aexists() if req.user else True
         ancestors = self.fetch_ancestors(parent)
         entries = self.fetch_entries(parent)
-        resp.text = render(
+        resp.text = await render(
             page='reply', view='reply', content='',
             user=req.user, entry=parent, errors={}, entries=entries,
             ancestors=ancestors, duplicate=duplicate
@@ -217,22 +218,22 @@ class ReplyResource:
 
     @before(auth_user)
     @before(login_required)
-    def on_post(self, req, resp, id):
-        parent = Posts.filter(id=id).select_related('parent').first()
-        form = req.get_media()
+    async def on_post(self, req, resp, id):
+        parent = await Posts.filter(id=id).select_related('parent').afirst()
+        form = await req.get_media()
         content = get_content(form)
         if not content:
             raise HTTPFound(f"/reply/{id}")
         hashtags, links, mentions = get_metadata(content)
         errors = {}
-        errors['content'] = valid_content(content, req.user)
+        errors['content'] = await valid_content(content, req.user)
         if not errors['content']:
-            errors['content'] = valid_reply(parent, req.user, content, mentions)
+            errors['content'] = await valid_reply(parent, req.user, content, mentions)
         errors = {k: v for k, v in errors.items() if v}
         if errors:
             ancestors = self.fetch_ancestors(parent)
             entries = self.fetch_entries(parent)
-            resp.text = render(
+            resp.text = await render(
                 page='reply', view='reply', content=content,
                 user=req.user, entry=parent, errors=errors,
                 entries=entries, ancestors=ancestors, duplicate=False
@@ -241,10 +242,11 @@ class ReplyResource:
             extra = {}
             extra['link'] = links[0] if links else ''
             extra['hashtag'] = hashtags[0] if hashtags else ''
-            extra['at_user'] = User.objects.get(
-                username=mentions[0]
-            ) if mentions else None
-            re, is_new = Post.objects.get_or_create(
+            if mentions:
+                extra['at_user'] = await User.objects.aget(username=mentions[0])
+            else:
+                extra['at_user'] = None
+            re, is_new = await Post.objects.aget_or_create(
                 parent=parent,
                 to_user=parent.created_by,
                 content=content,
@@ -259,34 +261,34 @@ class ReplyResource:
 class EditResource:
     @before(auth_user)
     @before(login_required)
-    def on_get(self, req, resp, id):
-        entry = Posts.filter(id=id).prefetch_related(PPFR).first()
+    async def on_get(self, req, resp, id):
+        entry = await Posts.filter(id=id).prefetch_related(PPFR).afirst()
         if not entry or entry.created_by != req.user or entry.replies:
             raise HTTPNotFound
         ancestors = [entry.parent] if entry.parent_id else []
-        resp.text = render(
+        resp.text = await render(
             page='edit', view='edit', content=entry.content,
             user=req.user, entry=entry, errors={}, ancestors=ancestors
         )
 
     @before(auth_user)
     @before(login_required)
-    def on_post(self, req, resp, id):
-        entry = Posts.filter(id=id).prefetch_related(PPFR).first()
-        form = req.get_media()
+    async def on_post(self, req, resp, id):
+        entry = await Posts.filter(id=id).prefetch_related(PPFR).afirst()
+        form = await req.get_media()
         content = get_content(form)
         hashtags, links, mentions = get_metadata(content)
         errors = {}
-        errors['content'] = valid_content(content, req.user)
+        errors['content'] = await valid_content(content, req.user)
         if not errors['content']:
             if entry.parent_id:
-                errors['content'] = valid_reply(entry.parent, req.user, content, mentions)
+                errors['content'] = await valid_reply(entry.parent, req.user, content, mentions)
             else:
-                errors['content'] = valid_thread(content)
+                errors['content'] = await valid_thread(content)
         errors = {k: v for k, v in errors.items() if v}
         if errors:
             ancestors = [entry.parent] if entry.parent_id else []
-            resp.text = render(
+            resp.text = await render(
                 page='edit', view='edit', content=content,
                 user=req.user, entry=entry, errors=errors, ancestors=ancestors
             )
@@ -296,12 +298,13 @@ class EditResource:
             entry.edited_at = utc_timestamp()
             entry.link = links[0] if links else ''
             entry.hashtag = hashtags[0] if hashtags else ''
-            entry.at_user = User.objects.get(
-                username=mentions[0]
-            ) if mentions else None
+            if mentions:
+                entry.at_user = await User.objects.aget(username=mentions[0])
+            else:
+                entry.at_user = None
             if previous_at_user != entry.at_user:
                 entry.mention_seen_at = .0
-            entry.save()
+            await entry.asave()
             raise HTTPFound(f"/reply/{entry.id}")
 
 
@@ -311,13 +314,15 @@ class MemberResource:
         return entries.prefetch_related(PFR, PPFR)
 
     @before(auth_user)
-    def on_get(self, req, resp, username):
+    async def on_get(self, req, resp, username):
         username = username.lower()
-        member = User.objects.filter(username=username).first()
+        member = await User.objects.filter(username=username).afirst()
+        if not member:
+            raise HTTPNotFound
         if not member:
             raise HTTPNotFound
         entries, page, number = paginate(req, self.fetch_entries(member))
-        resp.text = render(
+        resp.text = await render(
             page=page, view='member', number=number, errors={},
             user=req.user, member=member, entries=entries
         )
@@ -330,9 +335,9 @@ class FollowingResource:
 
     @before(auth_user)
     @before(login_required)
-    def on_get(self, req, resp):
+    async def on_get(self, req, resp):
         entries, page, number = paginate(req, self.fetch_entries(req.user), 24)
-        resp.text = render(
+        resp.text = await render(
             page=page, view='following', number=number,
             user=req.user, entries=entries, limit=24
         )
@@ -343,21 +348,21 @@ class FollowersResource:
         entries = Bond.objects.filter(to_user=user).exclude(created_by=user)
         return entries.order_by('-id').select_related('created_by')
 
-    def clear_followers(self, user):
-        Bond.objects.filter(
+    async def clear_followers(self, user):
+        await Bond.objects.filter(
             to_user=user, seen_at=.0
-        ).update(seen_at=utc_timestamp())
+        ).aupdate(seen_at=utc_timestamp())
 
     @before(auth_user)
     @before(login_required)
-    def on_get(self, req, resp):
+    async def on_get(self, req, resp):
         entries, page, number = paginate(req, self.fetch_entries(req.user), 24)
-        resp.text = render(
+        resp.text = await render(
             page=page, view='followers', number=number,
             user=req.user, entries=entries, limit=24
         )
         if req.user.notif_followers:
-            self.clear_followers(req.user)
+            await self.clear_followers(req.user)
 
 
 class MentionsResource:
@@ -365,21 +370,21 @@ class MentionsResource:
         entries = Posts.filter(at_user=user).order_by('-id')
         return entries.prefetch_related(PFR, PPFR)
 
-    def clear_mentions(self, user):
-        Post.objects.filter(
+    async def clear_mentions(self, user):
+        await Post.objects.filter(
             at_user=user, mention_seen_at=.0
-        ).update(mention_seen_at=utc_timestamp())
+        ).aupdate(mention_seen_at=utc_timestamp())
 
     @before(auth_user)
     @before(login_required)
-    def on_get(self, req, resp):
+    async def on_get(self, req, resp):
         entries, page, number = paginate(req, self.fetch_entries(req.user))
-        resp.text = render(
+        resp.text = await render(
             page=page, view='mentions', number=number,
             user=req.user, entries=entries
         )
         if req.user.notif_mentions:
-            self.clear_mentions(req.user)
+            await self.clear_mentions(req.user)
 
 
 class RepliesResource:
@@ -387,21 +392,21 @@ class RepliesResource:
         entries = Posts.filter(to_user=user).order_by('-id')
         return entries.prefetch_related(PPFR)
 
-    def clear_replies(self, user):
-        Post.objects.filter(
+    async def clear_replies(self, user):
+        await Post.objects.filter(
             to_user=user, reply_seen_at=.0
-        ).update(reply_seen_at=utc_timestamp())
+        ).aupdate(reply_seen_at=utc_timestamp())
 
     @before(auth_user)
     @before(login_required)
-    def on_get(self, req, resp):
+    async def on_get(self, req, resp):
         entries, page, number = paginate(req, self.fetch_entries(req.user))
-        resp.text = render(
+        resp.text = await render(
             page=page, view='replies', number=number,
             user=req.user, entries=entries
         )
         if req.user.notif_replies:
-            self.clear_replies(req.user)
+            await self.clear_replies(req.user)
 
 
 class SavedResource:
@@ -412,9 +417,9 @@ class SavedResource:
 
     @before(auth_user)
     @before(login_required)
-    def on_get(self, req, resp):
+    async def on_get(self, req, resp):
         entries, page, number = paginate(req, self.fetch_entries(req.user))
-        resp.text = render(
+        resp.text = await render(
             page=page, view='saved', number=number,
             user=req.user, entries=entries
         )
@@ -423,10 +428,10 @@ class SavedResource:
 class DestroyResource:
     @before(auth_user)
     @before(login_required)
-    def on_get(self, req, resp, username):
+    async def on_get(self, req, resp, username):
         if not req.user.id == 1:
             raise HTTPFound('/people')
-        User.objects.filter(username=username).delete()
+        await User.objects.filter(username=username).adelete()
         raise HTTPFound('/people')
 
 
@@ -453,12 +458,11 @@ class PeopleResource:
         return qs.order_by('id') if terms else qs.order_by('-id')
 
     @before(auth_user)
-    def on_get(self, req, resp):
+    async def on_get(self, req, resp):
         q = demojize(req.params.get('q', '').strip())
         terms = [t.strip() for t in q.split() if t.strip()]
-        entries = self.fetch_entries(terms)
-        entries, page, number = paginate(req, entries, 24)
-        resp.text = render(
+        entries, page, number = paginate(req, self.fetch_entries(terms), 24)
+        resp.text = await render(
             page=page, view='people', number=number, q=q,
             user=req.user, entries=entries, errors={}, limit=24,
             placeholder=self.placeholder
@@ -474,20 +478,20 @@ class DiscoverResource:
             query &= Q(content__icontains=term)
         return query
 
-    def fetch_entries(self, terms):
+    async def fetch_entries(self, terms):
         if terms:
             f = self.build_query(terms)
         else:
-            last_ids = User.objects.annotate(last_id=Max('posts')).values('last_id')
+            last_ids = [u['last_id'] async for u in User.objects.annotate(last_id=Max('posts')).values('last_id')]
             f = Q(id__in=last_ids)
         return Posts.filter(f).order_by('-id').prefetch_related(PFR, PPFR)
 
     @before(auth_user)
-    def on_get(self, req, resp):
+    async def on_get(self, req, resp):
         q = demojize(req.params.get('q', '').strip())
         terms = [t.strip() for t in q.split() if t.strip()]
-        entries, page, number = paginate(req, self.fetch_entries(terms))
-        resp.text = render(
+        entries, page, number = paginate(req, await self.fetch_entries(terms))
+        resp.text = await render(
             page=page, view='discover', number=number, q=q,
             user=req.user, entries=entries, errors={},
             placeholder=self.placeholder
@@ -497,17 +501,17 @@ class DiscoverResource:
 class TrendingResource:
     limit = 24
 
-    def fetch_entries(self):
-        sample = Post.objects.filter(parent=None).filter(
+    async def fetch_entries(self):
+        sample = [p['id'] async for p in Post.objects.filter(parent=None).filter(
             kids__isnull=False
-        ).order_by('-id').values('id')[:self.limit]
+        ).order_by('-id').values('id')[:self.limit]]
         entries = Posts.filter(id__in=sample).order_by('-replies', '-id')
         return entries.prefetch_related(PFR)
 
     @before(auth_user)
-    def on_get(self, req, resp):
-        entries, page, number = paginate(req, self.fetch_entries())
-        resp.text = render(
+    async def on_get(self, req, resp):
+        entries, page, number = paginate(req, await self.fetch_entries())
+        resp.text = await render(
             page=page, view='trending', number=number,
             user=req.user, entries=entries
         )
@@ -523,9 +527,9 @@ class MessagesResource:
 
     @before(auth_user)
     @before(login_required)
-    def on_get(self, req, resp):
+    async def on_get(self, req, resp):
         entries, page, number = paginate(req, self.fetch_entries(req))
-        resp.text = render(
+        resp.text = await render(
             page=page, view='messages', number=number,
             user=req.user, entries=entries
         )
@@ -538,33 +542,35 @@ class MessageResource:
         ).order_by('-id')
         return entries.select_related('created_by', 'to_user')
 
-    def clear_messages(self, req, member):
-        Chat.objects.filter(
+    async def clear_messages(self, req, member):
+        await Chat.objects.filter(
             created_by=member, to_user=req.user, seen_at=.0
-        ).update(seen_at=utc_timestamp())
+        ).aupdate(seen_at=utc_timestamp())
 
     @before(auth_user)
     @before(login_required)
-    def on_get(self, req, resp, username):
-        member = User.objects.filter(username=username.lower()).first()
+    async def on_get(self, req, resp, username):
+        member = await User.objects.filter(username=username.lower()).afirst()
+        if not member:
+            raise HTTPNotFound
         if not member:
             raise HTTPNotFound
         entries, page, number = paginate(req, self.fetch_entries(req, member))
-        forward = Chat.objects.filter(created_by=req.user, to_user=member).exists()
-        backward = Chat.objects.filter(created_by=member, to_user=req.user).exists()
+        forward = await Chat.objects.filter(created_by=req.user, to_user=member).aexists()
+        backward = await Chat.objects.filter(created_by=member, to_user=req.user).aexists()
         blocked = True if forward and not backward else False
-        resp.text = render(
+        resp.text = await render(
             page=page, view='message', number=number, user=req.user, errors={},
             entries=entries, member=member, blocked=blocked
         )
-        if req.user.received.filter(created_by=member, seen_at=.0).count():
-            self.clear_messages(req, member)
+        if await req.user.received.filter(created_by=member, seen_at=.0).acount():
+            await self.clear_messages(req, member)
 
     @before(auth_user)
     @before(login_required)
-    def on_post(self, req, resp, username):
-        member = User.objects.filter(username=username.lower()).first()
-        form = req.get_media()
+    async def on_post(self, req, resp, username):
+        member = await User.objects.filter(username=username.lower()).afirst()
+        form = await req.get_media()
         content = get_content(form)
         if not content:
             raise HTTPFound(f"/{username}/message")
@@ -573,12 +579,12 @@ class MessageResource:
         errors = {k: v for k, v in errors.items() if v}
         if errors:
             entries, page, number = paginate(req, self.fetch_entries(req, member))
-            resp.text = render(
+            resp.text = await render(
                 page=page, view='message', number=number, user=req.user,
                 member=member, entries=entries, content=content, errors=errors
             )
         else:
-            msg, is_new = Chat.objects.get_or_create(
+            msg, is_new = await Chat.objects.aget_or_create(
                 to_user=member,
                 content=content,
                 created_at=utc_timestamp(),
@@ -591,49 +597,49 @@ class MessageResource:
 class AccountResource:
     @before(auth_user)
     @before(login_required)
-    def on_get(self, req, resp):
-        resp.text = render(
+    async def on_get(self, req, resp):
+        resp.text = await render(
             page='account', view='account', user=req.user,
             change_errors={}, export_errors={}, delete_errors={}, form={}
         )
 
     @before(auth_user)
     @before(login_required)
-    def on_post_change(self, req, resp):
-        form = req.get_media()
+    async def on_post_change(self, req, resp):
+        form = await req.get_media()
         password1 = form.get('password1', '')
         password2 = form.get('password2', '')
         errors = {}
         errors['password'] = valid_password(password1, password2)
         errors = {k: v for k, v in errors.items() if v}
         if errors:
-            resp.text = render(
+            resp.text = await render(
                 page='account', view='account', user=req.user,
                 change_errors=errors, form=form
             )
         else:
             req.user.password = build_hash(password1)
-            req.user.save()
+            await req.user.asave()
             resp.unset_cookie('identity')
             raise HTTPFound('/login')
 
     @before(auth_user)
     @before(login_required)
-    def on_post_export(self, req, resp):
-        form = req.get_media()
+    async def on_post_export(self, req, resp):
+        form = await req.get_media()
         username = form.get('username', '').strip().lower()
         errors = {}
         if req.user.username != username:
             errors['username'] = "Username doesn't match"
         if errors:
-            resp.text = render(
+            resp.text = await render(
                 page='account', view='account', user=req.user,
                 export_errors=errors, form=form
             )
         else:
-            posts = Post.objects.filter(
+            posts = [p async for p in Post.objects.filter(
                 created_by=req.user
-            ).order_by('-id').prefetch_related('parent__created_by')
+            ).order_by('-id').select_related('parent__created_by')]
             data = []
             for post in posts:
                 d = {}
@@ -654,19 +660,19 @@ class AccountResource:
 
     @before(auth_user)
     @before(login_required)
-    def on_post_delete(self, req, resp):
-        form = req.get_media()
+    async def on_post_delete(self, req, resp):
+        form = await req.get_media()
         confirm = form.get('confirm', '')
         errors = {}
         if not verify_hash(confirm, req.user.password):
             errors['confirm'] = "Password doesn't match"
         if errors:
-            resp.text = render(
+            resp.text = await render(
                 page='account', view='account', user=req.user,
                 delete_errors=errors, form=form
             )
         else:
-            req.user.delete()
+            await req.user.adelete()
             resp.unset_cookie('identity')
             raise HTTPFound('/discover')
 
@@ -683,16 +689,16 @@ class DetailsResource:
 
     @before(auth_user)
     @before(login_required)
-    def on_get(self, req, resp):
-        resp.text = render(
+    async def on_get(self, req, resp):
+        resp.text = await render(
             page='details', view='details', user=req.user,
             errors={}, form={}
         )
 
     @before(auth_user)
     @before(login_required)
-    def on_post(self, req, resp):
-        form = req.get_media()
+    async def on_post(self, req, resp):
+        form = await req.get_media()
         f, s, p = {}, {}, {}
         self.update(form, s, self.social)
         self.update(form, p, self.phone)
@@ -704,29 +710,29 @@ class DetailsResource:
         if errors:
             f.update(p)
             f.update(s)
-            resp.text = render(
+            resp.text = await render(
                 page='details', view='details', user=req.user,
                 errors=errors, form=form
             )
         else:
             req.user.phone = p
             req.user.social = s
-            req.user.save(update_fields=['phone', 'social'])
+            await req.user.asave(update_fields=['phone', 'social'])
             raise HTTPFound(f"/{req.user}")
 
 
 class ProfileResource:
     @before(auth_user)
     @before(login_required)
-    def on_get(self, req, resp):
-        resp.text = render(
+    async def on_get(self, req, resp):
+        resp.text = await render(
             page='profile', view='profile', user=req.user, errors={}, form={}
         )
 
     @before(auth_user)
     @before(login_required)
-    def on_post(self, req, resp):
-        form = req.get_media()
+    async def on_post(self, req, resp):
+        form = await req.get_media()
         f = {}
         f['username'] = form.get('username', '').strip().lower()
         f['email'] = form.get('email', '').strip().lower()
@@ -737,9 +743,9 @@ class ProfileResource:
         f['location'] = get_location(form)
         f['link'] = form.get('link', '').strip().lower()
         f['description'] = get_content(form, 'description')
-        errors = profiling(f, req.user.id)
+        errors = await profiling(f, req.user.id)
         if errors:
-            resp.text = render(
+            resp.text = await render(
                 page='profile', view='profile', user=req.user,
                 errors=errors, form=form
             )
@@ -747,24 +753,24 @@ class ProfileResource:
             for field, value in f.items():
                 if getattr(req.user, field, '') != value:
                     setattr(req.user, field, value)
-            req.user.save()
+            await req.user.asave()
             raise HTTPFound('/{0}'.format(req.user))
 
 
 class LoginResource:
     @before(auth_user)
-    def on_get(self, req, resp):
+    async def on_get(self, req, resp):
         if req.user:
             raise HTTPFound('/feed')
-        resp.text = render(page='login', view='login', errors={}, form={})
+        resp.text = await render(page='login', view='login', errors={}, form={})
 
-    def on_post(self, req, resp):
-        form = req.get_media()
+    async def on_post(self, req, resp):
+        form = await req.get_media()
         username = form.get('username', '').strip().lower()
         password = form.get('password', '')
-        errors, user = authentication(username, password)
+        errors, user = await authentication(username, password)
         if errors:
-            resp.text = render(
+            resp.text = await render(
                 page='login', view='login', errors=errors, form=form
             )
         else:
@@ -776,22 +782,22 @@ class LoginResource:
 class LogoutResource:
     @before(auth_user)
     @before(login_required)
-    def on_get(self, req, resp):
+    async def on_get(self, req, resp):
         resp.unset_cookie('identity')
         raise HTTPFound('/discover')
 
 
 class RegisterResource:
     @before(auth_user)
-    def on_get(self, req, resp):
+    async def on_get(self, req, resp):
         if req.user:
             raise HTTPFound('/feed')
-        resp.text = render(
+        resp.text = await render(
             page='register', view='register', errors={}, form={}
         )
 
-    def on_post(self, req, resp):
-        form = req.get_media()
+    async def on_post(self, req, resp):
+        form = await req.get_media()
         f = {}
         f['username'] = form.get('username', '').strip().lower()
         f['email'] = form.get('email', '').strip().lower()
@@ -802,13 +808,13 @@ class RegisterResource:
         f['emoji'] = get_emoji(form)
         f['birthday'] = form.get('birthday', '').strip()
         f['location'] = form.get('location', '')
-        errors = registration(f)
+        errors = await registration(f)
         if errors:
-            resp.text = render(
+            resp.text = await render(
                 page='register', view='register', errors=errors, form=form
             )
         else:
-            user, is_new = User.objects.get_or_create(
+            user, is_new = await User.objects.aget_or_create(
                 username=f['username'],
                 defaults={
                     'created_at': utc_timestamp(),
@@ -822,7 +828,7 @@ class RegisterResource:
                 }
             )
             # create self bond
-            Bond.objects.get_or_create(
+            await Bond.objects.aget_or_create(
                 created_at=utc_timestamp(), seen_at=utc_timestamp(),
                 created_by=user, to_user=user
             )
@@ -834,37 +840,37 @@ class RegisterResource:
 
 class RecoverResource:
     @before(auth_user)
-    def on_get(self, req, resp):
+    async def on_get(self, req, resp):
         if req.user:
             raise HTTPFound('/feed')
-        resp.text = render(
+        resp.text = await render(
             page='recover', view='recover', errors={}, form={}
         )
 
-    def on_get_link(self, req, resp, token):
+    async def on_get_link(self, req, resp, token):
         email = FERNET.decrypt(token.encode()).decode()
-        user = User.objects.filter(email=email).first()
+        user = await User.objects.filter(email=email).afirst()
         token = FERNET.encrypt(str(user.id).encode()).decode()
         resp.set_cookie('identity', token, path="/", max_age=MAX_AGE)
         raise HTTPFound('/feed')
 
-    def on_post(self, req, resp):
-        form = req.get_media()
+    async def on_post(self, req, resp):
+        form = await req.get_media()
         email = form.get('email', '').strip().lower()
         errors = {}
-        user = User.objects.filter(email=email).first()
+        user = await User.objects.filter(email=email).afirst()
         if not user:
             errors['email'] = "Email doesn't exist"
         if errors:
-            resp.text = render(
+            resp.text = await render(
                 page='recover', view='recover', errors=errors, form=form
             )
         else:
             # generate token
             token = FERNET.encrypt(str(user.email).encode()).decode()
             # compose message
-            admin = User.objects.get(id=1)
-            m, is_new = Chat.objects.get_or_create(
+            admin = await User.objects.aget(id=1)
+            m, is_new = await Chat.objects.aget_or_create(
                 content=f"Send https://subreply.com/recover/{token} to {user.email}.",
                 created_at=utc_timestamp(),
                 created_by=user,
@@ -875,6 +881,6 @@ class RecoverResource:
                 errors['email'] = "Please wait for your recovery link"
             else:
                 errors['email'] = "Message couldn't be sent"
-            resp.text = render(
+            resp.text = await render(
                 page='recover', view='recover', errors=errors, form=form
             )

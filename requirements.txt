@@ -13,3 +13,4 @@ requests
 strictyaml
 tldextract
 unidecode
+uvicorn

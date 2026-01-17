@@ -12,6 +12,7 @@ from app.utils import has_repetitions, verify_hash
 from project.vars import INVALID, MAX_YEAR, MIN_YEAR, CITIES, LATIN
 
 
+
 def valid_hashtag(value):
     limits = digits + ascii_letters
     if not value:
@@ -26,7 +27,7 @@ def valid_hashtag(value):
         return "Hashtag contains repeating characters"
 
 
-def valid_content(value, user, limit=640):
+async def valid_content(value, user, limit=640):
     hashtags, links, mentions = get_metadata(value)
     if len(value) > limit:
         return f"Share fewer than {limit} characters"
@@ -57,15 +58,15 @@ def valid_content(value, user, limit=640):
             return "Don't mention yourself"
         elif mention == value.lower()[1:]:
             return "Share more than a mention"
-        elif not User.objects.filter(username=mention).exists():
+        elif not await User.objects.filter(username=mention).aexists():
             return "@{0} account doesn't exists".format(mention)
 
 
-def valid_thread(value):
+async def valid_thread(value):
     """Duplicate topic against old topics."""
-    threads = Post.objects.filter(
+    threads = [t async for t in Post.objects.filter(
         parent=None
-    ).select_related('created_by').order_by('-id')[:32]
+    ).select_related('created_by').order_by('-id')[:32]]
     duplicates = [t for t in threads if t.content.lower() == value.lower()]
     if duplicates:
         duplicate = duplicates[0]
@@ -73,13 +74,13 @@ def valid_thread(value):
         return err.format(duplicate.id, duplicate.created_by)
 
 
-def valid_reply(parent, user, value, mentions):
+async def valid_reply(parent, user, value, mentions):
     """Duplicate reply against replies for topic including topic."""
-    ancestors = parent.ancestors.values_list('id', flat=True)
+    ancestors = [a async for a in parent.ancestors.values_list('id', flat=True)]
     top_id = min(ancestors) if ancestors else parent.id
-    duplicate = Post.objects.filter(
+    duplicate = await Post.objects.filter(
         (Q(ancestors=top_id) | Q(id=top_id)) & Q(content__iexact=value)
-    ).select_related('created_by').first()
+    ).select_related('created_by').afirst()
     if duplicate:
         err = 'Duplicate of #{0} by @{1}'
         return err.format(duplicate.id, duplicate.created_by)
@@ -89,13 +90,13 @@ def valid_reply(parent, user, value, mentions):
         return "Don't mention the author"
 
 
-def authentication(username, password):
+async def authentication(username, password):
     errors = {}
     title = "Email" if "@" in username else "Username"
     if "@" in username:
-        user = User.objects.filter(email=username).first()
+        user = await User.objects.filter(email=username).afirst()
     else:
-        user = User.objects.filter(username=username).first()
+        user = await User.objects.filter(username=username).afirst()
     if not user:
         errors['username'] = "{0} doesn't exist".format(title)
     elif not verify_hash(password, user.password):
@@ -103,7 +104,7 @@ def authentication(username, password):
     return errors, user
 
 
-def valid_username(value, user_id=0):
+async def valid_username(value, user_id=0):
     limits = digits + ascii_letters + "_"
     if not value:
         return "Username can't be blank"
@@ -117,7 +118,7 @@ def valid_username(value, user_id=0):
         return "Username contains consecutive underscores"
     elif value in INVALID and user_id != 1:
         return "Username is invalid"
-    elif User.objects.filter(username=value).exclude(id=user_id).exists():
+    elif await User.objects.filter(username=value).exclude(id=user_id).aexists():
         return "Username is already taken"
 
 
@@ -162,16 +163,16 @@ def valid_last_name(value):
         return "First name should use Latin characters"
 
 
-def valid_full_name(emoji, first_name, last_name, user_id=0):
-    if User.objects.filter(
+async def valid_full_name(emoji, first_name, last_name, user_id=0):
+    if await User.objects.filter(
         emoji=emoji, first_name=first_name, last_name=last_name
-    ).exclude(id=user_id).exists():
+    ).exclude(id=user_id).aexists():
         return "Emoji and names combination is taken"
     elif first_name == last_name:
         return "First and last names should be different"
 
 
-def valid_email(value, user_id=0):
+async def valid_email(value, user_id=0):
     if not value:
         return "Email can't be blank"
     elif len(value) > 120:
@@ -180,7 +181,7 @@ def valid_email(value, user_id=0):
         return "Email should use ASCII characters"
     elif "@" not in value:
         return "Email isn't a valid address"
-    elif User.objects.filter(email=value).exclude(id=user_id).exists():
+    elif await User.objects.filter(email=value).exclude(id=user_id).aexists():
         return "Email is used by someone else"
     else:
         handle, domain = value.split('@', 1)
@@ -192,15 +193,15 @@ def valid_email(value, user_id=0):
             return "Email can't be sent to this address"
 
 
-def valid_description(value, user_id=0):
+async def valid_description(value, user_id=0):
     if value:
-        user = User.objects.filter(id=user_id).first()
-        return valid_content(value, user, limit=240)
+        user = await User.objects.filter(id=user_id).afirst()
+        return await valid_content(value, user, limit=240)
 
 
-def valid_link(value, user_id=0):
+async def valid_link(value, user_id=0):
     if value:
-        duplicate = User.objects.filter(link=value).exclude(id=user_id).first()
+        duplicate = await User.objects.filter(link=value).exclude(id=user_id).afirst()
         if len(value) > 240:
             return "Link can't be longer than 240 characters"
         elif len(value) != len(value.encode()):
@@ -331,33 +332,33 @@ def changing(user, current, password1, password2):
     return {k: v for k, v in errors.items() if v}
 
 
-def profiling(f, user_id):
+async def profiling(f, user_id):
     errors = {}
-    errors['username'] = valid_username(f['username'], user_id=user_id)
-    errors['email'] = valid_email(f['email'], user_id=user_id)
+    errors['username'] = await valid_username(f['username'], user_id=user_id)
+    errors['email'] = await valid_email(f['email'], user_id=user_id)
     errors['first_name'] = valid_first_name(f['first_name'])
     errors['last_name'] = valid_last_name(f['last_name'])
-    errors['full_name'] = valid_full_name(
+    errors['full_name'] = await valid_full_name(
         f['emoji'], f['first_name'], f['last_name'], user_id=user_id
     )
     errors['emoji'] = valid_emoji(f['emoji'])
     errors['birthday'] = valid_birthday(f['birthday'])
     errors['location'] = valid_location(f['location'])
-    errors['link'] = valid_link(f['link'], user_id=user_id)
-    errors['description'] = valid_description(
+    errors['link'] = await valid_link(f['link'], user_id=user_id)
+    errors['description'] = await valid_description(
         f['description'], user_id=user_id
     )
     return {k: v for k, v in errors.items() if v}
 
 
-def registration(f):
+async def registration(f):
     errors = {}
-    errors['username'] = valid_username(f['username'])
-    errors['email'] = valid_email(f['email'])
+    errors['username'] = await valid_username(f['username'])
+    errors['email'] = await valid_email(f['email'])
     errors['password'] = valid_password(f['password1'], f['password2'])
     errors['first_name'] = valid_first_name(f['first_name'])
     errors['last_name'] = valid_last_name(f['last_name'])
-    errors['full_name'] = valid_full_name(
+    errors['full_name'] = await valid_full_name(
         f['emoji'], f['first_name'], f['last_name']
     )
     errors['emoji'] = valid_emoji(f['emoji'])

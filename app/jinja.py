@@ -9,10 +9,10 @@ from app.filters import age, enumerize, hexcode, parser, timeago
 from app.utils import utc_timestamp
 from project.settings import DEBUG
 
-env = Environment(autoescape=True)
+env = Environment(autoescape=True, enable_async=True)
 
 env.auto_reload = DEBUG
-env.bytecode_cache = FileSystemBytecodeCache()
+# env.bytecode_cache = FileSystemBytecodeCache()
 env.loader = FileSystemLoader('templates')
 
 env.filters['age'] = age
@@ -32,8 +32,8 @@ env.globals['brand'] = "Subreply"
 env.globals['v'] = 267
 
 
-def render(page, **kwargs):
+async def render(page, **kwargs):
     if DEBUG:
         print('\n---', page, kwargs.get('view', ''))
     template = env.get_template(f'pages/{page}.html')
-    return template.render(**kwargs)
+    return await template.render_async(**kwargs)

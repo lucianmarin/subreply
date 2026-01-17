@@ -1,8 +1,15 @@
-from falcon import App
+import logging
+from falcon.asgi import App
 from falcon.constants import MEDIA_HTML
 
 from app import api, resources
 from project.settings import DEBUG
+
+if DEBUG:
+    logging.basicConfig(
+        format="%(asctime)s [%(levelname)s] %(message)s",
+        level=logging.DEBUG
+    )
 
 app = App(media_type=MEDIA_HTML)
 app.req_options.strip_url_path_trailing_slash = True
