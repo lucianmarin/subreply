@@ -12,7 +12,6 @@ from app.utils import has_repetitions, verify_hash
 from project.vars import INVALID, MAX_YEAR, MIN_YEAR, CITIES, LATIN
 
 
-
 def valid_hashtag(value):
     limits = digits + ascii_letters
     if not value:

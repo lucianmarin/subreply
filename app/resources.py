@@ -121,7 +121,7 @@ class TxtResource:
         users = [u async for u in User.objects.exclude(posts=None).values_list('username')]
         posts_urls = [f"https://subreply.com/reply/{p}" for p, in posts]
         sub_urls = [f"https://subreply.com/sub/{s}" for s, in subs]
-        user_urls = [f"https://subreply.com/{s}" for s, in users]
+        user_urls = [f"https://subreply.com/{u}" for u, in users]
         urls = sorted(posts_urls + sub_urls + user_urls)
         resp.text = "\n".join(urls)
 
