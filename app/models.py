@@ -60,30 +60,6 @@ class User(models.Model):
             return self.first_name[:1] + self.last_name[:1]
         return self.first_name[:3]
 
-    # @cached_property
-    # def notif_followers(self):
-    #     return self.followers.filter(seen_at=.0).acount()
-
-    # @cached_property
-    # def notif_mentions(self):
-    #     return self.mentions.filter(mention_seen_at=.0).acount()
-
-    # @cached_property
-    # def notif_replies(self):
-    #     return self.replies.filter(reply_seen_at=.0).acount()
-
-    # @cached_property
-    # def notif_messages(self):
-    #     return self.received.filter(seen_at=.0).acount()
-
-    # @cached_property
-    # def follows(self):
-    #     return self.following.values_list('to_user_id', flat=True)
-
-    # @cached_property
-    # def saves(self):
-    #     return self.saved.values_list('post_id', flat=True)
-
     @cached_property
     def links(self):
         social = self.social.copy()
