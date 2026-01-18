@@ -16,7 +16,7 @@
         {% endif %}
 
         {% for entry in entries %}
-            {% if view in ['arrivals', 'people'] %}
+            {% if view == "people" %}
                 {% set member = entry %}
                 {% include "common/user.html" %}
             {% elif view == 'following' %}

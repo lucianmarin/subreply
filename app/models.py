@@ -1,9 +1,12 @@
 from os import environ
+from datetime import datetime, timezone
 
 from django import setup
 from django.conf import settings
 from django.db import models
 from django.utils.functional import cached_property
+
+from app.utils import utc_timestamp
 
 if not settings.configured:
     environ.setdefault('DJANGO_SETTINGS_MODULE', 'project.settings')
@@ -24,6 +27,7 @@ class User(models.Model):
     password = models.CharField(max_length=80)
 
     created_at = models.FloatField(default=.0)
+    seen_at = models.FloatField(default=.0, db_index=True)
 
     emoji = models.CharField(max_length=80, default='')
     birthday = models.CharField(max_length=10, default='')
@@ -90,6 +94,14 @@ class User(models.Model):
         if self.phone:
             social['telephone'] = self.phone['code'] + self.phone['number']
         return social
+
+    def up_seen(self):
+        fmt = "%Y-%m-%d-%H-%M"
+        last_day = datetime.now(timezone.utc).strftime(fmt)
+        last_seen = datetime.fromtimestamp(self.seen_at).strftime(fmt)
+        if last_day != last_seen:
+            self.seen_at = utc_timestamp()
+            self.save(update_fields=['seen_at'])
 
 
 class Post(models.Model):

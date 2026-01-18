@@ -2,8 +2,10 @@
     <div class="author">
         {% if view == "member" %}
             <a class="right caps" href="/{{ member }}/message">Message</a>
+        {% elif view == "people" %}
+            <a class="right" href="/{{ member }}">{{ entry.seen_at | shortdate }}</a>
         {% else %}
-            <a class="right" href="/{{ member }}">{{ entry.created_at | shortdate }}</b>
+            <a class="right" href="/{{ member }}">{{ entry.created_at | shortdate }}</a>
         {% endif %}
         <a class="handle" href="/{{ member }}">
             {{ member.full_name | emojize }}

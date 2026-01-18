@@ -312,14 +312,17 @@ class MemberResource:
 
     @before(auth_user)
     def on_get(self, req, resp, username):
-        username = username.lower()
-        member = User.objects.filter(username=username).first()
+        member = User.objects.filter(username=username.lower()).first()
         if not member:
             raise HTTPNotFound
+        if req.user:
+            is_followed = Bond.objects.filter(created_by=member, to_user=req.user).exists()
+        else:
+            is_followed = None
         entries, page, number = paginate(req, self.fetch_entries(member))
         resp.text = render(
             page=page, view='member', number=number, errors={},
-            user=req.user, member=member, entries=entries
+            user=req.user, member=member, entries=entries, is_followed=is_followed
         )
 
 
@@ -450,7 +453,7 @@ class PeopleResource:
     def fetch_entries(self, terms):
         q = self.build_query(terms)
         qs = User.objects.filter(q)
-        return qs.order_by('id') if terms else qs.order_by('-id')
+        return qs.order_by('-seen_at')
 
     @before(auth_user)
     def on_get(self, req, resp):
@@ -812,6 +815,7 @@ class RegisterResource:
                 username=f['username'],
                 defaults={
                     'created_at': utc_timestamp(),
+                    'seen_at': utc_timestamp(),
                     'password': build_hash(f['password1']),
                     'email': f['email'],
                     'first_name': f['first_name'],
