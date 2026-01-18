@@ -32,8 +32,8 @@ env.globals['brand'] = "Subreply"
 env.globals['v'] = 267
 
 
-async def render(page, **kwargs):
+def render(page, **kwargs):
     if DEBUG:
         print('\n---', page, kwargs.get('view', ''))
     template = env.get_template(f'pages/{page}.html')
-    return await template.render_async(**kwargs)
+    return template.render_async(kwargs)
