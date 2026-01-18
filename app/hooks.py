@@ -13,12 +13,13 @@ async def auth_user(req, resp, resource, params):
         print(e)
         identity = 0
     req.user = await User.objects.filter(id=identity).afirst()
-    req.user.notif_followers = await req.user.followers.filter(seen_at=.0).acount()
-    req.user.notif_mentions = await req.user.mentions.filter(mention_seen_at=.0).acount()
-    req.user.notif_replies = await req.user.replies.filter(reply_seen_at=.0).acount()
-    req.user.notif_messages = await req.user.received.filter(seen_at=.0).acount()
-    req.user.follows = [f async for f in req.user.following.values_list('to_user_id', flat=True)]
-    req.user.saves = [s async for s in req.user.saved.values_list('post_id', flat=True)]
+    if req.user:
+        req.user.notif_followers = await req.user.followers.filter(seen_at=.0).acount()
+        req.user.notif_mentions = await req.user.mentions.filter(mention_seen_at=.0).acount()
+        req.user.notif_replies = await req.user.replies.filter(reply_seen_at=.0).acount()
+        req.user.notif_messages = await req.user.received.filter(seen_at=.0).acount()
+        req.user.follows = [f async for f in req.user.following.values_list('to_user_id', flat=True)]
+        req.user.saves = [s async for s in req.user.saved.values_list('post_id', flat=True)]
 
 
 async def login_required(req, resp, resource, params):
