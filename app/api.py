@@ -42,7 +42,7 @@ class LoginEndpoint:
             token = FERNET.encrypt(str(user.id).encode()).decode()
             resp.media = {
                 "token": token,
-                "user": build_user(user)
+                "user": await build_user(user)
             }
 
 
@@ -86,7 +86,7 @@ class RegisterEndpoint:
             token = FERNET.encrypt(str(user.id).encode()).decode()
             resp.media = {
                 "token": token,
-                "user": build_user(user)
+                "user": await build_user(user)
             }
 
 
@@ -114,7 +114,7 @@ class ProfileEndpoint:
                 if getattr(req.user, field, '') != value:
                     setattr(req.user, field, value)
             await req.user.asave()
-            resp.media = {'user': build_user(req.user)}
+            resp.media = {'user': await build_user(req.user)}
 
 
 class DetailsEndpoint:
@@ -146,7 +146,7 @@ class DetailsEndpoint:
             req.user.phone = p
             req.user.social = s
             await req.user.asave(update_fields=['phone', 'social'])
-            resp.media = {'user': build_user(req.user)}
+            resp.media = {'user': await build_user(req.user)}
 
 
 class PostEndpoint:
@@ -187,7 +187,7 @@ class PostEndpoint:
             )
             re.set_ancestors()
             await re.asave()
-            resp.media = build_entry(re, [], parents=True)
+            resp.media = await build_entry(re, [], parents=True)
 
 
 class SendEndpoint:
@@ -205,7 +205,7 @@ class SendEndpoint:
             created_by=req.user,
             seen_at=utc_timestamp() if member == req.user else .0
         )
-        resp.media = build_chat(msg)
+        resp.media = await build_chat(msg)
 
 
 class FeedEndpoint:
@@ -222,7 +222,7 @@ class FeedEndpoint:
         entries = [e async for e in entries_qs]
         resp.media = {
             "page": page,
-            "entries": [build_entry(entry, req.user.saves, parents=True) for entry in entries]
+            "entries": [await build_entry(entry, req.user.saves, parents=True) for entry in entries]
         }
 
 
@@ -245,9 +245,9 @@ class ReplyEndpoint:
         entries = [e async for e in self.fetch_entries(parent)]
         resp.content_type = MEDIA_JSON
         resp.media = {
-            "entry": build_entry(parent, req.user.saves),
-            "ancestors": [build_entry(entry, req.user.saves) for entry in ancestors],
-            "entries": [build_entry(entry, req.user.saves, parents=True) for entry in entries]
+            "entry": await build_entry(parent, req.user.saves),
+            "ancestors": [await build_entry(entry, req.user.saves) for entry in ancestors],
+            "entries": [await build_entry(entry, req.user.saves, parents=True) for entry in entries]
         }
 
 
@@ -268,8 +268,8 @@ class MemberEndpoint:
         resp.content_type = MEDIA_JSON
         resp.media = {
             "page": page,
-            "member": build_user(member),
-            "entries": [build_entry(entry, req.user.saves, parents=True) for entry in entries]
+            "member": await build_user(member),
+            "entries": [await build_entry(entry, req.user.saves, parents=True) for entry in entries]
         }
 
 
@@ -286,7 +286,7 @@ class FollowingEndpoint:
         resp.content_type = MEDIA_JSON
         resp.media = {
             "page": page,
-            "entries": [build_user(entry.to_user) for entry in entries]
+            "entries": [await build_user(entry.to_user) for entry in entries]
         }
 
 
@@ -308,7 +308,7 @@ class FollowersEndpoint:
         resp.content_type = MEDIA_JSON
         resp.media = {
             "page": page,
-            "entries": [build_user(entry.created_by) for entry in entries]
+            "entries": [await build_user(entry.created_by) for entry in entries]
         }
         if req.user.notif_followers:
             await self.clear_followers(req.user)
@@ -332,7 +332,7 @@ class MentionsEndpoint:
         resp.content_type = MEDIA_JSON
         resp.media = {
             "page": page,
-            "entries": [build_entry(entry, req.user.saves, parents=True) for entry in entries]
+            "entries": [await build_entry(entry, req.user.saves, parents=True) for entry in entries]
         }
         if req.user.notif_mentions:
             await self.clear_mentions(req.user)
@@ -356,7 +356,7 @@ class RepliesEndpoint:
         resp.content_type = MEDIA_JSON
         resp.media = {
             "page": page,
-            "entries": [build_entry(entry, req.user.saves) for entry in entries]
+            "entries": [await build_entry(entry, req.user.saves) for entry in entries]
         }
         if req.user.notif_replies:
             await self.clear_replies(req.user)
@@ -376,7 +376,7 @@ class SavedEndpoint:
         resp.content_type = MEDIA_JSON
         resp.media = {
             "page": page,
-            "entries": [build_entry(entry, req.user.saves, parents=True) for entry in entries]
+            "entries": [await build_entry(entry, req.user.saves, parents=True) for entry in entries]
         }
 
 
@@ -411,7 +411,7 @@ class PeopleEndpoint:
         resp.content_type = MEDIA_JSON
         resp.media = {
             "page": page,
-            "entries": [build_user(entry) for entry in entries]
+            "entries": [await build_user(entry) for entry in entries]
         }
 
 
@@ -440,7 +440,7 @@ class DiscoverEndpoint:
         resp.content_type = MEDIA_JSON
         resp.media = {
             "page": page,
-            "entries": [build_entry(entry, saves, parents=True) for entry in entries]
+            "entries": [await build_entry(entry, saves, parents=True) for entry in entries]
         }
 
 
@@ -462,7 +462,7 @@ class TrendingEndpoint:
         resp.content_type = MEDIA_JSON
         resp.media = {
             "page": page,
-            "entries": [build_entry(entry, saves, parents=True) for entry in entries]
+            "entries": [await build_entry(entry, saves, parents=True) for entry in entries]
         }
 
 
@@ -482,7 +482,7 @@ class MessagesEndpoint:
         resp.content_type = MEDIA_JSON
         resp.media = {
             "page": page,
-            "entries": [build_chat(entry) for entry in entries]
+            "entries": [await build_chat(entry) for entry in entries]
         }
 
 
@@ -509,7 +509,7 @@ class MessageEndpoint:
         resp.content_type = MEDIA_JSON
         resp.media = {
             "page": page,
-            "entries": [build_chat(entry) for entry in entries]
+            "entries": [await build_chat(entry) for entry in entries]
         }
         if await req.user.received.filter(created_by=member, seen_at=.0).acount():
             await self.clear_messages(req, member)
@@ -568,7 +568,7 @@ class EditEndpoint:
         if previous_at_user != entry.at_user:
             entry.mention_seen_at = .0
         await entry.asave()
-        resp.media = build_entry(entry, req.user.saves)
+        resp.media = await build_entry(entry, req.user.saves)
 
 
 class DeleteEndpoint:

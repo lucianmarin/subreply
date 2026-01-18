@@ -1,9 +1,11 @@
 from emoji import emojize
+from app.models import User
 from app.filters import timeago
 from app.utils import utc_timestamp
 
 
-def build_user(user):
+async def build_user(user_id):
+    user = await User.objects.aget(id=user_id)
     return {
         "username": user.username,
         "full_name": emojize(user.full_name),
@@ -20,25 +22,25 @@ def build_user(user):
     }
 
 
-def build_entry(entry, saves, parents=False):
+async def build_entry(entry, saves, parents=False):
     data = {
         "id": entry.id,
         "content": emojize(entry.content),
-        "created_by": build_user(entry.created_by),
+        "created_by": await build_user(entry.created_by_id),
         "saved": entry.id in saves,
         "timestamp": timeago(utc_timestamp() - entry.created_at)
     }
     if parents:
-        data['parent'] = build_entry(entry.parent, saves) if entry.parent else None
-    data['kids'] = [build_entry(kid, saves) for kid in entry.kids.all()]
+        data['parent'] = await build_entry(entry.parent, saves) if entry.parent else None
+    data['kids'] = [await build_entry(kid, saves) async for kid in entry.kids.all()]
     return data
 
 
-def build_chat(entry):
+async def build_chat(entry):
     return {
         "id": entry.id,
         "content": emojize(entry.content),
-        "created_by": build_user(entry.created_by),
-        "to_user": build_user(entry.to_user),
+        "created_by": await build_user(entry.created_by_id),
+        "to_user": await build_user(entry.to_user_id),
         "timestamp": timeago(utc_timestamp() - entry.created_at)
     }

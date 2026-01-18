@@ -2,7 +2,7 @@ from datetime import date
 from string import ascii_letters, digits
 
 from django.db.models import Q
-from dns.resolver import query as dns_query
+from dns.asyncresolver import resolve as async_dns_query
 from emoji import EMOJI_DATA, emoji_count
 from phonenumbers import is_possible_number, is_valid_number, parse
 
@@ -185,7 +185,7 @@ async def valid_email(value, user_id=0):
     else:
         handle, domain = value.split('@', 1)
         try:
-            has_mx = bool(dns_query(domain, 'MX'))
+            has_mx = bool(await async_dns_query(domain, 'MX'))
         except Exception:
             has_mx = False
         if not has_mx:
