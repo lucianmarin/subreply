@@ -9,8 +9,12 @@
 <div class="entry">
     <div class="status">
         Joined {{ member.created_at | shortdate }} ago.
-        Seen {{ member.seen_at | shortdate }} ago.
-        {% if is_followed %}Follows you.{% endif %}
+        {% if member.seen_at != member.created_at %}
+            Seen {{ member.seen_at | shortdate }} ago.
+        {% endif %}
+        {% if is_followed %}
+            Follows you.
+        {% endif %}
     </div>
 </div>
 
