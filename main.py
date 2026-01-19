@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from falcon import App
 from falcon.constants import MEDIA_HTML
 
@@ -9,6 +11,9 @@ app.req_options.strip_url_path_trailing_slash = True
 app.resp_options.secure_cookies_by_default = not DEBUG
 
 app.add_route('/', resources.MainResource())
+
+if DEBUG:
+    app.add_static_route('/static', Path('static').absolute())
 
 # post
 app.add_route('/api/login', api.LoginEndpoint())
@@ -82,9 +87,3 @@ app.add_route('/edit/{id:int}', resources.EditResource())
 app.add_route('/{username}/message', resources.MessageResource())
 app.add_route('/{username}/destroy', resources.DestroyResource())
 app.add_route('/{username}', resources.MemberResource())
-
-if DEBUG:
-    app.add_route('/static/{filename}', resources.StaticResource())
-    app.add_route('/static/route159/{filename}', resources.StaticResource("route159"))
-
-application = app

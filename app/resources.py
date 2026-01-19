@@ -30,32 +30,6 @@ def paginate(req, qs, limit=16):
     return qs[index:index + limit], page, number
 
 
-class StaticResource:
-    binary = ['png', 'jpg', 'woff', 'woff2']
-    mime_types = {
-        'js': "application/javascript",
-        'json': "application/json",
-        'css': "text/css",
-        'woff': "font/woff",
-        'woff2': "font/woff2",
-        'png': "image/png",
-        'jpg': "image/jpeg"
-    }
-
-    def __init__(self, subpath=""):
-        self.path = f"static/{subpath}" if subpath else "static"
-
-    def on_get(self, req, resp, filename):
-        name, ext = filename.split('.')
-        resp.content_type = self.mime_types[ext]
-        resp.cache_control = ["max-age=3600000"]
-        filepath = f"{self.path}/{filename}"
-        mode = "rb" if ext in self.binary else "r"
-        print("load", filepath, mode)
-        with open(filepath, mode) as f:
-            resp.text = f.read()
-
-
 class MainResource:
     @before(auth_user)
     def on_get(self, req, resp):
