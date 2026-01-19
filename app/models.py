@@ -35,6 +35,8 @@ class User(models.Model):
     link = models.CharField(max_length=240, default='')
     description = models.CharField(max_length=240, default='')
 
+    donations = models.IntegerField(default=0)
+
     phone = models.JSONField(default=dict)
     social = models.JSONField(default=dict)
 
@@ -95,7 +97,7 @@ class User(models.Model):
             social['telephone'] = self.phone['code'] + self.phone['number']
         return social
 
-    def up_seen(self):
+    def set_seen(self):
         fmt = "%Y-%m-%d-%H-%M"
         last_day = datetime.now(timezone.utc).strftime(fmt)
         last_seen = datetime.fromtimestamp(self.seen_at).strftime(fmt)
@@ -129,13 +131,7 @@ class Post(models.Model):
     def __str__(self):
         return self.content
 
-    def get_ancestors(self):
-        if not self.parent:
-            return []
-        return [self.parent] + self.parent.get_ancestors()
-
     def set_ancestors(self):
-        # self.ancestors.set(self.get_ancestors())
         if self.parent:
             self.ancestors.set(list(self.parent.ancestors.all()) + [self.parent])
         else:

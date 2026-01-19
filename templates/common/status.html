@@ -12,6 +12,9 @@
         {% if member.seen_at != member.created_at %}
             Seen {{ member.seen_at | shortdate }} ago.
         {% endif %}
+        {% if member.donations %}
+            Donated ${{ member.donations }}.
+        {% endif %}
         {% if is_followed %}
             Follows you.
         {% endif %}

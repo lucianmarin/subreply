@@ -14,7 +14,7 @@ def auth_user(req, resp, resource, params):
         identity = 0
     req.user = User.objects.filter(id=identity).first()
     if req.user:
-        req.user.up_seen()
+        req.user.set_seen()
 
 
 def login_required(req, resp, resource, params):
