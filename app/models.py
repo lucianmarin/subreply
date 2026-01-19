@@ -28,14 +28,13 @@ class User(models.Model):
 
     created_at = models.FloatField(default=.0)
     seen_at = models.FloatField(default=.0, db_index=True)
+    donated = models.FloatField(default=.0)
 
     emoji = models.CharField(max_length=80, default='')
     birthday = models.CharField(max_length=10, default='')
     location = models.CharField(max_length=60, default='')
     link = models.CharField(max_length=240, default='')
     description = models.CharField(max_length=240, default='')
-
-    donations = models.IntegerField(default=0)
 
     phone = models.JSONField(default=dict)
     social = models.JSONField(default=dict)
