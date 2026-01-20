@@ -5,7 +5,7 @@ from django import setup
 from django.conf import settings
 from django.db import models
 from django.utils.functional import cached_property
-
+import emoji
 from app.utils import utc_timestamp
 
 if not settings.configured:
@@ -46,11 +46,17 @@ class User(models.Model):
         return self.username
 
     @cached_property
+    def avatar(self):
+        if not self.emoji:
+            return ":bust_in_silhouette:"
+        return self.emoji
+
+    @cached_property
     def full_name(self):
         last_name = self.last_name
         if len(last_name) == 1:
             last_name += "."
-        return f"{self.emoji} {self.first_name} {last_name}".strip()
+        return f"{self.first_name} {last_name}".strip()
 
     @cached_property
     def short_name(self):

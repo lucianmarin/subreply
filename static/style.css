@@ -154,19 +154,13 @@ table td:nth-child(even):last-child, table th:nth-child(even):last-child { borde
 
 .list > .entry:last-child { padding-bottom: 0; }
 
-.entry { border-top: var(--whitesmoke) 1px solid; padding: 5px 0; }
+.entry { border-top: var(--whitesmoke) 1px solid; padding: 5px 0; margin-left: 25px; }
 
-.entry.indent { margin-left: 30px; }
+.entry.indent { margin-left: 25px; }
 
-.entry .text { margin-left: 30px; }
+.entry .avatar { float: left; display: block; margin-left: -25px; text-align: center; width: 25px; }
 
-.entry .text p { margin: 7.5px 0; }
-
-.entry .text p:first-child { margin-top: 0; }
-
-.entry .text p strong { margin-left: -30px; }
-
-.sublist { margin-left: 30px; }
+.sublist { margin-left: 25px; }
 
 .load { text-align: center; }
 

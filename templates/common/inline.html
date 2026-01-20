@@ -1,4 +1,7 @@
 <div class="entry">
+    <a class="avatar" href="/{{ entry.created_by }}">
+        {{ entry.created_by.avatar | emojize }}
+    </a>
     <div class="inline">
         <a class="name" href="/{{ entry.created_by }}">
             {{ entry.created_by.full_name | emojize }}
