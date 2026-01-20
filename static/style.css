@@ -86,11 +86,11 @@ table td:nth-child(even):last-child, table th:nth-child(even):last-child { borde
 
 .main { position: relative; }
 
-.menu { bottom: 10px; border-radius: 20px; box-shadow: 0 1px 5px var(--silver); display: none; height: 40px; left: calc(50% - 140px); margin-bottom: 10px; overflow: hidden; position: sticky; right: calc(50% - 140px); width: 280px; z-index: 1000; }
+.menu { background-color: var(--whitesmoke); bottom: 10px; border-radius: 20px; box-shadow: 0 1px 5px var(--silver); display: none; height: 40px; left: calc(50% - 140px); margin-bottom: 10px; overflow: hidden; position: sticky; right: calc(50% - 140px); width: 280px; z-index: 1000; }
 
 .menu.tiny { width: 160px; left: calc(50% - 80px); right: calc(50% - 80px); }
 
-.menu a { background-color: var(--whitesmoke); display: block; float: left; padding: 12px; position: relative; transition: background-color var(--d); }
+.menu a { background-color: var(--whitesmoke); border-radius: 20px; display: block; float: left; padding: 12px; position: relative; transition: background-color var(--d); }
 
 .menu a:first-child { border-top-left-radius: 20px; border-bottom-left-radius: 20px; }
 
