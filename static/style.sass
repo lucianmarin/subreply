@@ -209,6 +209,61 @@ table
     &.on a
         color: var(--accent)
 
+.main
+    position: relative
+
+.menu
+    bottom: 10px
+    border-radius: 20px
+    box-shadow: 0 1px 5px var(--silver)
+    display: none
+    height: 40px
+    left: calc(50% - 140px)
+    margin-bottom: 10px
+    overflow: hidden
+    position: sticky
+    right: calc(50% - 140px)
+    width: 280px
+    z-index: 1000
+    &.tiny
+        width: 160px
+        left: calc(50% - 80px)
+        right: calc(50% - 80px)
+    a
+        background-color: var(--whitesmoke)
+        display: block
+        float: left
+        padding: 12px
+        position: relative
+        transition: background-color var(--d)
+        &:first-child
+            border-top-left-radius: 20px
+            border-bottom-left-radius: 20px
+        &:last-child
+            border-top-right-radius: 20px
+            border-bottom-right-radius: 20px
+        &:hover
+            background-color: var(--white)
+        &.on
+            background-color: var(--white)
+            color: var(--accent)
+            svg path
+                stroke: var(--accent)
+        svg
+            display: block
+
+.menu, .links
+    span
+        color: var(--alert)
+        display: block
+        font-size: var(--sup)
+        font-weight: bold
+        position: absolute
+        right: 0
+        text-align: center
+        top: 0
+        width: 17px
+
 .links
     position: sticky
     text-align: right
@@ -236,16 +291,6 @@ table
                 stroke: var(--alert)
             span
                 color: var(--alert)
-    span
-        color: var(--alert)
-        display: block
-        font-size: var(--sup)
-        font-weight: bold
-        position: absolute
-        right: 0
-        text-align: center
-        top: 0
-        width: 17px
     svg
         float: right
         margin: 0 10px
@@ -256,6 +301,8 @@ table
     font-weight: bold
     margin: 15px 0
     overflow: hidden
+    &.optional
+        display: none
     a
         color: var(--silver)
         float: left
@@ -268,6 +315,10 @@ table
             color: var(--black)
             &::first-letter
                 border-bottom: 2px solid var(--black)
+        sup
+            color: var(--alert)
+            font-size: var(--sup)
+            font-weight: bold
 
 .reply
     margin: 10px 0
@@ -499,13 +550,20 @@ table
 
 @media (max-width: 704px)
     .container
-        grid-template-columns: auto 40px 525px 0
+        grid-template-columns: auto 40px 525px auto
     .links i
         display: none
 
 @media (max-width: 594px)
+    .links
+        display: none
+    .menu
+        display: block
     .container
-        grid-template-columns: 0 40px calc(100% - 70px) 0
+        grid-template-columns: 0 0 calc(100% - 20px) 0
+        grid-column-gap: 5px
+    .title.optional
+        display: block
 
 @font-face
     font-family: "Route 159"

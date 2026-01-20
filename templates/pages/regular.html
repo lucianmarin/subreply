@@ -1,51 +1,68 @@
 {% extends "base.html" %}
 
 {% block main %}
-    {% if view == 'feed' %}
-        {% include "input/thread.html" %}
-    {% elif view == 'message' %}
-        {% include "input/message.html" %}
-    {% elif view in ['discover', 'people'] %}
-        {% include "input/query.html" %}
+{% if view == 'feed' %}
+{% include "input/thread.html" %}
+{% elif view == 'message' %}
+{% include "input/message.html" %}
+{% elif view in ['discover', 'people'] %}
+{% include "input/query.html" %}
+{% elif view in ['trending', 'saved', 'followers', 'following'] %}
+<div class="title optional">
+    <a href="/trending" class="{% if view == 'trending' %}on{% endif %}">Trending</a>
+    <a href="/saved" class="{% if view == 'saved' %}on{% endif %}">Saved</a>
+    <a href="/followers" class="{% if view == 'followers' %}on{% endif %}">Followers{% if user.notif_followers %}<sup>{{
+            user.notif_followers }}</sup>{% endif %}</a>
+    <a href="/following" class="{% if view == 'following' %}on{% endif %}">Following</a>
+</div>
+{% elif view in ['replies', 'messages', 'mentions'] %}
+<div class="title optional">
+    <a href="/replies" class="{% if view == 'replies' %}on{% endif %}">Replies{% if user.notif_replies %}<sup>{{
+            user.notif_replies }}</sup>{% endif %}</a>
+    <a href="/messages" class="{% if view == 'messages' %}on{% endif %}">Messages{% if user.notif_messages %}<sup>{{
+            user.notif_messages }}</sup>{% endif %}</a>
+    <a href="/mentions" class="{% if view == 'mentions' %}on{% endif %}">Mentions{% if user.notif_mentions %}<sup>{{
+            user.notif_mentions }}</sup>{% endif %}</a>
+</div>
+{% endif %}
+
+<div class="list">
+    {% if view == 'member' %}
+    {% include "common/user.html" %}
+    {% include "common/status.html" %}
     {% endif %}
 
-    <div class="list">
-        {% if view == 'member' %}
-            {% include "common/user.html" %}
-            {% include "common/status.html" %}
-        {% endif %}
+    {% for entry in entries %}
+    {% if view == "people" %}
+    {% set member = entry %}
+    {% include "common/user.html" %}
+    {% elif view == 'following' %}
+    {% set member = entry.to_user %}
+    {% include "common/user.html" %}
+    {% elif view == 'followers' %}
+    {% set member = entry.created_by %}
+    {% include "common/user.html" %}
+    {% elif view == 'message' %}
+    {% include "common/message.html" %}
+    {% elif view == 'messages' %}
+    {% include "common/messages.html" %}
+    {% else %}
+    {% with prev=loop.previtem %}
+    {% include "common/stream.html" %}
+    {% endwith %}
+    {% endif %}
+    {% else %}
+    {% include "common/nothing.html" %}
+    {% endfor %}
 
-        {% for entry in entries %}
-            {% if view == "people" %}
-                {% set member = entry %}
-                {% include "common/user.html" %}
-            {% elif view == 'following' %}
-                {% set member = entry.to_user %}
-                {% include "common/user.html" %}
-            {% elif view == 'followers' %}
-                {% set member = entry.created_by %}
-                {% include "common/user.html" %}
-            {% elif view == 'message' %}
-                {% include "common/message.html" %}
-            {% elif view == 'messages' %}
-                {% include "common/messages.html" %}
-            {% else %}
-                {% with prev=loop.previtem %}
-                    {% include "common/stream.html" %}
-                {% endwith %}
-            {% endif %}
-        {% else %}
-            {% include "common/nothing.html" %}
-        {% endfor %}
+    {% if not limit %} {% set limit = 16 %} {% endif %}
 
-        {% if not limit %} {% set limit = 16 %} {% endif %}
-
-        {% if not q and entries | length == limit %}
-            <div class="entry">
-                <div class="load">
-                    <a onclick="getPage(event)" data-page="{{ number + 1 }}">Load more</a>
-                </div>
-            </div>
-        {% endif %}
+    {% if not q and entries | length == limit %}
+    <div class="entry">
+        <div class="load">
+            <a onclick="getPage(event)" data-page="{{ number + 1 }}">Load more</a>
+        </div>
     </div>
+    {% endif %}
+</div>
 {% endblock %}
