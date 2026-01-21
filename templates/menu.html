@@ -5,7 +5,7 @@
             <path d="M13 10V3L4 14h7v7l9-11h-7z" />
         </svg>
     </a>
-    <a href="/replies"
+    <a href="/messages"
         class="{% if view == 'replies' or view == 'mentions' or view == 'messages' or view == 'message' %}on{% elif user.notif_replies or user.notif_mentions or user.notif_messages %}red{% endif %}">
         {% if user.notif_replies or user.notif_mentions or user.notif_messages %}
         <span>{{ (user.notif_replies + user.notif_mentions + user.notif_messages) | cap }}</span>
