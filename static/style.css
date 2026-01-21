@@ -86,7 +86,7 @@ table td:nth-child(even):last-child, table th:nth-child(even):last-child { borde
 
 .main { position: relative; }
 
-.menu { background-color: var(--whitesmoke); bottom: 10px; border-radius: 20px; box-shadow: 0 1px 5px var(--silver); display: none; height: 40px; left: calc(50% - 140px); margin-bottom: 10px; overflow: hidden; position: sticky; right: calc(50% - 140px); width: 280px; z-index: 1000; }
+.menu { background-color: var(--whitesmoke); bottom: 10px; border-radius: 20px; box-shadow: 0 2px 0 var(--silver); display: none; height: 40px; left: calc(50% - 140px); margin-bottom: 10px; overflow: hidden; position: sticky; right: calc(50% - 140px); width: 280px; z-index: 1000; }
 
 .menu.tiny { width: 160px; left: calc(50% - 80px); right: calc(50% - 80px); }
 
