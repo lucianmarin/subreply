@@ -1,10 +1,7 @@
 <div class="entry {% if entry.to_user == user and entry.created_by != user %}indent{% endif %}">
     <div class="content">
-        <a class="avatar" href="/{{ entry.created_by }}">
-            {{ entry.created_by.avatar | emojize }}
-        </a>
         <a class="name" href="/{{ entry.created_by }}">
-            {{ entry.created_by.full_name }}
+            {{ entry.created_by.full_name | emojize }}
         </a>
         {{ entry.content | parser | emojize | safe }}
     </div>
