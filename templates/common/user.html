@@ -1,7 +1,4 @@
 <div class="entry">
-    <a class="avatar" href="/{{ member }}">
-        {{ member.avatar | emojize }}
-    </a>
     <div class="author">
         {% if view == "member" %}
         <a class="right caps" href="/{{ member }}/message">Message</a>
@@ -11,7 +8,7 @@
         <a class="right" href="/{{ member }}">{{ entry.created_at | shortdate }}</a>
         {% endif %}
         <a class="handle" href="/{{ member }}">
-            {{ member.full_name }}
+            {{ member.full_name | emojize }}
         </a>
         <a class="done" href="/{{ member }}">@{{ member }}</a>
         {% if user %}

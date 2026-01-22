@@ -3,70 +3,70 @@
 <meta name="viewport" content="width=device-width, maximum-scale=1, minimum-scale=1">
 
 {% if view == 'member' %}
-    <title>{{ member.full_name | emojize }} @{{ member }}</title>
-    <meta name="description" content="{{ member.description }}">
-    {% if member.emoji %}
-        <meta name="keywords" content="{{ member.emoji | keywords }}">
-    {% endif %}
-    <meta property="og:type" content="profile">
-    <meta property="og:url" content="https://subreply.com/{{ member }}">
-    <meta property="profile:username" content="{{ member.username }}">
-    <meta property="profile:first_name" content="{{ member.first_name }}">
-    {% if member.last_name %}
-        <meta property="profile:last_name" content="{{ member.last_name }}">
-    {% endif %}
+<title>{{ member.full_name | emojize }} @{{ member }}</title>
+<meta name="description" content="{{ member.description }}">
+{% if member.emoji %}
+<meta name="keywords" content="{{ member.emoji | keywords }}">
+{% endif %}
+<meta property="og:type" content="profile">
+<meta property="og:url" content="https://subreply.com/{{ member }}">
+<meta property="profile:username" content="{{ member.username }}">
+<meta property="profile:first_name" content="{{ member.first_name }}">
+{% if member.last_name %}
+<meta property="profile:last_name" content="{{ member.last_name }}">
+{% endif %}
 {% elif view == 'reply' %}
-    <title>{{ entry.content | emojize | shorten(60) }}</title>
-    <meta name="description" content="{{ entry.content | emojize | shorten(120) }}">
-    {% if entry.created_by.emoji %}
-        <meta name="keywords" content="{{ entry.created_by.emoji | keywords }}">
-    {% endif %}
-    <meta property="og:type" content="article">
-    <meta property="og:url" content="https://subreply.com/reply/{{ entry.id }}">
-    <meta property="article:author" content="{{ entry.created_by.short_name }}">
-    <meta property="article:published_time" content="{{ entry.created_at | isoformat }}">
-    {% if entry.edited_at %}
-        <meta property="article:modified_time" content="{{ entry.edited_at | isoformat }}">
-    {% endif %}
-    {% if entry.hashtag %}
-        <meta property="article:tag" content="{{ entry.hashtag }}">
-    {% endif %}
+<title>{{ entry.content | emojize | shorten(60) }}</title>
+<meta name="description" content="{{ entry.content | emojize | shorten(120) }}">
+{% if entry.created_by.emoji %}
+<meta name="keywords" content="{{ entry.created_by.emoji | keywords }}">
+{% endif %}
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://subreply.com/reply/{{ entry.id }}">
+<meta property="article:author" content="{{ entry.created_by.short_name }}">
+<meta property="article:published_time" content="{{ entry.created_at | isoformat }}">
+{% if entry.edited_at %}
+<meta property="article:modified_time" content="{{ entry.edited_at | isoformat }}">
+{% endif %}
+{% if entry.hashtag %}
+<meta property="article:tag" content="{{ entry.hashtag }}">
+{% endif %}
 {% elif view == 'message' %}
-    <title>Message @{{ member }}</title>
+<title>Message @{{ member }}</title>
 {% else %}
-    <title>{{ brand }} / {{ view | capitalize }}</title>
-    <meta name="description" content="Tiny, but mighty social network.">
-    <meta name="keywords" content="{{ view }}">
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://subreply.com/{{ view }}">
+<title>{{ brand }} / {{ view | capitalize }}</title>
+<meta name="description" content="Tiny, but mighty social network.">
+<meta name="keywords" content="{{ view }}">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://subreply.com/{{ view }}">
 {% endif %}
 
 <meta property="og:logo" content="/static/192.png">
 
 {% if view == 'member' and member.id == 1 %}
-    <link rel="me" href="https://mastodon.social/@lucianmarin">
+<link rel="me" href="https://mastodon.social/@lucianmarin">
 {% endif %}
 
 <link rel="apple-touch-icon" type="image/png" href="/static/192.png">
 <link rel="icon" sizes="192x192" type="image/png" href="/static/192.png">
 
-<link rel="manifest" type="application/json" href="/static/manifest.json">
+<link rel="manifest" type="application/json" href="/static/manifest.json?v={{ v }}">
 <link rel="stylesheet" type="text/css" href="/static/style.css?v={{ v }}">
 
 <script type="text/javascript" src="/static/script.js?v={{ v }}" async defer></script>
 
 {% if view in ['feed', 'reply', 'edit'] %}
-    <script type="text/javascript">
-        window.onload = function() {
-            var content = document.getElementById('id_content');
-            expand(content);
-        };
-    </script>
+<script type="text/javascript">
+    window.onload = function () {
+        var content = document.getElementById('id_content');
+        expand(content);
+    };
+</script>
 {% elif view in ['profile', 'add', 'update'] %}
-    <script type="text/javascript">
-        window.onload = function() {
-            var content = document.getElementById('id_description');
-            expand(content);
-        };
-    </script>
+<script type="text/javascript">
+    window.onload = function () {
+        var content = document.getElementById('id_description');
+        expand(content);
+    };
+</script>
 {% endif %}

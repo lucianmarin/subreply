@@ -187,7 +187,7 @@ table
     grid-column-gap: 10px
     grid-template-columns: auto 150px 525px auto
     &> div
-        min-height: 100vh
+        min-height: 380px
 
 .logo
     font-size: var(--tiny)
@@ -254,7 +254,7 @@ table
         svg
             display: block
 
-.menu, .links
+.menu, .sidebar
     span
         color: var(--alert)
         display: block
@@ -266,10 +266,12 @@ table
         top: 0
         width: 17px
 
-.links
-    position: sticky
+.sidebar
     text-align: right
-    top: 10px
+    .links
+        position: sticky
+        top: 10px
+        margin-bottom: 10px
     a
         background-color: var(--white)
         border-radius: var(--radius)
@@ -303,8 +305,6 @@ table
     font-weight: bold
     margin: 15px 0
     overflow: hidden
-    &.optional
-        display: none
     a
         color: var(--silver)
         float: left
@@ -358,18 +358,17 @@ table
 .entry
     border-top: var(--whitesmoke) 1px solid
     padding: 5px 0
-    margin-left: 25px
     &.indent
-        margin-left: 25px
+        margin-left: 30px
     .avatar
         float: left
         display: block
-        margin-left: -25px
+        margin-left: -30px
         text-align: center
-        width: 25px
+        width: 30px
 
 .sublist
-    margin-left: 25px
+    margin-left: 30px
 
 .load
     text-align: center
@@ -556,15 +555,10 @@ table
         display: none
 
 @media (max-width: 594px)
-    .links
-        display: none
     .menu
         display: block
     .container
-        grid-template-columns: 0 0 calc(100% - 20px) 0
-        grid-column-gap: 5px
-    .title.optional
-        display: block
+        grid-template-columns: 0 40px calc(100% - 70px) 0
 
 @font-face
     font-family: "Route 159"
