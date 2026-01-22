@@ -839,20 +839,30 @@ class RecoverResource:
             )
         else:
             # generate token
-            token = FERNET.encrypt(str(user.email).encode()).decode()
+            token = FERNET.encrypt(user.email.encode()).decode()
             # compose message
             admin = User.objects.get(id=1)
-            m, is_new = Chat.objects.get_or_create(
-                content=f"Send https://subreply.com/recover/{token} to {user.email}.",
-                created_at=utc_timestamp(),
+            if Chat.objects.filter(
+                content__startswith="Send https://subreply.com/recover",
+                content__endswith=f"to {user.email}.",
                 created_by=user,
-                to_user=admin
-            )
-            # callback
-            if is_new:
-                errors['email'] = "Please wait for your recovery link"
-            else:
+                to_user=admin,
+            ).exists():
                 errors['email'] = "Message couldn't be sent"
+            else:
+                m, is_new = Chat.objects.get_or_create(
+                    content=f"Send https://subreply.com/recover/{token} to {user.email}.",
+                    created_by=user,
+                    to_user=admin,
+                    defaults={
+                        'created_at': utc_timestamp(),
+                    }
+                )
+                # callback
+                if is_new:
+                    errors['email'] = "Please wait for your recovery link"
+                else:
+                    errors['email'] = "Message couldn't be sent"
             resp.text = render(
                 page='recover', view='recover', errors=errors, form=form
             )
