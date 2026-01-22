@@ -1,35 +1,32 @@
 {% extends "base.html" %}
 
 {% block main %}
-    <div class="title">
-        <a href="/login" class="on">Login</a>
-        <a href="/recover">Recover</a>
-        <a href="/register">Register</a>
-    </div>
+<div class="title">
+    <a href="/login" class="on">Login</a>
+</div>
 
-    <div class="login">
-        <form method="post">
-            <div class="line">
-                <div class="left">
-                    <label for="id_username">Username or email<i>*</i></label>
-                    <input type="text" name="username" id="id_username"
-                        value="{% if form %}{{ form.username }}{% endif %}">
-                </div>
-                <div class="right">
-                    <label for="id_password">Password<i>*</i></label>
-                    <input type="password" name="password" id="id_password"
-                        value="{% if form %}{{ form.password }}{% endif %}">
-                </div>
-                {% if 'username' in errors %}
-                    <div class="error">{{ errors['username'] }}</div>
-                {% endif %}
-                {% if 'password' in errors %}
-                    <div class="error">{{ errors['password'] }}</div>
-                {% endif %}
+<div class="login">
+    <form method="post">
+        <div class="line">
+            <div class="left">
+                <label for="id_username">Username or email<i>*</i></label>
+                <input type="text" name="username" id="id_username" value="{% if form %}{{ form.username }}{% endif %}">
             </div>
-            <div class="line">
-                <input type="submit" value="Login">
+            <div class="right">
+                <label for="id_password">Password<i>*</i></label>
+                <input type="password" name="password" id="id_password"
+                    value="{% if form %}{{ form.password }}{% endif %}">
             </div>
-        </form>
-    </div>
+            {% if 'username' in errors %}
+            <div class="error">{{ errors['username'] }}</div>
+            {% endif %}
+            {% if 'password' in errors %}
+            <div class="error">{{ errors['password'] }}</div>
+            {% endif %}
+        </div>
+        <div class="line">
+            <input type="submit" value="Login">
+        </div>
+    </form>
+</div>
 {% endblock %}
