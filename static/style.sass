@@ -212,60 +212,6 @@ table
 .main
     position: relative
 
-.menu
-    background-color: var(--whitesmoke)
-    bottom: 10px
-    border-radius: 20px
-    box-shadow: 0 2px 0 var(--silver)
-    display: none
-    height: 40px
-    left: calc(50% - 140px)
-    margin-bottom: 10px
-    overflow: hidden
-    position: sticky
-    right: calc(50% - 140px)
-    width: 280px
-    z-index: 1000
-    &.tiny
-        width: 160px
-        left: calc(50% - 80px)
-        right: calc(50% - 80px)
-    a
-        background-color: var(--whitesmoke)
-        border-radius: 20px
-        display: block
-        float: left
-        padding: 12px
-        position: relative
-        transition: background-color var(--d)
-        &:first-child
-            border-top-left-radius: 20px
-            border-bottom-left-radius: 20px
-        &:last-child
-            border-top-right-radius: 20px
-            border-bottom-right-radius: 20px
-        &:hover
-            background-color: var(--white)
-        &.on
-            background-color: var(--white)
-            color: var(--accent)
-            svg path
-                stroke: var(--accent)
-        svg
-            display: block
-
-.menu, .sidebar
-    span
-        color: var(--alert)
-        display: block
-        font-size: var(--sup)
-        font-weight: bold
-        position: absolute
-        right: 0
-        text-align: center
-        top: 0
-        width: 17px
-
 .sidebar
     text-align: right
     .links
@@ -299,6 +245,16 @@ table
         float: right
         margin: 0 10px
         padding: 2px
+    span
+        color: var(--alert)
+        display: block
+        font-size: var(--sup)
+        font-weight: bold
+        position: absolute
+        right: 0
+        text-align: center
+        top: 0
+        width: 17px
 
 .title
     color: var(--silver)
@@ -360,12 +316,6 @@ table
     padding: 5px 0
     &.indent
         margin-left: 30px
-    .avatar
-        float: left
-        display: block
-        margin-left: -30px
-        text-align: center
-        width: 30px
 
 .sublist
     margin-left: 30px
@@ -555,8 +505,6 @@ table
         display: none
 
 @media (max-width: 594px)
-    .menu
-        display: block
     .container
         grid-template-columns: 0 40px calc(100% - 70px) 0
 

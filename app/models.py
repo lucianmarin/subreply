@@ -46,12 +46,6 @@ class User(models.Model):
         return self.username
 
     @cached_property
-    def avatar(self):
-        if not self.emoji:
-            return ":bust_in_silhouette:"
-        return self.emoji
-
-    @cached_property
     def full_name(self):
         last_name = self.last_name
         if len(last_name) == 1:

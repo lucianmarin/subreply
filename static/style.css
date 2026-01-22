@@ -86,26 +86,6 @@ table td:nth-child(even):last-child, table th:nth-child(even):last-child { borde
 
 .main { position: relative; }
 
-.menu { background-color: var(--whitesmoke); bottom: 10px; border-radius: 20px; box-shadow: 0 2px 0 var(--silver); display: none; height: 40px; left: calc(50% - 140px); margin-bottom: 10px; overflow: hidden; position: sticky; right: calc(50% - 140px); width: 280px; z-index: 1000; }
-
-.menu.tiny { width: 160px; left: calc(50% - 80px); right: calc(50% - 80px); }
-
-.menu a { background-color: var(--whitesmoke); border-radius: 20px; display: block; float: left; padding: 12px; position: relative; transition: background-color var(--d); }
-
-.menu a:first-child { border-top-left-radius: 20px; border-bottom-left-radius: 20px; }
-
-.menu a:last-child { border-top-right-radius: 20px; border-bottom-right-radius: 20px; }
-
-.menu a:hover { background-color: var(--white); }
-
-.menu a.on { background-color: var(--white); color: var(--accent); }
-
-.menu a.on svg path { stroke: var(--accent); }
-
-.menu a svg { display: block; }
-
-.menu span, .sidebar span { color: var(--alert); display: block; font-size: var(--sup); font-weight: bold; position: absolute; right: 0; text-align: center; top: 0; width: 17px; }
-
 .sidebar { text-align: right; }
 
 .sidebar .links { position: sticky; top: 10px; margin-bottom: 10px; }
@@ -125,6 +105,8 @@ table td:nth-child(even):last-child, table th:nth-child(even):last-child { borde
 .sidebar a.red span { color: var(--alert); }
 
 .sidebar svg { float: right; margin: 0 10px; padding: 2px; }
+
+.sidebar span { color: var(--alert); display: block; font-size: var(--sup); font-weight: bold; position: absolute; right: 0; text-align: center; top: 0; width: 17px; }
 
 .title { color: var(--silver); font-weight: bold; margin: 15px 0; overflow: hidden; }
 
@@ -157,8 +139,6 @@ table td:nth-child(even):last-child, table th:nth-child(even):last-child { borde
 .entry { border-top: var(--whitesmoke) 1px solid; padding: 5px 0; }
 
 .entry.indent { margin-left: 30px; }
-
-.entry .avatar { float: left; display: block; margin-left: -30px; text-align: center; width: 30px; }
 
 .sublist { margin-left: 30px; }
 
@@ -296,7 +276,7 @@ table td:nth-child(even):last-child, table th:nth-child(even):last-child { borde
 
 @media (max-width: 704px) { .container { grid-template-columns: auto 40px 525px auto; } .links i { display: none; } }
 
-@media (max-width: 594px) { .menu { display: block; } .container { grid-template-columns: 0 40px calc(100% - 70px) 0; } }
+@media (max-width: 594px) { .container { grid-template-columns: 0 40px calc(100% - 70px) 0; } }
 
 @font-face { font-family: "Route 159"; font-style: normal; font-weight: normal; src: url(/static/route159/regular.woff2) format("woff2"); }
 
