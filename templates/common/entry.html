@@ -12,27 +12,25 @@
         </a>
         <a href="/reply/{{ entry.id }}">
             {% if not entry.replies %}
-            reply{% elif entry.replies == 1 %}1 reply{% else %}{{ entry.replies }} replies
+                reply{% elif entry.replies == 1 %}1 reply{% else %}{{ entry.replies }} replies
             {% endif %}
             {% if not entry.parent %}&not;{% endif %}
         </a>
         {% if user %}
-        {% if entry.created_by_id == user.id %}
-        {% if not entry.replies %}
-        <a href="/edit/{{ entry.id }}">edit</a>
-        {% endif %}
-        {% else %}
-        {% if entry.id in user.saves %}
-        <a onclick="postSave(event, 'unsave')" data-id="{{ entry.id }}">unsave</a>
-        {% else %}
-        <a onclick="postSave(event, 'save')" data-id="{{ entry.id }}">save</a>
-        {% endif %}
-        {% endif %}
-        {% if user.id in [entry.created_by_id, entry.to_user_id] and not entry.replies %}
-        <a onclick="postDelete(event, 'delete', 'deleted')" data-id="{{ entry.id }}">
-            delete
-        </a>
-        {% endif %}
+            {% if entry.created_by_id == user.id %}
+                {% if not entry.replies %}
+                    <a href="/edit/{{ entry.id }}">edit</a>
+                {% endif %}
+            {% else %}
+                {% if entry.id in user.saves %}
+                    <a onclick="postSave(event, 'unsave')" data-id="{{ entry.id }}">unsave</a>
+                {% else %}
+                    <a onclick="postSave(event, 'save')" data-id="{{ entry.id }}">save</a>
+                {% endif %}
+            {% endif %}
+            {% if user.id in [entry.created_by_id, entry.to_user_id] and not entry.replies %}
+                <a onclick="postDelete(event, 'delete', 'deleted')" data-id="{{ entry.id }}">delete</a>
+            {% endif %}
         {% endif %}
     </div>
 </div>
