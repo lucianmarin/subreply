@@ -24,22 +24,6 @@ function getPage(event) {
     });
 }
 
-function getNextPage() {
-    var items = document.getElementsByClassName('list')[0].children;
-    var element = items[items.length - 1].children[0].children[0];
-    if (element.innerText == "Load more") {
-        var page = element.dataset.page;
-        var loader = element.parentElement.parentElement;
-        var items = loader.parentElement;
-        var url = window.location.pathname + "?p=" + page;
-        element.innerText = "Loading...";
-        ajax(url, "get", "text", function (data) {
-            loader.remove();
-            items.innerHTML = items.innerHTML + data;
-        });
-    }
-}
-
 function postDelete(event, call, status) {
     event.preventDefault();
     var element = event.currentTarget;
