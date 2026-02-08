@@ -3,9 +3,9 @@
 {% set kids = entry.kids.all() %}
 
 {% if kids %}
-    <div class="sublist">
+    <div class="inlist">
         {% for entry in kids %}
-            {% include "common/entry.html" %}
+            {% include "common/threads.html" %}
         {% endfor %}
     </div>
 {% endif %}

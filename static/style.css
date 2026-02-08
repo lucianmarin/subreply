@@ -142,6 +142,10 @@ table td:nth-child(even):last-child, table th:nth-child(even):last-child { borde
 
 .sublist { margin-left: 30px; }
 
+.inlist { border-left: var(--gainsboro) 1px solid; padding-left: 1px; }
+
+.inlist .entry { padding-left: 10px; }
+
 .load { text-align: center; }
 
 .load a { color: var(--gray); }
