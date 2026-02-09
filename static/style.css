@@ -144,6 +144,8 @@ table td:nth-child(even):last-child, table th:nth-child(even):last-child { borde
 
 .inlist { border-left: var(--gainsboro) 1px solid; padding-left: 1px; }
 
+.inlist.stream { margin-left: 18px; }
+
 .inlist .entry { padding-left: 10px; }
 
 .load { text-align: center; }
