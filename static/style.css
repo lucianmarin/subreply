@@ -142,7 +142,9 @@ table td:nth-child(even):last-child, table th:nth-child(even):last-child { borde
 
 .sublist { margin-left: 30px; }
 
-.inlist { border-left: var(--whitesmoke) 2px solid; margin-left: 2px; }
+.inlist { border-left: var(--whitesmoke) 2px solid; }
+
+.inlist .inlist { margin-left: 2px; }
 
 .inlist .entry { padding-left: 15px; }
 
