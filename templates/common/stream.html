@@ -16,7 +16,7 @@
     {% set kids = entry.kids.all() | reverse | list %}
 
     {% if kids %}
-        <div class="inlist stream">
+        <div class="inlist">
             {% for entry in kids %}
                 {% if kids | count > 7 %}
                     {% include "common/inline.html" %}
