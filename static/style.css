@@ -138,15 +138,15 @@ table td:nth-child(even):last-child, table th:nth-child(even):last-child { borde
 
 .entry { border-top: var(--whitesmoke) 1px solid; padding: 5px 0; }
 
-.entry.indent { margin-left: 30px; }
+.entry.indent { margin-left: 15px; }
 
-.sublist { margin-left: 30px; }
+.sublist { margin-left: 15px; }
 
 .inlist { border-left: var(--whitesmoke) 2px solid; }
 
 .inlist .inlist { margin-left: 2px; }
 
-.inlist .entry { padding-left: 15px; }
+.inlist .entry { padding-left: 13px; }
 
 .load { text-align: center; }
 
