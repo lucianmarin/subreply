@@ -2,50 +2,56 @@
 
 {% block main %}
 {% if view == 'feed' %}
-{% include "input/thread.html" %}
+    {% include "input/thread.html" %}
 {% elif view == 'message' %}
-{% include "input/message.html" %}
+    {% include "input/message.html" %}
 {% elif view in ['discover', 'people'] %}
-{% include "input/query.html" %}
+    {% include "input/query.html" %}
+{% elif view == 'trending' %}
+    <div class="title">
+        <a href="/trending/recently" class="{% if batch == 'recently' %}on{% endif %}">Recently</a>
+        <a href="/trending/popular" class="{% if batch == 'popular' %}on{% endif %}">Popular</a>
+        <a href="/trending/alltime" class="{% if batch == 'alltime' %}on{% endif %}">Alltime</a>
+    </div>
 {% endif %}
 
 <div class="list">
     {% if view == 'member' %}
-    {% include "common/user.html" %}
-    {% include "common/status.html" %}
+        {% include "common/user.html" %}
+        {% include "common/status.html" %}
     {% endif %}
 
     {% for entry in entries %}
-    {% if view == "people" %}
-    {% set member = entry %}
-    {% include "common/user.html" %}
-    {% elif view == 'following' %}
-    {% set member = entry.to_user %}
-    {% include "common/user.html" %}
-    {% elif view == 'followers' %}
-    {% set member = entry.created_by %}
-    {% include "common/user.html" %}
-    {% elif view == 'message' %}
-    {% include "common/message.html" %}
-    {% elif view == 'messages' %}
-    {% include "common/messages.html" %}
+        {% if view == "people" %}
+            {% set member = entry %}
+            {% include "common/user.html" %}
+        {% elif view == 'following' %}
+            {% set member = entry.to_user %}
+            {% include "common/user.html" %}
+        {% elif view == 'followers' %}
+            {% set member = entry.created_by %}
+            {% include "common/user.html" %}
+        {% elif view == 'message' %}
+            {% include "common/message.html" %}
+        {% elif view == 'messages' %}
+            {% include "common/messages.html" %}
+        {% else %}
+            {% with prev=loop.previtem %}
+                {% include "common/stream.html" %}
+            {% endwith %}
+        {% endif %}
     {% else %}
-    {% with prev=loop.previtem %}
-    {% include "common/stream.html" %}
-    {% endwith %}
-    {% endif %}
-    {% else %}
-    {% include "common/nothing.html" %}
+        {% include "common/nothing.html" %}
     {% endfor %}
 
-    {% if not limit %} {% set limit = 16 %} {% endif %}
+    {% if not limit %}{% set limit = 16 %}{% endif %}
 
     {% if not q and entries | length == limit %}
-    <div class="entry">
-        <div class="load">
-            <a onclick="getPage(event)" data-page="{{ number + 1 }}">Load more</a>
+        <div class="entry">
+            <div class="load">
+                <a onclick="getPage(event)" data-page="{{ number + 1 }}">Load more</a>
+            </div>
         </div>
-    </div>
     {% endif %}
 </div>
 {% endblock %}
