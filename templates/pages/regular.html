@@ -7,12 +7,6 @@
     {% include "input/message.html" %}
 {% elif view in ['discover', 'people'] %}
     {% include "input/query.html" %}
-{% elif view == 'trending' %}
-    <div class="title">
-        <a href="/trending/recently" class="{% if batch == 'recently' %}on{% endif %}">Recently</a>
-        <a href="/trending/popular" class="{% if batch == 'popular' %}on{% endif %}">Popular</a>
-        <a href="/trending/alltime" class="{% if batch == 'alltime' %}on{% endif %}">Alltime</a>
-    </div>
 {% endif %}
 
 <div class="list">
