@@ -475,14 +475,13 @@ class TrendingResource:
     limit = 5 * 16 + 8
 
     def fetch_entries(self):
-        qs = Post.objects.filter(parent=None).filter(kids__isnull=False)
-        sample = qs.order_by('-id').values('id')[:self.limit]
+        sample = Post.objects.filter(parent=None).filter(kids__isnull=False).order_by('-id').values('id')[:self.limit]
         entries = Posts.filter(id__in=sample).order_by('-replies', '-id')
         return entries.prefetch_related(PFR)
 
     @before(auth_user)
     def on_get(self, req, resp):
-        entries, page, number = paginate(req, self.fetch_entries(batch))
+        entries, page, number = paginate(req, self.fetch_entries())
         resp.text = render(
             page=page, view='trending', number=number,
             user=req.user, entries=entries
