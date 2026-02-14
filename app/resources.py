@@ -472,23 +472,19 @@ class DiscoverResource:
 
 
 class TrendingResource:
-    def fetch_entries(self, batch):
+    limit = 5 * 16 + 8
+
+    def fetch_entries(self):
         qs = Post.objects.filter(parent=None).filter(kids__isnull=False)
-        limit = {}
-        limit["alltime"] = qs.count()  # almost 8888
-        limit["popular"] = limit["alltime"] // 10
-        limit["recently"] = limit["alltime"] // 100
-        sample = qs.order_by('-id').values('id')[:limit[batch]]
+        sample = qs.order_by('-id').values('id')[:self.limit]
         entries = Posts.filter(id__in=sample).order_by('-replies', '-id')
         return entries.prefetch_related(PFR)
 
     @before(auth_user)
-    def on_get(self, req, resp, batch):
-        if batch not in ['recently', 'popular', 'alltime']:
-            raise HTTPNotFound
+    def on_get(self, req, resp):
         entries, page, number = paginate(req, self.fetch_entries(batch))
         resp.text = render(
-            page=page, view='trending', number=number, batch=batch,
+            page=page, view='trending', number=number,
             user=req.user, entries=entries
         )
 
