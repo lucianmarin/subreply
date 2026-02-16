@@ -1,10 +1,8 @@
 {% include "common/entry.html" %}
 
-{% set kids = entry.kids.all() %}
-
-{% if kids %}
+{% if entry.tree_kids %}
     <div class="inlist">
-        {% for entry in kids %}
+        {% for entry in entry.tree_kids %}
             {% include "common/threads.html" %}
         {% endfor %}
     </div>
