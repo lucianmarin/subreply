@@ -6,6 +6,7 @@ emoji
 falcon
 gunicorn
 jinja2
+markdown
 phonenumbers
 pip
 psycopg2-binary
