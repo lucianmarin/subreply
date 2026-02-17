@@ -13,12 +13,12 @@
 {% else %}
     {% include "common/entry.html" %}
 
-    {% set kids = entry.kids.all()[:5] | reverse %}
+    {% set kids = entry.kids.all()[:8] | reverse %}
 
     {% if kids %}
-        <div class="inlist">
+        <div class="sublist">
             {% for entry in kids %}
-                {% include "common/entry.html" %}
+                {% include "common/inline.html" %}
             {% endfor %}
         </div>
     {% endif %}
