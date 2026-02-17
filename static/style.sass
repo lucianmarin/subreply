@@ -3,6 +3,7 @@ html
     --tiny: 10px
     --small: 13px
     --regular: 14px
+    --big: 16px
     --radius: 6px
     --d: 0.2s
     --white: #fff
@@ -256,7 +257,7 @@ table
         top: 0
         width: 17px
 
-.title
+.menu
     color: var(--silver)
     font-weight: bold
     margin: 15px 0
@@ -281,6 +282,15 @@ table
 .reply
     margin: 10px 0
     overflow: hidden
+    form
+        position: relative
+        a
+            display: block
+            height: 16px
+            padding: 7px
+            position: absolute
+            right: 0
+            width: 16px
     .placeholder
         background: var(--whitesmoke)
         background: linear-gradient(90deg, var(--whitesmoke) 0%, var(--white) 100%)
@@ -314,18 +324,24 @@ table
 .entry
     border-top: var(--whitesmoke) 1px solid
     padding: 5px 0
+    padding-left: 25px
     &.indent
-        margin-left: 15px
+        margin-left: 25px
+
+.avatar
+    float: left
+    display: block
+    margin-left: -25px
+    text-align: center
+    width: 25px
 
 .sublist
-    margin-left: 15px
+    margin-left: 25px
 
 .inlist
     border-left: var(--whitesmoke) 2px solid
     .inlist
         margin-left: 2px
-    .entry
-        padding-left: 13px
 
 .load
     text-align: center
@@ -339,25 +355,54 @@ table
 .inline
     opacity: 0.5
     @include dots
+    padding-left: 25px
     .name
         font-weight: bold
         &:hover
             color: var(--gray)
 
+.intitle
+    a:hover
+        color: var(--gray)
+
+.title
+    font-size: var(--big)
+    margin: 10px 0
+
+.body
+    p
+        margin: 10px 0
+    ul, ol
+        margin: 10px 0
+    pre
+        background-color: var(--whitesmoke)
+        border-radius: var(--radius)
+        padding: 5px
+        padding-left: 10px
+        margin: 10px 0
+        white-space: pre-wrap
+
+.none
+    display: none
+
+.summary
+    color: var(--gray)
+    cursor: pointer
+    margin: 10px 0
+    word-break: break-word
+
 .content
     cursor: text
     word-break: break-word
+
+.content, .summary
     a
         color: var(--accent)
         &.name
             color: var(--black)
             font-weight: bold
-        &.story
-            display: block
         &:hover
             color: var(--gray)
-    b
-        color: var(--silver)
 
 .small
     font-size: var(--small)
@@ -408,6 +453,8 @@ table
             color: var(--silver)
 
 .request
+    &.writer
+        margin-top: 10px
     &.upper
         margin-top: -10px
 

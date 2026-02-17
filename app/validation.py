@@ -195,7 +195,7 @@ def valid_email(value, user_id=0):
 def valid_description(value, user_id=0):
     if value:
         user = User.objects.filter(id=user_id).first()
-        return valid_content(value, user, limit=240)
+        return valid_content(value, user)
 
 
 def valid_link(value, user_id=0):

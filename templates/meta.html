@@ -55,7 +55,9 @@
     <script type="text/javascript">
         window.onload = function () {
             var content = document.getElementById('id_content');
+            var body = document.getElementById('id_body');
             expand(content);
+            expand(body, 0);
         };
     </script>
 {% elif view == 'profile' %}

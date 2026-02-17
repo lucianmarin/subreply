@@ -1,9 +1,40 @@
 from datetime import date, datetime, timezone
 from string import ascii_letters, digits
 
+import markdown
+from markupsafe import Markup
+from markdown.extensions import Extension
+from markdown.treeprocessors import Treeprocessor
 from tldextract import extract
 
 from project.vars import LINKS
+
+
+class NormalizeHeadingsTreeprocessor(Treeprocessor):
+    def run(self, root):
+        for element in root.iter():
+            if element.tag in {"h1", "h2", "h3", "h4", "h5", "h6"}:
+                element.tag = "h4"
+        return root
+
+
+class NormalizeHeadingsExtension(Extension):
+    def extendMarkdown(self, md):
+        md.treeprocessors.register(NormalizeHeadingsTreeprocessor(md), "normalize_headings_to_h4", 15)
+
+
+def markdownify(text):
+    html = markdown.markdown(
+        text or "",
+        extensions=["extra", "sane_lists", "nl2br", NormalizeHeadingsExtension()],
+    )
+    return Markup(html)
+
+
+def dotify(text):
+    if not text.endswith(('.', ',', '!', '?', ':', ';')):
+        text += "."
+    return text
 
 
 def hexcode(emoji):

@@ -74,13 +74,13 @@ app.add_route('/register', resources.RegisterResource())
 app.add_route('/recover', resources.RecoverResource())
 app.add_route('/recover/{token}', resources.RecoverResource(), suffix="link")
 
+app.add_route('/write', resources.WriteResource())
+app.add_route('/profile', resources.ProfileResource())
+app.add_route('/details', resources.DetailsResource())
 app.add_route('/account', resources.AccountResource())
 app.add_route('/account/change', resources.AccountResource(), suffix="change")
 app.add_route('/account/delete', resources.AccountResource(), suffix="delete")
 app.add_route('/account/export', resources.AccountResource(), suffix="export")
-
-app.add_route('/profile', resources.ProfileResource())
-app.add_route('/details', resources.DetailsResource())
 
 app.add_route('/reply/{id:int}', resources.ReplyResource())
 app.add_route('/edit/{id:int}', resources.EditResource())

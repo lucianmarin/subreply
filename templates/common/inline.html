@@ -1,8 +1,16 @@
-<div class="entry">
-    <div class="inline">
-        <a class="name" href="/{{ entry.created_by }}">
-            {{ entry.created_by.full_name | emojize }}
-        </a>
+<div class="inline">
+    <a class="avatar" href="/{{ entry.created_by }}">
+        {{ entry.created_by.avatar | emojize }}
+    </a>
+    <a class="name" href="/{{ entry.created_by }}">
+        {{ entry.created_by.full_name | emojize }}
+    </a>
+    <span>
+        {% if entry.title %}
+            <a class="name" href="/reply/{{ entry.id }}">
+                {{ entry.title | emojize | dotify }}
+            </a>
+        {% endif %}
         {{ entry.content | parser | emojize | safe }}
-    </div>
+    </span>
 </div>

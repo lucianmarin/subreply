@@ -1,13 +1,12 @@
 {% extends "base.html" %}
 
 {% block main %}
-{% if entry.title and entry.body %}
     <div class="request writer">
         <form method="post" autocomplete="off">
             <div class="line">
                 <input type="text" name="title" id="id_title" maxlength="240"
                     placeholder="Title"
-                    value="{% if form %}{{ form.title | emojize }}{% else %}{{ entry.title | emojize }}{% endif %}">
+                    value="{% if form %}{{ form.title }}{% endif %}">
                 {% if 'title' in errors %}
                     <div class="error">{{ errors['title'] }}</div>
                 {% endif %}
@@ -18,7 +17,7 @@
                     placeholder="Mention, link, hashtag supported"
                     rows="2" cols="60" maxlength="720"
                     oninput="expand(this)" onkeydown="inline(event)"
-                    >{% if form %}{{ form.content | emojize }}{% else %}{{ entry.content | emojize }}{% endif %}</textarea>
+                    >{% if form %}{{ form.content | emojize }}{% endif %}</textarea>
                 {% if 'content' in errors %}
                     <div class="error">{{ errors['content'] }}</div>
                 {% endif %}
@@ -29,23 +28,14 @@
                     placeholder="Markdown syntax"
                     rows="10" cols="60"
                     oninput="expand(this, 0)"
-                    >{% if form %}{{ form.body | emojize }}{% else %}{{ entry.body | emojize }}{% endif %}</textarea>
+                    >{% if form %}{{ form.body | emojize }}{% endif %}</textarea>
                 {% if 'body' in errors %}
                     <div class="error">{{ errors['body'] }}</div>
                 {% endif %}
             </div>
             <div class="line">
-                <input type="submit" value="Update">
+                <input type="submit" value="Publish">
             </div>
         </form>
     </div>
-{% else %}
-    <div class="list">
-        {% for entry in ancestors %}
-            {% include "common/entry.html" %}
-        {% endfor %}
-        {% include "common/entry.html" %}
-    </div>
-    {% include "input/edit.html" %}
-{% endif %}
 {% endblock %}

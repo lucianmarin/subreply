@@ -1,4 +1,4 @@
-html { --sup: 8px; --tiny: 10px; --small: 13px; --regular: 14px; --radius: 6px; --d: 0.2s; --white: #fff; --whitesmoke: #f0f0f0; --redsmoke: #fff0f0; --gainsboro: #e0e0e0; --silver: #c0c0c0; --gray: #808080; --black: #000; --accent: #4060e0; --alert: #ff4000; -ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; }
+html { --sup: 8px; --tiny: 10px; --small: 13px; --regular: 14px; --big: 16px; --radius: 6px; --d: 0.2s; --white: #fff; --whitesmoke: #f0f0f0; --redsmoke: #fff0f0; --gainsboro: #e0e0e0; --silver: #c0c0c0; --gray: #808080; --black: #000; --accent: #4060e0; --alert: #ff4000; -ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; }
 
 ::-moz-placeholder { color: #1f1f1f; }
 
@@ -108,21 +108,25 @@ table td:nth-child(even):last-child, table th:nth-child(even):last-child { borde
 
 .sidebar span { color: var(--alert); display: block; font-size: var(--sup); font-weight: bold; position: absolute; right: 0; text-align: center; top: 0; width: 17px; }
 
-.title { color: var(--silver); font-weight: bold; margin: 15px 0; overflow: hidden; }
+.menu { color: var(--silver); font-weight: bold; margin: 15px 0; overflow: hidden; }
 
-.title a { color: var(--silver); float: left; margin-right: 5px; }
+.menu a { color: var(--silver); float: left; margin-right: 5px; }
 
-.title a:last-child { margin-right: 0; }
+.menu a:last-child { margin-right: 0; }
 
-.title a:hover { color: var(--gray); }
+.menu a:hover { color: var(--gray); }
 
-.title a.on { color: var(--black); }
+.menu a.on { color: var(--black); }
 
-.title a.on::first-letter { border-bottom: 2px solid var(--black); }
+.menu a.on::first-letter { border-bottom: 2px solid var(--black); }
 
-.title a sup { color: var(--alert); font-size: var(--sup); font-weight: bold; }
+.menu a sup { color: var(--alert); font-size: var(--sup); font-weight: bold; }
 
 .reply { margin: 10px 0; overflow: hidden; }
+
+.reply form { position: relative; }
+
+.reply form a { display: block; height: 16px; padding: 7px; position: absolute; right: 0; width: 16px; }
 
 .reply .placeholder { background: var(--whitesmoke); background: linear-gradient(90deg, var(--whitesmoke) 0%, var(--white) 100%); border-radius: var(--radius); color: var(--gray); padding: 5px 10px; }
 
@@ -136,17 +140,17 @@ table td:nth-child(even):last-child, table th:nth-child(even):last-child { borde
 
 .list > .entry:last-child { padding-bottom: 0; }
 
-.entry { border-top: var(--whitesmoke) 1px solid; padding: 5px 0; }
+.entry { border-top: var(--whitesmoke) 1px solid; padding: 5px 0; padding-left: 25px; }
 
-.entry.indent { margin-left: 15px; }
+.entry.indent { margin-left: 25px; }
 
-.sublist { margin-left: 15px; }
+.avatar { float: left; display: block; margin-left: -25px; text-align: center; width: 25px; }
+
+.sublist { margin-left: 25px; }
 
 .inlist { border-left: var(--whitesmoke) 2px solid; }
 
 .inlist .inlist { margin-left: 2px; }
-
-.inlist .entry { padding-left: 13px; }
 
 .load { text-align: center; }
 
@@ -156,23 +160,33 @@ table td:nth-child(even):last-child, table th:nth-child(even):last-child { borde
 
 .load b { color: var(--gray); }
 
-.inline { opacity: 0.5; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.inline { opacity: 0.5; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding-left: 25px; }
 
 .inline .name { font-weight: bold; }
 
 .inline .name:hover { color: var(--gray); }
 
+.intitle a:hover { color: var(--gray); }
+
+.title { font-size: var(--big); margin: 10px 0; }
+
+.body p { margin: 10px 0; }
+
+.body ul, .body ol { margin: 10px 0; }
+
+.body pre { background-color: var(--whitesmoke); border-radius: var(--radius); padding: 5px; padding-left: 10px; margin: 10px 0; white-space: pre-wrap; }
+
+.none { display: none; }
+
+.summary { color: var(--gray); cursor: pointer; margin: 10px 0; word-break: break-word; }
+
 .content { cursor: text; word-break: break-word; }
 
-.content a { color: var(--accent); }
+.content a, .summary a { color: var(--accent); }
 
-.content a.name { color: var(--black); font-weight: bold; }
+.content a.name, .summary a.name { color: var(--black); font-weight: bold; }
 
-.content a.story { display: block; }
-
-.content a:hover { color: var(--gray); }
-
-.content b { color: var(--silver); }
+.content a:hover, .summary a:hover { color: var(--gray); }
 
 .small { font-size: var(--small); overflow: hidden; }
 
@@ -207,6 +221,8 @@ table td:nth-child(even):last-child, table th:nth-child(even):last-child { borde
 .status a { color: var(--gray); }
 
 .status a:hover { color: var(--silver); }
+
+.request.writer { margin-top: 10px; }
 
 .request.upper { margin-top: -10px; }
 

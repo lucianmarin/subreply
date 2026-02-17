@@ -1,4 +1,7 @@
 <div class="entry">
+    <a class="avatar" href="/{{ member }}">
+        {{ member.avatar | emojize }}
+    </a>
     <div class="author">
         {% if view == "member" %}
             <a class="right caps" href="/{{ member }}/message">Message</a>

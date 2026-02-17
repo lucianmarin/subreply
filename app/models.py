@@ -5,7 +5,7 @@ from django import setup
 from django.conf import settings
 from django.db import models
 from django.utils.functional import cached_property
-import emoji
+
 from app.utils import utc_timestamp
 
 if not settings.configured:
@@ -34,7 +34,7 @@ class User(models.Model):
     birthday = models.CharField(max_length=10, default='')
     location = models.CharField(max_length=60, default='')
     link = models.CharField(max_length=240, default='')
-    description = models.CharField(max_length=240, default='')
+    description = models.CharField(max_length=640, default='')
 
     phone = models.JSONField(default=dict)
     social = models.JSONField(default=dict)
@@ -46,12 +46,16 @@ class User(models.Model):
         return self.username
 
     @cached_property
+    def avatar(self):
+        if not self.emoji:
+            return ":bust_in_silhouette:"
+        return self.emoji
+
+    @cached_property
     def full_name(self):
         last_name = self.last_name
         if len(last_name) == 1:
             last_name += "."
-        if self.emoji:
-            return f"{self.emoji} {self.first_name} {last_name}".strip()
         return f"{self.first_name} {last_name}".strip()
 
     @cached_property
@@ -120,7 +124,9 @@ class Post(models.Model):
                                 related_name='replies')
     at_user = models.ForeignKey('User', on_delete=models.SET_NULL, null=True,
                                 related_name='mentions')
+    title = models.CharField(max_length=240, default='', db_index=True)
     content = models.CharField(max_length=640, db_index=True)
+    body = models.TextField(default='')
     link = models.CharField(max_length=240, default='', db_index=True)
     hashtag = models.CharField(max_length=15, default='', db_index=True)
     mention_seen_at = models.FloatField(default=.0, db_index=True)

@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block main %}
-    <div class="title">
+    <div class="menu">
         <a href="/profile" class="on">Profile</a>
         <a href="/details">Details</a>
         <a href="/account">Account</a>
@@ -91,8 +91,8 @@
             <div class="line">
                 <label for="id_description">Description</label>
                 <textarea name="description" id="id_description"
-                    rows="2" cols="60" maxlength="240"
-                    oninput="expand(this)" onkeydown="send(event)"
+                    rows="2" cols="60" maxlength="720"
+                    oninput="expand(this)" onkeydown="inline(event)"
                     >{% if form %}{{ form.description | emojize }}{% else %}{{ user.description | emojize }}{% endif %}</textarea>
                 {% if 'description' in errors %}
                     <div class="error">{{ errors['description'] }}</div>

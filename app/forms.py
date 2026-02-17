@@ -6,12 +6,14 @@ from unidecode import unidecode
 from project.vars import COUNTRIES
 
 
-def get_content(form, field="content"):
+def get_content(form, field="content", strip=True):
     value = form.get(field, '')
     demojized = demojize(value)
     decoded = unidecode(demojized)
-    words = [word.strip() for word in decoded.split()]
-    return " ".join(words)
+    if strip:
+        words = [word.strip() for word in decoded.split()]
+        return " ".join(words)
+    return decoded
 
 
 def get_emoji(form):
