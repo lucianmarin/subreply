@@ -16,8 +16,14 @@
         <meta property="profile:last_name" content="{{ member.last_name }}">
     {% endif %}
 {% elif view == 'reply' %}
-    <title>{{ entry.content | emojize | shorten(60) }}</title>
-    <meta name="description" content="{{ entry.content | emojize | shorten(120) }}">
+    <title>
+        {% if entry.title %}
+            {{ entry.title | emojize }}
+        {% else %}
+            {{ entry.content | emojize | shorten(60) }}
+        {% endif %}
+    </title>
+    <meta name="description" content="{{ entry.content | emojize | shorten(240) }}">
     {% if entry.created_by.emoji %}
         <meta name="keywords" content="{{ entry.created_by.emoji | keywords }}">
     {% endif %}
