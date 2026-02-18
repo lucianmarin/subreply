@@ -3,9 +3,6 @@
         <a href="/reply/{{ entry.id }}"><strong>{{ entry.title | emojize }}</strong></a>
     </div>
     <div class="summary" onclick="toggle(event)">
-        <a class="avatar" href="/{{ entry.created_by }}">
-            {{ entry.created_by.avatar | emojize }}
-        </a>
         <a class="name" href="/{{ entry.created_by }}">
             {{ entry.created_by.full_name | emojize }}
         </a>

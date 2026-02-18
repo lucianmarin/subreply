@@ -56,6 +56,8 @@ class User(models.Model):
         last_name = self.last_name
         if len(last_name) == 1:
             last_name += "."
+        if self.emoji:
+            return f"{self.emoji} {self.first_name} {last_name}".strip()
         return f"{self.first_name} {last_name}".strip()
 
     @cached_property

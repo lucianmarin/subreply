@@ -1,9 +1,10 @@
 html
     --sup: 8px
-    --tiny: 10px
+    --tiny: 11px
     --small: 13px
     --regular: 14px
     --big: 16px
+    --indent: 30px
     --radius: 6px
     --d: 0.2s
     --white: #fff
@@ -72,7 +73,7 @@ body, label, input, select, textarea
 
 code
     color: var(--accent)
-    font-size: var(--small)
+    font-size: var(--tiny)
 
 label
     color: var(--black)
@@ -190,26 +191,6 @@ table
     &> div
         min-height: 380px
 
-.logo
-    font-size: var(--tiny)
-    font-weight: bold
-    line-height: 30px
-    text-align: center
-    overflow: hidden
-    position: sticky
-    top: 10px
-    padding: 0 10px
-    a
-        background-color: var(--white)
-        border-radius: 15px
-        color: var(--black)
-        display: block
-        float: right
-        height: 30px
-        width: 30px
-    &.on a
-        color: var(--accent)
-
 .main
     position: relative
 
@@ -324,24 +305,25 @@ table
 .entry
     border-top: var(--whitesmoke) 1px solid
     padding: 5px 0
-    padding-left: 25px
     &.indent
-        margin-left: 25px
+        margin-left: var(--indent)
 
 .avatar
     float: left
     display: block
-    margin-left: -25px
+    margin-left: -var(--indent)
     text-align: center
-    width: 25px
+    width: var(--indent)
 
 .sublist
-    margin-left: 25px
+    margin-left: var(--indent)
 
 .inlist
     border-left: var(--whitesmoke) 2px solid
     .inlist
         margin-left: 2px
+    .entry
+        padding-left: 10px
 
 .load
     text-align: center
@@ -366,19 +348,30 @@ table
 
 .title
     font-size: var(--big)
-    margin: 10px 0
+    padding: 5px 0
+    margin-top: 5px
+    a
+        color: var(--black)
+        &:hover
+            color: var(--gray)
 
 .body
+    a
+        color: var(--accent)
+        &:hover
+            color: var(--gray)
     p
-        margin: 10px 0
+        text-indent: var(--indent)
+    h4
+        margin: 5px 0
+        text-indent: var(--indent)
     ul, ol
-        margin: 10px 0
+        padding-left: var(--indent)
     pre
         background-color: var(--whitesmoke)
         border-radius: var(--radius)
         padding: 5px
         padding-left: 10px
-        margin: 10px 0
         white-space: pre-wrap
 
 .none
@@ -387,7 +380,6 @@ table
 .summary
     color: var(--gray)
     cursor: pointer
-    margin: 10px 0
     word-break: break-word
 
 .content
@@ -521,7 +513,7 @@ table
             text-indent: 0
     p
         padding-bottom: 3px
-        text-indent: 40px
+        text-indent: var(--indent)
         &:first-child
             text-indent: 0
         &:last-child

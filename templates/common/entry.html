@@ -5,9 +5,6 @@
         </div>
     {% endif %}
     <div class="content {% if view == 'reply' and entry.title and not ancestors %}summary{% endif %}">
-        <a class="avatar" href="/{{ entry.created_by }}">
-            {{ entry.created_by.avatar | emojize }}
-        </a>
         <a class="name" href="/{{ entry.created_by }}">
             {{ entry.created_by.full_name | emojize }}
         </a>

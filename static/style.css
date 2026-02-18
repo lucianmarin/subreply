@@ -1,4 +1,4 @@
-html { --sup: 8px; --tiny: 10px; --small: 13px; --regular: 14px; --big: 16px; --radius: 6px; --d: 0.2s; --white: #fff; --whitesmoke: #f0f0f0; --redsmoke: #fff0f0; --gainsboro: #e0e0e0; --silver: #c0c0c0; --gray: #808080; --black: #000; --accent: #4060e0; --alert: #ff4000; -ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; }
+html { --sup: 8px; --tiny: 11px; --small: 13px; --regular: 14px; --big: 16px; --indent: 30px; --radius: 6px; --d: 0.2s; --white: #fff; --whitesmoke: #f0f0f0; --redsmoke: #fff0f0; --gainsboro: #e0e0e0; --silver: #c0c0c0; --gray: #808080; --black: #000; --accent: #4060e0; --alert: #ff4000; -ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; }
 
 ::-moz-placeholder { color: #1f1f1f; }
 
@@ -18,7 +18,7 @@ form, input, img, label { display: block; }
 
 body, label, input, select, textarea { font-family: "Route 159", sans-serif; font-size: var(--regular); line-height: 20px; }
 
-code { color: var(--accent); font-size: var(--small); }
+code { color: var(--accent); font-size: var(--tiny); }
 
 label { color: var(--black); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
@@ -78,12 +78,6 @@ table td:nth-child(even):last-child, table th:nth-child(even):last-child { borde
 
 .container > div { min-height: 380px; }
 
-.logo { font-size: var(--tiny); font-weight: bold; line-height: 30px; text-align: center; overflow: hidden; position: sticky; top: 10px; padding: 0 10px; }
-
-.logo a { background-color: var(--white); border-radius: 15px; color: var(--black); display: block; float: right; height: 30px; width: 30px; }
-
-.logo.on a { color: var(--accent); }
-
 .main { position: relative; }
 
 .sidebar { text-align: right; }
@@ -140,17 +134,19 @@ table td:nth-child(even):last-child, table th:nth-child(even):last-child { borde
 
 .list > .entry:last-child { padding-bottom: 0; }
 
-.entry { border-top: var(--whitesmoke) 1px solid; padding: 5px 0; padding-left: 25px; }
+.entry { border-top: var(--whitesmoke) 1px solid; padding: 5px 0; }
 
-.entry.indent { margin-left: 25px; }
+.entry.indent { margin-left: var(--indent); }
 
-.avatar { float: left; display: block; margin-left: -25px; text-align: center; width: 25px; }
+.avatar { float: left; display: block; margin-left: -var(--indent); text-align: center; width: var(--indent); }
 
-.sublist { margin-left: 25px; }
+.sublist { margin-left: var(--indent); }
 
 .inlist { border-left: var(--whitesmoke) 2px solid; }
 
 .inlist .inlist { margin-left: 2px; }
+
+.inlist .entry { padding-left: 10px; }
 
 .load { text-align: center; }
 
@@ -168,17 +164,27 @@ table td:nth-child(even):last-child, table th:nth-child(even):last-child { borde
 
 .intitle a:hover { color: var(--gray); }
 
-.title { font-size: var(--big); margin: 10px 0; }
+.title { font-size: var(--big); padding: 5px 0; margin-top: 5px; }
 
-.body p { margin: 10px 0; }
+.title a { color: var(--black); }
 
-.body ul, .body ol { margin: 10px 0; }
+.title a:hover { color: var(--gray); }
 
-.body pre { background-color: var(--whitesmoke); border-radius: var(--radius); padding: 5px; padding-left: 10px; margin: 10px 0; white-space: pre-wrap; }
+.body a { color: var(--accent); }
+
+.body a:hover { color: var(--gray); }
+
+.body p { text-indent: var(--indent); }
+
+.body h4 { margin: 5px 0; text-indent: var(--indent); }
+
+.body ul, .body ol { padding-left: var(--indent); }
+
+.body pre { background-color: var(--whitesmoke); border-radius: var(--radius); padding: 5px; padding-left: 10px; white-space: pre-wrap; }
 
 .none { display: none; }
 
-.summary { color: var(--gray); cursor: pointer; margin: 10px 0; word-break: break-word; }
+.summary { color: var(--gray); cursor: pointer; word-break: break-word; }
 
 .content { cursor: text; word-break: break-word; }
 
@@ -272,7 +278,7 @@ table td:nth-child(even):last-child, table th:nth-child(even):last-child { borde
 
 .about h4 + p { text-indent: 0; }
 
-.about p { padding-bottom: 3px; text-indent: 40px; }
+.about p { padding-bottom: 3px; text-indent: var(--indent); }
 
 .about p:first-child { text-indent: 0; }
 
