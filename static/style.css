@@ -176,7 +176,7 @@ table td:nth-child(even):last-child, table th:nth-child(even):last-child { borde
 
 .body p { text-indent: var(--indent); }
 
-.body h4 { margin: 5px 0; text-indent: var(--indent); }
+.body h4 { margin-top: 5px; text-indent: var(--indent); }
 
 .body ul, .body ol { padding-left: var(--indent); }
 
