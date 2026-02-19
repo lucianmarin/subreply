@@ -298,7 +298,7 @@ table td:nth-child(even):last-child, table th:nth-child(even):last-child { borde
 
 .about ol { margin-left: var(--indent); }
 
-.about svg { float: left; margin-left: calc(0px - var(--indent)); padding: 2px 12px; }
+.about svg { float: left; margin-left: calc(0px - var(--indent)); padding: 2px calc((var(--indent) - 16px)/2); }
 
 .about .emoji { float: left; margin-left: calc(0px - var(--indent)); text-align: center; width: 40px; }
 
