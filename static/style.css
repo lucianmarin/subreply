@@ -138,7 +138,7 @@ table td:nth-child(even):last-child, table th:nth-child(even):last-child { borde
 
 .entry.indent { margin-left: var(--indent); }
 
-.avatar { float: left; display: block; margin-left: -var(--indent); text-align: center; width: var(--indent); }
+.avatar { float: left; display: block; margin-left: calc(0px - var(--indent)); text-align: center; width: var(--indent); }
 
 .sublist { margin-left: var(--indent); }
 
@@ -294,13 +294,13 @@ table td:nth-child(even):last-child, table th:nth-child(even):last-child { borde
 
 .about ul { list-style: none; }
 
-.about ul li { padding-left: 40px; }
+.about ul li { padding-left: var(--indent); }
 
-.about ol { margin-left: 40px; }
+.about ol { margin-left: var(--indent); }
 
-.about svg { float: left; margin-left: -40px; padding: 2px 12px; }
+.about svg { float: left; margin-left: calc(0px - var(--indent)); padding: 2px 12px; }
 
-.about .emoji { float: left; margin-left: -40px; text-align: center; width: 40px; }
+.about .emoji { float: left; margin-left: calc(0px - var(--indent)); text-align: center; width: 40px; }
 
 @media (max-width: 704px) { .container { grid-template-columns: auto 40px 525px auto; } .links i { display: none; } }
 

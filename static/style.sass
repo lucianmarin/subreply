@@ -311,7 +311,7 @@ table
 .avatar
     float: left
     display: block
-    margin-left: -var(--indent)
+    margin-left: calc(0px - var(--indent))
     text-align: center
     width: var(--indent)
 
@@ -530,16 +530,16 @@ table
     ul
         list-style: none
         li
-            padding-left: 40px
+            padding-left: var(--indent)
     ol
-        margin-left: 40px
+        margin-left: var(--indent)
     svg
         float: left
-        margin-left: -40px
+        margin-left: calc(0px - var(--indent))
         padding: 2px 12px
     .emoji
         float: left
-        margin-left: -40px
+        margin-left: calc(0px - var(--indent))
         text-align: center
         width: 40px
 
