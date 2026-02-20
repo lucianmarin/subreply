@@ -5,11 +5,7 @@
         {% for entry in ancestors %}
             {% include "common/entry.html" %}
         {% endfor %}
-        {% if entry.title and entry.body and not ancestors %}
-            {% include "common/article.html" %}
-        {% else %}
-            {% include "common/entry.html" %}
-        {% endif %}
+        {% include "common/entry.html" %}
     </div>
 
     {% include "input/reply.html" %}

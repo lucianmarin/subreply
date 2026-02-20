@@ -573,49 +573,6 @@ class MessageResource:
             raise HTTPFound(f"/{username}/message")
 
 
-class WriteResource:
-    @before(auth_user)
-    @before(login_required)
-    def on_get(self, req, resp):
-        resp.text = render(
-            page='write', view='write', user=req.user, errors={}, form={}
-        )
-
-    @before(auth_user)
-    @before(login_required)
-    def on_post(self, req, resp):
-        form = req.get_media()
-        title = get_content(form, field='title')
-        body = get_content(form, field='body', strip=False)
-        content = get_content(form)
-        errors = {}
-        errors['content'] = valid_content(content, req.user)
-        if not errors['content']:
-            errors['content'] = valid_thread(content)
-        errors = {k: v for k, v in errors.items() if v}
-        if errors:
-            resp.text = render(
-                page='write', view='write', user=req.user, errors=errors, form=form
-            )
-        else:
-            hashtags, links, mentions = get_metadata(content)
-            extra = {}
-            extra['link'] = links[0] if links else ''
-            extra['hashtag'] = hashtags[0] if hashtags else ''
-            extra['at_user'] = User.objects.get(
-                username=mentions[0]
-            ) if mentions else None
-            article, is_new = Post.objects.get_or_create(
-                title=title,
-                content=content,
-                body=body,
-                created_at=utc_timestamp(),
-                created_by=req.user,
-                **extra
-            )
-            raise HTTPFound(f"/reply/{article.id}")
-
-
 class AccountResource:
     @before(auth_user)
     @before(login_required)

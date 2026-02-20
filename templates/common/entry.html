@@ -1,9 +1,4 @@
 <div class="entry">
-    {% if entry.title %}
-        <div class="intitle">
-            <a href="/reply/{{ entry.id }}"><strong>{{ entry.title | emojize }}</strong></a>
-        </div>
-    {% endif %}
     <div class="content {% if view == 'reply' and entry.title and not ancestors %}summary{% endif %}">
         <a class="name" href="/{{ entry.created_by }}">
             {{ entry.created_by.full_name | emojize }}

@@ -126,9 +126,7 @@ class Post(models.Model):
                                 related_name='replies')
     at_user = models.ForeignKey('User', on_delete=models.SET_NULL, null=True,
                                 related_name='mentions')
-    title = models.CharField(max_length=240, default='', db_index=True)
     content = models.CharField(max_length=640, db_index=True)
-    body = models.TextField(default='')
     link = models.CharField(max_length=240, default='', db_index=True)
     hashtag = models.CharField(max_length=15, default='', db_index=True)
     mention_seen_at = models.FloatField(default=.0, db_index=True)

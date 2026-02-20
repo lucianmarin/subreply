@@ -10,33 +10,6 @@ from tldextract import extract
 from project.vars import LINKS
 
 
-class NormalizeHeadingsTreeprocessor(Treeprocessor):
-    def run(self, root):
-        for element in root.iter():
-            if element.tag in {"h1", "h2", "h3", "h4", "h5", "h6"}:
-                element.tag = "h4"
-        return root
-
-
-class NormalizeHeadingsExtension(Extension):
-    def extendMarkdown(self, md):
-        md.treeprocessors.register(NormalizeHeadingsTreeprocessor(md), "normalize_headings_to_h4", 15)
-
-
-def markdownify(text):
-    html = markdown.markdown(
-        text or "",
-        extensions=["extra", "sane_lists", "nl2br", NormalizeHeadingsExtension()],
-    )
-    return Markup(html)
-
-
-def dotify(text):
-    if not text.endswith(('.', ',', '!', '?', ':', ';')):
-        text += "."
-    return text
-
-
 def hexcode(emoji):
     """Get hexcode for an emoji."""
     #  rjust(4, '0') is necessary to convert "2A" to "002A"

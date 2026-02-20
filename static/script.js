@@ -93,21 +93,12 @@ function postFollow(event, call) {
     });
 }
 
-function toggle(event) {
-    var element = event.currentTarget;
-    var body = element.nextElementSibling;
-    body.classList.toggle("none");
-}
-
-function expand(element, limit = 640, hide = false, padding = 10) {
+function expand(element, limit = 640) {
+    var padding = 10;
     element.style.height = "auto";
     element.style.height = element.scrollHeight - padding + "px";
     if (limit) {
         element.style.backgroundColor = element.value.length > limit ? "var(--redsmoke)" : "var(--whitesmoke)";
-    }
-    if (hide) {
-        var write = element.previousElementSibling;
-        write.style.display = element.value.length ? "none" : "block";
     }
 }
 

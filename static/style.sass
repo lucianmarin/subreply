@@ -263,15 +263,6 @@ table
 .reply
     margin: 10px 0
     overflow: hidden
-    form
-        position: relative
-        a
-            display: block
-            height: 16px
-            padding: 7px
-            position: absolute
-            right: 0
-            width: 16px
     .placeholder
         background: var(--whitesmoke)
         background: linear-gradient(90deg, var(--whitesmoke) 0%, var(--white) 100%)
@@ -342,51 +333,12 @@ table
         &:hover
             color: var(--gray)
 
-.intitle
-    a:hover
-        color: var(--gray)
-
-.title
-    font-size: var(--big)
-    padding: 5px 0
-    margin-top: 5px
-    a
-        color: var(--black)
-        &:hover
-            color: var(--gray)
-
-.body
-    a
-        color: var(--accent)
-        &:hover
-            color: var(--gray)
-    p
-        text-indent: var(--indent)
-    h4
-        margin-top: 5px
-        text-indent: var(--indent)
-    ul, ol
-        padding-left: var(--indent)
-    pre
-        background-color: var(--whitesmoke)
-        border-radius: var(--radius)
-        padding: 5px
-        padding-left: 10px
-        white-space: pre-wrap
-
 .none
     display: none
-
-.summary
-    color: var(--gray)
-    cursor: pointer
-    word-break: break-word
 
 .content
     cursor: text
     word-break: break-word
-
-.content, .summary
     a
         color: var(--accent)
         &.name

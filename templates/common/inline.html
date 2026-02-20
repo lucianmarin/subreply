@@ -3,11 +3,6 @@
         {{ entry.created_by.full_name | emojize }}
     </a>
     <span>
-        {% if entry.title %}
-            <a class="name" href="/reply/{{ entry.id }}">
-                {{ entry.title | emojize | dotify }}
-            </a>
-        {% endif %}
         {{ entry.content | parser | emojize | safe }}
     </span>
 </div>

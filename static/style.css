@@ -118,10 +118,6 @@ table td:nth-child(even):last-child, table th:nth-child(even):last-child { borde
 
 .reply { margin: 10px 0; overflow: hidden; }
 
-.reply form { position: relative; }
-
-.reply form a { display: block; height: 16px; padding: 7px; position: absolute; right: 0; width: 16px; }
-
 .reply .placeholder { background: var(--whitesmoke); background: linear-gradient(90deg, var(--whitesmoke) 0%, var(--white) 100%); border-radius: var(--radius); color: var(--gray); padding: 5px 10px; }
 
 .reply label { background-color: var(--whitesmoke); border-bottom-right-radius: var(--radius); border-top-right-radius: var(--radius); float: right; padding: 7px 10px; padding-left: 5px; height: 16px; width: 16px; }
@@ -162,37 +158,15 @@ table td:nth-child(even):last-child, table th:nth-child(even):last-child { borde
 
 .inline .name:hover { color: var(--gray); }
 
-.intitle a:hover { color: var(--gray); }
-
-.title { font-size: var(--big); padding: 5px 0; margin-top: 5px; }
-
-.title a { color: var(--black); }
-
-.title a:hover { color: var(--gray); }
-
-.body a { color: var(--accent); }
-
-.body a:hover { color: var(--gray); }
-
-.body p { text-indent: var(--indent); }
-
-.body h4 { margin-top: 5px; text-indent: var(--indent); }
-
-.body ul, .body ol { padding-left: var(--indent); }
-
-.body pre { background-color: var(--whitesmoke); border-radius: var(--radius); padding: 5px; padding-left: 10px; white-space: pre-wrap; }
-
 .none { display: none; }
-
-.summary { color: var(--gray); cursor: pointer; word-break: break-word; }
 
 .content { cursor: text; word-break: break-word; }
 
-.content a, .summary a { color: var(--accent); }
+.content a { color: var(--accent); }
 
-.content a.name, .summary a.name { color: var(--black); font-weight: bold; }
+.content a.name { color: var(--black); font-weight: bold; }
 
-.content a:hover, .summary a:hover { color: var(--gray); }
+.content a:hover { color: var(--gray); }
 
 .small { font-size: var(--small); overflow: hidden; }
 
