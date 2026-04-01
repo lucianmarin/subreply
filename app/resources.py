@@ -482,7 +482,7 @@ class DiscoverResource:
 
 
 class TrendingResource:
-    limit = 5 * 16 + 8
+    limit = 24
 
     def fetch_entries(self):
         sample = Post.objects.filter(parent=None).filter(kids__isnull=False).order_by('-id').values('id')[:self.limit]
