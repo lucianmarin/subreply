@@ -120,7 +120,8 @@ def parser(text):
             if len(address) > 21:
                 address = address[:18] + '...'
             if address:
-                word = f'<a href="{word}" rel="external">{address}</a>'
+                safe_url = word.replace('"', '&quot;').replace("'", '&#x27;')
+                word = f'<a href="{safe_url}" rel="external">{address}</a>'
         elif word.startswith('@'):
             handle = word[1:]
             if handle and all(c in limits for c in handle):
