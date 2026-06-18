@@ -159,7 +159,7 @@ def valid_last_name(value):
     elif value and has_repetitions(value):
         return "Last name contains repeating characters"
     elif not all(c in LATIN for c in value):
-        return "First name should use Latin characters"
+        return "Last name should use Latin characters"
 
 
 def valid_full_name(emoji, first_name, last_name, user_id=0):
@@ -288,7 +288,7 @@ def valid_phone(code, number):
         return "Number is needed"
     elif not code.startswith('+'):
         return "Code starts with +"
-    elif len(code) < 2 and len(code) > 4:
+    elif len(code) < 2 or len(code) > 4:
         return "Code between +1 and +999"
     elif not code[1:].isdecimal():
         return "Code must be numeric"

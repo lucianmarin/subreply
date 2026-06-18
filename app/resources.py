@@ -274,8 +274,6 @@ class EditResource:
             )
         else:
             previous_at_user = entry.at_user
-            entry.title = title
-            entry.body = body
             entry.content = content
             entry.edited_at = utc_timestamp()
             entry.link = links[0] if links else ''

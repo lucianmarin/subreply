@@ -5,7 +5,7 @@ from project.settings import FERNET
 
 
 def auth_user(req, resp, resource, params):
-    token = req.headers.get('AUTHORIZATION', '').replace('Bearer ', '')
+    token = req.get_header('Authorization', '').replace('Bearer ', '')
     token = token if token else req.cookies.get('identity', '')
     try:
         identity = FERNET.decrypt(token.encode()).decode() if token else 0
