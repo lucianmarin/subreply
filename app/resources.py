@@ -166,15 +166,7 @@ class FeedResource:
 
 class ReplyResource:
     def fetch_entries(self, parent):
-        replies = list(
-            Posts.filter(ancestors=parent).order_by('-id').select_related('parent')
-        )
-        by_parent = {}
-        for reply in replies:
-            by_parent.setdefault(reply.parent_id, []).append(reply)
-        for reply in replies:
-            reply.tree_kids = by_parent.get(reply.id, [])
-        return by_parent.get(parent.id, [])
+        return Posts.filter(parent=parent).order_by('-id').prefetch_related(RPFR)
 
     def fetch_ancestors(self, parent):
         return Posts.filter(

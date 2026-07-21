@@ -20,7 +20,7 @@ def build_user(user):
     }
 
 
-def build_entry(entry, saves, parents=False):
+def build_entry(entry, saves, has_parent=False, has_kids=False):
     data = {
         "id": entry.id,
         "content": emojize(entry.content),
@@ -28,9 +28,10 @@ def build_entry(entry, saves, parents=False):
         "saved": entry.id in saves,
         "timestamp": timeago(utc_timestamp() - entry.created_at)
     }
-    if parents:
+    if has_parent:
         data['parent'] = build_entry(entry.parent, saves) if entry.parent else None
-    data['kids'] = [build_entry(kid, saves) for kid in entry.kids.all()]
+    if has_kids:
+        data['kids'] = [build_entry(kid, saves) for kid in entry.kids.all()]
     return data
 
 

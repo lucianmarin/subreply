@@ -20,7 +20,6 @@ Posts = Post.objects.annotate(
 PPFR = Prefetch('parent', Posts)
 PFR = Prefetch('kids', Posts.order_by('-id'))
 RPFR = Prefetch('kids', Posts.prefetch_related(PFR))
-RPFR3 = Prefetch('kids', Posts.prefetch_related(RPFR))
 
 def paginate(req, qs, limit=16):
     p = req.params.get('p', '1').strip()
@@ -186,7 +185,7 @@ class PostEndpoint:
                 **extra
             )
             re.set_ancestors()
-            resp.media = build_entry(re, [], parents=True)
+            resp.media = build_entry(re, [], has_parent=True)
 
 
 class SendEndpoint:
@@ -220,13 +219,13 @@ class FeedEndpoint:
         entries, page = paginate(req, self.fetch_entries(req.user))
         resp.media = {
             "page": page,
-            "entries": [build_entry(entry, req.user.saves, parents=True) for entry in entries]
+            "entries": [build_entry(entry, req.user.saves, has_parent=True, has_kids=True) for entry in entries]
         }
 
 
 class ReplyEndpoint:
     def fetch_entries(self, parent):
-        return Posts.filter(parent=parent).order_by('-id').prefetch_related(RPFR3)
+        return Posts.filter(parent=parent).order_by('-id').prefetch_related(RPFR)
 
     def fetch_ancestors(self, parent):
         return Posts.filter(
@@ -245,7 +244,7 @@ class ReplyEndpoint:
         resp.media = {
             "entry": build_entry(parent, req.user.saves),
             "ancestors": [build_entry(entry, req.user.saves) for entry in ancestors],
-            "entries": [build_entry(entry, req.user.saves, parents=True) for entry in entries]
+            "kids": [build_entry(entry, req.user.saves, has_kids=True) for entry in entries]
         }
 
 
@@ -266,7 +265,7 @@ class MemberEndpoint:
         resp.media = {
             "page": page,
             "member": build_user(member),
-            "entries": [build_entry(entry, req.user.saves, parents=True) for entry in entries]
+            "entries": [build_entry(entry, req.user.saves, has_parent=True, has_kids=True) for entry in entries]
         }
 
 
@@ -326,7 +325,7 @@ class MentionsEndpoint:
         resp.content_type = MEDIA_JSON
         resp.media = {
             "page": page,
-            "entries": [build_entry(entry, req.user.saves, parents=True) for entry in entries]
+            "entries": [build_entry(entry, req.user.saves, has_parent=True, has_kids=True) for entry in entries]
         }
         if req.user.notif_mentions:
             self.clear_mentions(req.user)
@@ -349,7 +348,7 @@ class RepliesEndpoint:
         resp.content_type = MEDIA_JSON
         resp.media = {
             "page": page,
-            "entries": [build_entry(entry, req.user.saves) for entry in entries]
+            "entries": [build_entry(entry, req.user.saves, has_parent=True) for entry in entries]
         }
         if req.user.notif_replies:
             self.clear_replies(req.user)
@@ -368,7 +367,7 @@ class SavedEndpoint:
         resp.content_type = MEDIA_JSON
         resp.media = {
             "page": page,
-            "entries": [build_entry(entry, req.user.saves, parents=True) for entry in entries]
+            "entries": [build_entry(entry, req.user.saves, has_parent=True, has_kids=True) for entry in entries]
         }
 
 
@@ -429,7 +428,7 @@ class DiscoverEndpoint:
         resp.content_type = MEDIA_JSON
         resp.media = {
             "page": page,
-            "entries": [build_entry(entry, saves, parents=True) for entry in entries]
+            "entries": [build_entry(entry, saves, has_parent=True, has_kids=True) for entry in entries]
         }
 
 
@@ -450,7 +449,7 @@ class TrendingEndpoint:
         resp.content_type = MEDIA_JSON
         resp.media = {
             "page": page,
-            "entries": [build_entry(entry, saves, parents=True) for entry in entries]
+            "entries": [build_entry(entry, saves, has_kids=True) for entry in entries]
         }
 
 
