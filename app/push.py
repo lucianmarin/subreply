@@ -10,8 +10,9 @@ VAPID_CLAIMS = {"sub": "mailto:push@subreply.com"}
 
 
 def send_push_to_user(user, title, body, url, tag=None):
-    subs = Push.objects.filter(user=user)
-    if not subs:
+    try:
+        sub = user.push_subscription
+    except Push.DoesNotExist:
         return
 
     payload = dumps({
@@ -21,20 +22,19 @@ def send_push_to_user(user, title, body, url, tag=None):
         "tag": tag or "default",
     })
 
-    for sub in subs:
-        try:
-            webpush(
-                subscription_info={
-                    "endpoint": sub.endpoint,
-                    "keys": {
-                        "p256dh": sub.p256dh,
-                        "auth": sub.auth,
-                    }
-                },
-                data=payload,
-                vapid_private_key=VAPID_PRIVATE_KEY,
-                vapid_claims=VAPID_CLAIMS,
-            )
-        except WebPushException as ex:
-            if ex.response and ex.response.status_code == 410:
-                sub.delete()
+    try:
+        webpush(
+            subscription_info={
+                "endpoint": sub.endpoint,
+                "keys": {
+                    "p256dh": sub.p256dh,
+                    "auth": sub.auth,
+                }
+            },
+            data=payload,
+            vapid_private_key=VAPID_PRIVATE_KEY,
+            vapid_claims=VAPID_CLAIMS,
+        )
+    except WebPushException as ex:
+        if ex.response and ex.response.status_code == 410:
+            sub.delete()

@@ -1,37 +1,35 @@
 <div class="entry" id="push-status">
     <div class="status">
-        Push notifications: <span id="push-state">checking...</span>.
-        <span id="push-devices"></span>
-        <a href="#" id="push-toggle" onclick="togglePush(event)">Turn on</a>.
+        Push notifications: <span id="push-state">checking...</span>
+        <span id="push-action"></span>
     </div>
 </div>
 
 <script type="text/javascript">
-    var serverCount = {{ user.push_subscriptions.count() }};
-    var toggling = false;
+    var serverHasPush = {% if user.push_subscription %}true{% else %}false{% endif %};
+
+    function clearServer() {
+        fetch('/api/push/unsubscribe', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' }
+        }).then(function () {
+            serverHasPush = false;
+            updatePushUI(null);
+        });
+    }
 
     function updatePushUI(sub) {
         var state = document.getElementById('push-state');
-        var link = document.getElementById('push-toggle');
-        var devices = document.getElementById('push-devices');
+        var action = document.getElementById('push-action');
         if (sub) {
             state.innerText = 'on';
-            link.innerText = 'Turn off';
-            link.onclick = togglePush;
-            if (serverCount > 1) {
-                devices.innerText = '+' + (serverCount - 1) + ' other device(s)';
-            } else {
-                devices.innerText = '';
-            }
+            action.innerHTML = '&mdash; <a href="#" onclick="togglePush(event)">Turn off</a>.';
+        } else if (serverHasPush) {
+            state.innerText = 'off';
+            action.innerHTML = '&mdash; <a href="#" onclick="clearServer()">Clear old subscription</a> then <a href="#" onclick="togglePush(event)">Turn on</a>.';
         } else {
             state.innerText = 'off';
-            link.innerText = 'Turn on';
-            link.onclick = togglePush;
-            if (serverCount > 0) {
-                devices.innerText = '(on ' + serverCount + ' other device)';
-            } else {
-                devices.innerText = '';
-            }
+            action.innerHTML = '&mdash; <a href="#" onclick="togglePush(event)">Turn on</a>.';
         }
     }
 
@@ -41,32 +39,24 @@
         });
     } else {
         document.getElementById('push-state').innerText = 'unsupported';
-        document.getElementById('push-toggle').style.display = 'none';
     }
 
     function togglePush(event) {
         event.preventDefault();
-        if (toggling) return;
-        toggling = true;
         if (!('serviceWorker' in navigator && 'PushManager' in window)) {
-            toggling = false;
             return;
         }
         navigator.serviceWorker.ready.then(function (reg) {
             reg.pushManager.getSubscription().then(function (sub) {
                 if (sub) {
                     sub.unsubscribe().then(function () {
-                        if (navigator.onLine) {
-                            fetch('/api/push/unsubscribe', {
-                                method: 'POST',
-                                headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({ endpoint: sub.endpoint })
-                            });
-                        }
-                        serverCount = Math.max(0, serverCount - 1);
+                        fetch('/api/push/unsubscribe', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' }
+                        });
+                        serverHasPush = false;
                         updatePushUI(null);
-                        toggling = false;
-                    }).catch(function () { toggling = false; });
+                    });
                 } else {
                     fetch('/api/vapid-key').then(function (r) { return r.json(); }).then(function (data) {
                         return reg.pushManager.subscribe({
@@ -84,12 +74,11 @@
                             })
                         });
                     }).then(function () {
-                        serverCount += 1;
+                        serverHasPush = true;
                         updatePushUI({});
-                        toggling = false;
-                    }).catch(function () { toggling = false; });
+                    });
                 }
             });
-        }).catch(function () { toggling = false; });
+        });
     }
 </script>

@@ -559,10 +559,7 @@ class PushUnsubscribeEndpoint:
     @before(auth_required)
     def on_post(self, req, resp):
         resp.content_type = MEDIA_JSON
-        form = req.get_media()
-        endpoint = form.get('endpoint', '')
-        if endpoint:
-            Push.objects.filter(user=req.user, endpoint=endpoint).delete()
+        Push.objects.filter(user=req.user).delete()
         resp.media = {'status': 'unsubscribed'}
 
 
