@@ -1,35 +1,27 @@
 <div class="entry" id="push-status">
     <div class="status">
-        Push notifications: <span id="push-state">checking...</span>
-        <span id="push-action"></span>
+        Push notifications: <span id="push-state">checking</span>
+        &mdash; <a href="#" id="push-toggle" onclick="togglePush(event)">Turn on</a>.
     </div>
 </div>
 
 <script type="text/javascript">
-    var serverHasPush = {% if user.push_subscription %}true{% else %}false{% endif %};
-
-    function clearServer() {
-        fetch('/api/push/unsubscribe', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' }
-        }).then(function () {
-            serverHasPush = false;
-            updatePushUI(null);
-        });
-    }
+    var serverEndpoint = '';
+    {% if user.push_sub %}
+        serverEndpoint = '{{ user.push_sub.endpoint }}';
+    {% endif %}
 
     function updatePushUI(sub) {
         var state = document.getElementById('push-state');
-        var action = document.getElementById('push-action');
-        if (sub) {
+        var link = document.getElementById('push-toggle');
+        if (sub && sub.endpoint === serverEndpoint) {
             state.innerText = 'on';
-            action.innerHTML = '&mdash; <a href="#" onclick="togglePush(event)">Turn off</a>.';
-        } else if (serverHasPush) {
-            state.innerText = 'off';
-            action.innerHTML = '&mdash; <a href="#" onclick="clearServer()">Clear old subscription</a> then <a href="#" onclick="togglePush(event)">Turn on</a>.';
+            link.innerText = 'Turn off';
+            link.onclick = togglePush;
         } else {
             state.innerText = 'off';
-            action.innerHTML = '&mdash; <a href="#" onclick="togglePush(event)">Turn on</a>.';
+            link.innerText = 'Turn on';
+            link.onclick = togglePush;
         }
     }
 
@@ -38,7 +30,7 @@
             reg.pushManager.getSubscription().then(updatePushUI);
         });
     } else {
-        document.getElementById('push-state').innerText = 'unsupported';
+        document.getElementById('push-toggle').style.display = 'none';
     }
 
     function togglePush(event) {
@@ -48,34 +40,42 @@
         }
         navigator.serviceWorker.ready.then(function (reg) {
             reg.pushManager.getSubscription().then(function (sub) {
-                if (sub) {
+                if (sub && sub.endpoint === serverEndpoint) {
                     sub.unsubscribe().then(function () {
                         fetch('/api/push/unsubscribe', {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' }
                         });
-                        serverHasPush = false;
+                        serverEndpoint = '';
                         updatePushUI(null);
                     });
                 } else {
-                    fetch('/api/vapid-key').then(function (r) { return r.json(); }).then(function (data) {
+                    (serverEndpoint
+                        ? fetch('/api/push/unsubscribe', { method: 'POST', headers: { 'Content-Type': 'application/json' } }).then(function () { serverEndpoint = ''; })
+                        : Promise.resolve()
+                    ).then(function () {
+                        return sub ? sub.unsubscribe() : Promise.resolve();
+                    }).then(function () {
+                        return fetch('/api/vapid-key').then(function (r) { return r.json(); });
+                    }).then(function (data) {
                         return reg.pushManager.subscribe({
                             userVisibleOnly: true,
                             applicationServerKey: urlBase64ToUint8Array(data.publicKey)
                         });
                     }).then(function (sub) {
+                        var ep = sub.endpoint;
                         return fetch('/api/push/subscribe', {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify({
-                                endpoint: sub.endpoint,
+                                endpoint: ep,
                                 p256dh: btoa(String.fromCharCode.apply(null, new Uint8Array(sub.getKey('p256dh')))),
                                 auth: btoa(String.fromCharCode.apply(null, new Uint8Array(sub.getKey('auth'))))
                             })
+                        }).then(function () {
+                            serverEndpoint = ep;
+                            updatePushUI({ endpoint: serverEndpoint });
                         });
-                    }).then(function () {
-                        serverHasPush = true;
-                        updatePushUI({});
                     });
                 }
             });

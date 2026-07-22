@@ -3,6 +3,7 @@ from datetime import datetime, timezone
 
 from django import setup
 from django.conf import settings
+from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 from django.utils.functional import cached_property
 
@@ -111,6 +112,13 @@ class User(models.Model):
         if last_day != last_seen:
             self.seen_at = utc_timestamp()
             self.save(update_fields=['seen_at'])
+
+    @property
+    def push_sub(self):
+        try:
+            return self.push_subscription
+        except ObjectDoesNotExist:
+            return None
 
 
 class Post(models.Model):
