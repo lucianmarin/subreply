@@ -1,0 +1,61 @@
+<div class="entry" id="push-status">
+    <div class="status">
+        Push notifications:
+        <span id="push-state">{% if user.push_subscriptions.count() %}on{% else %}off{% endif %}</span>.
+        {% if user.push_subscriptions.count() %}
+            <a href="#" id="push-toggle" onclick="togglePush(event)">Turn off</a>.
+        {% else %}
+            <a href="#" id="push-toggle" onclick="togglePush(event)">Turn on</a>.
+        {% endif %}
+    </div>
+</div>
+
+<script type="text/javascript">
+    function togglePush(event) {
+        event.preventDefault();
+        if (!('serviceWorker' in navigator && 'PushManager' in window)) {
+            document.getElementById('push-state').innerText = 'not supported';
+            return;
+        }
+        var link = document.getElementById('push-toggle');
+        navigator.serviceWorker.ready.then(function (reg) {
+            reg.pushManager.getSubscription().then(function (sub) {
+                if (sub) {
+                    sub.unsubscribe().then(function () {
+                        if (navigator.onLine) {
+                            fetch('/api/push/unsubscribe', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ endpoint: sub.endpoint })
+                            });
+                        }
+                        document.getElementById('push-state').innerText = 'off';
+                        link.innerText = 'Turn on';
+                        link.onclick = togglePush;
+                    });
+                } else {
+                    fetch('/api/vapid-key').then(function (r) { return r.json(); }).then(function (data) {
+                        return reg.pushManager.subscribe({
+                            userVisibleOnly: true,
+                            applicationServerKey: urlBase64ToUint8Array(data.publicKey)
+                        });
+                    }).then(function (sub) {
+                        return fetch('/api/push/subscribe', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                endpoint: sub.endpoint,
+                                p256dh: btoa(String.fromCharCode.apply(null, new Uint8Array(sub.getKey('p256dh')))),
+                                auth: btoa(String.fromCharCode.apply(null, new Uint8Array(sub.getKey('auth'))))
+                            })
+                        });
+                    }).then(function () {
+                        document.getElementById('push-state').innerText = 'on';
+                        link.innerText = 'Turn off';
+                        link.onclick = togglePush;
+                    });
+                }
+            });
+        });
+    }
+</script>

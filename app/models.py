@@ -168,3 +168,14 @@ class Chat(models.Model):
     to_user = models.ForeignKey('User', on_delete=models.CASCADE, related_name='received')
     created_at = models.FloatField(default=.0)
     seen_at = models.FloatField(default=.0)
+
+
+class Push(models.Model):
+    user = models.ForeignKey('User', on_delete=models.CASCADE, related_name='push_subscriptions')
+    endpoint = models.TextField()
+    p256dh = models.TextField()
+    auth = models.TextField()
+    created_at = models.FloatField(default=.0)
+
+    class Meta:
+        unique_together = ['user', 'endpoint']

@@ -1,6 +1,6 @@
 from cryptography.fernet import Fernet
 
-from project.local import DEBUG, SIGNATURE
+from project.local import DEBUG, SIGNATURE, VAPID_PRIVATE_KEY, VAPID_PUBLIC_KEY
 
 ALLOWED_HOSTS = []
 AUTH_PASSWORD_VALIDATORS = []

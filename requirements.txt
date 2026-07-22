@@ -9,6 +9,7 @@ jinja2
 phonenumbers
 pip
 psycopg2-binary
+pywebpush
 requests
 strictyaml
 tldextract
