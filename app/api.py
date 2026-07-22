@@ -459,7 +459,7 @@ class MessagesEndpoint:
             to_user=req.user
         ).values('created_by_id').annotate(last_id=Max('id')).values('last_id')
         entries = Chat.objects.filter(id__in=last_ids).order_by('-id')
-        return entries.select_related('created_by')
+        return entries.select_related('created_by', 'to_user')
 
     @before(auth_user)
     @before(auth_required)

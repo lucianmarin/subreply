@@ -494,7 +494,7 @@ class MessagesResource:
             to_user=req.user
         ).values('created_by_id').annotate(last_id=Max('id')).values('last_id')
         entries = Chat.objects.filter(id__in=last_ids).order_by('-id')
-        return entries.select_related('created_by')
+        return entries.select_related('created_by', 'to_user')
 
     @before(auth_user)
     @before(login_required)
@@ -608,7 +608,7 @@ class AccountResource:
         else:
             posts = Post.objects.filter(
                 created_by=req.user
-            ).order_by('-id').prefetch_related('parent__created_by')
+            ).order_by('-id').select_related('parent__created_by')
             data = []
             for post in posts:
                 d = {}
