@@ -71,31 +71,7 @@
 
     if ('serviceWorker' in navigator && 'PushManager' in window) {
         window.addEventListener('load', function () {
-            navigator.serviceWorker.register('/sw.js', { scope: '/' }).then(function (reg) {
-                {% if user %}
-                reg.pushManager.getSubscription().then(function (sub) {
-                    if (sub) {
-                        return;
-                    }
-                    fetch('/api/vapid-key').then(function (r) { return r.json(); }).then(function (data) {
-                        return reg.pushManager.subscribe({
-                            userVisibleOnly: true,
-                            applicationServerKey: urlBase64ToUint8Array(data.publicKey)
-                        });
-                    }).then(function (sub) {
-                        fetch('/api/push/subscribe', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({
-                                endpoint: sub.endpoint,
-                                p256dh: btoa(String.fromCharCode.apply(null, new Uint8Array(sub.getKey('p256dh')))),
-                                auth: btoa(String.fromCharCode.apply(null, new Uint8Array(sub.getKey('auth'))))
-                            })
-                        });
-                    });
-                });
-                {% endif %}
-            });
+            navigator.serviceWorker.register('/sw.js', { scope: '/' });
         });
     }
 </script>

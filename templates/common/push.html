@@ -1,23 +1,57 @@
 <div class="entry" id="push-status">
     <div class="status">
-        Push notifications:
-        <span id="push-state">{% if user.push_subscriptions.count() %}on{% else %}off{% endif %}</span>.
-        {% if user.push_subscriptions.count() %}
-            <a href="#" id="push-toggle" onclick="togglePush(event)">Turn off</a>.
-        {% else %}
-            <a href="#" id="push-toggle" onclick="togglePush(event)">Turn on</a>.
-        {% endif %}
+        Push notifications: <span id="push-state">checking...</span>.
+        <span id="push-devices"></span>
+        <a href="#" id="push-toggle" onclick="togglePush(event)">Turn on</a>.
     </div>
 </div>
 
 <script type="text/javascript">
+    var serverCount = {{ user.push_subscriptions.count() }};
+    var toggling = false;
+
+    function updatePushUI(sub) {
+        var state = document.getElementById('push-state');
+        var link = document.getElementById('push-toggle');
+        var devices = document.getElementById('push-devices');
+        if (sub) {
+            state.innerText = 'on';
+            link.innerText = 'Turn off';
+            link.onclick = togglePush;
+            if (serverCount > 1) {
+                devices.innerText = '+' + (serverCount - 1) + ' other device(s)';
+            } else {
+                devices.innerText = '';
+            }
+        } else {
+            state.innerText = 'off';
+            link.innerText = 'Turn on';
+            link.onclick = togglePush;
+            if (serverCount > 0) {
+                devices.innerText = '(on ' + serverCount + ' other device)';
+            } else {
+                devices.innerText = '';
+            }
+        }
+    }
+
+    if ('serviceWorker' in navigator && 'PushManager' in window) {
+        navigator.serviceWorker.ready.then(function (reg) {
+            reg.pushManager.getSubscription().then(updatePushUI);
+        });
+    } else {
+        document.getElementById('push-state').innerText = 'unsupported';
+        document.getElementById('push-toggle').style.display = 'none';
+    }
+
     function togglePush(event) {
         event.preventDefault();
+        if (toggling) return;
+        toggling = true;
         if (!('serviceWorker' in navigator && 'PushManager' in window)) {
-            document.getElementById('push-state').innerText = 'not supported';
+            toggling = false;
             return;
         }
-        var link = document.getElementById('push-toggle');
         navigator.serviceWorker.ready.then(function (reg) {
             reg.pushManager.getSubscription().then(function (sub) {
                 if (sub) {
@@ -29,10 +63,10 @@
                                 body: JSON.stringify({ endpoint: sub.endpoint })
                             });
                         }
-                        document.getElementById('push-state').innerText = 'off';
-                        link.innerText = 'Turn on';
-                        link.onclick = togglePush;
-                    });
+                        serverCount = Math.max(0, serverCount - 1);
+                        updatePushUI(null);
+                        toggling = false;
+                    }).catch(function () { toggling = false; });
                 } else {
                     fetch('/api/vapid-key').then(function (r) { return r.json(); }).then(function (data) {
                         return reg.pushManager.subscribe({
@@ -50,12 +84,12 @@
                             })
                         });
                     }).then(function () {
-                        document.getElementById('push-state').innerText = 'on';
-                        link.innerText = 'Turn off';
-                        link.onclick = togglePush;
-                    });
+                        serverCount += 1;
+                        updatePushUI({});
+                        toggling = false;
+                    }).catch(function () { toggling = false; });
                 }
             });
-        });
+        }).catch(function () { toggling = false; });
     }
 </script>
