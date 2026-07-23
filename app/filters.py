@@ -1,10 +1,6 @@
 from datetime import date, datetime, timezone
 from string import ascii_letters, digits
 
-import markdown
-from markupsafe import Markup
-from markdown.extensions import Extension
-from markdown.treeprocessors import Treeprocessor
 from tldextract import extract
 
 from project.vars import LINKS
@@ -22,7 +18,9 @@ def enumerize(links):
     keys = sorted(links)  # eg. github
     parts = []
     for key in keys:
-        parts.append(LINKS[key].format(links[key]))
+        template = LINKS.get(key)
+        if template:
+            parts.append(template.format(links[key]))
     if len(parts) > 1:
         return ", ".join(parts[:-1]) + " and " + parts[-1]
     return "".join(parts)
@@ -55,8 +53,9 @@ def timeago(seconds):
     seconds = round(seconds)
     days = seconds // (3600 * 24)
     years = days // 365
-    weeks = (days - 365 * years) // 7
-    days = days - 365 * years
+    rem_days = days - 365 * years
+    weeks = rem_days // 7
+    rem_days = rem_days - 7 * weeks
     if not years and not days:
         if not seconds:
             return "%dms" % milliseconds
@@ -69,10 +68,10 @@ def timeago(seconds):
         if not weeks:
             return "%dd" % days
         return "%dw" % weeks
-    if not weeks and not days:
+    if not weeks and not rem_days:
         return "%dy" % years
     if not weeks:
-        return "%dy, %dd" % (years, days)
+        return "%dy, %dd" % (years, rem_days)
     return "%dy, %dw" % (years, weeks)
 
 

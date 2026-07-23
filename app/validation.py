@@ -2,14 +2,14 @@ from datetime import date
 from string import ascii_letters, digits
 
 from django.db.models import Q
-from dns.resolver import query as dns_query
+from dns.resolver import resolve as dns_query
 from emoji import EMOJI_DATA, emoji_count
 from phonenumbers import is_possible_number, is_valid_number, parse
 
 from app.forms import get_metadata
 from app.models import Post, User
 from app.utils import has_repetitions, verify_hash
-from project.vars import INVALID, MAX_YEAR, MIN_YEAR, CITIES, LATIN
+from project.vars import INVALID, MIN_AGE, MAX_AGE, CITIES, LATIN
 
 
 def valid_hashtag(value):
@@ -224,11 +224,14 @@ def valid_password(value1, value2):
         return "Password needs an uppercase letter"
     elif value1 == value1.upper():
         return "Password needs a lowercase letter"
+    elif not any(c.isdigit() for c in value1):
+        return "Password needs a digit"
 
 
 def valid_birthday(value, delimiter="-"):
     if value:
-        years = [str(y) for y in range(MIN_YEAR, MAX_YEAR + 1)]
+        CUR_YEAR = date.today().year
+        years = [str(y) for y in range(CUR_YEAR - MAX_AGE, CUR_YEAR - MIN_AGE + 1)]
         months = [str(m) for m in range(1, 13)] + [str(m).zfill(2) for m in range(1, 13)]
         days = [str(d) for d in range(1, 32)] + [str(d).zfill(2) for d in range(1, 32)]
         if value.count(delimiter) > 2:
@@ -238,7 +241,7 @@ def valid_birthday(value, delimiter="-"):
         elif value.count(delimiter) == 2:
             year, month, day = value.split(delimiter)
             if year not in years:
-                return "Year is not between {0}-{1}".format(MIN_YEAR, MAX_YEAR)
+                return "Year is not between {0}-{1}".format(CUR_YEAR - MAX_AGE, CUR_YEAR - MIN_AGE)
             elif month not in months:
                 return "Month is not between 1-12"
             elif day not in days:
@@ -251,11 +254,11 @@ def valid_birthday(value, delimiter="-"):
         elif value.count(delimiter):
             year, month = value.split(delimiter)
             if year not in years:
-                return "Year is not between {0}-{1}".format(MIN_YEAR, MAX_YEAR)
+                return "Year is not between {0}-{1}".format(CUR_YEAR - MAX_AGE, CUR_YEAR - MIN_AGE)
             elif month not in months:
                 return "Month is not between 1-12"
         elif value not in years:
-            return "Year is not between {0}-{1}".format(MIN_YEAR, MAX_YEAR)
+            return "Year is not between {0}-{1}".format(CUR_YEAR - MAX_AGE, CUR_YEAR - MIN_AGE)
 
 
 def valid_location(value, delimiter=", "):
@@ -305,7 +308,7 @@ def valid_date(value, delimiter="-"):
     if value:
         CUR_YEAR = date.today().year
         CUR_MONTH = date.today().month
-        years = [str(y) for y in range(MIN_YEAR, CUR_YEAR + 1)]
+        years = [str(y) for y in range(CUR_YEAR - MAX_AGE, CUR_YEAR + 1)]
         zeroes = [str(z).zfill(2) for z in range(1, 10)]
         months = zeroes + [str(m) for m in range(10, 13)]
         if value.count(delimiter) != 1:
@@ -315,7 +318,7 @@ def valid_date(value, delimiter="-"):
         elif value.count(delimiter) == 1:
             year, month = value.split(delimiter)
             if year not in years:
-                return "Year is not between {0}-{1}".format(MIN_YEAR, CUR_YEAR)
+                return "Year is not between {0}-{1}".format(CUR_YEAR - MAX_AGE, CUR_YEAR)
             elif month not in months:
                 return "Month is not between 01-12"
             elif year == str(CUR_YEAR) and int(month) > CUR_MONTH:

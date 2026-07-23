@@ -77,8 +77,8 @@ class AboutResource:
     @before(auth_user)
     def on_get_directory(self, req, resp):
         users = User.objects.exclude(posts=None).order_by('-id').values_list('emoji', 'username')
-        odds = [u for i, u in enumerate(users) if i % 2 == 0]
-        evens = [u for i, u in enumerate(users) if i % 2 == 1]
+        odds = [u for i, u in enumerate(users) if i % 2 == 1]
+        evens = [u for i, u in enumerate(users) if i % 2 == 0]
         resp.text = render(
             page='directory', view='about', user=req.user, users=zip(evens, odds)
         )
@@ -105,12 +105,10 @@ class TxtResource:
         threads = Post.objects.filter(parent=None).annotate(Count('kids')).exclude(kids__count=0)
         replies = Post.objects.exclude(parent=None)
         posts = threads.union(replies).values_list('id')
-        subs = Post.objects.values_list('hashtag').distinct()
         users = User.objects.exclude(posts=None).values_list('username')
         posts_urls = [f"https://subreply.com/reply/{p}" for p, in posts]
-        sub_urls = [f"https://subreply.com/sub/{s}" for s, in subs]
         user_urls = [f"https://subreply.com/{u}" for u, in users]
-        urls = sorted(posts_urls + sub_urls + user_urls)
+        urls = sorted(posts_urls + user_urls)
         resp.text = "\n".join(urls)
 
 
@@ -171,8 +169,8 @@ class FeedResource:
             ).first() if mentions else None
             th, is_new = Post.objects.get_or_create(
                 content=content,
-                created_at=utc_timestamp(),
                 created_by=req.user,
+                defaults={'created_at': utc_timestamp()},
                 **extra
             )
             raise HTTPFound('/')
@@ -236,10 +234,12 @@ class ReplyResource:
                 parent=parent,
                 to_user=parent.created_by,
                 content=content,
-                created_at=utc_timestamp(),
                 created_by=req.user,
+                defaults={'created_at': utc_timestamp()},
                 **extra
             )
+            if not is_new:
+                raise HTTPFound(f"/reply/{re.id}")
             re.set_ancestors()
             if parent.created_by != req.user:
                 send_push(
@@ -433,7 +433,7 @@ class SavedResource:
 class DestroyResource:
     @before(auth_user)
     @before(login_required)
-    def on_post(self, req, resp, username):
+    def on_get(self, req, resp, username):
         if not req.user.id == 1:
             raise HTTPFound('/people')
         username = username.lower()
@@ -628,7 +628,7 @@ class AccountResource:
         if errors:
             resp.text = render(
                 page='account', view='account', user=req.user,
-                change_errors=errors, form=form
+                change_errors=errors, export_errors={}, delete_errors={}, form=form
             )
         else:
             req.user.password = build_hash(password1)

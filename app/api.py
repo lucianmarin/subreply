@@ -82,8 +82,8 @@ class RegisterEndpoint:
             )
             # create self bond
             Bond.objects.get_or_create(
-                created_at=utc_timestamp(), seen_at=utc_timestamp(),
-                created_by=user, to_user=user
+                created_by=user, to_user=user,
+                defaults={'created_at': utc_timestamp(), 'seen_at': utc_timestamp()}
             )
             # generate token
             token = FERNET.encrypt(str(user.id).encode()).decode()
@@ -184,10 +184,13 @@ class PostEndpoint:
                 parent=parent,
                 to_user=parent.created_by if parent else None,
                 content=content,
-                created_at=utc_timestamp(),
                 created_by=req.user,
+                defaults={'created_at': utc_timestamp()},
                 **extra
             )
+            if not is_new:
+                resp.media = build_entry(re, [], has_parent=True)
+                return
             re.set_ancestors()
             if parent and parent.created_by != req.user:
                 send_push(
@@ -218,7 +221,14 @@ class SendEndpoint:
         member = User.objects.filter(username=username).first()
         if not member:
             raise HTTPNotFound
-        content = form.get('content', '')
+        content = get_content(form)
+        if not content:
+            resp.media = {'error': 'content is required'}
+            return
+        error = valid_content(content, req.user)
+        if error:
+            resp.media = {'error': error}
+            return
         msg, is_new = Chat.objects.get_or_create(
             to_user=member,
             content=content,
@@ -551,8 +561,8 @@ class PushSubscribeEndpoint:
             return
         Push.objects.update_or_create(
             user=req.user,
-            endpoint=endpoint,
             defaults={
+                'endpoint': endpoint,
                 'p256dh': p256dh,
                 'auth': auth,
                 'created_at': utc_timestamp(),
@@ -656,9 +666,9 @@ class SaveEndpoint:
             resp.media = {'status': 'not found'}
             return
         Save.objects.get_or_create(
-            created_at=utc_timestamp(),
             created_by=req.user,
-            post=entry
+            post=entry,
+            defaults={'created_at': utc_timestamp()}
         )
         resp.media = {'status': 'unsave'}
 

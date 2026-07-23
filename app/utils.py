@@ -1,7 +1,8 @@
 from base64 import b64encode
 from datetime import datetime, timezone
 from hashlib import pbkdf2_hmac
-from random import choice
+from hmac import compare_digest
+from secrets import choice
 from string import ascii_letters, ascii_lowercase, digits
 
 
@@ -30,7 +31,7 @@ def verify_hash(password, hashed):
     algorithm, iters, salt, old_h = hashed.split('$')
     dk = pbkdf2_hmac('sha256', password.encode(), salt.encode(), int(iters))
     h = b64encode(dk).decode('ascii').strip()
-    return h == old_h
+    return compare_digest(h, old_h)
 
 
 def base36encode(number):

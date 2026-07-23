@@ -9,7 +9,8 @@ with open(ROOT / 'static/cities.json') as file:
 with open(ROOT / 'static/countries.json') as file:
     COUNTRIES = load(file)
 
-MIN_YEAR, MAX_YEAR = 1918, 2018
+MIN_AGE = 16
+MAX_AGE = 100
 
 TYPES = [
     "work", "education", "project", "license", "certification",

@@ -39,7 +39,7 @@ self.addEventListener("notificationclick", function (event) {
             clients.matchAll({ type: "window", includeUncontrolled: true }).then(function (clientList) {
                 for (var i = 0; i < clientList.length; i++) {
                     var client = clientList[i];
-                    if ("focus" in client && client.url.split("?")[0].split("#")[0] == url) {
+                    if ("focus" in client && new URL(client.url).pathname == url) {
                         return client.focus();
                     }
                 }
