@@ -1,5 +1,6 @@
 from json import dumps
 
+from django.core.exceptions import ObjectDoesNotExist
 from emoji import emojize
 from pywebpush import webpush, WebPushException
 
@@ -12,7 +13,7 @@ VAPID_CLAIMS = {"sub": "mailto:push@subreply.com"}
 def send_push(user, title, body, url, tag=None):
     try:
         sub = user.push_subscription
-    except Push.DoesNotExist:
+    except ObjectDoesNotExist:
         return
 
     payload = dumps({

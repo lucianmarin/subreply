@@ -54,9 +54,9 @@ def timeago(seconds):
     milliseconds = round(seconds * 1000)
     seconds = round(seconds)
     days = seconds // (3600 * 24)
-    years = days // 365.25
-    weeks = (days - 365.25 * years) // 7
-    days = days - 365.25 * years
+    years = days // 365
+    weeks = (days - 365 * years) // 7
+    days = days - 365 * years
     if not years and not days:
         if not seconds:
             return "%dms" % milliseconds

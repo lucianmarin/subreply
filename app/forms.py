@@ -24,7 +24,7 @@ def get_emoji(form):
 def get_location(form, delimiter=", "):
     location = form.get('location', '').strip()
     if delimiter in location:
-        city, country = location.split(delimiter)
+        city, country = location.rsplit(delimiter, 1)
         country = COUNTRIES.get(country, country)
         return delimiter.join([city, country])
     return location

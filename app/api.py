@@ -24,7 +24,10 @@ RPFR = Prefetch('kids', Posts.prefetch_related(PFR))
 
 def paginate(req, qs, limit=16):
     p = req.params.get('p', '1').strip()
-    number = int(p) if p.isdecimal() and int(p) else 0
+    if p.isdecimal() and int(p) > 1:
+        number = int(p)
+    else:
+        number = 1
     index = (number - 1) * limit
     return qs[index:index + limit], number
 
@@ -174,9 +177,9 @@ class PostEndpoint:
             extra = {}
             extra['link'] = links[0] if links else ''
             extra['hashtag'] = hashtags[0] if hashtags else ''
-            extra['at_user'] = User.objects.get(
+            extra['at_user'] = User.objects.filter(
                 username=mentions[0]
-            ) if mentions else None
+            ).first() if mentions else None
             re, is_new = Post.objects.get_or_create(
                 parent=parent,
                 to_user=parent.created_by if parent else None,
@@ -613,7 +616,7 @@ class EditEndpoint:
         entry.edited_at = utc_timestamp()
         entry.link = links[0] if links else ''
         entry.hashtag = hashtags[0] if hashtags else ''
-        entry.at_user = User.objects.get(username=mentions[0]) if mentions else None
+        entry.at_user = User.objects.filter(username=mentions[0]).first() if mentions else None
         if previous_at_user != entry.at_user:
             entry.mention_seen_at = .0
         entry.save()

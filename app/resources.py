@@ -27,7 +27,10 @@ RPFR = Prefetch('kids', Posts.prefetch_related(PFR))
 
 def paginate(req, qs, limit=16):
     p = req.params.get('p', '1').strip()
-    number = int(p) if p.isdecimal() and int(p) else 0
+    if p.isdecimal() and int(p) > 1:
+        number = int(p)
+    else:
+        number = 1
     page = 'loader' if number > 1 else 'regular'
     index = (number - 1) * limit
     return qs[index:index + limit], page, number
@@ -163,9 +166,9 @@ class FeedResource:
             extra = {}
             extra['link'] = links[0] if links else ''
             extra['hashtag'] = hashtags[0] if hashtags else ''
-            extra['at_user'] = User.objects.get(
+            extra['at_user'] = User.objects.filter(
                 username=mentions[0]
-            ) if mentions else None
+            ).first() if mentions else None
             th, is_new = Post.objects.get_or_create(
                 content=content,
                 created_at=utc_timestamp(),
@@ -226,9 +229,9 @@ class ReplyResource:
             extra = {}
             extra['link'] = links[0] if links else ''
             extra['hashtag'] = hashtags[0] if hashtags else ''
-            extra['at_user'] = User.objects.get(
+            extra['at_user'] = User.objects.filter(
                 username=mentions[0]
-            ) if mentions else None
+            ).first() if mentions else None
             re, is_new = Post.objects.get_or_create(
                 parent=parent,
                 to_user=parent.created_by,
@@ -274,9 +277,9 @@ class EditResource:
     @before(login_required)
     def on_post(self, req, resp, id):
         entry = Posts.filter(id=id).prefetch_related(PPFR).first()
+        if not entry or entry.created_by != req.user or entry.replies:
+            raise HTTPNotFound
         form = req.get_media()
-        title = get_content(form, field='title')
-        body = get_content(form, field='body', strip=False)
         content = get_content(form)
         hashtags, links, mentions = get_metadata(content)
         errors = {}
@@ -284,6 +287,8 @@ class EditResource:
         if not errors['content']:
             if entry.parent_id:
                 errors['content'] = valid_reply(entry.parent, req.user, content, mentions)
+            else:
+                errors['content'] = valid_thread(content)
         errors = {k: v for k, v in errors.items() if v}
         if errors:
             ancestors = [entry.parent] if entry.parent_id else []
@@ -297,9 +302,9 @@ class EditResource:
             entry.edited_at = utc_timestamp()
             entry.link = links[0] if links else ''
             entry.hashtag = hashtags[0] if hashtags else ''
-            entry.at_user = User.objects.get(
+            entry.at_user = User.objects.filter(
                 username=mentions[0]
-            ) if mentions else None
+            ).first() if mentions else None
             if previous_at_user != entry.at_user:
                 entry.mention_seen_at = .0
             entry.save()
@@ -427,7 +432,7 @@ class SavedResource:
 class DestroyResource:
     @before(auth_user)
     @before(login_required)
-    def on_get(self, req, resp, username):
+    def on_post(self, req, resp, username):
         if not req.user.id == 1:
             raise HTTPFound('/people')
         User.objects.filter(username=username).delete()
@@ -853,8 +858,13 @@ class RecoverResource:
         )
 
     def on_get_link(self, req, resp, token):
-        email = FERNET.decrypt(token.encode()).decode()
+        try:
+            email = FERNET.decrypt(token.encode()).decode()
+        except Exception:
+            raise HTTPFound('/login')
         user = User.objects.filter(email=email).first()
+        if not user:
+            raise HTTPFound('/login')
         token = FERNET.encrypt(str(user.id).encode()).decode()
         resp.set_cookie('identity', token, path="/", max_age=MAX_AGE)
         raise HTTPFound('/feed')

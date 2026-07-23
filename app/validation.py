@@ -229,9 +229,8 @@ def valid_password(value1, value2):
 def valid_birthday(value, delimiter="-"):
     if value:
         years = [str(y) for y in range(MIN_YEAR, MAX_YEAR + 1)]
-        zeroes = [str(z).zfill(2) for z in range(1, 10)]
-        months = [str(m) for m in range(1, 13)] + zeroes
-        days = [str(d) for d in range(1, 32)] + zeroes
+        months = [str(m) for m in range(10, 13)] + [str(m).zfill(2) for m in range(1, 13)]
+        days = [str(d) for d in range(10, 32)] + [str(d).zfill(2) for d in range(1, 32)]
         if value.count(delimiter) > 2:
             return "Birthday has an invalid format"
         elif len(value) > 10:

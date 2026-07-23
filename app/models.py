@@ -1,5 +1,4 @@
 from os import environ
-from datetime import datetime, timezone
 
 from django import setup
 from django.conf import settings
@@ -106,10 +105,7 @@ class User(models.Model):
         return social
 
     def set_seen(self):
-        fmt = "%Y-%m-%d-%H-%M"
-        last_day = datetime.now(timezone.utc).strftime(fmt)
-        last_seen = datetime.fromtimestamp(self.seen_at, tz=timezone.utc).strftime(fmt)
-        if last_day != last_seen:
+        if utc_timestamp() - self.seen_at > 60:
             self.seen_at = utc_timestamp()
             self.save(update_fields=['seen_at'])
 

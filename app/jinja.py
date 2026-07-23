@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from textwrap import shorten
 from urllib.parse import quote_plus
 
@@ -21,7 +21,7 @@ env.filters['city'] = lambda loc: loc.split(",")[0] if "," in loc else loc
 env.filters['emojize'] = emojize
 env.filters['enumerize'] = enumerize
 env.filters['hexcode'] = hexcode
-env.filters['isoformat'] = lambda ts: datetime.fromtimestamp(ts).isoformat()
+env.filters['isoformat'] = lambda ts: datetime.fromtimestamp(ts, tz=timezone.utc).isoformat()
 env.filters['keywords'] = lambda emo: ", ".join(emo[1:-1].split("_"))
 env.filters['parser'] = parser
 env.filters['quote'] = quote_plus

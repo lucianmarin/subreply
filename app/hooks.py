@@ -1,4 +1,4 @@
-from falcon import HTTPFound, HTTPError
+from falcon import HTTPFound, HTTPUnauthorized
 
 from app.models import User
 from project.settings import FERNET
@@ -24,4 +24,4 @@ def login_required(req, resp, resource, params):
 
 def auth_required(req, resp, resource, params):
     if not req.user:
-        raise HTTPError('Login required')
+        raise HTTPUnauthorized(description='Login required')
