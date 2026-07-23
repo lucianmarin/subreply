@@ -9,7 +9,7 @@ from app.forms import get_content, get_emoji, get_location, get_metadata, get_na
 from app.hooks import auth_user, login_required
 from app.jinja import render
 from app.models import Bond, Chat, Post, Push, Save, User
-from app.push import send_push_to_user
+from app.push import send_push
 from app.utils import build_hash, utc_timestamp, verify_hash
 from app.validation import (authentication, profiling, registration,
                             valid_content, valid_handle, valid_password, valid_phone,
@@ -239,7 +239,7 @@ class ReplyResource:
             )
             re.set_ancestors()
             if parent.created_by != req.user:
-                send_push_to_user(
+                send_push(
                     parent.created_by,
                     f"{emojize(req.user.full_name)} replied to you",
                     content[:120],
@@ -247,7 +247,7 @@ class ReplyResource:
                     "reply",
                 )
             if re.at_user and re.at_user != req.user and re.at_user != parent.created_by:
-                send_push_to_user(
+                send_push(
                     re.at_user,
                     f"{emojize(req.user.full_name)} mentioned you",
                     content[:120],
@@ -588,7 +588,7 @@ class MessageResource:
                 seen_at=utc_timestamp() if member == req.user else .0
             )
             if member != req.user:
-                send_push_to_user(
+                send_push(
                     member,
                     f"{emojize(req.user.full_name)} sent you a message",
                     content[:120],

@@ -9,7 +9,7 @@ from project.settings import VAPID_PRIVATE_KEY
 VAPID_CLAIMS = {"sub": "mailto:push@subreply.com"}
 
 
-def send_push_to_user(user, title, body, url, tag=None):
+def send_push(user, title, body, url, tag=None):
     try:
         sub = user.push_subscription
     except Push.DoesNotExist:

@@ -7,7 +7,7 @@ from django.db.models import Count, Prefetch, Q, Max
 from app.forms import get_content, get_emoji, get_metadata, get_name, get_location
 from app.hooks import auth_required, auth_user
 from app.models import Bond, Chat, Post, Push, Save, User
-from app.push import send_push_to_user
+from app.push import send_push
 from app.serializers import build_entry, build_user, build_chat
 from app.utils import build_hash, utc_timestamp
 from app.validation import (authentication, registration, valid_content, valid_reply,
@@ -187,7 +187,7 @@ class PostEndpoint:
             )
             re.set_ancestors()
             if parent and parent.created_by != req.user:
-                send_push_to_user(
+                send_push(
                     parent.created_by,
                     f"{emojize(req.user.full_name)} replied to you",
                     re.content[:120],
@@ -195,7 +195,7 @@ class PostEndpoint:
                     "reply",
                 )
             if re.at_user and re.at_user != req.user:
-                send_push_to_user(
+                send_push(
                     re.at_user,
                     f"{emojize(req.user.full_name)} mentioned you",
                     re.content[:120],
@@ -221,7 +221,7 @@ class SendEndpoint:
             seen_at=utc_timestamp() if member == req.user else .0
         )
         if member != req.user:
-            send_push_to_user(
+            send_push(
                 member,
                 f"{emojize(req.user.full_name)} sent you a message",
                 content[:120],
@@ -682,7 +682,7 @@ class FollowEndpoint:
             created_at=utc_timestamp(), created_by=req.user, to_user=member
         )
         if member != req.user:
-            send_push_to_user(
+            send_push(
                 member,
                 f"{emojize(req.user.full_name)} followed you",
                 "",
