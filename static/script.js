@@ -114,3 +114,80 @@ function send(event) {
         event.currentTarget.parentElement.submit();
     }
 }
+
+function urlBase64ToUint8Array(base64String) {
+    var padding = '='.repeat((4 - base64String.length % 4) % 4);
+    var base64 = (base64String + padding).replace(/\-/g, '+').replace(/_/g, '/');
+    var rawData = window.atob(base64);
+    var output = new Uint8Array(rawData.length);
+    for (var i = 0; i < rawData.length; ++i) {
+        output[i] = rawData.charCodeAt(i);
+    }
+    return output;
+}
+
+function updatePushUI(sub) {
+    var state = document.getElementById('push-state');
+    var link = document.getElementById('push-toggle');
+    if (!state || !link) return;
+    if (sub && sub.endpoint === window.serverEndpoint) {
+        state.innerText = 'on';
+        link.innerText = 'Turn off';
+        link.onclick = togglePush;
+    } else {
+        state.innerText = 'off';
+        link.innerText = 'Turn on';
+        link.onclick = togglePush;
+    }
+}
+
+function togglePush(event) {
+    event.preventDefault();
+    if (!('serviceWorker' in navigator && 'PushManager' in window)) {
+        return;
+    }
+    navigator.serviceWorker.ready.then(function (reg) {
+        reg.pushManager.getSubscription().then(function (sub) {
+            if (sub && sub.endpoint === window.serverEndpoint) {
+                sub.unsubscribe().then(function () {
+                    fetch('/api/push/unsubscribe', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' }
+                    });
+                    window.serverEndpoint = '';
+                    updatePushUI(null);
+                });
+            } else {
+                (window.serverEndpoint
+                    ? fetch('/api/push/unsubscribe', { method: 'POST', headers: { 'Content-Type': 'application/json' } }).then(function () { window.serverEndpoint = ''; })
+                    : Promise.resolve()
+                ).then(function () {
+                    return sub ? sub.unsubscribe() : Promise.resolve();
+                }).then(function () {
+                    return fetch('/api/vapid-key').then(function (r) { return r.json(); });
+                }).then(function (data) {
+                    return reg.pushManager.subscribe({
+                        userVisibleOnly: true,
+                        applicationServerKey: urlBase64ToUint8Array(data.publicKey)
+                    });
+                }).then(function (sub) {
+                    var ep = sub.endpoint;
+                    return fetch('/api/push/subscribe', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            endpoint: ep,
+                            p256dh: btoa(String.fromCharCode.apply(null, new Uint8Array(sub.getKey('p256dh')))),
+                            auth: btoa(String.fromCharCode.apply(null, new Uint8Array(sub.getKey('auth'))))
+                        })
+                    }).then(function () {
+                        window.serverEndpoint = ep;
+                        updatePushUI({ endpoint: window.serverEndpoint });
+                    });
+                });
+            }
+        });
+    });
+}
+
+
