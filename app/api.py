@@ -632,7 +632,7 @@ class DeleteEndpoint:
     @before(auth_required)
     def on_post(self, req, resp, id):
         resp.content_type = MEDIA_JSON
-        entry = Post.objects.filter(id=id).first()
+        entry = Post.objects.filter(id=id).select_related('parent').first()
         if not entry:
             resp.media = {'status': 'not found'}
             return
