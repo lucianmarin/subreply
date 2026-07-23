@@ -165,6 +165,9 @@ class Bond(models.Model):
                                 related_name='followers')
     seen_at = models.FloatField(default=.0, db_index=True)
 
+    class Meta:
+        unique_together = ['created_by', 'to_user']
+
 
 class Chat(models.Model):
     content = models.CharField(max_length=640)

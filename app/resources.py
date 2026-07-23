@@ -205,6 +205,8 @@ class ReplyResource:
     @before(login_required)
     def on_post(self, req, resp, id):
         parent = Posts.filter(id=id).select_related('parent').first()
+        if not parent:
+            raise HTTPNotFound
         form = req.get_media()
         content = get_content(form)
         if not content:
@@ -224,19 +226,19 @@ class ReplyResource:
                 entries=entries, ancestors=ancestors, duplicate=False
             )
         else:
-            extra = {}
-            extra['link'] = links[0] if links else ''
-            extra['hashtag'] = hashtags[0] if hashtags else ''
-            extra['at_user'] = User.objects.filter(
-                username=mentions[0]
-            ).first() if mentions else None
             re, is_new = Post.objects.get_or_create(
                 parent=parent,
-                to_user=parent.created_by,
-                content=content,
                 created_by=req.user,
-                defaults={'created_at': utc_timestamp()},
-                **extra
+                defaults={
+                    'to_user': parent.created_by,
+                    'content': content,
+                    'created_at': utc_timestamp(),
+                    'link': links[0] if links else '',
+                    'hashtag': hashtags[0] if hashtags else '',
+                    'at_user': User.objects.filter(
+                        username=mentions[0]
+                    ).first() if mentions else None,
+                }
             )
             if not is_new:
                 raise HTTPFound(f"/reply/{re.id}")
@@ -575,6 +577,8 @@ class MessageResource:
     def on_post(self, req, resp, username):
         username = username.lower()
         member = User.objects.filter(username=username).first()
+        if not member:
+            raise HTTPNotFound
         form = req.get_media()
         content = get_content(form)
         if not content:
@@ -843,8 +847,8 @@ class RegisterResource:
             )
             # create self bond
             Bond.objects.get_or_create(
-                created_at=utc_timestamp(), seen_at=utc_timestamp(),
-                created_by=user, to_user=user
+                created_by=user, to_user=user,
+                defaults={'created_at': utc_timestamp(), 'seen_at': utc_timestamp()}
             )
             # set id cookie
             token = FERNET.encrypt(str(user.id).encode()).decode()

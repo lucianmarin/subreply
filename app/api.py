@@ -174,19 +174,19 @@ class PostEndpoint:
         if errors:
             resp.media = {'errors': errors}
         else:
-            extra = {}
-            extra['link'] = links[0] if links else ''
-            extra['hashtag'] = hashtags[0] if hashtags else ''
-            extra['at_user'] = User.objects.filter(
-                username=mentions[0]
-            ).first() if mentions else None
             re, is_new = Post.objects.get_or_create(
                 parent=parent,
-                to_user=parent.created_by if parent else None,
-                content=content,
                 created_by=req.user,
-                defaults={'created_at': utc_timestamp()},
-                **extra
+                defaults={
+                    'to_user': parent.created_by if parent else None,
+                    'content': content,
+                    'created_at': utc_timestamp(),
+                    'link': links[0] if links else '',
+                    'hashtag': hashtags[0] if hashtags else '',
+                    'at_user': User.objects.filter(
+                        username=mentions[0]
+                    ).first() if mentions else None,
+                }
             )
             if not is_new:
                 resp.media = build_entry(re, [], has_parent=True)
@@ -697,7 +697,8 @@ class FollowEndpoint:
             resp.media = {'status': 'not found'}
             return
         Bond.objects.get_or_create(
-            created_at=utc_timestamp(), created_by=req.user, to_user=member
+            created_by=req.user, to_user=member,
+            defaults={'created_at': utc_timestamp(), 'seen_at': utc_timestamp()}
         )
         if member != req.user:
             send_push(
