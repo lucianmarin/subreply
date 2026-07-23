@@ -35,7 +35,7 @@ def paginate(req, qs, limit=16):
 class LoginEndpoint:
     def on_post(self, req, resp):
         form = req.get_media()
-        username = form.get('username', '')
+        username = form.get('username', '').strip().lower()
         password = form.get('password', '')
         errors, user = authentication(username, password)
         resp.content_type = MEDIA_JSON
