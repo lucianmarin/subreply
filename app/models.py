@@ -156,6 +156,9 @@ class Save(models.Model):
     post = models.ForeignKey('Post', on_delete=models.CASCADE,
                              related_name='saved_by')
 
+    class Meta:
+        unique_together = ['created_by', 'post']
+
 
 class Bond(models.Model):
     created_at = models.FloatField(default=.0)

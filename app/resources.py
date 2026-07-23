@@ -828,19 +828,17 @@ class RegisterResource:
                 page='register', view='register', errors=errors, form=form
             )
         else:
-            user, is_new = User.objects.get_or_create(
+            user = User.objects.create(
                 username=f['username'],
-                defaults={
-                    'created_at': utc_timestamp(),
-                    'seen_at': utc_timestamp(),
-                    'password': build_hash(f['password1']),
-                    'email': f['email'],
-                    'first_name': f['first_name'],
-                    'last_name': f['last_name'],
-                    'emoji': f['emoji'],
-                    'birthday': f['birthday'],
-                    'location': f['location'],
-                }
+                created_at=utc_timestamp(),
+                seen_at=utc_timestamp(),
+                password=build_hash(f['password1']),
+                email=f['email'],
+                first_name=f['first_name'],
+                last_name=f['last_name'],
+                emoji=f['emoji'],
+                birthday=f['birthday'],
+                location=f['location'],
             )
             # create self bond
             Bond.objects.get_or_create(
