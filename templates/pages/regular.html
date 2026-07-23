@@ -13,6 +13,9 @@
     {% if view == 'member' %}
         {% include "common/user.html" %}
         {% include "common/status.html" %}
+        {% if user.id == member.id %}
+            {% include "common/push.html" %}
+        {% endif %}
     {% endif %}
 
     {% for entry in entries %}

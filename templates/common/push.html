@@ -1,0 +1,84 @@
+<div class="entry" id="push-status">
+    <div class="status">
+        Push notifications: <span id="push-state">checking</span>
+        &mdash; <a href="#" id="push-toggle" onclick="togglePush(event)">Turn on</a>.
+    </div>
+</div>
+
+<script type="text/javascript">
+    var serverEndpoint = '';
+    {% if user.push_sub %}
+        serverEndpoint = '{{ user.push_sub.endpoint }}';
+    {% endif %}
+
+    function updatePushUI(sub) {
+        var state = document.getElementById('push-state');
+        var link = document.getElementById('push-toggle');
+        if (sub && sub.endpoint === serverEndpoint) {
+            state.innerText = 'on';
+            link.innerText = 'Turn off';
+            link.onclick = togglePush;
+        } else {
+            state.innerText = 'off';
+            link.innerText = 'Turn on';
+            link.onclick = togglePush;
+        }
+    }
+
+    if ('serviceWorker' in navigator && 'PushManager' in window) {
+        navigator.serviceWorker.ready.then(function (reg) {
+            reg.pushManager.getSubscription().then(updatePushUI);
+        });
+    } else {
+        document.getElementById('push-toggle').style.display = 'none';
+    }
+
+    function togglePush(event) {
+        event.preventDefault();
+        if (!('serviceWorker' in navigator && 'PushManager' in window)) {
+            return;
+        }
+        navigator.serviceWorker.ready.then(function (reg) {
+            reg.pushManager.getSubscription().then(function (sub) {
+                if (sub && sub.endpoint === serverEndpoint) {
+                    sub.unsubscribe().then(function () {
+                        fetch('/api/push/unsubscribe', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' }
+                        });
+                        serverEndpoint = '';
+                        updatePushUI(null);
+                    });
+                } else {
+                    (serverEndpoint
+                        ? fetch('/api/push/unsubscribe', { method: 'POST', headers: { 'Content-Type': 'application/json' } }).then(function () { serverEndpoint = ''; })
+                        : Promise.resolve()
+                    ).then(function () {
+                        return sub ? sub.unsubscribe() : Promise.resolve();
+                    }).then(function () {
+                        return fetch('/api/vapid-key').then(function (r) { return r.json(); });
+                    }).then(function (data) {
+                        return reg.pushManager.subscribe({
+                            userVisibleOnly: true,
+                            applicationServerKey: urlBase64ToUint8Array(data.publicKey)
+                        });
+                    }).then(function (sub) {
+                        var ep = sub.endpoint;
+                        return fetch('/api/push/subscribe', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                endpoint: ep,
+                                p256dh: btoa(String.fromCharCode.apply(null, new Uint8Array(sub.getKey('p256dh')))),
+                                auth: btoa(String.fromCharCode.apply(null, new Uint8Array(sub.getKey('auth'))))
+                            })
+                        }).then(function () {
+                            serverEndpoint = ep;
+                            updatePushUI({ endpoint: serverEndpoint });
+                        });
+                    });
+                }
+            });
+        });
+    }
+</script>

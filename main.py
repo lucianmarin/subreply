@@ -45,6 +45,9 @@ app.add_route('/api/discover', api.DiscoverEndpoint())
 app.add_route('/api/messages', api.MessagesEndpoint())
 app.add_route('/api/{username}/message', api.MessageEndpoint())
 app.add_route('/api/notifications', api.NotificationsEndpoint())
+app.add_route('/api/vapid-key', api.VapidKeyEndpoint())
+app.add_route('/api/push/subscribe', api.PushSubscribeEndpoint())
+app.add_route('/api/push/unsubscribe', api.PushUnsubscribeEndpoint())
 app.add_route('/api/{username}', api.MemberEndpoint())
 
 app.add_route('/feed', resources.FeedResource())
@@ -65,6 +68,7 @@ app.add_route('/directory', resources.AboutResource(), suffix="directory")
 app.add_route('/privacy', resources.AboutResource(), suffix="privacy")
 app.add_route('/terms', resources.AboutResource(), suffix="terms")
 
+app.add_route('/sw.js', resources.SwResource())
 app.add_route('/robots.txt', resources.TxtResource(), suffix="bots")
 app.add_route('/sitemap.txt', resources.TxtResource(), suffix="map")
 

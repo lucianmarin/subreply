@@ -21,5 +21,9 @@
     "start_url": "/feed",
     "display": "standalone",
     "orientation": "portrait",
-    "status": "ok"
+    "status": "ok",
+    "serviceworker": {
+        "src": "/sw.js",
+        "scope": "/"
+    }
 }
