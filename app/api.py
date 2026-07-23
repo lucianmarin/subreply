@@ -387,7 +387,7 @@ class RepliesEndpoint:
 
 class SavedEndpoint:
     def fetch_entries(self, user):
-        saved_ids = Save.objects.filter(created_by=user).values('post__id')
+        saved_ids = Save.objects.filter(created_by=user).values('post_id')
         entries = Posts.filter(id__in=saved_ids).order_by('-id')
         return entries.prefetch_related(PFR, PPFR)
 
