@@ -316,7 +316,7 @@ class MemberResource:
         member = User.objects.filter(username=username.lower()).first()
         if not member:
             raise HTTPNotFound
-        if req.user:
+        if req.user and req.user != member:
             is_followed = Bond.objects.filter(created_by=member, to_user=req.user).exists()
         else:
             is_followed = None
