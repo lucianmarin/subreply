@@ -214,7 +214,10 @@ class SendEndpoint:
     def on_post(self, req, resp, username):
         resp.content_type = MEDIA_JSON
         form = req.get_media()
-        member = User.objects.get(username=username)
+        username = username.lower()
+        member = User.objects.filter(username=username).first()
+        if not member:
+            raise HTTPNotFound
         content = form.get('content', '')
         msg, is_new = Chat.objects.get_or_create(
             to_user=member,
@@ -515,7 +518,8 @@ class MessageEndpoint:
     @before(auth_user)
     @before(auth_required)
     def on_get(self, req, resp, username):
-        member = User.objects.filter(username=username.lower()).first()
+        username = username.lower()
+        member = User.objects.filter(username=username).first()
         if not member:
             raise HTTPNotFound
         entries, page = paginate(req, self.fetch_entries(req, member))
@@ -677,7 +681,8 @@ class FollowEndpoint:
     @before(auth_required)
     def on_post(self, req, resp, username):
         resp.content_type = MEDIA_JSON
-        member = User.objects.filter(username=username.lower()).first()
+        username = username.lower()
+        member = User.objects.filter(username=username).first()
         if not member:
             resp.media = {'status': 'not found'}
             return
@@ -700,7 +705,8 @@ class UnfollowEndpoint:
     @before(auth_required)
     def on_post(self, req, resp, username):
         resp.content_type = MEDIA_JSON
-        member = User.objects.filter(username=username.lower()).first()
+        username = username.lower()
+        member = User.objects.filter(username=username).first()
         if not member:
             resp.media = {'status': 'not found'}
             return
@@ -729,7 +735,8 @@ class ClearoutEndpoint:
     @before(auth_required)
     def on_post(self, req, resp, username):
         resp.content_type = MEDIA_JSON
-        member = User.objects.filter(username=username.lower()).first()
+        username = username.lower()
+        member = User.objects.filter(username=username).first()
         if not member:
             resp.media = {'status': 'not found'}
             return

@@ -318,7 +318,8 @@ class MemberResource:
 
     @before(auth_user)
     def on_get(self, req, resp, username):
-        member = User.objects.filter(username=username.lower()).first()
+        username = username.lower()
+        member = User.objects.filter(username=username).first()
         if not member:
             raise HTTPNotFound
         if req.user and req.user != member:
@@ -435,6 +436,7 @@ class DestroyResource:
     def on_post(self, req, resp, username):
         if not req.user.id == 1:
             raise HTTPFound('/people')
+        username = username.lower()
         User.objects.filter(username=username).delete()
         raise HTTPFound('/people')
 
@@ -553,7 +555,8 @@ class MessageResource:
     @before(auth_user)
     @before(login_required)
     def on_get(self, req, resp, username):
-        member = User.objects.filter(username=username.lower()).first()
+        username = username.lower()
+        member = User.objects.filter(username=username).first()
         if not member:
             raise HTTPNotFound
         entries, page, number = paginate(req, self.fetch_entries(req, member))
@@ -570,7 +573,8 @@ class MessageResource:
     @before(auth_user)
     @before(login_required)
     def on_post(self, req, resp, username):
-        member = User.objects.filter(username=username.lower()).first()
+        username = username.lower()
+        member = User.objects.filter(username=username).first()
         form = req.get_media()
         content = get_content(form)
         if not content:
