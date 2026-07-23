@@ -161,17 +161,15 @@ class FeedResource:
             )
         else:
             hashtags, links, mentions = get_metadata(content)
-            extra = {}
-            extra['link'] = links[0] if links else ''
-            extra['hashtag'] = hashtags[0] if hashtags else ''
-            extra['at_user'] = User.objects.filter(
-                username=mentions[0]
-            ).first() if mentions else None
-            th, is_new = Post.objects.get_or_create(
+            Post.objects.create(
                 content=content,
                 created_by=req.user,
-                defaults={'created_at': utc_timestamp()},
-                **extra
+                created_at=utc_timestamp(),
+                link=links[0] if links else '',
+                hashtag=hashtags[0] if hashtags else '',
+                at_user=User.objects.filter(
+                    username=mentions[0]
+                ).first() if mentions else None,
             )
             raise HTTPFound('/')
 
@@ -226,22 +224,21 @@ class ReplyResource:
                 entries=entries, ancestors=ancestors, duplicate=False
             )
         else:
-            re, is_new = Post.objects.get_or_create(
+            if Posts.filter(parent=parent, created_by=req.user).exists():
+                re = Posts.filter(parent=parent, created_by=req.user).first()
+                raise HTTPFound(f"/reply/{re.id}")
+            re = Post.objects.create(
                 parent=parent,
                 created_by=req.user,
-                defaults={
-                    'to_user': parent.created_by,
-                    'content': content,
-                    'created_at': utc_timestamp(),
-                    'link': links[0] if links else '',
-                    'hashtag': hashtags[0] if hashtags else '',
-                    'at_user': User.objects.filter(
-                        username=mentions[0]
-                    ).first() if mentions else None,
-                }
+                to_user=parent.created_by,
+                content=content,
+                created_at=utc_timestamp(),
+                link=links[0] if links else '',
+                hashtag=hashtags[0] if hashtags else '',
+                at_user=User.objects.filter(
+                    username=mentions[0]
+                ).first() if mentions else None,
             )
-            if not is_new:
-                raise HTTPFound(f"/reply/{re.id}")
             re.set_ancestors()
             if parent.created_by != req.user:
                 send_push(

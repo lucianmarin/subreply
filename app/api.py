@@ -174,23 +174,23 @@ class PostEndpoint:
         if errors:
             resp.media = {'errors': errors}
         else:
-            re, is_new = Post.objects.get_or_create(
+            if parent:
+                existing = Posts.filter(parent=parent, created_by=req.user).first()
+                if existing:
+                    resp.media = build_entry(existing, [], has_parent=True)
+                    return
+            re = Post.objects.create(
                 parent=parent,
                 created_by=req.user,
-                defaults={
-                    'to_user': parent.created_by if parent else None,
-                    'content': content,
-                    'created_at': utc_timestamp(),
-                    'link': links[0] if links else '',
-                    'hashtag': hashtags[0] if hashtags else '',
-                    'at_user': User.objects.filter(
-                        username=mentions[0]
-                    ).first() if mentions else None,
-                }
+                to_user=parent.created_by if parent else None,
+                content=content,
+                created_at=utc_timestamp(),
+                link=links[0] if links else '',
+                hashtag=hashtags[0] if hashtags else '',
+                at_user=User.objects.filter(
+                    username=mentions[0]
+                ).first() if mentions else None,
             )
-            if not is_new:
-                resp.media = build_entry(re, [], has_parent=True)
-                return
             re.set_ancestors()
             if parent and parent.created_by != req.user:
                 send_push(
