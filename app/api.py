@@ -229,7 +229,7 @@ class SendEndpoint:
         if error:
             resp.media = {'error': error}
             return
-        msg, is_new = Chat.objects.get_or_create(
+        msg = Chat.objects.create(
             to_user=member,
             content=content,
             created_at=utc_timestamp(),
@@ -696,11 +696,11 @@ class FollowEndpoint:
         if not member:
             resp.media = {'status': 'not found'}
             return
-        Bond.objects.get_or_create(
+        _, is_new = Bond.objects.get_or_create(
             created_by=req.user, to_user=member,
-            defaults={'created_at': utc_timestamp(), 'seen_at': utc_timestamp()}
+            defaults={'created_at': utc_timestamp()}
         )
-        if member != req.user:
+        if is_new and member != req.user:
             send_push(
                 member,
                 f"{emojize(req.user.full_name)} followed you",

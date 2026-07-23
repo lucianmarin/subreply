@@ -590,7 +590,7 @@ class MessageResource:
                 member=member, entries=entries, content=content, errors=errors
             )
         else:
-            msg, is_new = Chat.objects.get_or_create(
+            Chat.objects.create(
                 to_user=member,
                 content=content,
                 created_at=utc_timestamp(),
@@ -898,19 +898,13 @@ class RecoverResource:
             ).exists():
                 errors['email'] = "Message couldn't be sent"
             else:
-                m, is_new = Chat.objects.get_or_create(
+                Chat.objects.create(
                     content=f"Send https://subreply.com/recover/{token} to {user.email}.",
                     created_by=user,
                     to_user=admin,
-                    defaults={
-                        'created_at': utc_timestamp(),
-                    }
+                    created_at=utc_timestamp(),
                 )
-                # callback
-                if is_new:
-                    errors['email'] = "Please wait for your recovery link"
-                else:
-                    errors['email'] = "Message couldn't be sent"
+                errors['email'] = "Please wait for your recovery link"
             resp.text = render(
                 page='recover', view='recover', errors=errors, form=form
             )
