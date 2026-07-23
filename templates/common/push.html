@@ -7,11 +7,13 @@
 
 <script>
     window.serverEndpoint = '{% if user.push_sub %}{{ user.push_sub.endpoint }}{% endif %}';
-    if ('serviceWorker' in navigator && 'PushManager' in window) {
-        navigator.serviceWorker.ready.then(function (reg) {
-            reg.pushManager.getSubscription().then(updatePushUI);
-        });
-    } else {
-        document.getElementById('push-toggle').style.display = 'none';
-    }
+    window.addEventListener('load', function () {
+        if ('serviceWorker' in navigator && 'PushManager' in window) {
+            navigator.serviceWorker.ready.then(function (reg) {
+                reg.pushManager.getSubscription().then(updatePushUI);
+            });
+        } else if (document.getElementById('push-toggle')) {
+            document.getElementById('push-toggle').style.display = 'none';
+        }
+    });
 </script>
