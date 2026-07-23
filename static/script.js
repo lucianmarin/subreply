@@ -115,6 +115,26 @@ function send(event) {
     }
 }
 
+function clearout(event) {
+    event.preventDefault();
+    var element = event.currentTarget;
+    if (!element.dataset.confirm) {
+        element.innerText = "Are you sure?";
+        element.dataset.confirm = "yes";
+        return;
+    }
+    var member = element.dataset.member;
+    element.innerText = "Clearing...";
+    ajax("/api/" + member + "/clearout", "post", "json", function (data) {
+        if (data.status == "cleared") {
+            element.innerText = "Cleared";
+            element.onclick = function(ev) { ev.preventDefault(); };
+        } else {
+            element.innerText = "Error";
+        }
+    });
+}
+
 function urlBase64ToUint8Array(base64String) {
     var padding = '='.repeat((4 - base64String.length % 4) % 4);
     var base64 = (base64String + padding).replace(/\-/g, '+').replace(/_/g, '/');
@@ -189,5 +209,3 @@ function togglePush(event) {
         });
     });
 }
-
-

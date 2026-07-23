@@ -50,5 +50,13 @@
             </div>
         </div>
     {% endif %}
+
+    {% if view == 'message' and entries and entries | length < limit and not blocked %}
+        <div class="entry">
+            <div class="load">
+                <a onclick="clearout(event)" data-member="{{ member.username }}">Clear out</a>
+            </div>
+        </div>
+    {% endif %}
 </div>
 {% endblock %}

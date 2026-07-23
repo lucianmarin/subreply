@@ -719,3 +719,19 @@ class UnsendEndpoint:
             return
         entry.delete()
         resp.media = {'status': 'unsent'}
+
+
+class ClearoutEndpoint:
+    @before(auth_user)
+    @before(auth_required)
+    def on_post(self, req, resp, username):
+        resp.content_type = MEDIA_JSON
+        member = User.objects.filter(username=username.lower()).first()
+        if not member:
+            resp.media = {'status': 'not found'}
+            return
+        Chat.objects.filter(
+            Q(created_by=req.user.id, to_user=member.id) |
+            Q(created_by=member.id, to_user=req.user.id)
+        ).delete()
+        resp.media = {'status': 'cleared'}

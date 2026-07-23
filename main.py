@@ -22,6 +22,7 @@ app.add_route('/api/post', api.PostEndpoint())
 app.add_route('/api/{username}/send', api.SendEndpoint())
 # actions
 app.add_route('/api/unsend/{id:int}', api.UnsendEndpoint())
+app.add_route('/api/{username}/clearout', api.ClearoutEndpoint())
 app.add_route('/api/delete/{id:int}', api.DeleteEndpoint())
 app.add_route('/api/save/{id:int}', api.SaveEndpoint())
 app.add_route('/api/unsave/{id:int}', api.UnsaveEndpoint())
