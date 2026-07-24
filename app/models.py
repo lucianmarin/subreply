@@ -91,11 +91,11 @@ class User(models.Model):
 
     @cached_property
     def follows(self):
-        return self.following.values_list('to_user_id', flat=True)
+        return set(self.following.values_list('to_user_id', flat=True))
 
     @cached_property
     def saves(self):
-        return self.saved.values_list('post_id', flat=True)
+        return set(self.saved.values_list('post_id', flat=True))
 
     @cached_property
     def links(self):

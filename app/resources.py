@@ -112,16 +112,6 @@ class TxtResource:
         resp.text = "\n".join(urls)
 
 
-class IntroResource:
-    @before(auth_user)
-    def on_get(self, req, resp):
-        if req.user:
-            raise HTTPFound('/feed')
-        resp.text = render(
-            page='intro', view='intro', user=req.user
-        )
-
-
 class FeedResource:
     placeholder = "What are you up to?"
 
