@@ -79,9 +79,11 @@ class RegisterEndpoint:
                 location=f['location'],
             )
             # create self bond
-            Bond.objects.get_or_create(
-                created_by=user, to_user=user,
-                defaults={'created_at': utc_timestamp(), 'seen_at': utc_timestamp()}
+            Bond.objects.create(
+                created_by=user,
+                to_user=user,
+                created_at=utc_timestamp(),
+                seen_at=utc_timestamp()
             )
             # generate token
             token = FERNET.encrypt(str(user.id).encode()).decode()
@@ -663,7 +665,7 @@ class SaveEndpoint:
         if not entry:
             resp.media = {'status': 'not found'}
             return
-        Save.objects.get_or_create(
+        _, is_new = Save.objects.get_or_create(
             created_by=req.user,
             post=entry,
             defaults={'created_at': utc_timestamp()}

@@ -831,9 +831,11 @@ class RegisterResource:
                 location=f['location'],
             )
             # create self bond
-            Bond.objects.get_or_create(
-                created_by=user, to_user=user,
-                defaults={'created_at': utc_timestamp(), 'seen_at': utc_timestamp()}
+            Bond.objects.create(
+                created_by=user,
+                to_user=user,
+                created_at=utc_timestamp(),
+                seen_at=utc_timestamp()
             )
             # set id cookie
             token = FERNET.encrypt(str(user.id).encode()).decode()
