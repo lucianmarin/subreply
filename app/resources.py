@@ -214,9 +214,6 @@ class ReplyResource:
                 entries=entries, ancestors=ancestors, duplicate=False
             )
         else:
-            if Posts.filter(parent=parent, created_by=req.user).exists():
-                re = Posts.filter(parent=parent, created_by=req.user).first()
-                raise HTTPFound(f"/reply/{re.id}")
             re = Post.objects.create(
                 parent=parent,
                 created_by=req.user,
@@ -886,7 +883,7 @@ class RecoverResource:
                 created_by=user,
                 to_user=admin,
             ).exists():
-                errors['email'] = "Message couldn't be sent"
+                errors['email'] = "Request already sent"
             else:
                 Chat.objects.create(
                     content=f"Send https://subreply.com/recover/{token} to {user.email}.",

@@ -51,6 +51,7 @@ class LoginEndpoint:
 
 class RegisterEndpoint:
     def on_post(self, req, resp):
+        resp.content_type = MEDIA_JSON
         form = req.get_media()
         f = {}
         f['username'] = form.get('username', '').strip().lower()
@@ -63,7 +64,6 @@ class RegisterEndpoint:
         f['birthday'] = form.get('birthday', '').strip()
         f['location'] = form.get('location', '')
         errors = registration(f)
-        resp.content_type = MEDIA_JSON
         if errors:
             resp.media = {'errors': errors}
         else:
@@ -163,6 +163,10 @@ class PostEndpoint:
         if not content:
             resp.media = {'error': 'content parameter is empty'}
             return
+        if parent:
+            if Posts.filter(parent=parent, created_by=req.user).exists():
+                resp.media = {'error': 'reply already exists'}
+                return
         hashtags, links, mentions = get_metadata(content)
         errors = {}
         errors['content'] = valid_content(content, req.user)
@@ -174,11 +178,6 @@ class PostEndpoint:
         if errors:
             resp.media = {'errors': errors}
         else:
-            if parent:
-                existing = Posts.filter(parent=parent, created_by=req.user).first()
-                if existing:
-                    resp.media = build_entry(existing, [], has_parent=True)
-                    return
             re = Post.objects.create(
                 parent=parent,
                 created_by=req.user,
@@ -225,10 +224,11 @@ class SendEndpoint:
         if not content:
             resp.media = {'error': 'content is required'}
             return
-        error = valid_content(content, req.user)
-        if error:
-            resp.media = {'error': error}
-            return
+        errors = {}
+        errors['content'] = valid_content(content, req.user)
+        errors = {k: v for k, v in errors.items() if v}
+        if errors:
+            resp.media = {'errors': errors}
         msg = Chat.objects.create(
             to_user=member,
             content=content,
