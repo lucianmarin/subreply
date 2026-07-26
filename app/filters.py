@@ -100,6 +100,12 @@ def parser(text):
         if word.endswith(('.', ',', '!', '?', ':', ';')):
             endswith = word[-1:]
             word = word[:-1]
+        if word.endswith(('..', '!!', '??')):
+            endswith = word[-2:]
+            word = word[:-2]
+        if word.endswith(('...', '!!!', '???')):
+            endswith = word[-3:]
+            word = word[:-3]
         if word.endswith((')', ']', '}', "'", '"')):
             endswith = word[-1:] + endswith
             word = word[:-1]

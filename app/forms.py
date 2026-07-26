@@ -42,6 +42,10 @@ def get_metadata(text):
     for word in text.split():
         if word.endswith(('.', ',', '!', '?', ':', ';')):
             word = word[:-1]
+        if word.endswith(('..', '!!', '??')):
+            word = word[:-2]
+        if word.endswith(('...', '!!!', '???')):
+            word = word[:-3]
         if word.endswith((')', ']', '}', "'", '"')):
             word = word[:-1]
         if word.startswith(('(', '[', '{', "'", '"')):

@@ -60,7 +60,7 @@ def valid_content(value, user, limit=640):
         elif mention == value.lower()[1:]:
             return "Share more than a mention"
         elif not User.objects.filter(username=mention).exists():
-            return "@{0} account doesn't exists".format(mention)
+            return "@{0} account doesn't exist".format(mention)
 
 
 def valid_thread(value):
@@ -220,7 +220,7 @@ def valid_password(value1, value2):
         return "Password doesn't match"
     elif len(value1) < 8:
         return "Password is just too short"
-    elif len(value1) != sum(len(p) for p in value1.split()):
+    elif ' ' in value1:
         return "Password contains spaces"
     elif value1 == value1.lower():
         return "Password needs an uppercase letter"

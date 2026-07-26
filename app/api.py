@@ -431,7 +431,7 @@ class PeopleEndpoint:
     def fetch_entries(self, terms):
         q = self.build_query(terms)
         qs = User.objects.filter(q)
-        return qs.order_by('id') if terms else qs.order_by('-id')
+        return qs.order_by('-seen_at')
 
     @before(auth_user)
     def on_get(self, req, resp):
