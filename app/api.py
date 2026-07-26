@@ -218,34 +218,33 @@ class SendEndpoint:
         member = User.objects.filter(username=username).first()
         if not member:
             raise HTTPNotFound
+        forward = Chat.objects.filter(created_by=req.user, to_user=member).exists()
+        backward = Chat.objects.filter(created_by=member, to_user=req.user).exists()
         content = get_content(form)
         errors = {}
+        if forward and not backward:
+            errors['request'] = "Wait for the recipient to respond"
         errors['content'] = valid_content(content, req.user)
         errors = {k: v for k, v in errors.items() if v}
         if errors:
             resp.media = {'errors': errors}
-            return
-        forward = Chat.objects.filter(created_by=req.user, to_user=member).exists()
-        backward = Chat.objects.filter(created_by=member, to_user=req.user).exists()
-        if forward and not backward:
-            resp.media = {'error': 'wait for the recipient to respond'}
-            return
-        msg = Chat.objects.create(
-            to_user=member,
-            content=content,
-            created_at=utc_timestamp(),
-            created_by=req.user,
-            seen_at=utc_timestamp() if member == req.user else .0
-        )
-        if member != req.user:
-            send_push(
-                member,
-                f"{emojize(req.user.full_name)} sent you a message",
-                content[:120],
-                f"/{req.user.username}/message",
-                "message",
+        else:
+            msg = Chat.objects.create(
+                to_user=member,
+                content=content,
+                created_at=utc_timestamp(),
+                created_by=req.user,
+                seen_at=utc_timestamp() if member == req.user else .0
             )
-        resp.media = build_chat(msg)
+            if member != req.user:
+                send_push(
+                    member,
+                    f"{emojize(req.user.full_name)} sent you a message",
+                    content[:120],
+                    f"/{req.user.username}/message",
+                    "message",
+                )
+            resp.media = build_chat(msg)
 
 
 class FeedEndpoint:
