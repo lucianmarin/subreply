@@ -37,5 +37,5 @@ def send_push(user, title, body, url, tag=None):
             vapid_claims=VAPID_CLAIMS,
         )
     except WebPushException as ex:
-        if ex.response and ex.response.status_code == 410:
+        if ex.response and ex.response.status_code in [410, 404, 429, 503]:
             sub.delete()

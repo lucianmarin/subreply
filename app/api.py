@@ -474,7 +474,7 @@ class DiscoverEndpoint:
 
 
 class TrendingEndpoint:
-    limit = 5 * 16 + 8
+    limit = 24
 
     def fetch_entries(self):
         sample = Post.objects.filter(parent=None).filter(
