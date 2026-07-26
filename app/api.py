@@ -70,6 +70,7 @@ class RegisterEndpoint:
             user = User.objects.create(
                 username=f['username'],
                 created_at=utc_timestamp(),
+                seen_at=utc_timestamp(),
                 password=build_hash(f['password1']),
                 email=f['email'],
                 first_name=f['first_name'],
@@ -158,15 +159,9 @@ class PostEndpoint:
     def on_post(self, req, resp):
         resp.content_type = MEDIA_JSON
         form = req.get_media()
-        parent = Posts.filter(id=form.get('parent', 0)).first()
+        parent_id = int(form.get('parent', '') if str(form.get('parent', '')).isdigit() else 0)
+        parent = Posts.filter(id=parent_id).first()
         content = get_content(form)
-        if not content:
-            resp.media = {'error': 'content parameter is empty'}
-            return
-        if parent:
-            if Posts.filter(parent=parent, created_by=req.user).exists():
-                resp.media = {'error': 'reply already exists'}
-                return
         hashtags, links, mentions = get_metadata(content)
         errors = {}
         errors['content'] = valid_content(content, req.user)
@@ -177,6 +172,9 @@ class PostEndpoint:
         errors = {k: v for k, v in errors.items() if v}
         if errors:
             resp.media = {'errors': errors}
+        elif parent:
+            if existing := Posts.filter(parent=parent, created_by=req.user).first():
+                resp.media = build_entry(existing, [], has_parent=True)
         else:
             re = Post.objects.create(
                 parent=parent,
@@ -221,14 +219,17 @@ class SendEndpoint:
         if not member:
             raise HTTPNotFound
         content = get_content(form)
-        if not content:
-            resp.media = {'error': 'content is required'}
-            return
         errors = {}
         errors['content'] = valid_content(content, req.user)
         errors = {k: v for k, v in errors.items() if v}
         if errors:
             resp.media = {'errors': errors}
+            return
+        forward = Chat.objects.filter(created_by=req.user, to_user=member).exists()
+        backward = Chat.objects.filter(created_by=member, to_user=req.user).exists()
+        if forward and not backward:
+            resp.media = {'error': 'wait for the recipient to respond'}
+            return
         msg = Chat.objects.create(
             to_user=member,
             content=content,
@@ -647,9 +648,12 @@ class DeleteEndpoint:
             resp.media = {'status': 'not found'}
             return
         valid_ids = [
-            entry.created_by_id, entry.parent.created_by_id
+            entry.created_by_id, entry.to_user_id
         ] if entry.parent_id else [entry.created_by_id]
         if req.user.id not in valid_ids:
+            resp.media = {'status': 'not valid'}
+            return
+        if entry.kids.exists():
             resp.media = {'status': 'not valid'}
             return
         entry.delete()

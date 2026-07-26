@@ -213,6 +213,8 @@ class ReplyResource:
                 user=req.user, entry=parent, errors=errors,
                 entries=entries, ancestors=ancestors, duplicate=False
             )
+        elif existing := Posts.filter(parent=parent, created_by=req.user).first():
+            raise HTTPFound(f"/reply/{existing.id}")
         else:
             re = Post.objects.create(
                 parent=parent,
