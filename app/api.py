@@ -172,10 +172,12 @@ class PostEndpoint:
         errors = {k: v for k, v in errors.items() if v}
         if errors:
             resp.media = {'errors': errors}
-        elif parent:
-            if existing := Posts.filter(parent=parent, created_by=req.user).first():
-                resp.media = build_entry(existing, [], has_parent=True)
+
         else:
+            if parent:
+                if existing := Posts.filter(parent=parent, created_by=req.user).first():
+                    resp.media = build_entry(existing, [], has_parent=True)
+                    return
             re = Post.objects.create(
                 parent=parent,
                 created_by=req.user,
@@ -477,9 +479,7 @@ class TrendingEndpoint:
     limit = 24
 
     def fetch_entries(self):
-        sample = Post.objects.filter(parent=None).filter(
-            kids__isnull=False
-        ).order_by('-id').values('id')[:self.limit]
+        sample = Post.objects.filter(parent=None).exclude(kids=None).order_by('-id').values('id')[:self.limit]
         entries = Posts.filter(id__in=sample).order_by('-replies', '-id')
         return entries.prefetch_related(PFR)
 

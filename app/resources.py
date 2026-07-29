@@ -151,7 +151,7 @@ class FeedResource:
             )
         else:
             hashtags, links, mentions = get_metadata(content)
-            Post.objects.create(
+            th = Post.objects.create(
                 content=content,
                 created_by=req.user,
                 created_at=utc_timestamp(),
@@ -161,6 +161,14 @@ class FeedResource:
                     username=mentions[0]
                 ).first() if mentions else None,
             )
+            if th.at_user and th.at_user != req.user:
+                send_push(
+                    th.at_user,
+                    f"{emojize(req.user.full_name)} mentioned you",
+                    content[:120],
+                    f"/reply/{th.id}",
+                    "mention",
+                )
             raise HTTPFound('/')
 
 
@@ -213,9 +221,9 @@ class ReplyResource:
                 user=req.user, entry=parent, errors=errors,
                 entries=entries, ancestors=ancestors, duplicate=False
             )
-        elif existing := Posts.filter(parent=parent, created_by=req.user).first():
-            raise HTTPFound(f"/reply/{existing.id}")
         else:
+            if existing := Posts.filter(parent=parent, created_by=req.user).first():
+                raise HTTPFound(f"/reply/{existing.id}")
             re = Post.objects.create(
                 parent=parent,
                 created_by=req.user,
@@ -497,7 +505,7 @@ class TrendingResource:
     limit = 24
 
     def fetch_entries(self):
-        sample = Post.objects.filter(parent=None).filter(kids__isnull=False).order_by('-id').values('id')[:self.limit]
+        sample = Post.objects.filter(parent=None).exclude(kids=None).order_by('-id').values('id')[:self.limit]
         entries = Posts.filter(id__in=sample).order_by('-replies', '-id')
         return entries.prefetch_related(PFR)
 
