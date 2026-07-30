@@ -538,8 +538,7 @@ class MessageEndpoint:
             "page": page,
             "entries": [build_chat(entry) for entry in entries]
         }
-        if req.user.received.filter(created_by=member, seen_at=.0).count():
-            self.clear_messages(req, member)
+        self.clear_messages(req, member)
 
 class VapidKeyEndpoint:
     def on_get(self, req, resp):

@@ -563,8 +563,7 @@ class MessageResource:
             page=page, view='message', number=number, user=req.user, errors={},
             entries=entries, member=member, blocked=blocked
         )
-        if req.user.received.filter(created_by=member, seen_at=.0).count():
-            self.clear_messages(req, member)
+        self.clear_messages(req, member)
 
     @before(auth_user)
     @before(login_required)
