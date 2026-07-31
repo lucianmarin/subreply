@@ -10,7 +10,7 @@
             "request": "launch",
             "module": "gunicorn",
             "args": [
-                "router:app"
+                "main:app"
             ],
             "jinja": true,
             "autoStartBrowser": false

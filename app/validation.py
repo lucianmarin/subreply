@@ -131,13 +131,6 @@ def valid_handle(value):
         return "Handle can be only alphanumeric"
 
 
-def valid_id(value):
-    if len(value) > 15:
-        return "ID can't be longer than 15 characters"
-    elif not all(c in digits for c in value):
-        return "ID can be only numeric"
-
-
 def valid_first_name(value):
     if not value:
         return "First name can't be blank"
@@ -325,14 +318,6 @@ def valid_date(value, delimiter="-"):
                 return "Month is not between 01-12"
             elif year == str(CUR_YEAR) and int(month) > CUR_MONTH:
                 return "Date is in the future"
-
-
-def changing(user, current, password1, password2):
-    errors = {}
-    if not verify_hash(current, user.password):
-        errors['current'] = "Password doesn't match"
-    errors['password'] = valid_password(password1, password2)
-    return {k: v for k, v in errors.items() if v}
 
 
 def profiling(f, user_id):
