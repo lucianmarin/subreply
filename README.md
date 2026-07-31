@@ -21,7 +21,7 @@ SIGNATURE = Fernet.generate_key()
 Launch the app at http://localhost:8000 with:
 
 ```shell
-gunicorn router:app
+gunicorn main:app
 ```
 
 ## Styleguide
