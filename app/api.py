@@ -153,35 +153,24 @@ class DetailsEndpoint:
             resp.media = {'user': build_user(req.user)}
 
 
-class PostEndpoint:
+class ThreadEndpoint:
     @before(auth_user)
     @before(auth_required)
     def on_post(self, req, resp):
         resp.content_type = MEDIA_JSON
         form = req.get_media()
-        parent_id = int(form.get('parent', '') if str(form.get('parent', '')).isdigit() else 0)
-        parent = Posts.filter(id=parent_id).first()
         content = get_content(form)
         hashtags, links, mentions = get_metadata(content)
         errors = {}
         errors['content'] = valid_content(content, req.user)
-        if not errors['content'] and not parent:
+        if not errors['content']:
             errors['content'] = valid_thread(content)
-        if not errors['content'] and parent:
-            errors['content'] = valid_reply(parent, req.user, content, mentions)
         errors = {k: v for k, v in errors.items() if v}
         if errors:
             resp.media = {'errors': errors}
-
         else:
-            if parent:
-                if existing := Posts.filter(parent=parent, created_by=req.user).first():
-                    resp.media = build_entry(existing, [], has_parent=True)
-                    return
-            re = Post.objects.create(
-                parent=parent,
+            th = Post.objects.create(
                 created_by=req.user,
-                to_user=parent.created_by if parent else None,
                 content=content,
                 created_at=utc_timestamp(),
                 link=links[0] if links else '',
@@ -190,24 +179,15 @@ class PostEndpoint:
                     username=mentions[0]
                 ).first() if mentions else None,
             )
-            re.set_ancestors()
-            if parent and parent.created_by != req.user:
+            if th.at_user and th.at_user != req.user:
                 send_push(
-                    parent.created_by,
-                    f"{emojize(req.user.full_name)} replied to you",
-                    re.content[:120],
-                    f"/reply/{re.id}",
-                    "reply",
-                )
-            if re.at_user and re.at_user != req.user:
-                send_push(
-                    re.at_user,
+                    th.at_user,
                     f"{emojize(req.user.full_name)} mentioned you",
-                    re.content[:120],
-                    f"/reply/{re.id}",
+                    th.content[:120],
+                    f"/reply/{th.id}",
                     "mention",
                 )
-            resp.media = build_entry(re, [], has_parent=True)
+            resp.media = build_entry(th, [], has_parent=True)
 
 
 class SendEndpoint:
@@ -289,6 +269,58 @@ class ReplyEndpoint:
             "ancestors": [build_entry(entry, req.user.saves) for entry in ancestors],
             "kids": [build_entry(entry, req.user.saves, has_kids=True) for entry in entries]
         }
+
+    @before(auth_user)
+    @before(auth_required)
+    def on_post(self, req, resp, id):
+        resp.content_type = MEDIA_JSON
+        parent = Posts.filter(id=id).select_related('parent').first()
+        if not parent:
+            raise HTTPNotFound
+        form = req.get_media()
+        content = get_content(form)
+        hashtags, links, mentions = get_metadata(content)
+        errors = {}
+        errors['content'] = valid_content(content, req.user)
+        if not errors['content']:
+            errors['content'] = valid_reply(parent, req.user, content, mentions)
+        errors = {k: v for k, v in errors.items() if v}
+        if errors:
+            resp.media = {'errors': errors}
+        else:
+            if existing := Posts.filter(parent=parent, created_by=req.user).first():
+                resp.media = build_entry(existing, [], has_parent=True)
+                return
+            re = Post.objects.create(
+                parent=parent,
+                created_by=req.user,
+                to_user=parent.created_by,
+                content=content,
+                created_at=utc_timestamp(),
+                link=links[0] if links else '',
+                hashtag=hashtags[0] if hashtags else '',
+                at_user=User.objects.filter(
+                    username=mentions[0]
+                ).first() if mentions else None,
+            )
+            re.set_ancestors()
+            if parent.created_by != req.user:
+                send_push(
+                    parent.created_by,
+                    f"{emojize(req.user.full_name)} replied to you",
+                    re.content[:120],
+                    f"/reply/{re.id}",
+                    "reply",
+                )
+            if re.at_user and re.at_user != req.user and re.at_user != parent.created_by:
+                send_push(
+                    re.at_user,
+                    f"{emojize(req.user.full_name)} mentioned you",
+                    re.content[:120],
+                    f"/reply/{re.id}",
+                    "mention",
+                )
+            resp.media = build_entry(re, [], has_parent=True)
 
 
 class MemberEndpoint:

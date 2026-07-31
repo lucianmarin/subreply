@@ -18,7 +18,7 @@ if DEBUG:
 # post
 app.add_route('/api/login', api.LoginEndpoint())
 app.add_route('/api/register', api.RegisterEndpoint())
-app.add_route('/api/post', api.PostEndpoint())
+app.add_route('/api/thread', api.ThreadEndpoint())
 app.add_route('/api/{username}/send', api.SendEndpoint())
 # actions
 app.add_route('/api/unsend/{id:int}', api.UnsendEndpoint())
