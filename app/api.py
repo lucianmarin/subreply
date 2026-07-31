@@ -62,7 +62,7 @@ class RegisterEndpoint:
         f['last_name'] = get_name(form, 'last')
         f['emoji'] = get_emoji(form)
         f['birthday'] = form.get('birthday', '').strip()
-        f['location'] = form.get('location', '')
+        f['location'] = get_location(form)
         errors = registration(f)
         if errors:
             resp.media = {'errors': errors}
