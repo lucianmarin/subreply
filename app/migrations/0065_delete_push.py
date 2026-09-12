@@ -6,7 +6,7 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("app", "0063_bond_unique_pair"),
+        ("app", "0064_alter_save_unique_together"),
     ]
 
     operations = [
