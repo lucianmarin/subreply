@@ -2,7 +2,6 @@ from os import environ
 
 from django import setup
 from django.conf import settings
-from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 from django.utils.functional import cached_property
 
@@ -109,13 +108,6 @@ class User(models.Model):
             self.seen_at = utc_timestamp()
             self.save(update_fields=['seen_at'])
 
-    @property
-    def push_sub(self):
-        try:
-            return self.push_subscription
-        except ObjectDoesNotExist:
-            return None
-
 
 class Post(models.Model):
     ancestors = models.ManyToManyField('self', related_name='descendants',
@@ -178,11 +170,3 @@ class Chat(models.Model):
     to_user = models.ForeignKey('User', on_delete=models.CASCADE, related_name='received')
     created_at = models.FloatField(default=.0)
     seen_at = models.FloatField(default=.0)
-
-
-class Push(models.Model):
-    user = models.OneToOneField('User', on_delete=models.CASCADE, related_name='push_subscription')
-    endpoint = models.TextField()
-    p256dh = models.TextField()
-    auth = models.TextField()
-    created_at = models.FloatField(default=.0)

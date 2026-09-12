@@ -53,14 +53,6 @@
 
 <script type="text/javascript" src="/static/script.js?v={{ v }}" async defer></script>
 
-<script>
-    if ('serviceWorker' in navigator && 'PushManager' in window) {
-        window.addEventListener('load', function () {
-            navigator.serviceWorker.register('/sw.js', { scope: '/' });
-        });
-    }
-</script>
-
 {% if view in ['feed', 'reply', 'edit'] %}
     <script>
         window.addEventListener('load', function () {

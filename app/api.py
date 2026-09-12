@@ -1,4 +1,4 @@
-from emoji import demojize, emojize
+from emoji import demojize
 from falcon import HTTPNotFound
 from falcon.hooks import before
 from falcon.constants import MEDIA_JSON
@@ -6,13 +6,12 @@ from django.db.models import Count, Prefetch, Q, Max
 
 from app.forms import get_content, get_emoji, get_metadata, get_name, get_location
 from app.hooks import auth_required, auth_user
-from app.models import Bond, Chat, Post, Push, Save, User
-from app.push import send_push
+from app.models import Bond, Chat, Post, Save, User
 from app.serializers import build_entry, build_user, build_chat
 from app.utils import build_hash, utc_timestamp
 from app.validation import (authentication, registration, valid_content, valid_reply,
                             valid_thread, profiling, valid_handle, valid_phone)
-from project.settings import FERNET, VAPID_PUBLIC_KEY
+from project.settings import FERNET
 
 Posts = Post.objects.annotate(
     replies=Count('descendants')
@@ -179,14 +178,6 @@ class ThreadEndpoint:
                     username=mentions[0]
                 ).first() if mentions else None,
             )
-            if th.at_user and th.at_user != req.user:
-                send_push(
-                    th.at_user,
-                    f"{emojize(req.user.full_name)} mentioned you",
-                    th.content[:120],
-                    f"/reply/{th.id}",
-                    "mention",
-                )
             resp.media = build_entry(th, [], has_parent=True)
 
 
@@ -218,14 +209,6 @@ class SendEndpoint:
                 created_by=req.user,
                 seen_at=utc_timestamp() if member == req.user else .0
             )
-            if member != req.user:
-                send_push(
-                    member,
-                    f"{emojize(req.user.full_name)} sent you a message",
-                    content[:120],
-                    f"/{req.user.username}/message",
-                    "message",
-                )
             resp.media = build_chat(msg)
 
 
@@ -304,22 +287,6 @@ class ReplyEndpoint:
                 ).first() if mentions else None,
             )
             re.set_ancestors()
-            if parent.created_by != req.user:
-                send_push(
-                    parent.created_by,
-                    f"{emojize(req.user.full_name)} replied to you",
-                    re.content[:120],
-                    f"/reply/{re.id}",
-                    "reply",
-                )
-            if re.at_user and re.at_user != req.user and re.at_user != parent.created_by:
-                send_push(
-                    re.at_user,
-                    f"{emojize(req.user.full_name)} mentioned you",
-                    re.content[:120],
-                    f"/reply/{re.id}",
-                    "mention",
-                )
             resp.media = build_entry(re, [], has_parent=True)
 
 
@@ -572,47 +539,6 @@ class MessageEndpoint:
         }
         self.clear_messages(req, member)
 
-class VapidKeyEndpoint:
-    def on_get(self, req, resp):
-        resp.content_type = MEDIA_JSON
-        resp.media = {'publicKey': VAPID_PUBLIC_KEY}
-
-
-class PushSubscribeEndpoint:
-    @before(auth_user)
-    @before(auth_required)
-    def on_post(self, req, resp):
-        resp.content_type = MEDIA_JSON
-        form = req.get_media()
-        endpoint = form.get('endpoint', '')
-        p256dh = form.get('p256dh', '')
-        auth = form.get('auth', '')
-        if not endpoint or not p256dh or not auth:
-            resp.media = {'error': 'missing subscription parameters'}
-            return
-        Push.objects.update_or_create(
-            user=req.user,
-            defaults={
-                'endpoint': endpoint,
-                'p256dh': p256dh,
-                'auth': auth,
-                'created_at': utc_timestamp(),
-            }
-        )
-        resp.media = {'status': 'subscribed'}
-
-
-class PushUnsubscribeEndpoint:
-    @before(auth_user)
-    @before(auth_required)
-    def on_post(self, req, resp):
-        resp.content_type = MEDIA_JSON
-        Push.objects.filter(user=req.user).delete()
-        resp.media = {'status': 'unsubscribed'}
-
-
-# INFO
-
 class NotificationsEndpoint:
     @before(auth_user)
     @before(auth_required)
@@ -734,14 +660,6 @@ class FollowEndpoint:
             created_by=req.user, to_user=member,
             defaults={'created_at': utc_timestamp()}
         )
-        if is_new and member != req.user:
-            send_push(
-                member,
-                f"{emojize(req.user.full_name)} followed you",
-                "",
-                f"/{req.user.username}",
-                "follow",
-            )
         resp.media = {'status': 'unfollow'}
 
 

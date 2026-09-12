@@ -1,15 +1,12 @@
-from pathlib import Path
-
 from django.db.models import Count, Prefetch, Q, Max
-from emoji import demojize, emojize
+from emoji import demojize
 from falcon import HTTPFound, HTTPNotFound, before
 from strictyaml import as_document
 
 from app.forms import get_content, get_emoji, get_location, get_metadata, get_name
 from app.hooks import auth_user, login_required
 from app.jinja import render
-from app.models import Bond, Chat, Post, Push, Save, User
-from app.push import send_push
+from app.models import Bond, Chat, Post, Save, User
 from app.utils import build_hash, utc_timestamp, verify_hash
 from app.validation import (authentication, profiling, registration,
                             valid_content, valid_handle, valid_password, valid_phone,
@@ -84,14 +81,6 @@ class AboutResource:
         )
 
 
-class SwResource:
-    def on_get(self, req, resp):
-        resp.content_type = "application/javascript"
-        resp.set_header("Service-Worker-Allowed", "/")
-        sw_path = Path(__file__).parent.parent / "static" / "sw.js"
-        resp.text = sw_path.read_text()
-
-
 class TxtResource:
     def on_get_bots(self, req, resp):
         lines = (
@@ -161,14 +150,6 @@ class FeedResource:
                     username=mentions[0]
                 ).first() if mentions else None,
             )
-            if th.at_user and th.at_user != req.user:
-                send_push(
-                    th.at_user,
-                    f"{emojize(req.user.full_name)} mentioned you",
-                    content[:120],
-                    f"/reply/{th.id}",
-                    "mention",
-                )
             raise HTTPFound('/')
 
 
@@ -237,22 +218,6 @@ class ReplyResource:
                 ).first() if mentions else None,
             )
             re.set_ancestors()
-            if parent.created_by != req.user:
-                send_push(
-                    parent.created_by,
-                    f"{emojize(req.user.full_name)} replied to you",
-                    content[:120],
-                    f"/reply/{re.id}",
-                    "reply",
-                )
-            if re.at_user and re.at_user != req.user and re.at_user != parent.created_by:
-                send_push(
-                    re.at_user,
-                    f"{emojize(req.user.full_name)} mentioned you",
-                    content[:120],
-                    f"/reply/{re.id}",
-                    "mention",
-                )
             raise HTTPFound(f"/reply/{re.id}")
 
 
@@ -593,14 +558,6 @@ class MessageResource:
                 created_by=req.user,
                 seen_at=utc_timestamp() if member == req.user else .0
             )
-            if member != req.user:
-                send_push(
-                    member,
-                    f"{emojize(req.user.full_name)} sent you a message",
-                    content[:120],
-                    f"/{req.user.username}/message",
-                    "message",
-                )
             raise HTTPFound(f"/{username}/message")
 
 
