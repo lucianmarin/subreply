@@ -15,7 +15,7 @@ html
     --gray: #808080
     --black: #000
     --accent: #4060e0
-    --alert: #ff4000
+    --alert: #ff6000
     -ms-text-size-adjust: 100%
     -webkit-text-size-adjust: 100%
 
@@ -212,12 +212,12 @@ table
         &:hover
             background-color: var(--whitesmoke)
         &.on
-            background-color: var(--whitesmoke)
-            color: var(--accent)
+            background-color: var(--alert)
+            color: var(--white)
             svg path
-                stroke: var(--accent)
+                stroke: var(--white)
             span
-                color: var(--accent)
+                color: var(--white)
         &.red
             svg path
                 stroke: var(--alert)
@@ -254,7 +254,7 @@ table
         &.on
             color: var(--black)
             &::first-letter
-                border-bottom: 2px solid var(--black)
+                border-bottom: 2px solid var(--alert)
         sup
             color: var(--alert)
             font-size: var(--sup)
