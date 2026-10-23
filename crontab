@@ -4,4 +4,14 @@
 # user
 15 0 * * * bash sqldata/backup.sh
 
-30 * * * * logparser/venv/bin/python3 logparser/parse.py logs/sub.log.gz --html subreply/static/logs.html --skip subreply.com,lucianmarin.com,199.247.2.88 --hide 1
+0 * * * * cd news && venv/bin/python fetch.py
+
+30 * * * * logparser/venv/bin/python logparser/parse.py logs/sub.log.gz --html subreply/static/logs.html --skip subreply.com,136.244.80.161 --hide 1
+
+35 * * * * logparser/venv/bin/python logparser/parse.py logs/lm.log.gz --html lm/static/logs.html --skip lucianmarin.com,136.244.80.161 --hide 1
+
+40 * * * * logparser/venv/bin/python logparser/parse.py logs/news.log.gz --html news/static/logs.html --skip news.lucianmarin.com,136.244.80.161 --hide 1
+
+45 * * * * logparser/venv/bin/python logparser/parse.py logs/math.log.gz --html math/dist/static/logs.html --skip math.lucianmarin.com,136.244.80.161 --hide 1
+
+50 * * * * logparser/venv/bin/python logparser/parse.py logs/zero.log.gz --html zero/source/logs.html --skip zero.lucianmarin.com,136.244.80.161 --hide 1
