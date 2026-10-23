@@ -22,11 +22,13 @@ def build_user(user, follows):
 
 
 def build_entry(entry, req_user, has_parent=False, has_kids=False):
+    follows = req_user.follows if req_user else []
+    saves = req_user.saves if req_user else []
     data = {
         "id": entry.id,
         "content": emojize(entry.content),
-        "created_by": build_user(entry.created_by, req_user.follows),
-        "saved": entry.id in req_user.saves,
+        "created_by": build_user(entry.created_by,follows),
+        "saved": entry.id in saves,
         "timestamp": timeago(utc_timestamp() - entry.created_at)
     }
     if has_parent:
