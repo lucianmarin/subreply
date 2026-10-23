@@ -32,6 +32,7 @@ def paginate(req, qs, limit=16):
 
 
 class LoginEndpoint:
+    @before(auth_user)
     def on_post(self, req, resp):
         form = req.get_media()
         username = form.get('username', '').strip().lower()
@@ -49,6 +50,7 @@ class LoginEndpoint:
 
 
 class RegisterEndpoint:
+    @before(auth_user)
     def on_post(self, req, resp):
         resp.content_type = MEDIA_JSON
         form = req.get_media()
