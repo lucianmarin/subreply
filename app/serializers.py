@@ -3,7 +3,8 @@ from app.filters import timeago
 from app.utils import utc_timestamp
 
 
-def build_user(user, follows):
+def build_user(user, req_user):
+    follows = req_user.follows if req_user else []
     return {
         "followed": user.id in follows,
         "username": user.username,
@@ -22,12 +23,11 @@ def build_user(user, follows):
 
 
 def build_entry(entry, req_user, has_parent=False, has_kids=False):
-    follows = req_user.follows if req_user else []
     saves = req_user.saves if req_user else []
     data = {
         "id": entry.id,
         "content": emojize(entry.content),
-        "created_by": build_user(entry.created_by,follows),
+        "created_by": build_user(entry.created_by, req_user),
         "saved": entry.id in saves,
         "timestamp": timeago(utc_timestamp() - entry.created_at)
     }
@@ -38,11 +38,11 @@ def build_entry(entry, req_user, has_parent=False, has_kids=False):
     return data
 
 
-def build_chat(entry, follows):
+def build_chat(entry, req_user):
     return {
         "id": entry.id,
         "content": emojize(entry.content),
-        "created_by": build_user(entry.created_by, follows),
-        "to_user": build_user(entry.to_user, follows),
+        "created_by": build_user(entry.created_by, req_user),
+        "to_user": build_user(entry.to_user, req_user),
         "timestamp": timeago(utc_timestamp() - entry.created_at)
     }

@@ -44,7 +44,7 @@ class LoginEndpoint:
             token = FERNET.encrypt(str(user.id).encode()).decode()
             resp.media = {
                 "token": token,
-                "user": build_user(user, req.user.follows)
+                "user": build_user(user, req.user)
             }
 
 
@@ -89,7 +89,7 @@ class RegisterEndpoint:
             token = FERNET.encrypt(str(user.id).encode()).decode()
             resp.media = {
                 "token": token,
-                "user": build_user(user, req.user.follows)
+                "user": build_user(user, req.user)
             }
 
 
@@ -117,7 +117,7 @@ class ProfileEndpoint:
                 if getattr(req.user, field, '') != value:
                     setattr(req.user, field, value)
             req.user.save()
-            resp.media = {'user': build_user(req.user, req.user.follows)}
+            resp.media = {'user': build_user(req.user, req.user)}
 
 
 class DetailsEndpoint:
@@ -149,7 +149,7 @@ class DetailsEndpoint:
             req.user.phone = p
             req.user.social = s
             req.user.save(update_fields=['phone', 'social'])
-            resp.media = {'user': build_user(req.user, req.user.follows)}
+            resp.media = {'user': build_user(req.user, req.user)}
 
 
 class ThreadEndpoint:
@@ -209,7 +209,7 @@ class SendEndpoint:
                 created_by=req.user,
                 seen_at=utc_timestamp() if member == req.user else .0
             )
-            resp.media = build_chat(msg, req.user.follows)
+            resp.media = build_chat(msg, req.user)
 
 
 class FeedEndpoint:
@@ -306,7 +306,7 @@ class MemberEndpoint:
         resp.content_type = MEDIA_JSON
         resp.media = {
             "page": page,
-            "member": build_user(member, req.user.follows),
+            "member": build_user(member, req.user),
             "entries": [build_entry(entry, req.user, has_parent=True, has_kids=True) for entry in entries]
         }
 
@@ -323,7 +323,7 @@ class FollowingEndpoint:
         resp.content_type = MEDIA_JSON
         resp.media = {
             "page": page,
-            "entries": [build_user(entry.to_user, req.user.follows) for entry in entries]
+            "entries": [build_user(entry.to_user, req.user) for entry in entries]
         }
 
 
@@ -344,7 +344,7 @@ class FollowersEndpoint:
         resp.content_type = MEDIA_JSON
         resp.media = {
             "page": page,
-            "entries": [build_user(entry.created_by, req.user.follows) for entry in entries]
+            "entries": [build_user(entry.created_by, req.user) for entry in entries]
         }
         if req.user.notif_followers:
             self.clear_followers(req.user)
@@ -442,7 +442,7 @@ class PeopleEndpoint:
         resp.content_type = MEDIA_JSON
         resp.media = {
             "page": page,
-            "entries": [build_user(entry, req.user.follows) for entry in entries]
+            "entries": [build_user(entry, req.user) for entry in entries]
         }
 
 
@@ -506,7 +506,7 @@ class MessagesEndpoint:
         resp.content_type = MEDIA_JSON
         resp.media = {
             "page": page,
-            "entries": [build_chat(entry, req.user.follows) for entry in entries]
+            "entries": [build_chat(entry, req.user) for entry in entries]
         }
 
 
@@ -533,7 +533,7 @@ class MessageEndpoint:
         resp.content_type = MEDIA_JSON
         resp.media = {
             "page": page,
-            "entries": [build_chat(entry, req.user.follows) for entry in entries]
+            "entries": [build_chat(entry, req.user) for entry in entries]
         }
         self.clear_messages(req, member)
 
