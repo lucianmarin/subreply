@@ -3,8 +3,9 @@ from app.filters import timeago
 from app.utils import utc_timestamp
 
 
-def build_user(user):
+def build_user(user, follows):
     return {
+        "followed": user.id in follows,
         "username": user.username,
         "full_name": emojize(user.full_name),
         "first_name": user.first_name,
