@@ -178,7 +178,7 @@ class ThreadEndpoint:
                     username=mentions[0]
                 ).first() if mentions else None,
             )
-            resp.media = build_entry(th, [], has_parent=True)
+            resp.media = build_entry(th, req.user, has_parent=True)
 
 
 class SendEndpoint:
@@ -209,7 +209,7 @@ class SendEndpoint:
                 created_by=req.user,
                 seen_at=utc_timestamp() if member == req.user else .0
             )
-            resp.media = build_chat(msg)
+            resp.media = build_chat(msg, req.user.follows)
 
 
 class FeedEndpoint:
@@ -225,7 +225,7 @@ class FeedEndpoint:
         entries, page = paginate(req, self.fetch_entries(req.user))
         resp.media = {
             "page": page,
-            "entries": [build_entry(entry, req.user.saves, has_parent=True, has_kids=True) for entry in entries]
+            "entries": [build_entry(entry, req.user, has_parent=True, has_kids=True) for entry in entries]
         }
 
 
@@ -248,9 +248,9 @@ class ReplyEndpoint:
         entries = self.fetch_entries(parent)
         resp.content_type = MEDIA_JSON
         resp.media = {
-            "entry": build_entry(parent, req.user.saves),
-            "ancestors": [build_entry(entry, req.user.saves) for entry in ancestors],
-            "kids": [build_entry(entry, req.user.saves, has_kids=True) for entry in entries]
+            "entry": build_entry(parent, req.user),
+            "ancestors": [build_entry(entry, req.user) for entry in ancestors],
+            "kids": [build_entry(entry, req.user, has_kids=True) for entry in entries]
         }
 
     @before(auth_user)
@@ -272,7 +272,7 @@ class ReplyEndpoint:
             resp.media = {'errors': errors}
         else:
             if existing := Posts.filter(parent=parent, created_by=req.user).first():
-                resp.media = build_entry(existing, [], has_parent=True)
+                resp.media = build_entry(existing, req.user, has_parent=True)
                 return
             re = Post.objects.create(
                 parent=parent,
@@ -287,7 +287,7 @@ class ReplyEndpoint:
                 ).first() if mentions else None,
             )
             re.set_ancestors()
-            resp.media = build_entry(re, [], has_parent=True)
+            resp.media = build_entry(re, req.user, has_parent=True)
 
 
 class MemberEndpoint:
@@ -307,7 +307,7 @@ class MemberEndpoint:
         resp.media = {
             "page": page,
             "member": build_user(member, req.user.follows),
-            "entries": [build_entry(entry, req.user.saves, has_parent=True, has_kids=True) for entry in entries]
+            "entries": [build_entry(entry, req.user, has_parent=True, has_kids=True) for entry in entries]
         }
 
 
@@ -367,7 +367,7 @@ class MentionsEndpoint:
         resp.content_type = MEDIA_JSON
         resp.media = {
             "page": page,
-            "entries": [build_entry(entry, req.user.saves, has_parent=True, has_kids=True) for entry in entries]
+            "entries": [build_entry(entry, req.user, has_parent=True, has_kids=True) for entry in entries]
         }
         if req.user.notif_mentions:
             self.clear_mentions(req.user)
@@ -390,7 +390,7 @@ class RepliesEndpoint:
         resp.content_type = MEDIA_JSON
         resp.media = {
             "page": page,
-            "entries": [build_entry(entry, req.user.saves, has_parent=True) for entry in entries]
+            "entries": [build_entry(entry, req.user, has_parent=True) for entry in entries]
         }
         if req.user.notif_replies:
             self.clear_replies(req.user)
@@ -409,7 +409,7 @@ class SavedEndpoint:
         resp.content_type = MEDIA_JSON
         resp.media = {
             "page": page,
-            "entries": [build_entry(entry, req.user.saves, has_parent=True, has_kids=True) for entry in entries]
+            "entries": [build_entry(entry, req.user, has_parent=True, has_kids=True) for entry in entries]
         }
 
 
@@ -466,11 +466,10 @@ class DiscoverEndpoint:
         q = demojize(req.params.get('q', '').strip())
         terms = [t.strip() for t in q.split() if t.strip()]
         entries, page = paginate(req, self.fetch_entries(terms))
-        saves = req.user.saves if req.user else []
         resp.content_type = MEDIA_JSON
         resp.media = {
             "page": page,
-            "entries": [build_entry(entry, saves, has_parent=True, has_kids=True) for entry in entries]
+            "entries": [build_entry(entry, req.user, has_parent=True, has_kids=True) for entry in entries]
         }
 
 
@@ -485,11 +484,10 @@ class TrendingEndpoint:
     @before(auth_user)
     def on_get(self, req, resp):
         entries, page = paginate(req, self.fetch_entries())
-        saves = req.user.saves if req.user else []
         resp.content_type = MEDIA_JSON
         resp.media = {
             "page": page,
-            "entries": [build_entry(entry, saves, has_kids=True) for entry in entries]
+            "entries": [build_entry(entry, req.user, has_kids=True) for entry in entries]
         }
 
 
@@ -508,7 +506,7 @@ class MessagesEndpoint:
         resp.content_type = MEDIA_JSON
         resp.media = {
             "page": page,
-            "entries": [build_chat(entry) for entry in entries]
+            "entries": [build_chat(entry, req.user.follows) for entry in entries]
         }
 
 
@@ -535,7 +533,7 @@ class MessageEndpoint:
         resp.content_type = MEDIA_JSON
         resp.media = {
             "page": page,
-            "entries": [build_chat(entry) for entry in entries]
+            "entries": [build_chat(entry, req.user.follows) for entry in entries]
         }
         self.clear_messages(req, member)
 
@@ -591,7 +589,7 @@ class EditEndpoint:
         if previous_at_user != entry.at_user:
             entry.mention_seen_at = .0
         entry.save()
-        resp.media = build_entry(entry, req.user.saves)
+        resp.media = build_entry(entry, req.user)
 
 
 class DeleteEndpoint:

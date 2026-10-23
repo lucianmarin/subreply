@@ -21,26 +21,26 @@ def build_user(user, follows):
     }
 
 
-def build_entry(entry, saves, has_parent=False, has_kids=False):
+def build_entry(entry, req_user, has_parent=False, has_kids=False):
     data = {
         "id": entry.id,
         "content": emojize(entry.content),
-        "created_by": build_user(entry.created_by),
-        "saved": entry.id in saves,
+        "created_by": build_user(entry.created_by, req_user.follows),
+        "saved": entry.id in req_user.saves,
         "timestamp": timeago(utc_timestamp() - entry.created_at)
     }
     if has_parent:
-        data['parent'] = build_entry(entry.parent, saves) if entry.parent else None
+        data['parent'] = build_entry(entry.parent, req_user) if entry.parent else None
     if has_kids:
-        data['kids'] = [build_entry(kid, saves) for kid in entry.kids.all()]
+        data['kids'] = [build_entry(kid, req_user) for kid in entry.kids.all()]
     return data
 
 
-def build_chat(entry):
+def build_chat(entry, follows):
     return {
         "id": entry.id,
         "content": emojize(entry.content),
-        "created_by": build_user(entry.created_by),
-        "to_user": build_user(entry.to_user),
+        "created_by": build_user(entry.created_by, follows),
+        "to_user": build_user(entry.to_user, follows),
         "timestamp": timeago(utc_timestamp() - entry.created_at)
     }
