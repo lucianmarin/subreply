@@ -5,14 +5,16 @@ from unidecode import unidecode
 
 from project.vars import COUNTRIES
 
+ALNUM_CHARS = set(digits + ascii_letters)
+USERNAME_CHARS = set(digits + ascii_letters + "_")
+
 
 def get_content(form, field="content", strip=True):
     value = form.get(field, '')
     demojized = demojize(value)
     decoded = unidecode(demojized)
     if strip:
-        words = [word.strip() for word in decoded.split()]
-        return " ".join(words)
+        return " ".join(decoded.split())
     return decoded
 
 
@@ -32,12 +34,10 @@ def get_location(form, delimiter=", "):
 
 def get_name(form, field):
     value = form.get(f'{field}_name', '')
-    words = [word.strip() for word in value.split()]
-    return " ".join(words)
+    return " ".join(value.split())
 
 
 def get_metadata(text):
-    limits = digits + ascii_letters + "_"
     hashtags, links, mentions = [], [], []
     for word in text.split():
         if word.endswith(('...', '!!!', '???')):
@@ -56,14 +56,14 @@ def get_metadata(text):
             protocol, separator, address = word.partition('://')
             if "." in address:
                 links.append(word.lower())
-        if word.startswith('@'):
+        elif word.startswith('@'):
             handle = word[1:]
-            if handle and all(c in limits for c in handle):
+            if handle and all(c in USERNAME_CHARS for c in handle):
                 mentions.append(handle.lower())
-        if word.startswith('#'):
+        elif word.startswith('#'):
             handle = word[1:]
             if handle and all(c in digits for c in handle):
                 continue
-            elif handle and all(c in digits + ascii_letters for c in handle):
+            elif handle and all(c in ALNUM_CHARS for c in handle):
                 hashtags.append(handle.lower())
     return hashtags, links, mentions

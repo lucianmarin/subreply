@@ -11,16 +11,20 @@ from app.models import Post, User
 from app.utils import has_repetitions, verify_hash
 from project.vars import INVALID, MIN_AGE, MAX_AGE, CITIES, LATIN
 
+EMOJI_CODES = {v['en'] for v in EMOJI_DATA.values()}
+HANDLE_CHARS = set(digits + ascii_letters + "_.-")
+USERNAME_CHARS = set(digits + ascii_letters + "_")
+ALNUM_CHARS = set(digits + ascii_letters)
+
 
 def valid_hashtag(value):
-    limits = digits + ascii_letters
     if not value:
         return "Value cannot be empty"
     elif len(value) > 15:
         return "Hashtag can't be longer than 15 characters"
-    elif all(c in digits for c in value):
+    elif value.isdigit() and value.isascii():
         return "Hashtag contains only digits"
-    elif not all(c in limits for c in value):
+    elif not all(c in ALNUM_CHARS for c in value):
         return "Hashtag can be only alphanumeric"
     elif has_repetitions(value):
         return "Hashtag contains repeating characters"
@@ -32,7 +36,7 @@ def valid_content(value, user, limit=640):
         return "Share something"
     elif len(value) > limit:
         return f"Share fewer than {limit} characters"
-    elif len(value) != len(value.encode()):
+    elif not value.isascii():
         return "Only ASCII characters are allowed"
     elif len(mentions) > 1:
         return "Mention a single member"
@@ -106,12 +110,11 @@ def authentication(username, password):
 
 
 def valid_username(value, user_id=0):
-    limits = digits + ascii_letters + "_"
     if not value:
         return "Username can't be blank"
     elif len(value) > 15:
         return "Username can't be longer than 15 characters"
-    elif not all(c in limits for c in value):
+    elif not all(c in USERNAME_CHARS for c in value):
         return "Username can be only alphanumeric"
     elif has_repetitions(value):
         return "Username contains repeating characters"
@@ -124,10 +127,9 @@ def valid_username(value, user_id=0):
 
 
 def valid_handle(value):
-    limits = digits + ascii_letters + "_.-"
     if len(value) > 15:
         return "Handle can't be longer than 15 characters"
-    elif not all(c in limits for c in value):
+    elif not all(c in HANDLE_CHARS for c in value):
         return "Handle can be only alphanumeric"
 
 
@@ -171,7 +173,7 @@ def valid_email(value, user_id=0):
         return "Email can't be blank"
     elif len(value) > 120:
         return "Email can't be longer than 120 characters"
-    elif len(value) != len(value.encode()):
+    elif not value.isascii():
         return "Email should use ASCII characters"
     elif "@" not in value:
         return "Email isn't a valid address"
@@ -196,7 +198,7 @@ def valid_link(value, user_id=0):
     if value:
         if len(value) > 240:
             return "Link can't be longer than 240 characters"
-        elif len(value) != len(value.encode()):
+        elif not value.isascii():
             return "Link should use ASCII characters"
         elif not value.startswith(('http://', 'https://')):
             return "Link hasn't a valid http(s) address"
@@ -224,9 +226,9 @@ def valid_password(value1, value2):
 def valid_birthday(value, delimiter="-"):
     if value:
         CUR_YEAR = date.today().year
-        years = [str(y) for y in range(CUR_YEAR - MAX_AGE, CUR_YEAR - MIN_AGE + 1)]
-        months = [str(m) for m in range(1, 13)] + [str(m).zfill(2) for m in range(1, 13)]
-        days = [str(d) for d in range(1, 32)] + [str(d).zfill(2) for d in range(1, 32)]
+        years = {str(y) for y in range(CUR_YEAR - MAX_AGE, CUR_YEAR - MIN_AGE + 1)}
+        months = {str(m) for m in range(1, 13)} | {str(m).zfill(2) for m in range(1, 13)}
+        days = {str(d) for d in range(1, 32)} | {str(d).zfill(2) for d in range(1, 32)}
         if value.count(delimiter) > 2:
             return "Birthday has an invalid format"
         elif len(value) > 10:
@@ -269,8 +271,7 @@ def valid_location(value, delimiter=", "):
 
 
 def valid_emoji(value):
-    codes = [v['en'] for v in EMOJI_DATA.values()]
-    if value and value not in codes:
+    if value and value not in EMOJI_CODES:
         return "Emoji is invalid"
 
 
@@ -301,9 +302,9 @@ def valid_date(value, delimiter="-"):
     if value:
         CUR_YEAR = date.today().year
         CUR_MONTH = date.today().month
-        years = [str(y) for y in range(CUR_YEAR - MAX_AGE, CUR_YEAR + 1)]
-        zeroes = [str(z).zfill(2) for z in range(1, 10)]
-        months = zeroes + [str(m) for m in range(10, 13)]
+        years = {str(y) for y in range(CUR_YEAR - MAX_AGE, CUR_YEAR + 1)}
+        zeroes = {str(z).zfill(2) for z in range(1, 10)}
+        months = zeroes | {str(m) for m in range(10, 13)}
         if value.count(delimiter) != 1:
             return "Date has an invalid format"
         elif len(value) > 7:

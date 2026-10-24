@@ -4,7 +4,7 @@ from pathlib import Path
 ROOT = Path(__file__).parent.parent
 
 with open(ROOT / 'static/cities.json') as file:
-    CITIES = load(file)
+    CITIES = {k: set(v) for k, v in load(file).items()}
 
 with open(ROOT / 'static/countries.json') as file:
     COUNTRIES = load(file)
@@ -42,7 +42,7 @@ RESERVED = [
     "sublevel"
 ]
 
-INVALID = RESERVED + [
+INVALID = set(RESERVED + [
     "about",
     "account",
     "api",
@@ -96,7 +96,7 @@ INVALID = RESERVED + [
     "threads",
     "trending",
     "xhr"
-]
+])
 
 
 LATIN = ". "
@@ -130,3 +130,4 @@ LATIN += "ȐȑȒȓȔȕȖȗȘșȚțȜȝȞȟ"
 LATIN += "ȠȡȢȣȤȥȦȧȨȩȪȫȬȭȮȯ"
 LATIN += "ȰȱȲȳȴȵȶȷȸȹȺȻȼȽȾȿ"
 LATIN += "ɀɁɂɃɄɅɆɇɈɉɊɋɌɍɎɏ"
+LATIN = set(LATIN)

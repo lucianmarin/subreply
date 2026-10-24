@@ -5,6 +5,10 @@ from tldextract import extract
 
 from project.vars import LINKS
 
+SUPERSCRIPTS = str.maketrans("0123456789", "⁰¹²³⁴⁵⁶⁷⁸⁹")
+ALNUM_CHARS = set(digits + ascii_letters)
+USERNAME_CHARS = set(digits + ascii_letters + "_")
+
 
 def hexcode(emoji):
     """Get hexcode for an emoji."""
@@ -77,16 +81,11 @@ def timeago(seconds):
 
 def superscript(number):
     """Convert 1 to sup(1)."""
-    text = str(number)
-    ints = [8304, 185, 178, 179, 8308, 8309, 8310, 8311, 8312, 8313]
-    for i, o in enumerate(ints):
-        text = text.replace(str(i), chr(o))
-    return text
+    return str(number).translate(SUPERSCRIPTS)
 
 
 def parser(text):
     """Convert plain text to HTML."""
-    limits = digits + ascii_letters + "_"
     # unicode xml safe
     text = text.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
     # replace &nbsp; (160) with space (32)
@@ -129,13 +128,13 @@ def parser(text):
                 word = f'<a href="{safe_url}" rel="external">{address}</a>'
         elif word.startswith('@'):
             handle = word[1:]
-            if handle and all(c in limits for c in handle):
+            if handle and all(c in USERNAME_CHARS for c in handle):
                 word = f'<a href="/{handle}" rel="author">@{handle}</a>'
         elif word.startswith('#'):
             handle = word[1:]
             if handle and all(c in digits for c in handle):
                 word = f'<a href="/reply/{handle}" rel="bookmark">#{handle}</a>'
-            elif handle and all(c in digits + ascii_letters for c in handle):
+            elif handle and all(c in ALNUM_CHARS for c in handle):
                 word = f'<a href="/discover?q=%23{handle}" rel="tag">#{handle}</a>'
         # wrap word
         word = startswith + word + endswith
