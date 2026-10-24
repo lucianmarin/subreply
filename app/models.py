@@ -135,8 +135,9 @@ class Post(models.Model):
         return self.content
 
     def set_ancestors(self):
-        if self.parent:
-            self.ancestors.set(list(self.parent.ancestors.all()) + [self.parent])
+        if self.parent_id:
+            ancestor_ids = list(self.parent.ancestors.values_list('id', flat=True))
+            self.ancestors.set(ancestor_ids + [self.parent_id])
         else:
             self.ancestors.clear()
 
@@ -169,4 +170,4 @@ class Chat(models.Model):
     created_by = models.ForeignKey('User', on_delete=models.CASCADE, related_name='sent')
     to_user = models.ForeignKey('User', on_delete=models.CASCADE, related_name='received')
     created_at = models.FloatField(default=.0)
-    seen_at = models.FloatField(default=.0)
+    seen_at = models.FloatField(default=.0, db_index=True)

@@ -187,22 +187,20 @@ def valid_email(value, user_id=0):
             return "Email can't be sent to this address"
 
 
-def valid_description(value, user_id=0):
+def valid_description(value, user):
     if value:
-        user = User.objects.filter(id=user_id).first()
         return valid_content(value, user)
 
 
 def valid_link(value, user_id=0):
     if value:
-        duplicate = User.objects.filter(link=value).exclude(id=user_id).first()
         if len(value) > 240:
             return "Link can't be longer than 240 characters"
         elif len(value) != len(value.encode()):
             return "Link should use ASCII characters"
         elif not value.startswith(('http://', 'https://')):
             return "Link hasn't a valid http(s) address"
-        elif duplicate:
+        elif duplicate := User.objects.filter(link=value).exclude(id=user_id).first():
             return f'Link is used by @{duplicate}'
 
 
@@ -320,22 +318,20 @@ def valid_date(value, delimiter="-"):
                 return "Date is in the future"
 
 
-def profiling(f, user_id):
+def profiling(f, user):
     errors = {}
-    errors['username'] = valid_username(f['username'], user_id=user_id)
-    errors['email'] = valid_email(f['email'], user_id=user_id)
+    errors['username'] = valid_username(f['username'], user_id=user.id)
+    errors['email'] = valid_email(f['email'], user_id=user.id)
     errors['first_name'] = valid_first_name(f['first_name'])
     errors['last_name'] = valid_last_name(f['last_name'])
     errors['full_name'] = valid_full_name(
-        f['emoji'], f['first_name'], f['last_name'], user_id=user_id
+        f['emoji'], f['first_name'], f['last_name'], user_id=user.id
     )
     errors['emoji'] = valid_emoji(f['emoji'])
     errors['birthday'] = valid_birthday(f['birthday'])
     errors['location'] = valid_location(f['location'])
-    errors['link'] = valid_link(f['link'], user_id=user_id)
-    errors['description'] = valid_description(
-        f['description'], user_id=user_id
-    )
+    errors['link'] = valid_link(f['link'], user_id=user.id)
+    errors['description'] = valid_description(f['description'], user)
     return {k: v for k, v in errors.items() if v}
 
 

@@ -2,7 +2,7 @@ from emoji import demojize
 from falcon import HTTPNotFound
 from falcon.hooks import before
 from falcon.constants import MEDIA_JSON
-from django.db.models import Count, Prefetch, Q, Max
+from django.db.models import Count, Max, Prefetch, Q
 
 from app.forms import get_content, get_emoji, get_metadata, get_name, get_location
 from app.hooks import auth_required, auth_user
@@ -19,7 +19,7 @@ Posts = Post.objects.annotate(
 
 PPFR = Prefetch('parent', Posts)
 PFR = Prefetch('kids', Posts.order_by('-id'))
-RPFR = Prefetch('kids', Posts.prefetch_related(PFR))
+RPFR = Prefetch('kids', Posts.order_by('-id').prefetch_related(PFR))
 
 def paginate(req, qs, limit=16):
     p = req.params.get('p', '1').strip()
@@ -111,7 +111,7 @@ class ProfileEndpoint:
         f['location'] = get_location(form)
         f['link'] = form.get('link', '').strip().lower()
         f['description'] = get_content(form, 'description')
-        errors = profiling(f, req.user.id)
+        errors = profiling(f, req.user)
         if errors:
             resp.media = {'errors': errors}
         else:
@@ -273,7 +273,7 @@ class ReplyEndpoint:
         if errors:
             resp.media = {'errors': errors}
         else:
-            if existing := Posts.filter(parent=parent, created_by=req.user).first():
+            if existing := Posts.filter(parent=parent, created_by=req.user).prefetch_related(PPFR).first():
                 resp.media = build_entry(existing, req.user, has_parent=True)
                 return
             re = Post.objects.create(
@@ -459,7 +459,7 @@ class DiscoverEndpoint:
         if terms:
             f = self.build_query(terms)
         else:
-            last_ids = User.objects.annotate(last_id=Max('posts')).values('last_id')
+            last_ids = Post.objects.values('created_by_id').annotate(last_id=Max('id')).values('last_id')
             f = Q(id__in=last_ids)
         return Posts.filter(f).order_by('-id').prefetch_related(PFR, PPFR)
 
@@ -582,13 +582,13 @@ class EditEndpoint:
             resp.media = {'errors': errors}
             return
 
-        previous_at_user = entry.at_user
+        previous_at_user_id = entry.at_user_id
         entry.content = content
         entry.edited_at = utc_timestamp()
         entry.link = links[0] if links else ''
         entry.hashtag = hashtags[0] if hashtags else ''
         entry.at_user = User.objects.filter(username=mentions[0]).first() if mentions else None
-        if previous_at_user != entry.at_user:
+        if previous_at_user_id != entry.at_user_id:
             entry.mention_seen_at = .0
         entry.save()
         resp.media = build_entry(entry, req.user)
@@ -599,7 +599,7 @@ class DeleteEndpoint:
     @before(auth_required)
     def on_post(self, req, resp, id):
         resp.content_type = MEDIA_JSON
-        entry = Post.objects.filter(id=id).select_related('parent').first()
+        entry = Post.objects.filter(id=id).first()
         if not entry:
             resp.media = {'status': 'not found'}
             return
@@ -638,11 +638,10 @@ class UnsaveEndpoint:
     @before(auth_required)
     def on_post(self, req, resp, id):
         resp.content_type = MEDIA_JSON
-        entry = Post.objects.filter(id=id).first()
-        if not entry:
+        if not Post.objects.filter(id=id).exists():
             resp.media = {'status': 'not found'}
             return
-        Save.objects.filter(created_by=req.user, post=entry).delete()
+        Save.objects.filter(created_by=req.user, post_id=id).delete()
         resp.media = {'status': 'save'}
 
 

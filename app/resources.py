@@ -1,4 +1,4 @@
-from django.db.models import Count, Prefetch, Q, Max
+from django.db.models import Count, Max, Prefetch, Q
 from emoji import demojize
 from falcon import HTTPFound, HTTPNotFound, before
 from strictyaml import as_document
@@ -19,7 +19,7 @@ Posts = Post.objects.annotate(
 
 PPFR = Prefetch('parent', Posts)
 PFR = Prefetch('kids', Posts.order_by('-id'))
-RPFR = Prefetch('kids', Posts.prefetch_related(PFR))
+RPFR = Prefetch('kids', Posts.order_by('-id').prefetch_related(PFR))
 
 
 def paginate(req, qs, limit=16):
@@ -91,12 +91,12 @@ class TxtResource:
         resp.text = "\n".join(lines)
 
     def on_get_map(self, req, resp):
-        threads = Post.objects.filter(parent=None).annotate(Count('kids')).exclude(kids__count=0)
+        threads = Post.objects.filter(parent=None).exclude(kids=None)
         replies = Post.objects.exclude(parent=None)
-        posts = threads.union(replies).values_list('id')
-        users = User.objects.exclude(posts=None).values_list('username')
-        posts_urls = [f"https://subreply.com/reply/{p}" for p, in posts]
-        user_urls = [f"https://subreply.com/{u}" for u, in users]
+        posts = threads.union(replies).values_list('id', flat=True)
+        users = User.objects.exclude(posts=None).values_list('username', flat=True)
+        posts_urls = [f"https://subreply.com/reply/{p}" for p in posts]
+        user_urls = [f"https://subreply.com/{u}" for u in users]
         urls = sorted(posts_urls + user_urls)
         resp.text = "\n".join(urls)
 
@@ -203,7 +203,7 @@ class ReplyResource:
                 entries=entries, ancestors=ancestors, duplicate=False
             )
         else:
-            if existing := Posts.filter(parent=parent, created_by=req.user).first():
+            if existing := Post.objects.filter(parent=parent, created_by=req.user).first():
                 raise HTTPFound(f"/reply/{existing.id}")
             re = Post.objects.create(
                 parent=parent,
@@ -258,7 +258,7 @@ class EditResource:
                 user=req.user, entry=entry, errors=errors, ancestors=ancestors
             )
         else:
-            previous_at_user = entry.at_user
+            previous_at_user_id = entry.at_user_id
             entry.content = content
             entry.edited_at = utc_timestamp()
             entry.link = links[0] if links else ''
@@ -266,7 +266,7 @@ class EditResource:
             entry.at_user = User.objects.filter(
                 username=mentions[0]
             ).first() if mentions else None
-            if previous_at_user != entry.at_user:
+            if previous_at_user_id != entry.at_user_id:
                 entry.mention_seen_at = .0
             entry.save()
             raise HTTPFound(f"/reply/{entry.id}")
@@ -450,7 +450,7 @@ class DiscoverResource:
         if terms:
             f = self.build_query(terms)
         else:
-            last_ids = User.objects.annotate(last_id=Max('posts')).values('last_id')
+            last_ids = Post.objects.values('created_by_id').annotate(last_id=Max('id')).values('last_id')
             f = Q(id__in=last_ids)
         return Posts.filter(f).order_by('-id').prefetch_related(PFR, PPFR)
 
@@ -586,7 +586,7 @@ class AccountResource:
             )
         else:
             req.user.password = build_hash(password1)
-            req.user.save()
+            req.user.save(update_fields=['password'])
             resp.unset_cookie('identity')
             raise HTTPFound('/login')
 
@@ -710,7 +710,7 @@ class ProfileResource:
         f['location'] = get_location(form)
         f['link'] = form.get('link', '').strip().lower()
         f['description'] = get_content(form, 'description')
-        errors = profiling(f, req.user.id)
+        errors = profiling(f, req.user)
         if errors:
             resp.text = render(
                 page='profile', view='profile', user=req.user,
@@ -842,19 +842,18 @@ class RecoverResource:
             # generate token
             token = FERNET.encrypt(user.email.encode()).decode()
             # compose message
-            admin = User.objects.get(id=1)
             if Chat.objects.filter(
                 content__startswith="Send https://subreply.com/recover",
                 content__endswith=f"to {user.email}.",
                 created_by=user,
-                to_user=admin,
+                to_user_id=1,
             ).exists():
                 errors['email'] = "Request already sent"
             else:
                 Chat.objects.create(
                     content=f"Send https://subreply.com/recover/{token} to {user.email}.",
                     created_by=user,
-                    to_user=admin,
+                    to_user_id=1,
                     created_at=utc_timestamp(),
                 )
                 errors['email'] = "Please wait for your recovery link"
