@@ -1,5 +1,7 @@
 # Subreply
 
+![screenshot](screenshot.png)
+
 Tiny, but mighty social network. Create an account at https://subreply.com.
 
 ## Install
