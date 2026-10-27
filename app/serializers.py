@@ -12,7 +12,7 @@ def build_user(user, req_user):
         "first_name": user.first_name,
         "last_name": user.last_name,
         "created_at": user.created_at,
-        "emoji": user.emoji,
+        "emoji": emojize(user.emoji),
         "birthday": user.birthday,
         "location": user.location,
         "link": user.link,
