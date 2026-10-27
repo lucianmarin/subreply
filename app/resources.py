@@ -140,7 +140,7 @@ class FeedResource:
             )
         else:
             hashtags, links, mentions = get_metadata(content)
-            th = Post.objects.create(
+            Post.objects.create(
                 content=content,
                 created_by=req.user,
                 created_at=utc_timestamp(),

@@ -213,7 +213,7 @@ def valid_password(value1, value2):
         return "Password doesn't match"
     elif len(value1) < 8:
         return "Password is just too short"
-    elif ' ' in value1:
+    elif any(c.isspace() for c in value1):
         return "Password contains spaces"
     elif value1 == value1.lower():
         return "Password needs an uppercase letter"
