@@ -32,6 +32,7 @@ def build_entry(entry, req_user, has_parent=False, has_kids=False):
         "content": emojize(entry.content),
         "created_by": build_user(entry.created_by, req_user),
         "saved": entry.id in saves,
+        "replies": getattr(entry, 'replies', 0),
         "timestamp": timeago(utc_timestamp() - entry.created_at)
     }
     if has_parent:
