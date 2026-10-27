@@ -5,7 +5,7 @@ from app.utils import utc_timestamp
 
 def build_user(user, req_user):
     follows = req_user.follows if req_user else []
-    return {
+    data = {
         "followed": user.id in follows,
         "username": user.username,
         "full_name": emojize(user.full_name),
@@ -20,6 +20,9 @@ def build_user(user, req_user):
         "phone": user.phone,
         "social": user.social,
     }
+    if req_user and user == req_user:
+        data["email"] = user.email
+    return data
 
 
 def build_entry(entry, req_user, has_parent=False, has_kids=False):

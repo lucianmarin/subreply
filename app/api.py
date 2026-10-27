@@ -45,7 +45,7 @@ class LoginEndpoint:
             token = FERNET.encrypt(str(user.id).encode()).decode()
             resp.media = {
                 "token": token,
-                "user": build_user(user, req.user)
+                "user": build_user(user, user)
             }
 
 
@@ -91,7 +91,7 @@ class RegisterEndpoint:
             token = FERNET.encrypt(str(user.id).encode()).decode()
             resp.media = {
                 "token": token,
-                "user": build_user(user, req.user)
+                "user": build_user(user, user)
             }
 
 
@@ -298,8 +298,19 @@ class MemberEndpoint:
         return entries.prefetch_related(PFR, PPFR)
 
     @before(auth_user)
+    def on_get_details(self, req, resp, username):
+        username = username.lower()
+        member = User.objects.filter(username=username).first()
+        if not member:
+            raise HTTPNotFound
+        resp.content_type = MEDIA_JSON
+        resp.media = {
+            "member": build_user(member, req.user),
+        }
+
+    @before(auth_user)
     @before(auth_required)
-    def on_get(self, req, resp, username):
+    def on_get_posts(self, req, resp, username):
         username = username.lower()
         member = User.objects.filter(username=username).first()
         if not member:
@@ -308,7 +319,6 @@ class MemberEndpoint:
         resp.content_type = MEDIA_JSON
         resp.media = {
             "page": page,
-            "member": build_user(member, req.user),
             "entries": [build_entry(entry, req.user, has_parent=True, has_kids=True) for entry in entries]
         }
 
