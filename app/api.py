@@ -309,7 +309,6 @@ class MemberEndpoint:
         }
 
     @before(auth_user)
-    @before(auth_required)
     def on_get_posts(self, req, resp, username):
         username = username.lower()
         member = User.objects.filter(username=username).first()
