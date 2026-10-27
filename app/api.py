@@ -241,18 +241,21 @@ class ReplyEndpoint:
         ).order_by('id').prefetch_related(PPFR)
 
     @before(auth_user)
-    @before(auth_required)
     def on_get(self, req, resp, id):
         parent = Posts.filter(id=id).first()
         if not parent:
             raise HTTPNotFound
+        duplicate = Post.objects.filter(
+            parent=parent, created_by=req.user
+        ).exists() if req.user else True
         ancestors = self.fetch_ancestors(parent)
         entries = self.fetch_entries(parent)
         resp.content_type = MEDIA_JSON
         resp.media = {
             "entry": build_entry(parent, req.user),
             "ancestors": [build_entry(entry, req.user) for entry in ancestors],
-            "kids": [build_entry(entry, req.user, has_kids=True) for entry in entries]
+            "kids": [build_entry(entry, req.user, has_kids=True) for entry in entries],
+            "duplicate": duplicate
         }
 
     @before(auth_user)
@@ -334,7 +337,7 @@ class FollowingEndpoint:
         resp.content_type = MEDIA_JSON
         resp.media = {
             "page": page,
-            "entries": [build_user(entry.to_user, req.user) for entry in entries]
+            "entries": [build_user(entry.to_user, req.user, timestamp=entry.created_at) for entry in entries]
         }
 
 
@@ -355,7 +358,7 @@ class FollowersEndpoint:
         resp.content_type = MEDIA_JSON
         resp.media = {
             "page": page,
-            "entries": [build_user(entry.created_by, req.user) for entry in entries]
+            "entries": [build_user(entry.created_by, req.user, timestamp=entry.created_at) for entry in entries]
         }
         if req.user.notif_followers:
             self.clear_followers(req.user)
@@ -541,9 +544,13 @@ class MessageEndpoint:
         if not member:
             raise HTTPNotFound
         entries, page = paginate(req, self.fetch_entries(req, member))
+        forward = Chat.objects.filter(created_by=req.user, to_user=member).exists()
+        backward = Chat.objects.filter(created_by=member, to_user=req.user).exists()
+        blocked = True if forward and not backward and member != req.user else False
         resp.content_type = MEDIA_JSON
         resp.media = {
             "page": page,
+            "blocked": blocked,
             "entries": [build_chat(entry, req.user) for entry in entries]
         }
         self.clear_messages(req, member)
@@ -600,7 +607,7 @@ class EditEndpoint:
         if previous_at_user_id != entry.at_user_id:
             entry.mention_seen_at = .0
         entry.save()
-        resp.media = build_entry(entry, req.user)
+        resp.media = build_entry(entry, req.user, has_parent=True)
 
 
 class DeleteEndpoint:

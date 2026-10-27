@@ -93,6 +93,10 @@ class User(models.Model):
         return set(self.following.values_list('to_user_id', flat=True))
 
     @cached_property
+    def followers_set(self):
+        return set(self.followers.exclude(created_by=self).values_list('created_by_id', flat=True))
+
+    @cached_property
     def saves(self):
         return set(self.saved.values_list('post_id', flat=True))
 

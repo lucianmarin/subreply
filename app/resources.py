@@ -102,7 +102,7 @@ class TxtResource:
 
 
 class FeedResource:
-    placeholder = "What are you up to?"
+    placeholder = "Say something"
 
     def fetch_entries(self, user):
         friends = Bond.objects.filter(created_by=user).values('to_user_id')
