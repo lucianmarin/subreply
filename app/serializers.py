@@ -49,11 +49,12 @@ def build_entry(entry, req_user, has_parent=False, has_kids=False):
 
 
 def build_chat(entry, req_user):
+    to_user = req_user if entry.to_user_id == req_user.id else entry.to_user
     return {
         "id": entry.id,
         "content": emojize(entry.content),
         "created_by": build_user(entry.created_by, req_user),
-        "to_user": build_user(entry.to_user, req_user),
+        "to_user": build_user(to_user, req_user),
         "seen": bool(entry.seen_at),
         "timestamp": timeago(utc_timestamp() - entry.created_at)
     }

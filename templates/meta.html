@@ -53,7 +53,7 @@
 
 <script type="text/javascript" src="/static/script.js?v={{ v }}" async defer></script>
 
-{% if view in ['feed', 'reply', 'edit'] %}
+{% if view in ['feed', 'reply', 'edit', 'message'] %}
     <script>
         window.addEventListener('load', function () {
             var content = document.getElementById('id_content');

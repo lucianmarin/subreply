@@ -361,10 +361,7 @@ class DeleteEndpoint:
         valid_ids = [
             entry.created_by_id, entry.to_user_id
         ] if entry.parent_id else [entry.created_by_id]
-        if req.user.id not in valid_ids:
-            resp.media = {'status': 'not valid'}
-            return
-        if entry.replies:
+        if req.user.id not in valid_ids or entry.replies:
             resp.media = {'status': 'not valid'}
             return
         entry.subtract_replies()
@@ -407,7 +404,7 @@ class FollowEndpoint:
     def on_post(self, req, resp, username):
         resp.content_type = MEDIA_JSON
         username = username.lower()
-        member = User.objects.filter(username=username).first()
+        member = User.objects.filter(username=username).exclude(id=req.user.id).first()
         if not member:
             resp.media = {'status': 'not found'}
             return
@@ -424,7 +421,7 @@ class UnfollowEndpoint:
     def on_post(self, req, resp, username):
         resp.content_type = MEDIA_JSON
         username = username.lower()
-        member = User.objects.filter(username=username).first()
+        member = User.objects.filter(username=username).exclude(id=req.user.id).first()
         if not member:
             resp.media = {'status': 'not found'}
             return

@@ -514,7 +514,7 @@ class MessagesResource:
             to_user=req.user
         ).values('created_by_id').annotate(last_id=Max('id')).values('last_id')
         entries = Chat.objects.filter(id__in=last_ids).order_by('-id')
-        return entries.select_related('created_by', 'to_user')
+        return entries.select_related('created_by')
 
     @before(auth_user)
     @before(login_required)
@@ -573,8 +573,8 @@ class MessageResource:
         entries, page, number = paginate(req, self.fetch_entries(req, member))
         blocked = self.is_blocked(req.user, member)
         resp.text = render(
-            page=page, view='message', number=number, user=req.user, errors={},
-            entries=entries, member=member, blocked=blocked
+            page=page, view='message', number=number, content='',
+            user=req.user, errors={}, entries=entries, member=member, blocked=blocked
         )
         self.clear_messages(req, member)
 

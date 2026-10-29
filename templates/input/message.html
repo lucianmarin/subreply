@@ -9,7 +9,7 @@
                 rows="1" cols="60" maxlength="720"
                 placeholder="Message @{{ member }}"
                 oninput="expand(this)" onkeydown="send(event)"
-                >{{ content }}</textarea>
+                >{{ content | emojize }}</textarea>
         {% endif %}
         {% for name, error in errors.items() %}
             <div class="error">{{ error }}</div>
