@@ -38,7 +38,7 @@ def build_entry(entry, req_user, has_parent=False, has_kids=False):
         "created_by": build_user(entry.created_by, req_user),
         "saved": entry.id in saves,
         "edited": bool(entry.edited_at),
-        "replies": getattr(entry, 'replies', 0),
+        "replies": entry.replies,
         "timestamp": timeago(utc_timestamp() - entry.created_at)
     }
     if has_parent:

@@ -365,9 +365,10 @@ class DeleteEndpoint:
         if req.user.id not in valid_ids:
             resp.media = {'status': 'not valid'}
             return
-        if entry.kids.exists():
+        if entry.replies:
             resp.media = {'status': 'not valid'}
             return
+        entry.subtract_replies()
         entry.delete()
         resp.media = {'status': 'deleted'}
 

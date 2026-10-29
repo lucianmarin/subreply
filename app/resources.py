@@ -1,4 +1,4 @@
-from django.db.models import Count, Max, Prefetch, Q
+from django.db.models import Max, Prefetch, Q
 from emoji import demojize
 from falcon import HTTPFound, HTTPNotFound, before
 from strictyaml import as_document
@@ -16,9 +16,7 @@ from app.validation import (
 )
 from project.settings import FERNET, MAX_AGE
 
-Posts = Post.objects.annotate(
-    replies=Count('descendants')
-).select_related('created_by')
+Posts = Post.objects.select_related('created_by')
 
 PPFR = Prefetch('parent', Posts)
 PFR = Prefetch('kids', Posts.order_by('-id'))
@@ -94,7 +92,7 @@ class TxtResource:
         resp.text = "\n".join(lines)
 
     def on_get_map(self, req, resp):
-        threads = Post.objects.filter(parent=None).exclude(kids=None)
+        threads = Post.objects.filter(parent=None).exclude(replies=0)
         replies = Post.objects.exclude(parent=None)
         posts = threads.union(replies).values_list('id', flat=True)
         users = User.objects.exclude(posts=None).values_list('username', flat=True)
@@ -199,6 +197,8 @@ class ReplyResource:
             ).first() if mentions else None,
         )
         re.set_ancestors()
+        re.add_replies()
+        parent.replies += 1
         return re
 
     @before(auth_user)
@@ -504,7 +504,7 @@ class TrendingResource:
     limit = 24
 
     def fetch_entries(self):
-        sample = Post.objects.filter(parent=None).exclude(kids=None).order_by('-id').values('id')[:self.limit]
+        sample = Post.objects.filter(parent=None).exclude(replies=0).order_by('-id').values('id')[:self.limit]
         entries = Posts.filter(id__in=sample).order_by('-replies', '-id')
         return entries.prefetch_related(PFR)
 

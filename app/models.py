@@ -3,6 +3,7 @@ from os import environ
 from django import setup
 from django.conf import settings
 from django.db import models
+from django.db.models import F
 from django.utils.functional import cached_property
 
 from app.utils import utc_timestamp
@@ -131,6 +132,7 @@ class Post(models.Model):
     hashtag = models.CharField(max_length=15, default='', db_index=True)
     mention_seen_at = models.FloatField(default=.0, db_index=True)
     reply_seen_at = models.FloatField(default=.0, db_index=True)
+    replies = models.IntegerField(default=0, db_index=True)
 
     class Meta:
         unique_together = ['parent', 'created_by']
@@ -144,6 +146,12 @@ class Post(models.Model):
             self.ancestors.set(ancestor_ids + [self.parent_id])
         else:
             self.ancestors.clear()
+
+    def add_replies(self):
+        self.ancestors.update(replies=F('replies') + 1)
+
+    def subtract_replies(self):
+        self.ancestors.update(replies=F('replies') - 1)
 
 
 class Save(models.Model):
