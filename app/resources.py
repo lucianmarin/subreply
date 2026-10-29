@@ -270,7 +270,7 @@ class EditResource:
     @before(login_required)
     def on_get(self, req, resp, id):
         entry = self.fetch_entry(id)
-        if not entry or entry.created_by != req.user or entry.replies:
+        if not entry or entry.created_by_id != req.user.id or entry.replies:
             raise HTTPNotFound
         ancestors = [entry.parent] if entry.parent_id else []
         resp.text = render(
@@ -282,7 +282,7 @@ class EditResource:
     @before(login_required)
     def on_post(self, req, resp, id):
         entry = self.fetch_entry(id)
-        if not entry or entry.created_by != req.user or entry.replies:
+        if not entry or entry.created_by_id != req.user.id or entry.replies:
             raise HTTPNotFound
         form = req.get_media()
         content = get_content(form)

@@ -15,45 +15,6 @@
         {% include "common/status.html" %}
     {% endif %}
 
-    {% for entry in entries %}
-        {% if view == "people" %}
-            {% set member = entry %}
-            {% include "common/user.html" %}
-        {% elif view == 'following' %}
-            {% set member = entry.to_user %}
-            {% include "common/user.html" %}
-        {% elif view == 'followers' %}
-            {% set member = entry.created_by %}
-            {% include "common/user.html" %}
-        {% elif view == 'message' %}
-            {% include "common/message.html" %}
-        {% elif view == 'messages' %}
-            {% include "common/messages.html" %}
-        {% else %}
-            {% with prev=loop.previtem %}
-                {% include "common/stream.html" %}
-            {% endwith %}
-        {% endif %}
-    {% else %}
-        {% include "common/nothing.html" %}
-    {% endfor %}
-
-    {% if not limit %}{% set limit = 16 %}{% endif %}
-
-    {% if not q and entries | length == limit %}
-        <div class="entry">
-            <div class="load">
-                <a onclick="getPage(event)" data-page="{{ number + 1 }}">Load more</a>
-            </div>
-        </div>
-    {% endif %}
-
-    {% if view == 'message' and entries and entries | length < limit and not blocked %}
-        <div class="entry">
-            <div class="load">
-                <a onclick="clearout(event)" data-member="{{ member.username }}">Clear out</a>
-            </div>
-        </div>
-    {% endif %}
+    {% include "pages/loader.html" %}
 </div>
 {% endblock %}

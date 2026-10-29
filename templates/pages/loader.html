@@ -21,9 +21,9 @@
     {% include "common/nothing.html" %}
 {% endfor %}
 
-{% if not limit %} {% set limit = 16 %} {% endif %}
+{% if not limit %}{% set limit = 16 %}{% endif %}
 
-{% if entries | length == limit %}
+{% if not q and entries | length == limit %}
     <div class="entry">
         <div class="load">
             <a onclick="getPage(event)" data-page="{{ number + 1 }}">Load more</a>

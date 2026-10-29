@@ -1,6 +1,6 @@
 <div class="reply">
     <form method="post" autocomplete="off">
-        {% if entry.created_by == user %}
+        {% if user and entry.created_by_id == user.id %}
             <div class="placeholder">
                 {% if entry.replies %}
                     Reply back to them

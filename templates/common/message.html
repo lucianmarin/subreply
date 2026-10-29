@@ -1,11 +1,11 @@
-<div class="entry {% if entry.to_user == user and entry.created_by != user %}indent{% endif %}">
+<div class="entry {% if entry.to_user_id == user.id and entry.created_by_id != user.id %}indent{% endif %}">
     <div class="content">
         <a class="name" href="/{{ entry.created_by }}">
             {{ entry.created_by.full_name | emojize }}
         </a>
         {{ entry.content | parser | emojize | safe }}
     </div>
-    {% if entry.created_by == user %}
+    {% if entry.created_by_id == user.id %}
     <div class="small">
         <a class="right" href="/{{ entry.to_user }}/message">
             {{ entry.created_at | shortdate }}
