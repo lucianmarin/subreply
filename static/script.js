@@ -32,7 +32,9 @@ function postDelete(event, call, status) {
     if (id != "0") {
         var confirm = document.createElement("a");
         element.innerText = "undo";
+        element.className = "gone";
         confirm.innerText = "yes";
+        confirm.className = "warn";
         confirm.onclick = function (event) {
             event.preventDefault();
             ajax("/api/" + call + "/" + id, "post", "json", function (data) {
@@ -53,6 +55,7 @@ function postDelete(event, call, status) {
         element.dataset.oldId = id;
     } else {
         element.innerText = call;
+        element.className = "";
         var confirm = element.nextElementSibling;
         confirm.remove();
         element.dataset.id = element.dataset.oldId;
@@ -68,6 +71,7 @@ function postSave(event, call) {
     ajax("/api/" + call + "/" + id, "post", "json", function (data) {
         if (data.status == reverse) {
             element.innerText = data.status;
+            element.className = data.status == "unsave" ? "gone" : "";
             element.onclick = function (ev) {
                 ev.preventDefault();
                 postSave(ev, reverse);

@@ -23,7 +23,7 @@
                 {% endif %}
             {% else %}
                 {% if entry.id in user.saves %}
-                    <a onclick="postSave(event, 'unsave')" data-id="{{ entry.id }}">unsave</a>
+                    <a class="gone" onclick="postSave(event, 'unsave')" data-id="{{ entry.id }}">unsave</a>
                 {% else %}
                     <a onclick="postSave(event, 'save')" data-id="{{ entry.id }}">save</a>
                 {% endif %}
