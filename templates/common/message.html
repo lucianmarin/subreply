@@ -10,7 +10,7 @@
         <a class="right" href="/{{ entry.to_user }}/message">
             {{ entry.created_at | shortdate }}
         </a>
-        <a class="done" href="/{{ entry.to_user }}/message">
+        <a class="{% if not entry.seen_at %}g{% else %}d{% endif %}one" href="/{{ entry.to_user }}/message">
             {% if not entry.seen_at %}un{% endif %}read
         </a>
         <a onclick="postDelete(event, 'unsend', 'unsent')" data-id="{{ entry.id }}">

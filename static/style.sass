@@ -14,8 +14,8 @@ html
     --silver: #c0c0c0
     --gray: #808080
     --black: #000
-    --accent: #4060e0
-    --alert: #ff4000
+    --accent: #2eb8b8
+    --alert: #ff4500
     -ms-text-size-adjust: 100%
     -webkit-text-size-adjust: 100%
 
@@ -39,7 +39,6 @@ html
         --silver: #404040
         --gray: #808080
         --black: #fff
-        --accent: #6080e0
     ::-moz-placeholder
         color: lighten(#808080, 43%)
 
@@ -110,12 +109,14 @@ textarea
     width: calc(100% - 15px)
 
 input[type=submit]
+    background-color: var(--accent)
+    color: var(--white)
     cursor: pointer
     float: right
     padding: 5px 15px
     transition: background-color var(--d)
     &:hover
-        background-color: var(--gainsboro)
+        background-color: var(--gray)
 
 svg
     stroke-linecap: round
@@ -212,7 +213,7 @@ table
         &:hover
             background-color: var(--whitesmoke)
         &.on
-            background-color: var(--alert)
+            background-color: var(--accent)
             color: var(--white)
             svg path
                 stroke: var(--white)
@@ -254,9 +255,9 @@ table
         &.on
             color: var(--black)
             &::first-letter
-                border-bottom: 2px solid var(--alert)
+                border-bottom: 2px solid var(--accent)
         sup
-            color: var(--alert)
+            color: var(--accent)
             font-size: var(--sup)
             font-weight: bold
 
@@ -341,9 +342,11 @@ table
     word-break: break-word
     a
         color: var(--accent)
+        text-decoration: underline
         &.name
             color: var(--black)
             font-weight: bold
+            text-decoration: none
         &:hover
             color: var(--gray)
 
@@ -361,6 +364,8 @@ table
             color: var(--silver)
         &.done
             color: var(--silver)
+        &.gone
+            color: var(--accent)
         &.right
             color: var(--silver)
             float: right
@@ -456,6 +461,11 @@ table
 .about
     a
         color: var(--accent)
+        text-decoration: underline
+        &.name
+            color: var(--black)
+            font-weight: bold
+            text-decoration: none
         &:hover
             color: var(--gray)
     h4

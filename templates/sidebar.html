@@ -31,7 +31,7 @@
             </svg>
         </a>
         <a href="/messages"
-            class="{% if view in ['message', 'messages'] %}on{% endif %} {% if user.notif_messages %}red{% endif %}">
+            class="{% if view in ['message', 'messages'] %}on{% elif user.notif_messages %}red{% endif %}">
             <i>Messages</i>
             {% if user.notif_messages %}
                 <span>{{ user.notif_messages | cap }}</span>

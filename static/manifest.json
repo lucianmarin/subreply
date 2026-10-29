@@ -5,16 +5,10 @@
     "description": "Tiny, but mighty social network.",
     "icons": [
         {
-            "src": "/static/192.png",
+            "src": "/static/teal.png",
             "sizes": "192x192",
             "type": "image/png",
-            "purpose": "any"
-        },
-        {
-            "src": "/static/256.png",
-            "sizes": "256x256",
-            "type": "image/png",
-            "purpose": "maskable"
+            "purpose": "any maskable"
         }
     ],
     "id": "/feed",
