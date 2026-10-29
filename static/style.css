@@ -162,9 +162,9 @@ table td:nth-child(even):last-child, table th:nth-child(even):last-child { borde
 
 .content { cursor: text; word-break: break-word; }
 
-.content a { color: var(--accent); text-decoration: underline; }
+.content a { color: var(--accent); }
 
-.content a.name { color: var(--black); font-weight: bold; text-decoration: none; }
+.content a.name { color: var(--black); font-weight: bold; }
 
 .content a:hover { color: var(--gray); }
 
@@ -246,9 +246,9 @@ table td:nth-child(even):last-child, table th:nth-child(even):last-child { borde
 
 .error a { color: var(--alert); font-weight: bold; }
 
-.about a { color: var(--accent); text-decoration: underline; }
+.about a { color: var(--accent); }
 
-.about a.name { color: var(--black); font-weight: bold; text-decoration: none; }
+.about a.name { color: var(--black); font-weight: bold; }
 
 .about a:hover { color: var(--gray); }
 
