@@ -75,11 +75,9 @@ class AboutResource:
 
     @before(auth_user)
     def on_get_directory(self, req, resp):
-        users = User.objects.exclude(posts=None).order_by('-id').values_list('emoji', 'username')
-        odds = [u for i, u in enumerate(users) if i % 2 == 1]
-        evens = [u for i, u in enumerate(users) if i % 2 == 0]
+        users = list(User.objects.exclude(posts=None).order_by('-id').values_list('emoji', 'username'))
         resp.text = render(
-            page='directory', view='about', user=req.user, users=zip(evens, odds)
+            page='directory', view='about', user=req.user, users=zip(users[::2], users[1::2])
         )
 
 
@@ -638,7 +636,7 @@ class AccountResource:
         if errors:
             resp.text = render(
                 page='account', view='account', user=req.user,
-                export_errors=errors, form=form
+                change_errors={}, export_errors=errors, delete_errors={}, form=form
             )
         else:
             posts = Post.objects.filter(
@@ -673,7 +671,7 @@ class AccountResource:
         if errors:
             resp.text = render(
                 page='account', view='account', user=req.user,
-                delete_errors=errors, form=form
+                change_errors={}, export_errors={}, delete_errors=errors, form=form
             )
         else:
             req.user.delete()

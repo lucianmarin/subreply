@@ -29,14 +29,14 @@ def valid_hashtag(value):
 
 
 def valid_content(value, user, limit=640):
-    hashtags, links, mentions = get_metadata(value)
     if not value:
         return "Share something"
     elif len(value) > limit:
         return f"Share fewer than {limit} characters"
     elif not value.isascii():
         return "Only ASCII characters are allowed"
-    elif len(mentions) > 1:
+    hashtags, links, mentions = get_metadata(value)
+    if len(mentions) > 1:
         return "Mention a single member"
     elif len(links) > 1:
         return "Link a single address"
@@ -79,18 +79,17 @@ def valid_thread(value):
 
 def valid_reply(parent, user, value, mentions):
     """Duplicate reply against replies for topic including topic."""
-    ancestors = parent.ancestors.values_list('id', flat=True)
-    top_id = min(ancestors) if ancestors else parent.id
+    if parent.created_by_id == user.id:
+        return "Don't reply to yourself"
+    elif mentions and mentions[0] == parent.created_by.username:
+        return "Don't mention the author"
+    top_id = min(parent.ancestors.values_list('id', flat=True)) if parent.parent_id else parent.id
     duplicate = Post.objects.filter(
         (Q(ancestors=top_id) | Q(id=top_id)) & Q(content__iexact=value)
     ).select_related('created_by').first()
     if duplicate:
         err = 'Duplicate of #{0} by @{1}'
         return err.format(duplicate.id, duplicate.created_by)
-    elif parent.created_by_id == user.id:
-        return "Don't reply to yourself"
-    elif mentions and mentions[0] == parent.created_by.username:
-        return "Don't mention the author"
 
 
 def authentication(username, password):

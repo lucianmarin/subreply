@@ -123,7 +123,7 @@ class Post(models.Model):
 
     def set_ancestors(self):
         if self.parent_id:
-            ancestor_ids = list(self.parent.ancestors.values_list('id', flat=True))
+            ancestor_ids = list(self.parent.ancestors.values_list('id', flat=True)) if self.parent.parent_id else []
             self.ancestors.set(ancestor_ids + [self.parent_id])
         else:
             self.ancestors.clear()
