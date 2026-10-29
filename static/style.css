@@ -32,9 +32,7 @@ input:focus, select:focus, textarea:focus { outline: 0 none; }
 
 input[type=text], input[type=password], input[type=email], input[type=url], select, textarea { overflow: hidden; padding: 5px 10px; padding-right: 5px; resize: none; width: calc(100% - 15px); }
 
-input[type=submit] { background-color: var(--accent); color: var(--white); cursor: pointer; float: right; padding: 5px 15px; transition: background-color var(--d); }
-
-input[type=submit]:hover { background-color: var(--gray); }
+input[type=submit] { background-color: var(--accent); color: var(--white); cursor: pointer; float: right; padding: 5px 15px; }
 
 svg { stroke-linecap: round; stroke-linejoin: round; stroke-width: 2; }
 
