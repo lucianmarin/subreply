@@ -1,5 +1,5 @@
-{% if entry.parent %}
-    {% set hidden = prev and prev.parent == entry.parent %}
+{% if entry.parent_id %}
+    {% set hidden = prev and prev.parent_id == entry.parent_id %}
 
     {% if not hidden %}
         {% for entry in [entry.parent] %}

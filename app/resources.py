@@ -1,4 +1,4 @@
-from django.db.models import Max, Prefetch, Q
+from django.db.models import Max, Prefetch, Q, Subquery
 from emoji import demojize
 from falcon import HTTPFound, HTTPNotFound, before
 from strictyaml import as_document
@@ -21,6 +21,7 @@ Posts = Post.objects.select_related('created_by')
 PPFR = Prefetch('parent', Posts)
 PFR = Prefetch('kids', Posts.order_by('-id'))
 RPFR = Prefetch('kids', Posts.order_by('-id').prefetch_related(PFR))
+USQ = lambda m: Subquery(User.objects.filter(username=m[0]).values('id')[:1]) if m else None
 
 
 def paginate(req, qs, limit=16):
@@ -125,9 +126,7 @@ class FeedResource:
             created_at=utc_timestamp(),
             link=links[0] if links else '',
             hashtag=hashtags[0] if hashtags else '',
-            at_user=User.objects.filter(
-                username=mentions[0]
-            ).first() if mentions else None,
+            at_user_id=USQ(mentions),
         )
 
     @before(auth_user)
@@ -167,7 +166,7 @@ class ReplyResource:
     def fetch_ancestors(self, parent):
         return Posts.filter(
             id__in=parent.ancestors.values('id')
-        ).order_by('id').prefetch_related(PPFR)
+        ).order_by('id')
 
     def has_duplicate(self, parent, user):
         return Post.objects.filter(
@@ -192,9 +191,7 @@ class ReplyResource:
             created_at=utc_timestamp(),
             link=links[0] if links else '',
             hashtag=hashtags[0] if hashtags else '',
-            at_user=User.objects.filter(
-                username=mentions[0]
-            ).first() if mentions else None,
+            at_user_id=USQ(mentions),
         )
         re.set_ancestors()
         re.add_replies()
@@ -218,7 +215,7 @@ class ReplyResource:
     @before(auth_user)
     @before(login_required)
     def on_post(self, req, resp, id):
-        parent = Posts.filter(id=id).select_related('parent').first()
+        parent = Posts.filter(id=id).first()
         if not parent:
             raise HTTPNotFound
         form = req.get_media()
@@ -257,16 +254,14 @@ class EditResource:
         return {k: v for k, v in errors.items() if v}
 
     def update_entry(self, entry, content):
+        _, _, prev_mentions = get_metadata(entry.content)
         hashtags, links, mentions = get_metadata(content)
-        previous_at_user_id = entry.at_user_id
         entry.content = content
         entry.edited_at = utc_timestamp()
         entry.link = links[0] if links else ''
         entry.hashtag = hashtags[0] if hashtags else ''
-        entry.at_user = User.objects.filter(
-            username=mentions[0]
-        ).first() if mentions else None
-        if previous_at_user_id != entry.at_user_id:
+        if mentions != prev_mentions:
+            entry.at_user_id = USQ(mentions)
             entry.mention_seen_at = .0
         entry.save()
         return entry
@@ -554,9 +549,10 @@ class MessageResource:
         ).update(seen_at=utc_timestamp())
 
     def is_blocked(self, user, member):
-        forward = Chat.objects.filter(created_by=user, to_user=member).exists()
-        backward = Chat.objects.filter(created_by=member, to_user=user).exists()
-        return forward and not backward
+        return (
+            Chat.objects.filter(created_by=user, to_user=member).exists() and
+            not Chat.objects.filter(created_by=member, to_user=user).exists()
+        )
 
     def validate_message(self, content, user, member):
         errors = {}

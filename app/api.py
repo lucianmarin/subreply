@@ -11,7 +11,7 @@ from app.resources import (
     DetailsResource, DiscoverResource, EditResource, FeedResource,
     FollowersResource, FollowingResource, LoginResource, MemberResource,
     MentionsResource, MessageResource, MessagesResource, PeopleResource,
-    Posts, PPFR, ProfileResource, RegisterResource, RepliesResource,
+    Posts, ProfileResource, RegisterResource, RepliesResource,
     ReplyResource, SavedResource, TrendingResource, paginate
 )
 from app.serializers import build_entry, build_user, build_chat
@@ -144,7 +144,7 @@ class ReplyEndpoint(ReplyResource):
     @before(auth_required)
     def on_post(self, req, resp, id):
         resp.content_type = MEDIA_JSON
-        parent = Posts.filter(id=id).select_related('parent').first()
+        parent = Posts.filter(id=id).first()
         if not parent:
             raise HTTPNotFound
         form = req.get_media()
@@ -153,7 +153,8 @@ class ReplyEndpoint(ReplyResource):
         if errors:
             resp.media = {'errors': errors}
         else:
-            if existing := Posts.filter(parent=parent, created_by=req.user).prefetch_related(PPFR).first():
+            if existing := Posts.filter(parent=parent, created_by=req.user).first():
+                existing.parent = parent
                 resp.media = build_entry(existing, req.user, has_parent=True)
                 return
             re = self.create_entry(parent, content, req.user)
