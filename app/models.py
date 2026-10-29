@@ -74,24 +74,8 @@ class User(models.Model):
         return self.first_name[:3]
 
     @cached_property
-    def notif_followers(self):
-        return self.followers.filter(seen_at=.0).count()
-
-    @cached_property
-    def notif_mentions(self):
-        return self.mentions.filter(mention_seen_at=.0).count()
-
-    @cached_property
-    def notif_replies(self):
-        return self.replies.filter(reply_seen_at=.0).count()
-
-    @cached_property
-    def notif_messages(self):
-        return self.received.filter(seen_at=.0).count()
-
-    @cached_property
-    def follows(self):
-        return set(self.following.values_list('to_user_id', flat=True))
+    def following_set(self):
+        return set(self.following.exclude(to_user=self).values_list('to_user_id', flat=True))
 
     @cached_property
     def followers_set(self):

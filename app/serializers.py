@@ -4,7 +4,7 @@ from app.utils import utc_timestamp
 
 
 def build_user(user, req_user, timestamp=None):
-    follows = req_user.follows if req_user else []
+    follows = req_user.following_set if req_user else []
     followers = req_user.followers_set if req_user else []
     data = {
         "followed": user.id in follows,

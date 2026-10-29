@@ -1,7 +1,27 @@
+from django.db.models import Count, IntegerField, OuterRef, Subquery
+from django.db.models.functions import Coalesce
 from falcon import HTTPFound, HTTPUnauthorized
 
-from app.models import User
+from app.models import Bond, Chat, Post, User
 from project.settings import FERNET
+
+
+def count_subquery(qs, field='to_user'):
+    return Coalesce(
+        Subquery(
+            qs.values(field).annotate(c=Count('*')).values('c'),
+            output_field=IntegerField()
+        ),
+        0
+    )
+
+
+Users = User.objects.annotate(
+    notif_followers=count_subquery(Bond.objects.filter(to_user=OuterRef('pk'), seen_at=.0)),
+    notif_mentions=count_subquery(Post.objects.filter(at_user=OuterRef('pk'), mention_seen_at=.0), 'at_user'),
+    notif_replies=count_subquery(Post.objects.filter(to_user=OuterRef('pk'), reply_seen_at=.0)),
+    notif_messages=count_subquery(Chat.objects.filter(to_user=OuterRef('pk'), seen_at=.0)),
+)
 
 
 def auth_user(req, resp, resource, params):
@@ -12,7 +32,7 @@ def auth_user(req, resp, resource, params):
     except Exception as e:
         print(e)
         identity = 0
-    req.user = User.objects.filter(id=identity).first()
+    req.user = Users.filter(id=identity).first() if identity else None
     if req.user:
         req.user.set_seen()
 

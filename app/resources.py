@@ -45,13 +45,13 @@ class MainResource:
 class AboutResource:
     @before(auth_user)
     def on_get(self, req, resp):
-        luc = User.objects.get(id=1)
-        sub = User.objects.get(id=2)
+        users = User.objects.in_bulk([1, 2])
         emo = User.objects.exclude(
             id__in=[1, 2]
         ).exclude(emoji="").order_by("?").first()
         resp.text = render(
-            page='about', view='about', user=req.user, luc=luc, sub=sub, emo=emo
+            page='about', view='about', user=req.user,
+            luc=users[1], sub=users[2], emo=emo
         )
 
     @before(auth_user)
