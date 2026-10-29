@@ -5,6 +5,33 @@ from hmac import compare_digest
 from secrets import choice
 from string import ascii_letters, ascii_lowercase, digits
 
+ALNUM_CHARS = set(digits + ascii_letters)
+USERNAME_CHARS = set(digits + ascii_letters + "_")
+
+
+def unwrap(word):
+    endswith = ""
+    startswith = ""
+    if word.endswith(('...', '!!!', '???')):
+        endswith = word[-3:]
+        word = word[:-3]
+    if word.endswith(('..', '!!', '??')):
+        endswith = word[-2:]
+        word = word[:-2]
+    if word.endswith(('.', ',', '!', '?', ':', ';')):
+        endswith = word[-1:]
+        word = word[:-1]
+    if word.endswith((')', ']', '}', "'", '"')):
+        endswith = word[-1:] + endswith
+        word = word[:-1]
+    if word.startswith(('(', '[', '{', "'", '"')):
+        startswith = word[:1]
+        word = word[1:]
+    if word.endswith("'s"):
+        endswith = word[-2:] + endswith
+        word = word[:-2]
+    return startswith, word, endswith
+
 
 def has_repetitions(word, n=3):
     return any(char * n in word for char in set(word))

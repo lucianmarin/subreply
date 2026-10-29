@@ -1,13 +1,12 @@
 from datetime import date, datetime, timezone
-from string import ascii_letters, digits
+from string import digits
 
 from tldextract import extract
 
+from app.utils import ALNUM_CHARS, USERNAME_CHARS, unwrap
 from project.vars import LINKS
 
 SUPERSCRIPTS = str.maketrans("0123456789", "⁰¹²³⁴⁵⁶⁷⁸⁹")
-ALNUM_CHARS = set(digits + ascii_letters)
-USERNAME_CHARS = set(digits + ascii_letters + "_")
 
 
 def hexcode(emoji):
@@ -93,27 +92,7 @@ def parser(text):
     # split text in words and parse each
     words = []
     for word in text.split():
-        # unwrap word
-        endswith = ""
-        startswith = ""
-        if word.endswith(('...', '!!!', '???')):
-            endswith = word[-3:]
-            word = word[:-3]
-        if word.endswith(('..', '!!', '??')):
-            endswith = word[-2:]
-            word = word[:-2]
-        if word.endswith(('.', ',', '!', '?', ':', ';')):
-            endswith = word[-1:]
-            word = word[:-1]
-        if word.endswith((')', ']', '}', "'", '"')):
-            endswith = word[-1:] + endswith
-            word = word[:-1]
-        if word.startswith(('(', '[', '{', "'", '"')):
-            startswith = word[:1]
-            word = word[1:]
-        if word.endswith("'s"):
-            endswith = word[-2:] + endswith
-            word = word[:-2]
+        startswith, word, endswith = unwrap(word)
         # replace word
         if word.startswith(('http://', 'https://')):
             protocol, separator, address = word.partition('://')

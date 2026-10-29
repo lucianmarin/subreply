@@ -251,8 +251,7 @@ class PeopleEndpoint(PeopleResource):
     @before(auth_user)
     def on_get(self, req, resp):
         q = demojize(req.params.get('q', '').strip())
-        terms = [t.strip() for t in q.split() if t.strip()]
-        entries, _, page = paginate(req, self.fetch_entries(terms), 24)
+        entries, _, page = paginate(req, self.fetch_entries(q.split()), 24)
         resp.content_type = MEDIA_JSON
         resp.media = {
             "page": page,
@@ -264,8 +263,7 @@ class DiscoverEndpoint(DiscoverResource):
     @before(auth_user)
     def on_get(self, req, resp):
         q = demojize(req.params.get('q', '').strip())
-        terms = [t.strip() for t in q.split() if t.strip()]
-        entries, _, page = paginate(req, self.fetch_entries(terms))
+        entries, _, page = paginate(req, self.fetch_entries(q.split()))
         resp.content_type = MEDIA_JSON
         resp.media = {
             "page": page,

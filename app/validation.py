@@ -8,13 +8,11 @@ from phonenumbers import is_possible_number, is_valid_number, parse
 
 from app.forms import get_metadata
 from app.models import Post, User
-from app.utils import has_repetitions, verify_hash
+from app.utils import ALNUM_CHARS, USERNAME_CHARS, has_repetitions, verify_hash
 from project.vars import INVALID, MIN_AGE, MAX_AGE, CITIES, LATIN
 
 EMOJI_CODES = {v['en'] for v in EMOJI_DATA.values()}
 HANDLE_CHARS = set(digits + ascii_letters + "_.-")
-USERNAME_CHARS = set(digits + ascii_letters + "_")
-ALNUM_CHARS = set(digits + ascii_letters)
 
 
 def valid_hashtag(value):

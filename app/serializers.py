@@ -25,7 +25,7 @@ def build_user(user, req_user, timestamp=None):
         "phone": user.phone,
         "social": user.social,
     }
-    if req_user and user == req_user:
+    if req_user and user.id == req_user.id:
         data["email"] = user.email
     return data
 

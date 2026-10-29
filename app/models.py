@@ -53,12 +53,9 @@ class User(models.Model):
 
     @cached_property
     def full_name(self):
-        last_name = self.last_name
-        if len(last_name) == 1:
-            last_name += "."
         if self.emoji:
-            return f"{self.emoji} {self.first_name} {last_name}".strip()
-        return f"{self.first_name} {last_name}".strip()
+            return f"{self.emoji} {self.short_name}"
+        return self.short_name
 
     @cached_property
     def short_name(self):

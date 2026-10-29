@@ -93,9 +93,7 @@ class TxtResource:
         resp.text = "\n".join(lines)
 
     def on_get_map(self, req, resp):
-        threads = Post.objects.filter(parent=None).exclude(replies=0)
-        replies = Post.objects.exclude(parent=None)
-        posts = threads.union(replies).values_list('id', flat=True)
+        posts = Post.objects.exclude(parent=None, replies=0).values_list('id', flat=True)
         users = User.objects.exclude(posts=None).values_list('username', flat=True)
         posts_urls = [f"https://subreply.com/reply/{p}" for p in posts]
         user_urls = [f"https://subreply.com/{u}" for u in users]
@@ -312,7 +310,7 @@ class MemberResource:
     @before(auth_user)
     def on_get(self, req, resp, username):
         member = self.fetch_member(username)
-        if req.user and req.user != member:
+        if req.user and req.user.id != member.id:
             is_followed = Bond.objects.filter(created_by=member, to_user=req.user).exists()
         else:
             is_followed = None
@@ -456,8 +454,7 @@ class PeopleResource:
     @before(auth_user)
     def on_get(self, req, resp):
         q = demojize(req.params.get('q', '').strip())
-        terms = [t.strip() for t in q.split() if t.strip()]
-        entries = self.fetch_entries(terms)
+        entries = self.fetch_entries(q.split())
         entries, page, number = paginate(req, entries, 24)
         resp.text = render(
             page=page, view='people', number=number, q=q,
@@ -486,8 +483,7 @@ class DiscoverResource:
     @before(auth_user)
     def on_get(self, req, resp):
         q = demojize(req.params.get('q', '').strip())
-        terms = [t.strip() for t in q.split() if t.strip()]
-        entries, page, number = paginate(req, self.fetch_entries(terms))
+        entries, page, number = paginate(req, self.fetch_entries(q.split()))
         resp.text = render(
             page=page, view='discover', number=number, q=q,
             user=req.user, entries=entries, errors={},
@@ -567,7 +563,7 @@ class MessageResource:
             content=content,
             created_at=utc_timestamp(),
             created_by=user,
-            seen_at=utc_timestamp() if member == user else .0
+            seen_at=utc_timestamp() if member.id == user.id else .0
         )
 
     @before(auth_user)
@@ -651,7 +647,7 @@ class AccountResource:
             data = []
             for post in posts:
                 d = {}
-                if post.parent:
+                if post.parent_id:
                     p = {}
                     p['username'] = post.parent.created_by.username
                     p['content'] = post.parent.content

@@ -1,12 +1,10 @@
-from string import ascii_letters, digits
+from string import digits
 
 from emoji import demojize
 from unidecode import unidecode
 
+from app.utils import ALNUM_CHARS, USERNAME_CHARS, unwrap
 from project.vars import COUNTRIES
-
-ALNUM_CHARS = set(digits + ascii_letters)
-USERNAME_CHARS = set(digits + ascii_letters + "_")
 
 
 def get_content(form, field="content"):
@@ -38,18 +36,7 @@ def get_name(form, field):
 def get_metadata(text):
     hashtags, links, mentions = [], [], []
     for word in text.split():
-        if word.endswith(('...', '!!!', '???')):
-            word = word[:-3]
-        if word.endswith(('..', '!!', '??')):
-            word = word[:-2]
-        if word.endswith(('.', ',', '!', '?', ':', ';')):
-            word = word[:-1]
-        if word.endswith((')', ']', '}', "'", '"')):
-            word = word[:-1]
-        if word.startswith(('(', '[', '{', "'", '"')):
-            word = word[1:]
-        if word.endswith("'s"):
-            word = word[:-2]
+        _, word, _ = unwrap(word)
         if word.startswith(('http://', 'https://')):
             protocol, separator, address = word.partition('://')
             if "." in address:
