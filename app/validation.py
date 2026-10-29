@@ -317,36 +317,3 @@ def valid_date(value, delimiter="-"):
                 return "Month is not between 01-12"
             elif year == str(CUR_YEAR) and int(month) > CUR_MONTH:
                 return "Date is in the future"
-
-
-def profiling(f, user):
-    errors = {}
-    errors['username'] = valid_username(f['username'], user_id=user.id)
-    errors['email'] = valid_email(f['email'], user_id=user.id)
-    errors['first_name'] = valid_first_name(f['first_name'])
-    errors['last_name'] = valid_last_name(f['last_name'])
-    errors['full_name'] = valid_full_name(
-        f['emoji'], f['first_name'], f['last_name'], user_id=user.id
-    )
-    errors['emoji'] = valid_emoji(f['emoji'])
-    errors['birthday'] = valid_birthday(f['birthday'])
-    errors['location'] = valid_location(f['location'])
-    errors['link'] = valid_link(f['link'], user_id=user.id)
-    errors['description'] = valid_description(f['description'], user)
-    return {k: v for k, v in errors.items() if v}
-
-
-def registration(f):
-    errors = {}
-    errors['username'] = valid_username(f['username'])
-    errors['email'] = valid_email(f['email'])
-    errors['password'] = valid_password(f['password1'], f['password2'])
-    errors['first_name'] = valid_first_name(f['first_name'])
-    errors['last_name'] = valid_last_name(f['last_name'])
-    errors['full_name'] = valid_full_name(
-        f['emoji'], f['first_name'], f['last_name']
-    )
-    errors['emoji'] = valid_emoji(f['emoji'])
-    errors['birthday'] = valid_birthday(f['birthday'])
-    errors['location'] = valid_location(f['location'])
-    return {k: v for k, v in errors.items() if v}

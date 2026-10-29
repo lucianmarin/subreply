@@ -8,9 +8,12 @@ from app.hooks import auth_user, login_required
 from app.jinja import render
 from app.models import Bond, Chat, Post, Save, User
 from app.utils import build_hash, utc_timestamp, verify_hash
-from app.validation import (authentication, profiling, registration,
-                            valid_content, valid_handle, valid_password, valid_phone,
-                            valid_reply, valid_thread)
+from app.validation import (
+    authentication, valid_birthday, valid_content, valid_description,
+    valid_email, valid_emoji, valid_first_name, valid_full_name, valid_handle,
+    valid_last_name, valid_link, valid_location, valid_password, valid_phone,
+    valid_reply, valid_thread, valid_username
+)
 from project.settings import FERNET, MAX_AGE
 
 Posts = Post.objects.annotate(
@@ -109,6 +112,26 @@ class FeedResource:
         entries = Posts.filter(created_by__in=friends).order_by('-id')
         return entries.prefetch_related(PFR, PPFR)
 
+    def validate_entry(self, content, user):
+        errors = {}
+        errors['content'] = valid_content(content, user)
+        if not errors['content']:
+            errors['content'] = valid_thread(content)
+        return {k: v for k, v in errors.items() if v}
+
+    def create_entry(self, content, user):
+        hashtags, links, mentions = get_metadata(content)
+        return Post.objects.create(
+            content=content,
+            created_by=user,
+            created_at=utc_timestamp(),
+            link=links[0] if links else '',
+            hashtag=hashtags[0] if hashtags else '',
+            at_user=User.objects.filter(
+                username=mentions[0]
+            ).first() if mentions else None,
+        )
+
     @before(auth_user)
     @before(login_required)
     def on_get(self, req, resp):
@@ -126,11 +149,7 @@ class FeedResource:
         content = get_content(form)
         if not content:
             raise HTTPFound('/')
-        errors = {}
-        errors['content'] = valid_content(content, req.user)
-        if not errors['content']:
-            errors['content'] = valid_thread(content)
-        errors = {k: v for k, v in errors.items() if v}
+        errors = self.validate_entry(content, req.user)
         if errors:
             entries = self.fetch_entries(req.user)[:16]
             resp.text = render(
@@ -139,17 +158,7 @@ class FeedResource:
                 placeholder=self.placeholder
             )
         else:
-            hashtags, links, mentions = get_metadata(content)
-            Post.objects.create(
-                content=content,
-                created_by=req.user,
-                created_at=utc_timestamp(),
-                link=links[0] if links else '',
-                hashtag=hashtags[0] if hashtags else '',
-                at_user=User.objects.filter(
-                    username=mentions[0]
-                ).first() if mentions else None,
-            )
+            self.create_entry(content, req.user)
             raise HTTPFound('/')
 
 
@@ -162,14 +171,42 @@ class ReplyResource:
             id__in=parent.ancestors.values('id')
         ).order_by('id').prefetch_related(PPFR)
 
+    def has_duplicate(self, parent, user):
+        return Post.objects.filter(
+            parent=parent, created_by=user
+        ).exists() if user else True
+
+    def validate_entry(self, parent, content, user):
+        _, _, mentions = get_metadata(content)
+        errors = {}
+        errors['content'] = valid_content(content, user)
+        if not errors['content']:
+            errors['content'] = valid_reply(parent, user, content, mentions)
+        return {k: v for k, v in errors.items() if v}
+
+    def create_entry(self, parent, content, user):
+        hashtags, links, mentions = get_metadata(content)
+        re = Post.objects.create(
+            parent=parent,
+            created_by=user,
+            to_user=parent.created_by,
+            content=content,
+            created_at=utc_timestamp(),
+            link=links[0] if links else '',
+            hashtag=hashtags[0] if hashtags else '',
+            at_user=User.objects.filter(
+                username=mentions[0]
+            ).first() if mentions else None,
+        )
+        re.set_ancestors()
+        return re
+
     @before(auth_user)
     def on_get(self, req, resp, id):
         parent = Posts.filter(id=id).first()
         if not parent:
             raise HTTPNotFound
-        duplicate = Post.objects.filter(
-            parent=parent, created_by=req.user
-        ).exists() if req.user else True
+        duplicate = self.has_duplicate(parent, req.user)
         ancestors = self.fetch_ancestors(parent)
         entries = self.fetch_entries(parent)
         resp.text = render(
@@ -188,12 +225,7 @@ class ReplyResource:
         content = get_content(form)
         if not content:
             raise HTTPFound(f"/reply/{id}")
-        hashtags, links, mentions = get_metadata(content)
-        errors = {}
-        errors['content'] = valid_content(content, req.user)
-        if not errors['content']:
-            errors['content'] = valid_reply(parent, req.user, content, mentions)
-        errors = {k: v for k, v in errors.items() if v}
+        errors = self.validate_entry(parent, content, req.user)
         if errors:
             ancestors = self.fetch_ancestors(parent)
             entries = self.fetch_entries(parent)
@@ -205,27 +237,44 @@ class ReplyResource:
         else:
             if existing := Post.objects.filter(parent=parent, created_by=req.user).first():
                 raise HTTPFound(f"/reply/{existing.id}")
-            re = Post.objects.create(
-                parent=parent,
-                created_by=req.user,
-                to_user=parent.created_by,
-                content=content,
-                created_at=utc_timestamp(),
-                link=links[0] if links else '',
-                hashtag=hashtags[0] if hashtags else '',
-                at_user=User.objects.filter(
-                    username=mentions[0]
-                ).first() if mentions else None,
-            )
-            re.set_ancestors()
+            re = self.create_entry(parent, content, req.user)
             raise HTTPFound(f"/reply/{re.id}")
 
 
 class EditResource:
+    def fetch_entry(self, id):
+        return Posts.filter(id=id).prefetch_related(PPFR).first()
+
+    def validate_entry(self, entry, content, user):
+        _, _, mentions = get_metadata(content)
+        errors = {}
+        errors['content'] = valid_content(content, user)
+        if not errors['content']:
+            if entry.parent_id:
+                errors['content'] = valid_reply(entry.parent, user, content, mentions)
+            else:
+                errors['content'] = valid_thread(content)
+        return {k: v for k, v in errors.items() if v}
+
+    def update_entry(self, entry, content):
+        hashtags, links, mentions = get_metadata(content)
+        previous_at_user_id = entry.at_user_id
+        entry.content = content
+        entry.edited_at = utc_timestamp()
+        entry.link = links[0] if links else ''
+        entry.hashtag = hashtags[0] if hashtags else ''
+        entry.at_user = User.objects.filter(
+            username=mentions[0]
+        ).first() if mentions else None
+        if previous_at_user_id != entry.at_user_id:
+            entry.mention_seen_at = .0
+        entry.save()
+        return entry
+
     @before(auth_user)
     @before(login_required)
     def on_get(self, req, resp, id):
-        entry = Posts.filter(id=id).prefetch_related(PPFR).first()
+        entry = self.fetch_entry(id)
         if not entry or entry.created_by != req.user or entry.replies:
             raise HTTPNotFound
         ancestors = [entry.parent] if entry.parent_id else []
@@ -237,20 +286,12 @@ class EditResource:
     @before(auth_user)
     @before(login_required)
     def on_post(self, req, resp, id):
-        entry = Posts.filter(id=id).prefetch_related(PPFR).first()
+        entry = self.fetch_entry(id)
         if not entry or entry.created_by != req.user or entry.replies:
             raise HTTPNotFound
         form = req.get_media()
         content = get_content(form)
-        hashtags, links, mentions = get_metadata(content)
-        errors = {}
-        errors['content'] = valid_content(content, req.user)
-        if not errors['content']:
-            if entry.parent_id:
-                errors['content'] = valid_reply(entry.parent, req.user, content, mentions)
-            else:
-                errors['content'] = valid_thread(content)
-        errors = {k: v for k, v in errors.items() if v}
+        errors = self.validate_entry(entry, content, req.user)
         if errors:
             ancestors = [entry.parent] if entry.parent_id else []
             resp.text = render(
@@ -258,31 +299,24 @@ class EditResource:
                 user=req.user, entry=entry, errors=errors, ancestors=ancestors
             )
         else:
-            previous_at_user_id = entry.at_user_id
-            entry.content = content
-            entry.edited_at = utc_timestamp()
-            entry.link = links[0] if links else ''
-            entry.hashtag = hashtags[0] if hashtags else ''
-            entry.at_user = User.objects.filter(
-                username=mentions[0]
-            ).first() if mentions else None
-            if previous_at_user_id != entry.at_user_id:
-                entry.mention_seen_at = .0
-            entry.save()
+            self.update_entry(entry, content)
             raise HTTPFound(f"/reply/{entry.id}")
 
 
 class MemberResource:
+    def fetch_member(self, username):
+        member = User.objects.filter(username=username.lower()).first()
+        if not member:
+            raise HTTPNotFound
+        return member
+
     def fetch_entries(self, member):
         entries = Posts.filter(created_by=member).order_by('-id')
         return entries.prefetch_related(PFR, PPFR)
 
     @before(auth_user)
     def on_get(self, req, resp, username):
-        username = username.lower()
-        member = User.objects.filter(username=username).first()
-        if not member:
-            raise HTTPNotFound
+        member = self.fetch_member(username)
         if req.user and req.user != member:
             is_followed = Bond.objects.filter(created_by=member, to_user=req.user).exists()
         else:
@@ -502,6 +536,12 @@ class MessagesResource:
 
 
 class MessageResource:
+    def fetch_member(self, username):
+        member = User.objects.filter(username=username.lower()).first()
+        if not member:
+            raise HTTPNotFound
+        return member
+
     def fetch_entries(self, req, member):
         entries = Chat.objects.filter(
             Q(created_by=req.user.id, to_user=member.id) | Q(created_by=member.id, to_user=req.user.id)
@@ -513,17 +553,33 @@ class MessageResource:
             created_by=member, to_user=req.user, seen_at=.0
         ).update(seen_at=utc_timestamp())
 
+    def is_blocked(self, user, member):
+        forward = Chat.objects.filter(created_by=user, to_user=member).exists()
+        backward = Chat.objects.filter(created_by=member, to_user=user).exists()
+        return forward and not backward
+
+    def validate_message(self, content, user, member):
+        errors = {}
+        if self.is_blocked(user, member):
+            errors['request'] = "Wait for the recipient to respond"
+        errors['content'] = valid_content(content, user)
+        return {k: v for k, v in errors.items() if v}
+
+    def create_entry(self, user, member, content):
+        return Chat.objects.create(
+            to_user=member,
+            content=content,
+            created_at=utc_timestamp(),
+            created_by=user,
+            seen_at=utc_timestamp() if member == user else .0
+        )
+
     @before(auth_user)
     @before(login_required)
     def on_get(self, req, resp, username):
-        username = username.lower()
-        member = User.objects.filter(username=username).first()
-        if not member:
-            raise HTTPNotFound
+        member = self.fetch_member(username)
         entries, page, number = paginate(req, self.fetch_entries(req, member))
-        forward = Chat.objects.filter(created_by=req.user, to_user=member).exists()
-        backward = Chat.objects.filter(created_by=member, to_user=req.user).exists()
-        blocked = True if forward and not backward else False
+        blocked = self.is_blocked(req.user, member)
         resp.text = render(
             page=page, view='message', number=number, user=req.user, errors={},
             entries=entries, member=member, blocked=blocked
@@ -533,17 +589,12 @@ class MessageResource:
     @before(auth_user)
     @before(login_required)
     def on_post(self, req, resp, username):
-        username = username.lower()
-        member = User.objects.filter(username=username).first()
-        if not member:
-            raise HTTPNotFound
+        member = self.fetch_member(username)
         form = req.get_media()
         content = get_content(form)
         if not content:
-            raise HTTPFound(f"/{username}/message")
-        errors = {}
-        errors['content'] = valid_content(content, req.user)
-        errors = {k: v for k, v in errors.items() if v}
+            raise HTTPFound(f"/{member.username}/message")
+        errors = self.validate_message(content, req.user, member)
         if errors:
             entries, page, number = paginate(req, self.fetch_entries(req, member))
             resp.text = render(
@@ -551,14 +602,8 @@ class MessageResource:
                 member=member, entries=entries, content=content, errors=errors
             )
         else:
-            Chat.objects.create(
-                to_user=member,
-                content=content,
-                created_at=utc_timestamp(),
-                created_by=req.user,
-                seen_at=utc_timestamp() if member == req.user else .0
-            )
-            raise HTTPFound(f"/{username}/message")
+            self.create_entry(req.user, member, content)
+            raise HTTPFound(f"/{member.username}/message")
 
 
 class AccountResource:
@@ -654,6 +699,24 @@ class DetailsResource:
             if value:
                 d[field] = value.lower()
 
+    def parse_form(self, form):
+        s, p = {}, {}
+        self.update(form, s, self.social)
+        self.update(form, p, self.phone)
+        return s, p
+
+    def validate_details(self, s, p):
+        errors = {}
+        for field, value in s.items():
+            errors[field] = valid_handle(value)
+        errors['phone'] = valid_phone(p.get('code', ''), p.get('number', ''))
+        return {k: v for k, v in errors.items() if v}
+
+    def update_user(self, user, s, p):
+        user.phone = p
+        user.social = s
+        user.save(update_fields=['phone', 'social'])
+
     @before(auth_user)
     @before(login_required)
     def on_get(self, req, resp):
@@ -666,29 +729,54 @@ class DetailsResource:
     @before(login_required)
     def on_post(self, req, resp):
         form = req.get_media()
-        f, s, p = {}, {}, {}
-        self.update(form, s, self.social)
-        self.update(form, p, self.phone)
-        errors = {}
-        for field, value in s.items():
-            errors[field] = valid_handle(value)
-        errors['phone'] = valid_phone(p.get('code', ''), p.get('number', ''))
-        errors = {k: v for k, v in errors.items() if v}
+        s, p = self.parse_form(form)
+        errors = self.validate_details(s, p)
         if errors:
-            f.update(p)
-            f.update(s)
             resp.text = render(
                 page='details', view='details', user=req.user,
                 errors=errors, form=form
             )
         else:
-            req.user.phone = p
-            req.user.social = s
-            req.user.save(update_fields=['phone', 'social'])
+            self.update_user(req.user, s, p)
             raise HTTPFound(f"/{req.user}")
 
 
 class ProfileResource:
+    def parse_form(self, form):
+        return {
+            'username': form.get('username', '').strip().lower(),
+            'email': form.get('email', '').strip().lower(),
+            'first_name': get_name(form, 'first'),
+            'last_name': get_name(form, 'last'),
+            'emoji': get_emoji(form),
+            'birthday': form.get('birthday', '').strip(),
+            'location': get_location(form),
+            'link': form.get('link', '').strip().lower(),
+            'description': get_content(form, 'description'),
+        }
+
+    def validate_profile(self, f, user):
+        errors = {}
+        errors['username'] = valid_username(f['username'], user_id=user.id)
+        errors['email'] = valid_email(f['email'], user_id=user.id)
+        errors['first_name'] = valid_first_name(f['first_name'])
+        errors['last_name'] = valid_last_name(f['last_name'])
+        errors['full_name'] = valid_full_name(
+            f['emoji'], f['first_name'], f['last_name'], user_id=user.id
+        )
+        errors['emoji'] = valid_emoji(f['emoji'])
+        errors['birthday'] = valid_birthday(f['birthday'])
+        errors['location'] = valid_location(f['location'])
+        errors['link'] = valid_link(f['link'], user_id=user.id)
+        errors['description'] = valid_description(f['description'], user)
+        return {k: v for k, v in errors.items() if v}
+
+    def update_user(self, user, f):
+        for field, value in f.items():
+            if getattr(user, field, '') != value:
+                setattr(user, field, value)
+        user.save()
+
     @before(auth_user)
     @before(login_required)
     def on_get(self, req, resp):
@@ -700,31 +788,27 @@ class ProfileResource:
     @before(login_required)
     def on_post(self, req, resp):
         form = req.get_media()
-        f = {}
-        f['username'] = form.get('username', '').strip().lower()
-        f['email'] = form.get('email', '').strip().lower()
-        f['first_name'] = get_name(form, 'first')
-        f['last_name'] = get_name(form, 'last')
-        f['emoji'] = get_emoji(form)
-        f['birthday'] = form.get('birthday', '').strip()
-        f['location'] = get_location(form)
-        f['link'] = form.get('link', '').strip().lower()
-        f['description'] = get_content(form, 'description')
-        errors = profiling(f, req.user)
+        f = self.parse_form(form)
+        errors = self.validate_profile(f, req.user)
         if errors:
             resp.text = render(
                 page='profile', view='profile', user=req.user,
                 errors=errors, form=form
             )
         else:
-            for field, value in f.items():
-                if getattr(req.user, field, '') != value:
-                    setattr(req.user, field, value)
-            req.user.save()
+            self.update_user(req.user, f)
             raise HTTPFound('/{0}'.format(req.user))
 
 
 class LoginResource:
+    def authenticate_user(self, form):
+        username = form.get('username', '').strip().lower()
+        password = form.get('password', '')
+        return authentication(username, password)
+
+    def build_token(self, user):
+        return FERNET.encrypt(str(user.id).encode()).decode()
+
     @before(auth_user)
     def on_get(self, req, resp):
         if req.user:
@@ -733,15 +817,13 @@ class LoginResource:
 
     def on_post(self, req, resp):
         form = req.get_media()
-        username = form.get('username', '').strip().lower()
-        password = form.get('password', '')
-        errors, user = authentication(username, password)
+        errors, user = self.authenticate_user(form)
         if errors:
             resp.text = render(
                 page='login', view='login', errors=errors, form=form
             )
         else:
-            token = FERNET.encrypt(str(user.id).encode()).decode()
+            token = self.build_token(user)
             resp.set_cookie('identity', token, path="/", max_age=MAX_AGE)
             raise HTTPFound('/feed')
 
@@ -755,6 +837,58 @@ class LogoutResource:
 
 
 class RegisterResource:
+    def parse_form(self, form):
+        return {
+            'username': form.get('username', '').strip().lower(),
+            'email': form.get('email', '').strip().lower(),
+            'password1': form.get('password1', ''),
+            'password2': form.get('password2', ''),
+            'first_name': get_name(form, 'first'),
+            'last_name': get_name(form, 'last'),
+            'emoji': get_emoji(form),
+            'birthday': form.get('birthday', '').strip(),
+            'location': get_location(form),
+        }
+
+    def validate_registration(self, f):
+        errors = {}
+        errors['username'] = valid_username(f['username'])
+        errors['email'] = valid_email(f['email'])
+        errors['password'] = valid_password(f['password1'], f['password2'])
+        errors['first_name'] = valid_first_name(f['first_name'])
+        errors['last_name'] = valid_last_name(f['last_name'])
+        errors['full_name'] = valid_full_name(
+            f['emoji'], f['first_name'], f['last_name']
+        )
+        errors['emoji'] = valid_emoji(f['emoji'])
+        errors['birthday'] = valid_birthday(f['birthday'])
+        errors['location'] = valid_location(f['location'])
+        return {k: v for k, v in errors.items() if v}
+
+    def create_user(self, f):
+        user = User.objects.create(
+            username=f['username'],
+            created_at=utc_timestamp(),
+            seen_at=utc_timestamp(),
+            password=build_hash(f['password1']),
+            email=f['email'],
+            first_name=f['first_name'],
+            last_name=f['last_name'],
+            emoji=f['emoji'],
+            birthday=f['birthday'],
+            location=f['location'],
+        )
+        Bond.objects.create(
+            created_by=user,
+            to_user=user,
+            created_at=utc_timestamp(),
+            seen_at=utc_timestamp()
+        )
+        return user
+
+    def build_token(self, user):
+        return FERNET.encrypt(str(user.id).encode()).decode()
+
     @before(auth_user)
     def on_get(self, req, resp):
         if req.user:
@@ -765,43 +899,15 @@ class RegisterResource:
 
     def on_post(self, req, resp):
         form = req.get_media()
-        f = {}
-        f['username'] = form.get('username', '').strip().lower()
-        f['email'] = form.get('email', '').strip().lower()
-        f['password1'] = form.get('password1', '')
-        f['password2'] = form.get('password2', '')
-        f['first_name'] = get_name(form, 'first')
-        f['last_name'] = get_name(form, 'last')
-        f['emoji'] = get_emoji(form)
-        f['birthday'] = form.get('birthday', '').strip()
-        f['location'] = get_location(form)
-        errors = registration(f)
+        f = self.parse_form(form)
+        errors = self.validate_registration(f)
         if errors:
             resp.text = render(
                 page='register', view='register', errors=errors, form=form
             )
         else:
-            user = User.objects.create(
-                username=f['username'],
-                created_at=utc_timestamp(),
-                seen_at=utc_timestamp(),
-                password=build_hash(f['password1']),
-                email=f['email'],
-                first_name=f['first_name'],
-                last_name=f['last_name'],
-                emoji=f['emoji'],
-                birthday=f['birthday'],
-                location=f['location'],
-            )
-            # create self bond
-            Bond.objects.create(
-                created_by=user,
-                to_user=user,
-                created_at=utc_timestamp(),
-                seen_at=utc_timestamp()
-            )
-            # set id cookie
-            token = FERNET.encrypt(str(user.id).encode()).decode()
+            user = self.create_user(f)
+            token = self.build_token(user)
             resp.set_cookie('identity', token, path="/", max_age=MAX_AGE)
             raise HTTPFound('/')
 

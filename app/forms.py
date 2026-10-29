@@ -9,13 +9,11 @@ ALNUM_CHARS = set(digits + ascii_letters)
 USERNAME_CHARS = set(digits + ascii_letters + "_")
 
 
-def get_content(form, field="content", strip=True):
+def get_content(form, field="content"):
     value = form.get(field, '')
     demojized = demojize(value)
     decoded = unidecode(demojized)
-    if strip:
-        return " ".join(decoded.split())
-    return decoded
+    return " ".join(decoded.split())
 
 
 def get_emoji(form):
