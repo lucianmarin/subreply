@@ -82,6 +82,7 @@ function postSave(event, call) {
             postSave(ev, next);
         };
     };
+    element.onclick = null;
     ajax("/api/" + call + "/" + id, "post", "json", function (data) {
         if (data && data.status == reverse) {
             element.innerText = data.status;
@@ -105,6 +106,7 @@ function postFollow(event, call) {
             postFollow(ev, next);
         };
     };
+    element.onclick = null;
     ajax("/api/" + call + "/" + username, "post", "json", function (data) {
         if (data && data.status == reverse) {
             element.innerText = data.status;
