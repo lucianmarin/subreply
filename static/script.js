@@ -18,9 +18,10 @@ function getPage(event) {
     var items = loader.parentElement;
     var url = window.location.pathname + "?p=" + page;
     element.innerText = "Loading...";
+    element.onclick = null;
     ajax(url, "get", "text", function (data) {
         loader.remove();
-        items.innerHTML = items.innerHTML + data;
+        items.insertAdjacentHTML("beforeend", data);
     });
 }
 
@@ -29,14 +30,16 @@ function postDelete(event, call, status) {
     var element = event.currentTarget;
     var small = element.parentElement;
     var id = element.dataset.id;
-    if (id != "0") {
+    if (!element.dataset.confirm) {
         var confirm = document.createElement("a");
         element.innerText = "undo";
         element.className = "gone";
+        element.dataset.confirm = "yes";
         confirm.innerText = "yes";
         confirm.className = "warn";
         confirm.onclick = function (event) {
             event.preventDefault();
+            confirm.onclick = null;
             ajax("/api/" + call + "/" + id, "post", "json", function (data) {
                 if (data.status == status) {
                     var state = document.createElement("b");
@@ -51,15 +54,12 @@ function postDelete(event, call, status) {
             });
         };
         small.appendChild(confirm);
-        element.dataset.id = "0";
-        element.dataset.oldId = id;
     } else {
         element.innerText = call;
         element.className = "";
+        element.dataset.confirm = "";
         var confirm = element.nextElementSibling;
         confirm.remove();
-        element.dataset.id = element.dataset.oldId;
-        element.dataset.oldId = "0";
     }
 }
 
@@ -107,13 +107,13 @@ function expand(element, limit = 640) {
 }
 
 function inline(event) {
-    if (event.keyCode == 13) {
+    if (event.key == "Enter") {
         event.preventDefault();
     }
 }
 
 function send(event) {
-    if (event.keyCode == 13) {
+    if (event.key == "Enter") {
         event.preventDefault();
         event.currentTarget.parentElement.submit();
     }
@@ -135,16 +135,12 @@ function postClear(event) {
         confirm.onclick = function (ev) {
             ev.preventDefault();
             var member = element.dataset.member;
-            element.innerText = "Clearing...";
-            element.className = "";
-            element.dataset.confirm = "";
-            element.onclick = function (e) { e.preventDefault(); };
-            load.replaceChildren(element);
+            load.innerText = "Clearing...";
             ajax("/api/" + member + "/clear", "post", "json", function (data) {
                 if (data.status == "cleared") {
-                    element.innerText = "Cleared";
+                    load.innerText = "Cleared";
                 } else {
-                    element.innerText = "Error";
+                    load.innerText = "Error";
                 }
             });
         };
