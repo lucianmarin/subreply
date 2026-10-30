@@ -148,6 +148,8 @@ table td:nth-child(even):last-child { border-right: 0 none; }
 
 .load { color: var(--silver); text-align: center; }
 
+.load a, .load b { text-transform: capitalize; }
+
 .load a { color: var(--gray); }
 
 .load a:hover { color: var(--silver); }
@@ -191,6 +193,8 @@ table td:nth-child(even):last-child { border-right: 0 none; }
 .small a.right { color: var(--silver); float: right; margin-right: 0; }
 
 .author { color: var(--gray); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.author .action, .author .accent { text-transform: capitalize; }
 
 .author .done, .author .handle, .author i { font-weight: bold; }
 

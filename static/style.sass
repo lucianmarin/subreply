@@ -322,6 +322,8 @@ table
 .load
     color: var(--silver)
     text-align: center
+    a, b
+        text-transform: capitalize
     a
         color: var(--gray)
         &:hover
@@ -381,6 +383,8 @@ table
 .author
     color: var(--gray)
     @include dots
+    .action, .accent
+        text-transform: capitalize
     .done, .handle, i
         font-weight: bold
     .action, .ago, .done
