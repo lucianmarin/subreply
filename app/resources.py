@@ -311,8 +311,11 @@ class EditResource:
 
 
 class MemberResource:
-    def fetch_member(self, username):
-        member = User.objects.filter(username=username.lower()).first()
+    def fetch_member(self, req, username):
+        username = username.lower()
+        if req.user and req.user.username == username:
+            return req.user
+        member = User.objects.filter(username=username).first()
         if not member:
             raise HTTPNotFound
         return member
@@ -323,7 +326,7 @@ class MemberResource:
 
     @before(auth_user)
     def on_get(self, req, resp, username):
-        member = self.fetch_member(username)
+        member = self.fetch_member(req, username)
         entries, page, number = paginate(req, self.fetch_entries(member))
         if page == 'regular' and req.user and req.user.id != member.id:
             is_followed = Bond.objects.filter(created_by=member, to_user=req.user).exists()
@@ -541,8 +544,11 @@ class MessagesResource:
 
 
 class MessageResource:
-    def fetch_member(self, username):
-        member = User.objects.filter(username=username.lower()).first()
+    def fetch_member(self, req, username):
+        username = username.lower()
+        if req.user and req.user.username == username:
+            return req.user
+        member = User.objects.filter(username=username).first()
         if not member:
             raise HTTPNotFound
         return member
@@ -558,11 +564,9 @@ class MessageResource:
             created_by=member, to_user=req.user, seen_at=.0
         ).update(seen_at=utc_timestamp())
 
-    def is_blocked(self, user, member, entries=None):
-        if entries:
-            if any(e.created_by_id == member.id for e in entries):
-                return False
-            return not Chat.objects.filter(created_by=member, to_user=user).exists()
+    def is_blocked(self, user, member):
+        if user.id == member.id:
+            return False
         return (
             Chat.objects.filter(created_by=user, to_user=member).exists() and
             not Chat.objects.filter(created_by=member, to_user=user).exists()
@@ -587,20 +591,20 @@ class MessageResource:
     @before(auth_user)
     @before(login_required)
     def on_get(self, req, resp, username):
-        member = self.fetch_member(username)
+        member = self.fetch_member(req, username)
         entries, page, number = paginate(req, self.fetch_entries(req, member))
-        blocked = self.is_blocked(req.user, member, entries) if entries or number > 1 else False
+        blocked = self.is_blocked(req.user, member) if entries else False
         resp.text = render(
             page=page, view='message', number=number, content='',
             user=req.user, errors={}, entries=entries, member=member, blocked=blocked
         )
-        if req.user.notif_messages:
+        if req.user.notif_messages and req.user.id != member.id:
             self.clear_messages(req, member)
 
     @before(auth_user)
     @before(login_required)
     def on_post(self, req, resp, username):
-        member = self.fetch_member(username)
+        member = self.fetch_member(req, username)
         form = req.get_media()
         content = get_content(form)
         if not content:
@@ -863,8 +867,6 @@ class LoginResource:
 
 
 class LogoutResource:
-    @before(auth_user)
-    @before(login_required)
     def on_get(self, req, resp):
         resp.unset_cookie('identity')
         raise HTTPFound(BASE)

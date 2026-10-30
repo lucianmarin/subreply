@@ -83,7 +83,7 @@ def valid_reply(parent, user, value, mentions):
         return "Don't reply to yourself"
     elif mentions and mentions[0] == parent.created_by.username:
         return "Don't mention the author"
-    top_id = min(parent.ancestors.values_list('id', flat=True)) if parent.parent_id else parent.id
+    top_id = min(parent.ancestor_ids) if parent.parent_id else parent.id
     duplicate = Post.objects.filter(
         (Q(ancestors=top_id) | Q(id=top_id)) & Q(content__iexact=value)
     ).select_related('created_by').first()

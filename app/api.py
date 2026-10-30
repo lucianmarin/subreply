@@ -19,7 +19,6 @@ from app.utils import utc_timestamp
 
 
 class LoginEndpoint(LoginResource):
-    @before(auth_user)
     def on_post(self, req, resp):
         form = req.get_media()
         errors, user = self.authenticate_user(form)
@@ -34,7 +33,6 @@ class LoginEndpoint(LoginResource):
 
 
 class RegisterEndpoint(RegisterResource):
-    @before(auth_user)
     def on_post(self, req, resp):
         resp.content_type = MEDIA_JSON
         form = req.get_media()
@@ -101,7 +99,7 @@ class SendEndpoint(MessageResource):
     def on_post(self, req, resp, username):
         resp.content_type = MEDIA_JSON
         form = req.get_media()
-        member = self.fetch_member(username)
+        member = self.fetch_member(req, username)
         content = get_content(form)
         errors = self.validate_message(content, req.user, member)
         if errors:
@@ -164,7 +162,7 @@ class ReplyEndpoint(ReplyResource):
 class MemberEndpoint(MemberResource):
     @before(auth_user)
     def on_get_details(self, req, resp, username):
-        member = self.fetch_member(username)
+        member = self.fetch_member(req, username)
         resp.content_type = MEDIA_JSON
         resp.media = {
             "member": build_user(member, req.user),
@@ -172,7 +170,7 @@ class MemberEndpoint(MemberResource):
 
     @before(auth_user)
     def on_get_posts(self, req, resp, username):
-        member = self.fetch_member(username)
+        member = self.fetch_member(req, username)
         entries, _, page = paginate(req, self.fetch_entries(member))
         resp.content_type = MEDIA_JSON
         resp.media = {
@@ -298,16 +296,16 @@ class MessageEndpoint(MessageResource):
     @before(auth_user)
     @before(auth_required)
     def on_get(self, req, resp, username):
-        member = self.fetch_member(username)
+        member = self.fetch_member(req, username)
         entries, _, page = paginate(req, self.fetch_entries(req, member))
-        blocked = self.is_blocked(req.user, member, entries) if entries or page > 1 else False
+        blocked = self.is_blocked(req.user, member) if entries else False
         resp.content_type = MEDIA_JSON
         resp.media = {
             "page": page,
             "blocked": blocked,
             "entries": [build_chat(entry, req.user) for entry in entries]
         }
-        if req.user.notif_messages:
+        if req.user.notif_messages and req.user.id != member.id:
             self.clear_messages(req, member)
 
 
@@ -395,10 +393,10 @@ class UnsaveEndpoint:
     @before(auth_required)
     def on_post(self, req, resp, id):
         resp.content_type = MEDIA_JSON
-        deleted, _ = Save.objects.filter(created_by=req.user, post_id=id).delete()
-        if not deleted and not Post.objects.filter(id=id).exists():
+        if not Post.objects.filter(id=id).exists():
             resp.media = {'status': 'not found'}
             return
+        Save.objects.filter(created_by=req.user, post_id=id).delete()
         resp.media = {'status': 'save'}
 
 
@@ -425,12 +423,11 @@ class UnfollowEndpoint:
     def on_post(self, req, resp, username):
         resp.content_type = MEDIA_JSON
         username = username.lower()
-        deleted, _ = Bond.objects.filter(
-            created_by=req.user, to_user__username=username
-        ).exclude(to_user=req.user).delete()
-        if not deleted and not User.objects.filter(username=username).exclude(id=req.user.id).exists():
+        member = User.objects.filter(username=username).exclude(id=req.user.id).first()
+        if not member:
             resp.media = {'status': 'not found'}
             return
+        Bond.objects.filter(created_by=req.user, to_user=member).delete()
         resp.media = {'status': 'follow'}
 
 
@@ -439,10 +436,14 @@ class UnsendEndpoint:
     @before(auth_required)
     def on_post(self, req, resp, id):
         resp.content_type = MEDIA_JSON
-        deleted, _ = Chat.objects.filter(id=id, created_by=req.user).delete()
-        if not deleted:
+        entry = Chat.objects.filter(id=id).first()
+        if not entry:
             resp.media = {'status': 'not found'}
             return
+        if req.user.id != entry.created_by_id:
+            resp.media = {'status': 'not valid'}
+            return
+        entry.delete()
         resp.media = {'status': 'unsent'}
 
 

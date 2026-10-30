@@ -121,10 +121,13 @@ class Post(models.Model):
     def __str__(self):
         return self.content
 
+    @cached_property
+    def ancestor_ids(self):
+        return list(self.ancestors.values_list('id', flat=True)) if self.parent_id else []
+
     def set_ancestors(self):
         if self.parent_id:
-            ancestor_ids = list(self.parent.ancestors.values_list('id', flat=True)) if self.parent.parent_id else []
-            self.ancestors.add(*ancestor_ids, self.parent_id)
+            self.ancestors.add(*self.parent.ancestor_ids, self.parent_id)
         else:
             self.ancestors.clear()
 
