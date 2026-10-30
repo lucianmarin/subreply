@@ -124,7 +124,7 @@ class FeedEndpoint(FeedResource):
 class ReplyEndpoint(ReplyResource):
     @before(auth_user)
     def on_get(self, req, resp, id):
-        parent = Posts.filter(id=id).first()
+        parent = Posts.filter(id=id).select_related('parent__created_by').first()
         if not parent:
             raise HTTPNotFound
         ancestors = self.fetch_ancestors(parent)
@@ -380,11 +380,12 @@ class SaveEndpoint:
         if not entry:
             resp.media = {'status': 'not found'}
             return
-        Save.objects.get_or_create(
-            created_by=req.user,
-            post=entry,
-            defaults={'created_at': utc_timestamp()}
-        )
+        if entry.id not in req.user.saves_set:
+            Save.objects.create(
+                created_by=req.user,
+                post=entry,
+                created_at=utc_timestamp()
+            )
         resp.media = {'status': 'unsave'}
 
 
@@ -393,10 +394,11 @@ class UnsaveEndpoint:
     @before(auth_required)
     def on_post(self, req, resp, id):
         resp.content_type = MEDIA_JSON
-        if not Post.objects.filter(id=id).exists():
+        if int(id) in req.user.saves_set:
+            Save.objects.filter(created_by=req.user, post_id=id).delete()
+        elif not Post.objects.filter(id=id).exists():
             resp.media = {'status': 'not found'}
             return
-        Save.objects.filter(created_by=req.user, post_id=id).delete()
         resp.media = {'status': 'save'}
 
 
@@ -410,10 +412,11 @@ class FollowEndpoint:
         if not member:
             resp.media = {'status': 'not found'}
             return
-        Bond.objects.get_or_create(
-            created_by=req.user, to_user=member,
-            defaults={'created_at': utc_timestamp()}
-        )
+        if member.id not in req.user.following_set:
+            Bond.objects.create(
+                created_by=req.user, to_user=member,
+                created_at=utc_timestamp()
+            )
         resp.media = {'status': 'unfollow'}
 
 
@@ -427,7 +430,8 @@ class UnfollowEndpoint:
         if not member:
             resp.media = {'status': 'not found'}
             return
-        Bond.objects.filter(created_by=req.user, to_user=member).delete()
+        if member.id in req.user.following_set:
+            Bond.objects.filter(created_by=req.user, to_user=member).delete()
         resp.media = {'status': 'follow'}
 
 

@@ -176,9 +176,9 @@ class ReplyResource:
     def fetch_ancestors(self, parent):
         if not parent.parent_id:
             return []
-        return Posts.filter(
-            id__in=parent.ancestors.values('id')
-        ).order_by('id')
+        if not parent.parent.parent_id:
+            return [parent.parent]
+        return parent.ancestors.select_related('created_by').order_by('id')
 
     def has_duplicate(self, entries, user):
         return any(e.created_by_id == user.id for e in entries) if user else True
@@ -210,7 +210,7 @@ class ReplyResource:
 
     @before(auth_user)
     def on_get(self, req, resp, id):
-        parent = Posts.filter(id=id).first()
+        parent = Posts.filter(id=id).select_related('parent__created_by').first()
         if not parent:
             raise HTTPNotFound
         ancestors = self.fetch_ancestors(parent)
@@ -225,7 +225,7 @@ class ReplyResource:
     @before(auth_user)
     @before(login_required)
     def on_post(self, req, resp, id):
-        parent = Posts.filter(id=id).first()
+        parent = Posts.filter(id=id).select_related('parent__created_by').first()
         if not parent:
             raise HTTPNotFound
         form = req.get_media()
@@ -336,6 +336,8 @@ class MemberResource:
 
 class FollowingResource:
     def fetch_entries(self, user):
+        if not user.following_ids:
+            return []
         entries = Bond.objects.filter(created_by=user).exclude(to_user=user)
         return entries.order_by('-id').select_related('to_user')
 
@@ -351,6 +353,8 @@ class FollowingResource:
 
 class FollowersResource:
     def fetch_entries(self, user):
+        if not user.followers_ids:
+            return []
         entries = Bond.objects.filter(to_user=user).exclude(created_by=user)
         return entries.order_by('-id').select_related('created_by')
 
@@ -417,8 +421,9 @@ class RepliesResource:
 
 class SavedResource:
     def fetch_entries(self, user):
-        saved_ids = Save.objects.filter(created_by=user).values('post_id')
-        entries = Posts.filter(id__in=saved_ids).order_by('-id')
+        if not user.saves_ids:
+            return []
+        entries = Posts.filter(id__in=user.saves_ids).order_by('-id')
         return entries.select_related('parent__created_by').prefetch_related(PFR)
 
     @before(auth_user)
