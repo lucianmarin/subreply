@@ -4,9 +4,8 @@ from app.utils import utc_timestamp
 
 
 def build_user(user, req_user, timestamp=None):
-    is_other = req_user and user.id != req_user.id
-    follows = req_user.following_set if is_other else ()
-    followers = req_user.followers_set if is_other else ()
+    follows = req_user.following_set if req_user else set()
+    followers = req_user.followers_set if req_user else set()
     data = {
         "followed": user.id in follows,
         "follows": user.id in followers,
@@ -32,8 +31,7 @@ def build_user(user, req_user, timestamp=None):
 
 
 def build_entry(entry, req_user, has_parent=False, has_kids=False):
-    is_other = req_user and entry.created_by_id != req_user.id
-    saves = req_user.saves_set if is_other else ()
+    saves = req_user.saves_set if req_user else set()
     data = {
         "id": entry.id,
         "content": emojize(entry.content),

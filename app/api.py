@@ -124,7 +124,7 @@ class FeedEndpoint(FeedResource):
 class ReplyEndpoint(ReplyResource):
     @before(auth_user)
     def on_get(self, req, resp, id):
-        parent = Posts.filter(id=id).select_related('parent__created_by').first()
+        parent = Posts.filter(id=id).first()
         if not parent:
             raise HTTPNotFound
         ancestors = self.fetch_ancestors(parent)

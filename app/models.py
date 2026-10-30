@@ -72,15 +72,15 @@ class User(models.Model):
 
     @cached_property
     def following_set(self):
-        return set(self.following_ids)
+        return set(getattr(self, 'following_ids', ()))
 
     @cached_property
     def followers_set(self):
-        return set(self.followers_ids)
+        return set(getattr(self, 'followers_ids', ()))
 
     @cached_property
     def saves_set(self):
-        return set(self.saves_ids)
+        return set(getattr(self, 'saves_ids', ()))
 
     @cached_property
     def links(self):
