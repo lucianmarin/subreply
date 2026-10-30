@@ -10,8 +10,8 @@
             {{ entry.created_at | shortdate }}
         </a>
         <a href="/{{ entry.created_by }}/message">message</a>
-        <a class="{% if not entry.seen_at %}g{% else %}d{% endif %}one" href="/{{ entry.created_by }}/message">
+        <b class="{% if not entry.seen_at %}g{% else %}d{% endif %}one">
             {% if not entry.seen_at %}un{% endif %}read
-        </a>
+        </b>
     </div>
 </div>

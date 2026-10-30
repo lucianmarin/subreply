@@ -152,15 +152,15 @@ table td:nth-child(even):last-child { border-right: 0 none; }
 
 .load a::first-letter, .load b::first-letter { text-transform: uppercase; }
 
+.load b { color: var(--gray); }
+
 .load a { color: var(--gray); }
 
 .load a:hover { color: var(--silver); }
 
-.load a.gone { color: var(--accent); }
+.load .gone { color: var(--accent); }
 
-.load a.warn { color: var(--alert); }
-
-.load b { color: var(--gray); }
+.load .warn { color: var(--alert); }
 
 .inline { opacity: 0.5; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
@@ -184,19 +184,23 @@ table td:nth-child(even):last-child { border-right: 0 none; }
 
 .small a { color: var(--gray); float: left; margin-right: 10px; }
 
+.small a:last-child { margin-right: 0; }
+
 .small a:hover { color: var(--silver); }
 
-.small a.done { color: var(--silver); }
-
-.small a.gone { color: var(--accent); }
-
-.small a.warn { color: var(--alert); }
-
 .small a.right { color: var(--silver); float: right; margin-right: 0; }
+
+.small .done { color: var(--silver); }
+
+.small .gone { color: var(--accent); }
+
+.small .warn { color: var(--alert); }
 
 .author { color: var(--gray); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 .author a, .author b, .author i { display: inline-block; }
+
+.author a:hover { color: var(--silver); }
 
 .author .action::first-letter, .author .accent::first-letter, .author .warn::first-letter { text-transform: uppercase; }
 
@@ -204,13 +208,11 @@ table td:nth-child(even):last-child { border-right: 0 none; }
 
 .author .action, .author .ago, .author .done { color: var(--gray); }
 
-.author .action:hover, .author .ago:hover, .author .done:hover { color: var(--silver); }
-
 .author .accent { color: var(--accent); }
 
-.author .handle:hover { color: var(--gray); }
-
 .author .warn { color: var(--alert); }
+
+.author .handle:hover { color: var(--gray); }
 
 .author .right { color: var(--silver); float: right; }
 

@@ -328,16 +328,16 @@ table
         display: inline-block
         &::first-letter
             text-transform: uppercase
+    b
+        color: var(--gray)
     a
         color: var(--gray)
         &:hover
             color: var(--silver)
-        &.gone
-            color: var(--accent)
-        &.warn
-            color: var(--alert)
-    b
-        color: var(--gray)
+    .gone
+        color: var(--accent)
+    .warn
+        color: var(--alert)
 
 .inline
     opacity: 0.5
@@ -371,24 +371,29 @@ table
         color: var(--gray)
         float: left
         margin-right: 10px
+        &:last-child
+            margin-right: 0
         &:hover
             color: var(--silver)
-        &.done
-            color: var(--silver)
-        &.gone
-            color: var(--accent)
-        &.warn
-            color: var(--alert)
         &.right
             color: var(--silver)
             float: right
             margin-right: 0
+    .done
+        color: var(--silver)
+    .gone
+        color: var(--accent)
+    .warn
+        color: var(--alert)
 
 .author
     color: var(--gray)
     @include dots
     a, b, i
         display: inline-block
+    a
+        &:hover
+            color: var(--silver)
     .action, .accent, .warn
         &::first-letter
             text-transform: uppercase
@@ -396,15 +401,13 @@ table
         font-weight: bold
     .action, .ago, .done
         color: var(--gray)
-        &:hover
-            color: var(--silver)
     .accent
         color: var(--accent)
+    .warn
+        color: var(--alert)
     .handle
         &:hover
             color: var(--gray)
-    .warn
-        color: var(--alert)
     .right
         color: var(--silver)
         float: right
