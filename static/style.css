@@ -148,7 +148,7 @@ table td:nth-child(even):last-child { border-right: 0 none; }
 
 .load { color: var(--silver); text-align: center; }
 
-.load a, .load b { display: block; }
+.load a, .load b { display: inline-block; }
 
 .load a::first-letter, .load b::first-letter { text-transform: uppercase; }
 
