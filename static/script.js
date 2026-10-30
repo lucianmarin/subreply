@@ -119,22 +119,41 @@ function send(event) {
     }
 }
 
-function clearout(event) {
+function postClear(event) {
     event.preventDefault();
     var element = event.currentTarget;
+    var load = element.parentElement;
     if (!element.dataset.confirm) {
-        element.innerText = "Are you sure?";
+        var confirm = document.createElement("a");
+        var sep = document.createElement("span");
+        sep.innerHTML = " &mdash; ";
+        element.innerText = "Undo";
+        element.className = "gone";
         element.dataset.confirm = "yes";
-        return;
+        confirm.innerText = "Yes";
+        confirm.className = "warn";
+        confirm.onclick = function (ev) {
+            ev.preventDefault();
+            var member = element.dataset.member;
+            element.innerText = "Clearing...";
+            element.className = "";
+            element.dataset.confirm = "";
+            element.onclick = function (e) { e.preventDefault(); };
+            load.replaceChildren(element);
+            ajax("/api/" + member + "/clear", "post", "json", function (data) {
+                if (data.status == "cleared") {
+                    element.innerText = "Cleared";
+                } else {
+                    element.innerText = "Error";
+                }
+            });
+        };
+        load.appendChild(sep);
+        load.appendChild(confirm);
+    } else {
+        element.innerText = "Clear out";
+        element.className = "";
+        element.dataset.confirm = "";
+        load.replaceChildren(element);
     }
-    var member = element.dataset.member;
-    element.innerText = "Clearing...";
-    ajax("/api/" + member + "/clearout", "post", "json", function (data) {
-        if (data.status == "cleared") {
-            element.innerText = "Cleared";
-            element.onclick = function(ev) { ev.preventDefault(); };
-        } else {
-            element.innerText = "Error";
-        }
-    });
 }

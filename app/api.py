@@ -448,7 +448,7 @@ class UnsendEndpoint:
         resp.media = {'status': 'unsent'}
 
 
-class ClearoutEndpoint:
+class ClearEndpoint:
     @before(auth_user)
     @before(auth_required)
     def on_post(self, req, resp, username):

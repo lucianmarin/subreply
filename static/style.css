@@ -146,11 +146,15 @@ table td:nth-child(even):last-child { border-right: 0 none; }
 
 .inlist .entry { padding-left: 10px; }
 
-.load { text-align: center; }
+.load { color: var(--silver); text-align: center; }
 
 .load a { color: var(--gray); }
 
 .load a:hover { color: var(--silver); }
+
+.load a.gone { color: var(--accent); }
+
+.load a.warn { color: var(--alert); }
 
 .load b { color: var(--gray); }
 

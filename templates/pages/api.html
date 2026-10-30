@@ -42,7 +42,7 @@
         <h4>POST Endpoints</h4>
         <ul>
             <li><code>/api/login</code> &mdash; username*, password* params returns token and user</li>
-            <li><code>/api/register</code> &mdash; username*, email*, password1*, password2*, email*, first_name, last_name, emoji, birthday, location params returns token and user</li>
+            <li><code>/api/register</code> &mdash; username*, email*, password1*, password2*, first_name, last_name, emoji, birthday, location params returns token and user</li>
             <li><code>/api/thread</code> &mdash; content* param returns thread details</li>
             <li><code>/api/reply/{id:int}</code> &mdash; content* param returns reply details</li>
             <li><code>/api/{username}/send</code> &mdash; content* param returns message details</li>
@@ -52,13 +52,14 @@
         <h4>PATCH Endpoints</h4>
         <ul>
             <li><code>/api/edit/{id:int}</code> &mdash; content* param returns message details</li>
-            <li><code>/api/profile</code> &mdash; form fields from frontend</li>
-            <li><code>/api/details</code> &mdash; form fields from frontend</li>
+            <li><code>/api/profile</code> &mdash; username*, email*, first_name, last_name, emoji, birthday, location, link, description params returns user</li>
+            <li><code>/api/details</code> &mdash; github, instagram, linkedin, reddit, paypal, spotify, x, code, number params returns user</li>
         </ul>
 
         <h4>POST Actions</h4>
         <ul>
             <li><code>/api/unsend/{id:int}</code></li>
+            <li><code>/api/{username}/clear</code></li>
             <li><code>/api/delete/{id:int}</code></li>
             <li><code>/api/save/{id:int}</code></li>
             <li><code>/api/unsave/{id:int}</code></li>
