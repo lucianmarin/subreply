@@ -17,10 +17,7 @@ from app.validation import (
 from project.settings import FERNET, MAX_AGE
 
 Posts = Post.objects.select_related('created_by')
-
-PPFR = Prefetch('parent', Posts)
 PFR = Prefetch('kids', Posts.order_by('-id'))
-RPFR = Prefetch('kids', Posts.order_by('-id').prefetch_related(PFR))
 USQ = lambda m: Subquery(User.objects.filter(username=m[0]).values('id')[:1]) if m else None
 BASE = '/trending'
 
@@ -120,7 +117,7 @@ class FeedResource:
     def fetch_entries(self, user):
         friends = Bond.objects.filter(created_by=user).values('to_user_id')
         entries = Posts.filter(created_by__in=friends).order_by('-id')
-        return entries.prefetch_related(PFR, PPFR)
+        return entries.select_related('parent__created_by').prefetch_related(PFR)
 
     def validate_entry(self, content, user):
         errors = {}
@@ -172,17 +169,19 @@ class FeedResource:
 
 class ReplyResource:
     def fetch_entries(self, parent):
-        return Posts.filter(parent=parent).order_by('-id').prefetch_related(RPFR)
+        if not parent.replies:
+            return []
+        return Posts.filter(parent=parent).order_by('-id').prefetch_related(PFR)
 
     def fetch_ancestors(self, parent):
+        if not parent.parent_id:
+            return []
         return Posts.filter(
             id__in=parent.ancestors.values('id')
         ).order_by('id')
 
-    def has_duplicate(self, parent, user):
-        return Post.objects.filter(
-            parent=parent, created_by=user
-        ).exists() if user else True
+    def has_duplicate(self, entries, user):
+        return any(e.created_by_id == user.id for e in entries) if user else True
 
     def validate_entry(self, parent, content, user):
         errors = {}
@@ -214,9 +213,9 @@ class ReplyResource:
         parent = Posts.filter(id=id).first()
         if not parent:
             raise HTTPNotFound
-        duplicate = self.has_duplicate(parent, req.user)
         ancestors = self.fetch_ancestors(parent)
         entries = self.fetch_entries(parent)
+        duplicate = self.has_duplicate(entries, req.user)
         resp.text = render(
             page='reply', view='reply', content='',
             user=req.user, entry=parent, errors={}, entries=entries,
@@ -251,7 +250,7 @@ class ReplyResource:
 
 class EditResource:
     def fetch_entry(self, id):
-        return Posts.filter(id=id).prefetch_related(PPFR).first()
+        return Posts.filter(id=id).select_related('parent__created_by').first()
 
     def validate_entry(self, entry, content, user):
         errors = {}
@@ -320,16 +319,16 @@ class MemberResource:
 
     def fetch_entries(self, member):
         entries = Posts.filter(created_by=member).order_by('-id')
-        return entries.prefetch_related(PFR, PPFR)
+        return entries.select_related('parent__created_by').prefetch_related(PFR)
 
     @before(auth_user)
     def on_get(self, req, resp, username):
         member = self.fetch_member(username)
-        if req.user and req.user.id != member.id:
+        entries, page, number = paginate(req, self.fetch_entries(member))
+        if page == 'regular' and req.user and req.user.id != member.id:
             is_followed = Bond.objects.filter(created_by=member, to_user=req.user).exists()
         else:
             is_followed = None
-        entries, page, number = paginate(req, self.fetch_entries(member))
         resp.text = render(
             page=page, view='member', number=number, errors={},
             user=req.user, member=member, entries=entries, is_followed=is_followed
@@ -376,7 +375,7 @@ class FollowersResource:
 class MentionsResource:
     def fetch_entries(self, user):
         entries = Posts.filter(at_user=user).order_by('-id')
-        return entries.prefetch_related(PFR, PPFR)
+        return entries.select_related('parent__created_by').prefetch_related(PFR)
 
     def clear_mentions(self, user):
         Post.objects.filter(
@@ -398,7 +397,7 @@ class MentionsResource:
 class RepliesResource:
     def fetch_entries(self, user):
         entries = Posts.filter(to_user=user).order_by('-id')
-        return entries.prefetch_related(PPFR)
+        return entries.select_related('parent__created_by')
 
     def clear_replies(self, user):
         Post.objects.filter(
@@ -421,7 +420,7 @@ class SavedResource:
     def fetch_entries(self, user):
         saved_ids = Save.objects.filter(created_by=user).values('post_id')
         entries = Posts.filter(id__in=saved_ids).order_by('-id')
-        return entries.prefetch_related(PFR, PPFR)
+        return entries.select_related('parent__created_by').prefetch_related(PFR)
 
     @before(auth_user)
     @before(login_required)
@@ -493,7 +492,7 @@ class DiscoverResource:
         else:
             last_ids = Post.objects.values('created_by_id').annotate(last_id=Max('id')).values('last_id')
             f = Q(id__in=last_ids)
-        return Posts.filter(f).order_by('-id').prefetch_related(PFR, PPFR)
+        return Posts.filter(f).order_by('-id').select_related('parent__created_by').prefetch_related(PFR)
 
     @before(auth_user)
     def on_get(self, req, resp):
@@ -559,7 +558,11 @@ class MessageResource:
             created_by=member, to_user=req.user, seen_at=.0
         ).update(seen_at=utc_timestamp())
 
-    def is_blocked(self, user, member):
+    def is_blocked(self, user, member, entries=None):
+        if entries:
+            if any(e.created_by_id == member.id for e in entries):
+                return False
+            return not Chat.objects.filter(created_by=member, to_user=user).exists()
         return (
             Chat.objects.filter(created_by=user, to_user=member).exists() and
             not Chat.objects.filter(created_by=member, to_user=user).exists()
@@ -586,12 +589,13 @@ class MessageResource:
     def on_get(self, req, resp, username):
         member = self.fetch_member(username)
         entries, page, number = paginate(req, self.fetch_entries(req, member))
-        blocked = self.is_blocked(req.user, member)
+        blocked = self.is_blocked(req.user, member, entries) if entries or number > 1 else False
         resp.text = render(
             page=page, view='message', number=number, content='',
             user=req.user, errors={}, entries=entries, member=member, blocked=blocked
         )
-        self.clear_messages(req, member)
+        if req.user.notif_messages:
+            self.clear_messages(req, member)
 
     @before(auth_user)
     @before(login_required)

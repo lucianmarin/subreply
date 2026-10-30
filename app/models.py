@@ -79,7 +79,7 @@ class User(models.Model):
         return set(self.followers.exclude(created_by=self).values_list('created_by_id', flat=True))
 
     @cached_property
-    def saves(self):
+    def saves_set(self):
         return set(self.saved.values_list('post_id', flat=True))
 
     @cached_property
@@ -124,15 +124,17 @@ class Post(models.Model):
     def set_ancestors(self):
         if self.parent_id:
             ancestor_ids = list(self.parent.ancestors.values_list('id', flat=True)) if self.parent.parent_id else []
-            self.ancestors.set(ancestor_ids + [self.parent_id])
+            self.ancestors.add(*ancestor_ids, self.parent_id)
         else:
             self.ancestors.clear()
 
     def add_replies(self):
-        self.ancestors.update(replies=F('replies') + 1)
+        if self.parent_id:
+            self.ancestors.update(replies=F('replies') + 1)
 
     def subtract_replies(self):
-        self.ancestors.update(replies=F('replies') - 1)
+        if self.parent_id:
+            self.ancestors.update(replies=F('replies') - 1)
 
 
 class Save(models.Model):

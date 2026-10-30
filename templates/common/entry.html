@@ -22,7 +22,7 @@
                     <a href="/edit/{{ entry.id }}">edit</a>
                 {% endif %}
             {% else %}
-                {% if entry.id in user.saves %}
+                {% if entry.id in user.saves_set %}
                     <a class="gone" onclick="postSave(event, 'unsave')" data-id="{{ entry.id }}">unsave</a>
                 {% else %}
                     <a onclick="postSave(event, 'save')" data-id="{{ entry.id }}">save</a>

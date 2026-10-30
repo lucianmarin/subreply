@@ -129,9 +129,9 @@ class ReplyEndpoint(ReplyResource):
         parent = Posts.filter(id=id).first()
         if not parent:
             raise HTTPNotFound
-        duplicate = self.has_duplicate(parent, req.user)
         ancestors = self.fetch_ancestors(parent)
         entries = self.fetch_entries(parent)
+        duplicate = self.has_duplicate(entries, req.user)
         resp.content_type = MEDIA_JSON
         resp.media = {
             "entry": build_entry(parent, req.user),
@@ -300,14 +300,15 @@ class MessageEndpoint(MessageResource):
     def on_get(self, req, resp, username):
         member = self.fetch_member(username)
         entries, _, page = paginate(req, self.fetch_entries(req, member))
-        blocked = self.is_blocked(req.user, member)
+        blocked = self.is_blocked(req.user, member, entries) if entries or page > 1 else False
         resp.content_type = MEDIA_JSON
         resp.media = {
             "page": page,
             "blocked": blocked,
             "entries": [build_chat(entry, req.user) for entry in entries]
         }
-        self.clear_messages(req, member)
+        if req.user.notif_messages:
+            self.clear_messages(req, member)
 
 
 class NotificationsEndpoint:
@@ -394,10 +395,10 @@ class UnsaveEndpoint:
     @before(auth_required)
     def on_post(self, req, resp, id):
         resp.content_type = MEDIA_JSON
-        if not Post.objects.filter(id=id).exists():
+        deleted, _ = Save.objects.filter(created_by=req.user, post_id=id).delete()
+        if not deleted and not Post.objects.filter(id=id).exists():
             resp.media = {'status': 'not found'}
             return
-        Save.objects.filter(created_by=req.user, post_id=id).delete()
         resp.media = {'status': 'save'}
 
 
@@ -424,11 +425,12 @@ class UnfollowEndpoint:
     def on_post(self, req, resp, username):
         resp.content_type = MEDIA_JSON
         username = username.lower()
-        member = User.objects.filter(username=username).exclude(id=req.user.id).first()
-        if not member:
+        deleted, _ = Bond.objects.filter(
+            created_by=req.user, to_user__username=username
+        ).exclude(to_user=req.user).delete()
+        if not deleted and not User.objects.filter(username=username).exclude(id=req.user.id).exists():
             resp.media = {'status': 'not found'}
             return
-        Bond.objects.filter(created_by=req.user, to_user=member).delete()
         resp.media = {'status': 'follow'}
 
 
@@ -437,14 +439,10 @@ class UnsendEndpoint:
     @before(auth_required)
     def on_post(self, req, resp, id):
         resp.content_type = MEDIA_JSON
-        entry = Chat.objects.filter(id=id).first()
-        if not entry:
+        deleted, _ = Chat.objects.filter(id=id, created_by=req.user).delete()
+        if not deleted:
             resp.media = {'status': 'not found'}
             return
-        if req.user.id != entry.created_by_id:
-            resp.media = {'status': 'not valid'}
-            return
-        entry.delete()
         resp.media = {'status': 'unsent'}
 
 
