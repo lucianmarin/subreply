@@ -11,19 +11,20 @@
 
     <div class="about">
         <table>
-            <tr>
-                <th>:)</th>
-                <th>Username</th>
-                <th>;)</th>
-                <th>Username</th>
-            </tr>
-            {% for user in users %}
-                <tr>
-                    {% for emoji, username in user %}
-                        <td>{{ emoji | emojize }}</td>
-                        <td><a href="/{{ username }}">@{{ username }}</a></td>
+            {% for group, users in groups.items() %}
+                <tbody{% if loop.index > 2 %} class="collapsed"{% endif %}>
+                    <tr onclick="this.parentElement.classList.toggle('collapsed')">
+                        <th colspan="4">{{ group }}</th>
+                    </tr>
+                    {% for user in users %}
+                        <tr>
+                            {% for emoji, username in user %}
+                                <td>{{ emoji | emojize }}</td>
+                                <td>{% if username %}<a href="/{{ username }}">@{{ username }}</a>{% endif %}</td>
+                            {% endfor %}
+                        </tr>
                     {% endfor %}
-                </tr>
+                </tbody>
             {% endfor %}
         </table>
     </div>

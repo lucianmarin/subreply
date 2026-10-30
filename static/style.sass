@@ -129,15 +129,20 @@ table
     line-height: 15px
     margin: 10px 0
     width: 100%
+    tbody.collapsed td
+        display: none
+    tbody:first-child th
+        border-top: 0 none
+        padding-top: 0
     th
-        color: var(--silver)
-        font-weight: normal
+        border-top: var(--whitesmoke) 1px solid
+        cursor: pointer
+        font-weight: bold
         text-align: left
-        padding-bottom: 6px
+        padding: 6px 0
     td
         border-top: var(--whitesmoke) 1px solid
         padding: 6px 0
-    td, th
         &:nth-child(odd)
             text-align: center
             width: 30px

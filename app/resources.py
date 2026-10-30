@@ -75,9 +75,23 @@ class AboutResource:
 
     @before(auth_user)
     def on_get_directory(self, req, resp):
-        users = list(User.objects.exclude(posts=None).order_by('-id').values_list('emoji', 'username'))
+        users = User.objects.exclude(posts=None).order_by('username').values_list('emoji', 'username')
+        groups = {}
+        for emoji, username in users:
+            c = username[0]
+            if c.isdigit():
+                key = '0-9 numbers'
+            elif c == '_':
+                key = '_ character'
+            else:
+                key = f'{c.upper()} letter'
+            groups.setdefault(key, []).append((emoji, username))
+        groups = {
+            k: list(zip(v[::2], v[1::2] + [('', '')]))
+            for k, v in sorted(groups.items(), key=lambda x: (x[0] != '_ character', x[0]))
+        }
         resp.text = render(
-            page='directory', view='about', user=req.user, users=zip(users[::2], users[1::2])
+            page='directory', view='about', user=req.user, groups=groups
         )
 
 
