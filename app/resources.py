@@ -22,6 +22,7 @@ PPFR = Prefetch('parent', Posts)
 PFR = Prefetch('kids', Posts.order_by('-id'))
 RPFR = Prefetch('kids', Posts.order_by('-id').prefetch_related(PFR))
 USQ = lambda m: Subquery(User.objects.filter(username=m[0]).values('id')[:1]) if m else None
+BASE = '/trending'
 
 
 def paginate(req, qs, limit=16):
@@ -40,7 +41,7 @@ class MainResource:
     def on_get(self, req, resp):
         if req.user:
             raise HTTPFound('/feed')
-        raise HTTPFound('/discover')
+        raise HTTPFound(BASE)
 
 
 class AboutResource:
@@ -693,7 +694,7 @@ class AccountResource:
         else:
             req.user.delete()
             resp.unset_cookie('identity')
-            raise HTTPFound('/discover')
+            raise HTTPFound(BASE)
 
 
 class DetailsResource:
@@ -862,7 +863,7 @@ class LogoutResource:
     @before(login_required)
     def on_get(self, req, resp):
         resp.unset_cookie('identity')
-        raise HTTPFound('/discover')
+        raise HTTPFound(BASE)
 
 
 class RegisterResource:
