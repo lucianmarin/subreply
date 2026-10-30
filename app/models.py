@@ -72,15 +72,15 @@ class User(models.Model):
 
     @cached_property
     def following_set(self):
-        return set(self.following.exclude(to_user=self).values_list('to_user_id', flat=True))
+        return set(self.following_ids)
 
     @cached_property
     def followers_set(self):
-        return set(self.followers.exclude(created_by=self).values_list('created_by_id', flat=True))
+        return set(self.followers_ids)
 
     @cached_property
     def saves_set(self):
-        return set(self.saved.values_list('post_id', flat=True))
+        return set(self.saves_ids)
 
     @cached_property
     def links(self):

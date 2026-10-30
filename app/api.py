@@ -145,7 +145,7 @@ class ReplyEndpoint(ReplyResource):
         parent = Posts.filter(id=id).first()
         if not parent:
             raise HTTPNotFound
-        if existing := Posts.filter(parent=parent, created_by=req.user).first():
+        if parent.replies and (existing := Posts.filter(parent=parent, created_by=req.user).first()):
             existing.parent = parent
             resp.media = build_entry(existing, req.user, has_parent=True)
             return

@@ -15,7 +15,7 @@
         {% if member.donated %}
             Donated ${{ member.donated }}.
         {% endif %}
-        {% if is_followed %}
+        {% if user and member.id in user.followers_set %}
             Follows you.
         {% endif %}
     </div>

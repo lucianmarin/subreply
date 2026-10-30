@@ -232,7 +232,7 @@ class ReplyResource:
         content = get_content(form)
         if not content:
             raise HTTPFound(f"/reply/{id}")
-        if existing := Post.objects.filter(parent=parent, created_by=req.user).first():
+        if parent.replies and (existing := Post.objects.filter(parent=parent, created_by=req.user).first()):
             raise HTTPFound(f"/reply/{existing.id}")
         errors = self.validate_entry(parent, content, req.user)
         if errors:
@@ -328,13 +328,9 @@ class MemberResource:
     def on_get(self, req, resp, username):
         member = self.fetch_member(req, username)
         entries, page, number = paginate(req, self.fetch_entries(member))
-        if page == 'regular' and req.user and req.user.id != member.id:
-            is_followed = Bond.objects.filter(created_by=member, to_user=req.user).exists()
-        else:
-            is_followed = None
         resp.text = render(
             page=page, view='member', number=number, errors={},
-            user=req.user, member=member, entries=entries, is_followed=is_followed
+            user=req.user, member=member, entries=entries
         )
 
 
