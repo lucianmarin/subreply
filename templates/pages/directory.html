@@ -14,7 +14,7 @@
             {% for group, users in groups.items() %}
                 <tbody{% if loop.index > 2 %} class="collapsed"{% endif %}>
                     <tr onclick="this.parentElement.classList.toggle('collapsed')">
-                        <th colspan="4">{{ group }}</th>
+                        <th colspan="4">{{ group | safe }}</th>
                     </tr>
                     {% for user in users %}
                         <tr>

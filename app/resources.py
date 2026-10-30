@@ -87,7 +87,7 @@ class AboutResource:
                 key = f'{c.upper()} letter'
             groups.setdefault(key, []).append((emoji, username))
         groups = {
-            k: list(zip(v[::2], v[1::2] + [('', '')]))
+            f"{k} &mdash; {len(v)} users": list(zip(v[::2], v[1::2] + [('', '')]))
             for k, v in sorted(groups.items(), key=lambda x: (x[0] != '_ character', x[0]))
         }
         resp.text = render(
