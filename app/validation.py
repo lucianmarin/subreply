@@ -95,13 +95,15 @@ def valid_reply(parent, user, value, mentions):
 def authentication(username, password):
     errors = {}
     title = "Email" if "@" in username else "Username"
-    if "@" in username:
+    if not username:
+        user = None
+    elif "@" in username:
         user = User.objects.filter(email=username).first()
     else:
         user = User.objects.filter(username=username).first()
     if not user:
         errors['username'] = "{0} doesn't exist".format(title)
-    elif not verify_hash(password, user.password):
+    elif not password or not verify_hash(password, user.password):
         errors['password'] = "Password doesn't match"
     return errors, user
 

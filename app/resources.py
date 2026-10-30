@@ -170,10 +170,10 @@ class ReplyResource:
         ).exists() if user else True
 
     def validate_entry(self, parent, content, user):
-        _, _, mentions = get_metadata(content)
         errors = {}
         errors['content'] = valid_content(content, user)
         if not errors['content']:
+            _, _, mentions = get_metadata(content)
             errors['content'] = valid_reply(parent, user, content, mentions)
         return {k: v for k, v in errors.items() if v}
 
@@ -239,11 +239,11 @@ class EditResource:
         return Posts.filter(id=id).prefetch_related(PPFR).first()
 
     def validate_entry(self, entry, content, user):
-        _, _, mentions = get_metadata(content)
         errors = {}
         errors['content'] = valid_content(content, user)
-        if not errors['content']:
+        if not errors['content'] and content.lower() != entry.content.lower():
             if entry.parent_id:
+                _, _, mentions = get_metadata(content)
                 errors['content'] = valid_reply(entry.parent, user, content, mentions)
             else:
                 errors['content'] = valid_thread(content)
@@ -282,6 +282,8 @@ class EditResource:
             raise HTTPNotFound
         form = req.get_media()
         content = get_content(form)
+        if content == entry.content:
+            raise HTTPFound(f"/reply/{entry.id}")
         errors = self.validate_entry(entry, content, req.user)
         if errors:
             ancestors = [entry.parent] if entry.parent_id else []
@@ -550,9 +552,9 @@ class MessageResource:
 
     def validate_message(self, content, user, member):
         errors = {}
-        if self.is_blocked(user, member):
-            errors['request'] = "Wait for the recipient to respond"
         errors['content'] = valid_content(content, user)
+        if not errors['content'] and self.is_blocked(user, member):
+            errors['request'] = "Wait for the recipient to respond"
         return {k: v for k, v in errors.items() if v}
 
     def create_entry(self, user, member, content):
@@ -589,7 +591,8 @@ class MessageResource:
             entries, page, number = paginate(req, self.fetch_entries(req, member))
             resp.text = render(
                 page=page, view='message', number=number, user=req.user,
-                member=member, entries=entries, content=content, errors=errors
+                member=member, entries=entries, content=content, errors=errors,
+                blocked='request' in errors
             )
         else:
             self.create_entry(req.user, member, content)
@@ -705,9 +708,15 @@ class DetailsResource:
         return {k: v for k, v in errors.items() if v}
 
     def update_user(self, user, s, p):
-        user.phone = p
-        user.social = s
-        user.save(update_fields=['phone', 'social'])
+        fields = []
+        if p != user.phone:
+            user.phone = p
+            fields.append('phone')
+        if s != user.social:
+            user.social = s
+            fields.append('social')
+        if fields:
+            user.save(update_fields=fields)
 
     @before(auth_user)
     @before(login_required)
@@ -775,10 +784,13 @@ class ProfileResource:
         return {k: v for k, v in errors.items() if v}
 
     def update_user(self, user, f):
+        fields = []
         for field, value in f.items():
             if getattr(user, field, '') != value:
                 setattr(user, field, value)
-        user.save()
+                fields.append(field)
+        if fields:
+            user.save(update_fields=fields)
 
     @before(auth_user)
     @before(login_required)
@@ -941,7 +953,7 @@ class RecoverResource:
         form = req.get_media()
         email = form.get('email', '').strip().lower()
         errors = {}
-        user = User.objects.filter(email=email).first()
+        user = User.objects.filter(email=email).first() if email else None
         if not user:
             errors['email'] = "Email doesn't exist"
         elif Chat.objects.filter(

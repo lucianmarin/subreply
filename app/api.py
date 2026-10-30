@@ -340,6 +340,9 @@ class EditEndpoint(EditResource):
 
         form = req.get_media()
         content = get_content(form)
+        if content == entry.content:
+            resp.media = build_entry(entry, req.user, has_parent=True)
+            return
         errors = self.validate_entry(entry, content, req.user)
         if errors:
             resp.media = {'errors': errors}
