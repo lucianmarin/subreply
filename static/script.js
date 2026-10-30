@@ -1,4 +1,4 @@
-function ajax(path, method = "post", type = "json", callback) {
+function ajax(path, method, type, callback) {
     var xhr = new XMLHttpRequest();
     xhr.open(method, path, true);
     xhr.responseType = type;
@@ -36,8 +36,9 @@ function postDelete(event, call, status) {
     var element = event.currentTarget;
     var small = element.parentElement;
     var id = element.dataset.id;
+    var confirm = element.nextElementSibling;
     if (!element.dataset.confirm) {
-        var confirm = document.createElement("a");
+        confirm = document.createElement("a");
         element.innerText = "undo";
         element.className = "gone";
         element.dataset.confirm = "yes";
@@ -49,12 +50,13 @@ function postDelete(event, call, status) {
         element.innerText = call;
         element.className = "";
         element.dataset.confirm = "";
-        var confirm = element.nextElementSibling;
         confirm.remove();
     }
 
     function remove(event) {
         event.preventDefault();
+        var undo = element.onclick;
+        element.onclick = null;
         confirm.onclick = null;
         ajax("/api/" + call + "/" + id, "post", "json", function (data) {
             if (data && data.status == status) {
@@ -64,6 +66,7 @@ function postDelete(event, call, status) {
                 confirm.remove();
                 element.remove();
             } else {
+                element.onclick = undo;
                 confirm.innerText = "retry";
                 confirm.onclick = remove;
             }
@@ -172,6 +175,8 @@ function postClear(event) {
 
     function clear(event) {
         event.preventDefault();
+        var undo = element.onclick;
+        element.onclick = null;
         confirm.onclick = null;
         ajax("/api/" + member + "/clear", "post", "json", function (data) {
             if (data && data.status == "cleared") {
@@ -182,6 +187,7 @@ function postClear(event) {
                 sep.remove();
                 element.remove();
             } else {
+                element.onclick = undo;
                 confirm.innerText = "retry";
                 confirm.onclick = clear;
             }
