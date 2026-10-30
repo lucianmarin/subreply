@@ -218,6 +218,8 @@ class ReplyResource:
         content = get_content(form)
         if not content:
             raise HTTPFound(f"/reply/{id}")
+        if existing := Post.objects.filter(parent=parent, created_by=req.user).first():
+            raise HTTPFound(f"/reply/{existing.id}")
         errors = self.validate_entry(parent, content, req.user)
         if errors:
             ancestors = self.fetch_ancestors(parent)
@@ -228,8 +230,6 @@ class ReplyResource:
                 entries=entries, ancestors=ancestors, duplicate=False
             )
         else:
-            if existing := Post.objects.filter(parent=parent, created_by=req.user).first():
-                raise HTTPFound(f"/reply/{existing.id}")
             re = self.create_entry(parent, content, req.user)
             raise HTTPFound(f"/reply/{re.id}")
 
@@ -695,11 +695,13 @@ class DetailsResource:
         self.update(form, p, self.phone)
         return s, p
 
-    def validate_details(self, s, p):
+    def validate_details(self, s, p, user):
         errors = {}
         for field, value in s.items():
-            errors[field] = valid_handle(value)
-        errors['phone'] = valid_phone(p.get('code', ''), p.get('number', ''))
+            if value != user.social.get(field):
+                errors[field] = valid_handle(value)
+        if p != user.phone:
+            errors['phone'] = valid_phone(p.get('code', ''), p.get('number', ''))
         return {k: v for k, v in errors.items() if v}
 
     def update_user(self, user, s, p):
@@ -720,7 +722,7 @@ class DetailsResource:
     def on_post(self, req, resp):
         form = req.get_media()
         s, p = self.parse_form(form)
-        errors = self.validate_details(s, p)
+        errors = self.validate_details(s, p, req.user)
         if errors:
             resp.text = render(
                 page='details', view='details', user=req.user,
@@ -747,18 +749,28 @@ class ProfileResource:
 
     def validate_profile(self, f, user):
         errors = {}
-        errors['username'] = valid_username(f['username'], user_id=user.id)
-        errors['email'] = valid_email(f['email'], user_id=user.id)
-        errors['first_name'] = valid_first_name(f['first_name'])
-        errors['last_name'] = valid_last_name(f['last_name'])
-        errors['full_name'] = valid_full_name(
-            f['emoji'], f['first_name'], f['last_name'], user_id=user.id
-        )
-        errors['emoji'] = valid_emoji(f['emoji'])
-        errors['birthday'] = valid_birthday(f['birthday'])
-        errors['location'] = valid_location(f['location'])
-        errors['link'] = valid_link(f['link'], user_id=user.id)
-        errors['description'] = valid_description(f['description'], user)
+        if f['username'] != user.username:
+            errors['username'] = valid_username(f['username'], user_id=user.id)
+        if f['email'] != user.email:
+            errors['email'] = valid_email(f['email'], user_id=user.id)
+        if f['first_name'] != user.first_name:
+            errors['first_name'] = valid_first_name(f['first_name'])
+        if f['last_name'] != user.last_name:
+            errors['last_name'] = valid_last_name(f['last_name'])
+        if f['emoji'] != user.emoji:
+            errors['emoji'] = valid_emoji(f['emoji'])
+        if (f['emoji'], f['first_name'], f['last_name']) != (user.emoji, user.first_name, user.last_name):
+            errors['full_name'] = valid_full_name(
+                f['emoji'], f['first_name'], f['last_name'], user_id=user.id
+            )
+        if f['birthday'] != user.birthday:
+            errors['birthday'] = valid_birthday(f['birthday'])
+        if f['location'] != user.location:
+            errors['location'] = valid_location(f['location'])
+        if f['link'] != user.link:
+            errors['link'] = valid_link(f['link'], user_id=user.id)
+        if f['description'] != user.description:
+            errors['description'] = valid_description(f['description'], user)
         return {k: v for k, v in errors.items() if v}
 
     def update_user(self, user, f):

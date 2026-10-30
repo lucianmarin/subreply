@@ -157,12 +157,12 @@ def valid_last_name(value):
 
 
 def valid_full_name(emoji, first_name, last_name, user_id=0):
-    if User.objects.filter(
+    if first_name == last_name:
+        return "First and last names should be different"
+    elif User.objects.filter(
         emoji=emoji, first_name=first_name, last_name=last_name
     ).exclude(id=user_id).exists():
         return "Emoji and names combination is taken"
-    elif first_name == last_name:
-        return "First and last names should be different"
 
 
 def valid_email(value, user_id=0):
@@ -226,31 +226,22 @@ def valid_birthday(value, delimiter="-"):
         years = {str(y) for y in range(CUR_YEAR - MAX_AGE, CUR_YEAR - MIN_AGE + 1)}
         months = {str(m) for m in range(1, 13)} | {str(m).zfill(2) for m in range(1, 13)}
         days = {str(d) for d in range(1, 32)} | {str(d).zfill(2) for d in range(1, 32)}
-        if value.count(delimiter) > 2:
+        parts = value.split(delimiter)
+        if len(parts) > 3:
             return "Birthday has an invalid format"
         elif len(value) > 10:
             return "Birthday is too long"
-        elif value.count(delimiter) == 2:
-            year, month, day = value.split(delimiter)
-            if year not in years:
-                return "Year is not between {0}-{1}".format(CUR_YEAR - MAX_AGE, CUR_YEAR - MIN_AGE)
-            elif month not in months:
-                return "Month is not between 1-12"
-            elif day not in days:
-                return "Day is not between 1-31"
-            else:
-                try:
-                    _ = date(int(year), int(month), int(day))
-                except Exception:
-                    return "Birthday is invalid"
-        elif value.count(delimiter):
-            year, month = value.split(delimiter)
-            if year not in years:
-                return "Year is not between {0}-{1}".format(CUR_YEAR - MAX_AGE, CUR_YEAR - MIN_AGE)
-            elif month not in months:
-                return "Month is not between 1-12"
-        elif value not in years:
+        elif parts[0] not in years:
             return "Year is not between {0}-{1}".format(CUR_YEAR - MAX_AGE, CUR_YEAR - MIN_AGE)
+        elif len(parts) > 1 and parts[1] not in months:
+            return "Month is not between 1-12"
+        elif len(parts) == 3:
+            if parts[2] not in days:
+                return "Day is not between 1-31"
+            try:
+                date(int(parts[0]), int(parts[1]), int(parts[2]))
+            except Exception:
+                return "Birthday is invalid"
 
 
 def valid_location(value, delimiter=", "):

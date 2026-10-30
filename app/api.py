@@ -72,7 +72,7 @@ class DetailsEndpoint(DetailsResource):
         resp.content_type = MEDIA_JSON
         form = req.get_media()
         s, p = self.parse_form(form)
-        errors = self.validate_details(s, p)
+        errors = self.validate_details(s, p, req.user)
         if errors:
             resp.media = {'errors': errors}
         else:
@@ -147,16 +147,16 @@ class ReplyEndpoint(ReplyResource):
         parent = Posts.filter(id=id).first()
         if not parent:
             raise HTTPNotFound
+        if existing := Posts.filter(parent=parent, created_by=req.user).first():
+            existing.parent = parent
+            resp.media = build_entry(existing, req.user, has_parent=True)
+            return
         form = req.get_media()
         content = get_content(form)
         errors = self.validate_entry(parent, content, req.user)
         if errors:
             resp.media = {'errors': errors}
         else:
-            if existing := Posts.filter(parent=parent, created_by=req.user).first():
-                existing.parent = parent
-                resp.media = build_entry(existing, req.user, has_parent=True)
-                return
             re = self.create_entry(parent, content, req.user)
             resp.media = build_entry(re, req.user, has_parent=True)
 
@@ -378,7 +378,7 @@ class SaveEndpoint:
         if not entry:
             resp.media = {'status': 'not found'}
             return
-        _, is_new = Save.objects.get_or_create(
+        Save.objects.get_or_create(
             created_by=req.user,
             post=entry,
             defaults={'created_at': utc_timestamp()}
@@ -408,7 +408,7 @@ class FollowEndpoint:
         if not member:
             resp.media = {'status': 'not found'}
             return
-        _, is_new = Bond.objects.get_or_create(
+        Bond.objects.get_or_create(
             created_by=req.user, to_user=member,
             defaults={'created_at': utc_timestamp()}
         )
