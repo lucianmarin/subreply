@@ -177,7 +177,7 @@ def valid_email(value, user_id=0):
     elif User.objects.filter(email=value).exclude(id=user_id).exists():
         return "Email is used by someone else"
     else:
-        handle, domain = value.split('@', 1)
+        _, domain = value.split('@', 1)
         try:
             has_mx = bool(dns_query(domain, 'MX'))
         except Exception:

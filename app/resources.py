@@ -759,10 +759,11 @@ class ProfileResource:
             errors['last_name'] = valid_last_name(f['last_name'])
         if f['emoji'] != user.emoji:
             errors['emoji'] = valid_emoji(f['emoji'])
-        if (f['emoji'], f['first_name'], f['last_name']) != (user.emoji, user.first_name, user.last_name):
-            errors['full_name'] = valid_full_name(
-                f['emoji'], f['first_name'], f['last_name'], user_id=user.id
-            )
+        if not (errors.get('emoji') or errors.get('first_name') or errors.get('last_name')):
+            if (f['emoji'], f['first_name'], f['last_name']) != (user.emoji, user.first_name, user.last_name):
+                errors['full_name'] = valid_full_name(
+                    f['emoji'], f['first_name'], f['last_name'], user_id=user.id
+                )
         if f['birthday'] != user.birthday:
             errors['birthday'] = valid_birthday(f['birthday'])
         if f['location'] != user.location:
@@ -859,10 +860,11 @@ class RegisterResource:
         errors['password'] = valid_password(f['password1'], f['password2'])
         errors['first_name'] = valid_first_name(f['first_name'])
         errors['last_name'] = valid_last_name(f['last_name'])
-        errors['full_name'] = valid_full_name(
-            f['emoji'], f['first_name'], f['last_name']
-        )
         errors['emoji'] = valid_emoji(f['emoji'])
+        if not (errors['emoji'] or errors['first_name'] or errors['last_name']):
+            errors['full_name'] = valid_full_name(
+                f['emoji'], f['first_name'], f['last_name']
+            )
         errors['birthday'] = valid_birthday(f['birthday'])
         errors['location'] = valid_location(f['location'])
         return {k: v for k, v in errors.items() if v}
@@ -942,29 +944,24 @@ class RecoverResource:
         user = User.objects.filter(email=email).first()
         if not user:
             errors['email'] = "Email doesn't exist"
-        if errors:
-            resp.text = render(
-                page='recover', view='recover', errors=errors, form=form
-            )
+        elif Chat.objects.filter(
+            content__startswith="Send https://subreply.com/recover",
+            content__endswith=f"to {user.email}.",
+            created_by=user,
+            to_user_id=1,
+        ).exists():
+            errors['email'] = "Request already sent"
         else:
             # generate token
             token = FERNET.encrypt(user.email.encode()).decode()
             # compose message
-            if Chat.objects.filter(
-                content__startswith="Send https://subreply.com/recover",
-                content__endswith=f"to {user.email}.",
+            Chat.objects.create(
+                content=f"Send https://subreply.com/recover/{token} to {user.email}.",
                 created_by=user,
                 to_user_id=1,
-            ).exists():
-                errors['email'] = "Request already sent"
-            else:
-                Chat.objects.create(
-                    content=f"Send https://subreply.com/recover/{token} to {user.email}.",
-                    created_by=user,
-                    to_user_id=1,
-                    created_at=utc_timestamp(),
-                )
-                errors['email'] = "Please wait for your recovery link"
-            resp.text = render(
-                page='recover', view='recover', errors=errors, form=form
+                created_at=utc_timestamp(),
             )
+            errors['email'] = "Please wait for your recovery link"
+        resp.text = render(
+            page='recover', view='recover', errors=errors, form=form
+        )
