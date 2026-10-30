@@ -1,6 +1,6 @@
 html
-    --sup: 8px
-    --tiny: 11px
+    --sup: 9px
+    --tiny: 12px
     --small: 13px
     --regular: 14px
     --big: 16px
@@ -244,12 +244,14 @@ table
 .menu
     color: var(--silver)
     font-weight: bold
+    height: 20px
     margin: 15px 0
     overflow: hidden
     a
         color: var(--silver)
+        display: block
         float: left
-        margin-right: 5px
+        margin-right: 10px
         &:last-child
             margin-right: 0
         &:hover
@@ -323,7 +325,9 @@ table
     color: var(--silver)
     text-align: center
     a, b
-        text-transform: capitalize
+        display: block
+        &::first-letter
+            text-transform: uppercase
     a
         color: var(--gray)
         &:hover
@@ -383,8 +387,11 @@ table
 .author
     color: var(--gray)
     @include dots
-    .action, .accent
-        text-transform: capitalize
+    a, b, i
+        display: inline-block
+    .action, .accent, .warn
+        &::first-letter
+            text-transform: uppercase
     .done, .handle, i
         font-weight: bold
     .action, .ago, .done
@@ -393,9 +400,11 @@ table
             color: var(--silver)
     .accent
         color: var(--accent)
-    .accent, .handle
+    .handle
         &:hover
             color: var(--gray)
+    .warn
+        color: var(--alert)
     .right
         color: var(--silver)
         float: right

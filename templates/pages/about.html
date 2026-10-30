@@ -12,68 +12,68 @@
     <div class="about">
         <div class="block">
             <p>
-                Welcome to an online platform designed to encourage meaningful connection and engagement. It eliminates distractions and clutter, allowing users to focus on meaningful conversations and content sharing.
+                Welcome to a minimalist social network built for thoughtful conversation. By stripping away noise, algorithms and visual clutter, Subreply lets you focus on what actually matters: genuine connection and ideas worth sharing.
             </p>
             <p>
-                <a class="name" href="/{{ sub }}">{{ sub.full_name | emojize }}</a> aims to reduce the impact that social apps have on your time, relationships and self-esteem, while enhancing the positive aspects of connecting with others online. The overall goal is to foster a more meaningful and intentional digital experience that encourages communication and connection.
+                <a class="name" href="/{{ sub }}">{{ sub.full_name | emojize }}</a> is designed to protect your time, attention and peace of mind while keeping the best part of the internet — talking with interesting people. No endless doomscrolling, vanity metrics or dark patterns; just a calm, intentional space to read, write and connect.
             </p>
             <p>
-                <a class="name" href="/{{ luc }}">{{ luc.full_name | emojize }}</a> created Subreply for people who enjoy reading and writing, who value creativity and originality over visual, who want to express themselves freely without censorship or filters, and who want to connect with like-mined people from around the world.
+                <a class="name" href="/{{ luc }}">{{ luc.full_name | emojize }}</a> created Subreply for people who love reading and writing, who value originality over visuals, who want to express themselves freely without algorithmic filters, and who want to meet like-minded people from around the world.
             </p>
         </div>
 
-        <h4>Web app install</h4>
+        <h4>Install as a web app</h4>
         <ul>
             <li>
                 <svg width="16" height="16" viewBox="0 0 24 24">
-                    <path d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 010 1.971l-11.54 6.347a1.125 1.125 0 01-1.667-.985V5.653z" />
+                    <path id="play" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 010 1.971l-11.54 6.347a1.125 1.125 0 01-1.667-.985V5.653z" />
                 </svg>
-                Install on Android by <a href="https://support.google.com/chrome/answer/9658361">adding it to home screen</a> from Chrome
+                Install on Android by <a href="https://support.google.com/chrome/answer/9658361">adding it to your home screen</a> from Chrome.
             </li>
             <li>
                 <svg width="16" height="16" viewBox="0 0 24 24">
-                    <path d="M10.5 1.5H8.25A2.25 2.25 0 006 3.75v16.5a2.25 2.25 0 002.25 2.25h7.5A2.25 2.25 0 0018 20.25V3.75a2.25 2.25 0 00-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3m-3 18.75h3" />
+                    <path id="device-phone-mobile" d="M10.5 1.5H8.25A2.25 2.25 0 006 3.75v16.5a2.25 2.25 0 002.25 2.25h7.5A2.25 2.25 0 0018 20.25V3.75a2.25 2.25 0 00-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3m-3 18.75h3" />
                 </svg>
-                Install on iPhone or iPad by <a href="https://support.apple.com/guide/iphone/bookmark-favorite-webpages-iph42ab2f3a7/ios">adding it to home screen</a> from Safari
+                Install on iPhone or iPad by <a href="https://support.apple.com/guide/iphone/bookmark-favorite-webpages-iph42ab2f3a7/ios">adding it to your home screen</a> from Safari.
             </li>
             <li>
                 <svg width="16" height="16" viewBox="0 0 24 24">
-                    <path d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    <path id="ellipsis-horizontal-circle" d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                Similarly can be installed on Windows, Linux and macOS
+                Also available on Windows, Linux and <a href="https://github.com/lucianmarin/macreply">macOS</a>.
             </li>
         </ul>
 
-        <h4>Tech stack and donations</h4>
+        <h4>Tech stack and support</h4>
         <ol>
-            <li>High frequency <a href="https://vultr.com/?ref=8946799-8H">Vultr VPS</a> running on Ubuntu 24.04 LTS</li>
-            <li>Coded in Python 3.12 using Falcon and Django ORM</li>
-            <li>Speed up by Gunicorn in front of Nginx, PgBouncer in front of PostgreSQL</li>
-            <li>Icons provided by <a href="https://heroicons.dev/">Heroicons</a>, Route 159 font by <a href="https://dotcolon.net/font/route159">Sora Sagano</a></li>
-            <li><a href="https://paypal.com/donate/?hosted_button_id=586UTPPSHBWAN">Donate with PayPal</a> to keep it ad-free and running indefinitely</li>
+            <li>Hosted on a high-frequency <a href="https://vultr.com/?ref=8946799-8H">Vultr VPS</a> running Ubuntu 24.04 LTS.</li>
+            <li>Built with Python 3.12, Falcon and Django ORM.</li>
+            <li>Powered by Gunicorn behind Nginx and PgBouncer in front of PostgreSQL.</li>
+            <li>Icons by <a href="https://heroicons.com/">Heroicons</a>, Route 159 typeface by <a href="https://dotcolon.net/fonts/route159">Sora Sagano</a>.</li>
+            <li><a href="https://paypal.com/donate/?hosted_button_id=586UTPPSHBWAN">Donate via PayPal</a> to keep Subreply independent, ad-free and running indefinitely.</li>
         </ol>
 
-        <h4>Features and limitations</h4>
+        <h4>Features and design constraints</h4>
         <ol>
-            <li>Reverse-chronological order for all feeds</li>
-            <li>Unique name handles like <a class="name" href="/{{ emo }}">{{ emo.full_name | emojize }}</a></li>
-            <li>Unique conversation view similar to a chat interface</li>
-            <li>Light and dark themes based on OS preference</li>
-            <li>Supports links, mentions, hashrefs and hashtags</li>
-            <li>Limited to ASCII characters and emojis</li>
-            <li>Limited to 640 characters per reply</li>
-            <li>Limited to one link, mention, hashref or hashtag per reply</li>
-            <li>No support for paragraphs, keeps conversation tidy</li>
-            <li>No popularity counters or instant gratification</li>
+            <li>Pure reverse-chronological feeds — no algorithmic sorting.</li>
+            <li>Expressive emoji handles like <a class="name" href="/{{ emo }}">{{ emo.full_name | emojize }}</a>.</li>
+            <li>Streamlined, chat-like conversation threads.</li>
+            <li>Automatic light and dark themes following your OS preference.</li>
+            <li>First-class support for links, mentions, hashrefs and hashtags.</li>
+            <li>Focused text: ASCII characters and emojis only.</li>
+            <li>Concise thoughts: up to 640 characters per reply.</li>
+            <li>Intentional linking: one link, mention, hashref or hashtag per reply.</li>
+            <li>Single-paragraph replies to keep conversations clean and readable.</li>
+            <li>Zero vanity metrics — no likes, follower counts or instant-gratification loops.</li>
         </ol>
 
-        <h4>Keeping things private</h4>
+        <h4>Privacy by default</h4>
         <ol>
-            <li>Edit or delete your replies before they are replied to</li>
-            <li>Delete received replies before they are replied to</li>
-            <li>No redistribution of any data, private or public based on GDPR</li>
-            <li>Straightforward and complete account deletion</li>
-            <li>Data export in a human readable format</li>
+            <li>Edit or delete your replies anytime before someone responds.</li>
+            <li>Remove replies to your posts before responding to them.</li>
+            <li>Strict GDPR compliance — your data is never sold or redistributed.</li>
+            <li>Instant, complete account deletion whenever you choose.</li>
+            <li>Easy data export in a clean, human-readable format.</li>
         </ol>
     </div>
 {% endblock %}

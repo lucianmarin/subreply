@@ -12,11 +12,11 @@
     <div class="about">
         <div class="block">
             <p>
-                API should be used to build clients for iOS, Android and other platforms. Clients should have their own branding starting with "sub" prefix: Subchat, Sublevel, Subversion, etc. Clients can provide additional features like image support, language translation to and from English, etc.
+                Build your own native client for iOS, Android, desktop or the web with the Subreply API. Third-party apps are encouraged to adopt the "sub" or "reply" naming convention — such as Subchat, Sublevel, Subversion or <a href="https://github.com/lucianmarin/macreply">Macreply</a> — and can extend the core experience with features like inline media previews, instant translation and custom notifications.
             </p>
             <p>
-                You can authenticate by getting a token from <code>/api/login</code> endpoint then setting the Bearer header for following requests.
-                You can paginate a GET endpoint using <code>?p=number</code> parameter.
+                Authenticate by requesting a token from the <code>/api/login</code> endpoint and passing it in the <code>Authorization: Bearer</code> header on subsequent requests.
+                Paginate any GET endpoint by appending the <code>?p=number</code> query parameter.
             </p>
         </div>
 
@@ -28,8 +28,8 @@
             <li><code>/api/mentions</code></li>
             <li><code>/api/replies</code></li>
             <li><code>/api/saved</code></li>
-            <li><code>/api/people</code> &mdash; optional q param to find people</li>
-            <li><code>/api/discover</code> &mdash; optional q param to search content</li>
+            <li><code>/api/people</code> &mdash; optional <code>q</code> param to search people</li>
+            <li><code>/api/discover</code> &mdash; optional <code>q</code> param to search content</li>
             <li><code>/api/trending</code></li>
             <li><code>/api/messages</code></li>
             <li><code>/api/notifications</code></li>
@@ -41,19 +41,19 @@
 
         <h4>POST Endpoints</h4>
         <ul>
-            <li><code>/api/login</code> &mdash; username*, password* params returns token and user</li>
-            <li><code>/api/register</code> &mdash; username*, email*, password1*, password2*, first_name, last_name, emoji, birthday, location params returns token and user</li>
-            <li><code>/api/thread</code> &mdash; content* param returns thread details</li>
-            <li><code>/api/reply/{id:int}</code> &mdash; content* param returns reply details</li>
-            <li><code>/api/{username}/send</code> &mdash; content* param returns message details</li>
+            <li><code>/api/login</code> &mdash; username*, password* params; returns token and user</li>
+            <li><code>/api/register</code> &mdash; username*, email*, password1*, password2*, first_name, last_name, emoji, birthday, location params; returns token and user</li>
+            <li><code>/api/thread</code> &mdash; content* param; returns thread details</li>
+            <li><code>/api/reply/{id:int}</code> &mdash; content* param; returns reply details</li>
+            <li><code>/api/{username}/send</code> &mdash; content* param; returns message details</li>
         </ul>
 
 
         <h4>PATCH Endpoints</h4>
         <ul>
-            <li><code>/api/edit/{id:int}</code> &mdash; content* param returns message details</li>
-            <li><code>/api/profile</code> &mdash; username*, email*, first_name, last_name, emoji, birthday, location, link, description params returns user</li>
-            <li><code>/api/details</code> &mdash; github, instagram, linkedin, reddit, paypal, spotify, x, code, number params returns user</li>
+            <li><code>/api/edit/{id:int}</code> &mdash; content* param; returns reply details</li>
+            <li><code>/api/profile</code> &mdash; username*, email*, first_name, last_name, emoji, birthday, location, link, description params; returns user</li>
+            <li><code>/api/details</code> &mdash; github, instagram, linkedin, reddit, paypal, spotify, x, code, number params; returns user</li>
         </ul>
 
         <h4>POST Actions</h4>
@@ -65,11 +65,6 @@
             <li><code>/api/unsave/{id:int}</code></li>
             <li><code>/api/follow/{username}</code></li>
             <li><code>/api/unfollow/{username}</code></li>
-        </ul>
-
-        <h4>PUT Endpoints</h4>
-        <ul>
-            <li>work in progress</li>
         </ul>
     </div>
 {% endblock %}

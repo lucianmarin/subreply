@@ -16,12 +16,13 @@ function getPage(event) {
     var page = element.dataset.page;
     var loader = element.parentElement.parentElement;
     var items = loader.parentElement;
-    var url = window.location.pathname + "?p=" + page;
-    element.innerText = "loading...";
+    var url = new URL(window.location.href);
+    url.searchParams.set("p", page);
     element.onclick = null;
-    ajax(url, "get", "text", function (data) {
+    ajax(url.pathname + url.search, "get", "text", function (data) {
         if (data == null) {
-            element.innerText = "load more";
+            element.innerText = "retry";
+            element.className = "warn";
             element.onclick = getPage;
             return;
         }
@@ -93,6 +94,7 @@ function postSave(event, call) {
             element.onclick = rebind(reverse);
         } else {
             element.innerText = "retry";
+            element.className = "warn";
             element.onclick = rebind(call);
         }
     });
@@ -117,6 +119,7 @@ function postFollow(event, call) {
             element.onclick = rebind(reverse);
         } else {
             element.innerText = "retry";
+            element.className = "warn";
             element.onclick = rebind(call);
         }
     });
@@ -182,10 +185,7 @@ function postClear(event) {
             if (data && data.status == "cleared") {
                 var state = document.createElement("b");
                 state.innerText = data.status;
-                load.appendChild(state);
-                confirm.remove();
-                sep.remove();
-                element.remove();
+                load.replaceChildren(state);
             } else {
                 element.onclick = undo;
                 confirm.innerText = "retry";
