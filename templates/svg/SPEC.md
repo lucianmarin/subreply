@@ -19,7 +19,7 @@
   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" overflow="visible">
   ```
   `overflow="visible"` prevents spring overshoots from clipping against the `24x24` viewBox while staying within the `.sidebar svg` `2px` padding box.
-- **Preserved Primary ID**: The primary `<path>` in each animated SVG retains `id="<icon-id>"` matching its filename.
+- **No Path IDs**: `<path>` elements inside `templates/svg/*.svg` omit `id` attributes since the icon identifier is already encoded in the filename and path IDs are not used by CSS.
 
 ## Timing, Loop & Spring Physics
 

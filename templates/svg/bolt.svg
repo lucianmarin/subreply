@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" overflow="visible">
-    <path id="bolt" d="M3.75 13.5L14.25 2.25L12 10.5H20.25L9.75 21.75L12 13.5Z">
+    <path d="M3.75 13.5L14.25 2.25L12 10.5H20.25L9.75 21.75L12 13.5Z">
         <animate attributeName="d" values="M3.75 13.5L14.25 2.25L12 10.5H20.25L9.75 21.75L12 13.5Z;M2.595 13.77L14.565 0.495L12 10.23H21.405L9.435 23.505L12 13.77Z;M4.3275 13.365L14.0925 3.1275L12 10.635H19.6725L9.9075 20.8725L12 13.365Z;M3.5025 13.56L14.3175 1.86L12 10.44H20.4975L9.6825 22.14L12 13.56Z;M3.75 13.5L14.25 2.25L12 10.5H20.25L9.75 21.75L12 13.5Z;M3.75 13.5L14.25 2.25L12 10.5H20.25L9.75 21.75L12 13.5Z" keyTimes="0;0.14;0.28;0.4;0.5;1" keySplines="0.2 0.8 0.2 1;0.4 0 0.2 1;0.4 0 0.2 1;0.4 0 0.2 1;0 0 1 1" calcMode="spline" dur="1.6s" repeatCount="indefinite" />
         <animateTransform attributeName="transform" type="rotate" values="0 12 12;-12 12 12;6 12 12;-2 12 12;0 12 12;0 12 12" keyTimes="0;0.14;0.28;0.4;0.5;1" keySplines="0.2 0.8 0.2 1;0.4 0 0.2 1;0.4 0 0.2 1;0.4 0 0.2 1;0 0 1 1" calcMode="spline" dur="1.6s" repeatCount="indefinite" />
     </path>
