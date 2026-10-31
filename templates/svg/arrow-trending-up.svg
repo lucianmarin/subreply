@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" overflow="visible">
+    <path id="arrow-trending-up" d="M2.25 18L9 11.25l4.306 4.306a11.95 11.95 0 0 1 5.814-5.518l2.74-1.22">
+        <animateTransform attributeName="transform" type="translate" values="0 0;1.5 -1.5;-0.5 0.5;0.15 -0.15;0 0;0 0" keyTimes="0;0.14;0.28;0.4;0.5;1" keySplines="0.2 0.8 0.2 1;0.4 0 0.2 1;0.4 0 0.2 1;0.4 0 0.2 1;0 0 1 1" calcMode="spline" dur="1.6s" repeatCount="indefinite" />
+    </path>
+    <path d="M21.86 8.818l-5.94-2.281M21.86 8.817l-2.28 5.941">
+        <animateTransform attributeName="transform" type="translate" values="0 0;2.1 -2.1;-0.65 0.65;0.2 -0.2;0 0;0 0" keyTimes="0;0.14;0.28;0.4;0.5;1" keySplines="0.2 0.8 0.2 1;0.4 0 0.2 1;0.4 0 0.2 1;0.4 0 0.2 1;0 0 1 1" calcMode="spline" dur="1.6s" repeatCount="indefinite" />
+    </path>
+</svg>

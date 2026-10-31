@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" overflow="visible">
+    <path id="arrow-uturn-left" d="M3 9h12a6 6 0 0 1 0 12h-3">
+        <animate attributeName="d" values="M3 9h12a6 6 0 0 1 0 12h-3;M1 9h14a6 6 0 0 1 0 12h-4;M4.2 9h10.8a6 6 0 0 1 0 12h-2.5;M2.7 9h12.3a6 6 0 0 1 0 12h-3.1;M3 9h12a6 6 0 0 1 0 12h-3;M3 9h12a6 6 0 0 1 0 12h-3" keyTimes="0;0.14;0.28;0.4;0.5;1" keySplines="0.2 0.8 0.2 1;0.4 0 0.2 1;0.4 0 0.2 1;0.4 0 0.2 1;0 0 1 1" calcMode="spline" dur="1.6s" repeatCount="indefinite" />
+    </path>
+    <path d="M9 15L3 9l6-6">
+        <animateTransform attributeName="transform" type="translate" values="0 0;-2 0;1.2 0;-0.3 0;0 0;0 0" keyTimes="0;0.14;0.28;0.4;0.5;1" keySplines="0.2 0.8 0.2 1;0.4 0 0.2 1;0.4 0 0.2 1;0.4 0 0.2 1;0 0 1 1" calcMode="spline" dur="1.6s" repeatCount="indefinite" />
+    </path>
+</svg>
