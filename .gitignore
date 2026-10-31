@@ -10,3 +10,4 @@ sub.pid
 settings.json
 
 *.ipynb
+logs.html
