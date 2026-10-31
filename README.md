@@ -38,3 +38,14 @@ gunicorn main:app
 - ideal to use as internal social network in any organization
 - easy to install and easy to maintain
 - cost depends on level of support needed
+
+
+## Architecture
+
+Why Falcon + Gunicorn + Django ORM + PgBouncer over FastAPI + Tortoise ORM:
+
+- single-query composition with Django ORM (`OuterRef`, `ArraySubquery`, inline `Subquery`) avoids multiple database round-trips required by Tortoise ORM
+- PgBouncer handles connection pooling at port 6432 with sub-millisecond local I/O, making async database drivers unnecessary
+- Falcon WSGI + Gunicorn has lower per-request framework and serialization overhead than FastAPI/Pydantic
+- CPU-bound PBKDF2 hashing, Jinja2 rendering, and synchronous DNS MX lookups run in isolated workers without blocking an async event loop
+
