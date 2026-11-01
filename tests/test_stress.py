@@ -1,17 +1,25 @@
 import concurrent.futures
 import os
+import statistics
+import threading
 import time
 import requests
-import statistics
 
 URL = os.getenv("STRESS_URL") or "http://localhost:8000/trending"
 NUM_REQUESTS = int(os.getenv("STRESS_REQUESTS") or 1024)
 CONCURRENT_THREADS = int(os.getenv("STRESS_THREADS") or 32)
 
+thread_local = threading.local()
+
+def get_session():
+    if not hasattr(thread_local, "session"):
+        thread_local.session = requests.Session()
+    return thread_local.session
+
 def fetch_url(url):
     start_time = time.time()
     try:
-        response = requests.get(url, timeout=10)
+        response = get_session().get(url, timeout=10)
         response.raise_for_status()
         status_code = response.status_code
         result = "Success"
