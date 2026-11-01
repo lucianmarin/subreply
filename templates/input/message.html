@@ -7,7 +7,7 @@
         {% else %}
             <textarea name="content" id="id_content" autofocus
                 rows="1" cols="60" maxlength="720"
-                placeholder="Message @{{ member }}"
+                placeholder="Message {% if member.id == user.id %}yourself{% else %}@{{ member }}{% endif %}"
                 oninput="expand(this)" onkeydown="send(event)"
                 >{{ content | emojize }}</textarea>
         {% endif %}
