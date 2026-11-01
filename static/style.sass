@@ -268,6 +268,14 @@ table
 .reply
     margin: 10px 0
     overflow: hidden
+    .icon
+        height: 16px
+        float: right
+        padding: 7px
+        transform: scale(1, -1)
+        width: 16px
+        svg path
+            stroke: var(--gray)
     .placeholder
         background: var(--whitesmoke)
         background: linear-gradient(90deg, var(--whitesmoke) 0%, var(--white) 100%)
@@ -278,6 +286,7 @@ table
         background-color: var(--whitesmoke)
         border-bottom-right-radius: var(--radius)
         border-top-right-radius: var(--radius)
+        cursor: pointer
         float: right
         padding: 7px 10px
         padding-left: 5px
@@ -334,9 +343,9 @@ table
         color: var(--gray)
         &:hover
             color: var(--silver)
-    .gone
+    .accent
         color: var(--accent)
-    .warn
+    .alert
         color: var(--alert)
 
 .inline
@@ -381,9 +390,9 @@ table
             margin-right: 0
     .done
         color: var(--silver)
-    .gone
+    .accent
         color: var(--accent)
-    .warn
+    .alert
         color: var(--alert)
 
 .author
@@ -394,26 +403,23 @@ table
     a
         &:hover
             color: var(--silver)
-    .action, .accent, .warn
+    .action, .accent, .alert
         &::first-letter
             text-transform: uppercase
-    .done, .handle, i
+    .fullname, .username, i
         font-weight: bold
-    .action, .ago, .done
+    .action, .username
         color: var(--gray)
     .accent
         color: var(--accent)
-    .warn
+    .alert
         color: var(--alert)
-    .handle
+    .fullname
         &:hover
             color: var(--gray)
     .right
         color: var(--silver)
         float: right
-    .caps
-        font-size: var(--tiny)
-        text-transform: uppercase
 
 .status
     color: var(--gray)

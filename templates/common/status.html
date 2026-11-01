@@ -1,22 +1,32 @@
-{% if member.links %}
+{% if member.links or member.donated %}
     <div class="entry">
         <div class="status">
-            Also on {{ member.links | enumerize | safe }}.
+            {% if member.links %}
+                Also on {{ member.links | enumerize | safe }}.
+            {% endif %}
+            {% if member.donated %}
+                Donated ${{ member.donated }}.
+            {% endif %}
         </div>
     </div>
 {% endif %}
 
 <div class="entry">
-    <div class="status">
-        Joined {{ member.created_at | shortdate }} ago.
-        {% if member.seen_at != member.created_at %}
-            Seen {{ member.seen_at | shortdate }} ago.
-        {% endif %}
-        {% if member.donated %}
-            Donated ${{ member.donated }}.
-        {% endif %}
-        {% if user and member.id in user.followers_set %}
-            Follows you.
+    <div class="small">
+        {% if member.id == user.id %}
+            <a class="accent" href="/{{ member }}/message">notes</a>
+            <a class="action" href="/details">details</a>
+            <a class="alert" href="/logout">logout</a>
+        {% else %}
+            <a class="accent" href="/{{ member }}/message">message</a>
+            {% if member.id in user.following_set %}
+                <a class="action" onclick="postFollow(event, 'unfollow')" data-username="{{ member }}">unfollow</a>
+            {% else %}
+                <a class="accent" onclick="postFollow(event, 'follow')" data-username="{{ member }}">follow</a>
+            {% endif %}
+            {% if user and member.id in user.followers_set %}
+                <b>follows you</b>
+            {% endif %}
         {% endif %}
     </div>
 </div>

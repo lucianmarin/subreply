@@ -41,15 +41,15 @@ function postDelete(event, call, status) {
     if (!element.dataset.confirm) {
         confirm = document.createElement("a");
         element.innerText = "undo";
-        element.className = "gone";
+        element.className = "accent";
         element.dataset.confirm = "yes";
         confirm.innerText = "yes";
-        confirm.className = "warn";
+        confirm.className = "alert";
         confirm.onclick = remove;
         small.appendChild(confirm);
     } else {
         element.innerText = call;
-        element.className = "";
+        element.className = "action";
         element.dataset.confirm = "";
         confirm.remove();
     }
@@ -90,11 +90,11 @@ function postSave(event, call) {
     ajax("/api/" + call + "/" + id, "post", "json", function (data) {
         if (data && data.status == reverse) {
             element.innerText = data.status;
-            element.className = data.status == "unsave" ? "gone" : "";
+            element.className = data.status == "unsave" ? "accent" : "action";
             element.onclick = rebind(reverse);
         } else {
             element.innerText = "retry";
-            element.className = "warn";
+            element.className = "alert";
             element.onclick = rebind(call);
         }
     });
@@ -119,7 +119,7 @@ function postFollow(event, call) {
             element.onclick = rebind(reverse);
         } else {
             element.innerText = "retry";
-            element.className = "warn";
+            element.className = "alert";
             element.onclick = rebind(call);
         }
     });
@@ -162,10 +162,10 @@ function postClear(event) {
         var confirm = document.createElement("a");
         sep.innerHTML = " &mdash; ";
         element.innerText = "undo";
-        element.className = "gone";
+        element.className = "accent";
         element.dataset.confirm = "yes";
         confirm.innerText = "yes";
-        confirm.className = "warn";
+        confirm.className = "alert";
         confirm.onclick = clear;
         load.appendChild(sep);
         load.appendChild(confirm);

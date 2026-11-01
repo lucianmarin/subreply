@@ -10,7 +10,7 @@
             {% if entry.edited_at %}&middot;&middot;&middot;{% endif %}
             {{ entry.created_at | shortdate }}
         </a>
-        <a href="/reply/{{ entry.id }}">
+        <a class="action" href="/reply/{{ entry.id }}">
             {% if not entry.replies %}
                 reply{% elif entry.replies == 1 %}1 reply{% else %}{{ entry.replies }} replies
             {% endif %}
@@ -19,17 +19,17 @@
         {% if user %}
             {% if entry.created_by_id == user.id %}
                 {% if not entry.replies %}
-                    <a href="/edit/{{ entry.id }}">edit</a>
+                    <a class="action" href="/edit/{{ entry.id }}">edit</a>
                 {% endif %}
             {% else %}
                 {% if entry.id in user.saves_set %}
-                    <a class="gone" onclick="postSave(event, 'unsave')" data-id="{{ entry.id }}">unsave</a>
+                    <a class="accent" onclick="postSave(event, 'unsave')" data-id="{{ entry.id }}">unsave</a>
                 {% else %}
-                    <a onclick="postSave(event, 'save')" data-id="{{ entry.id }}">save</a>
+                    <a class="action" onclick="postSave(event, 'save')" data-id="{{ entry.id }}">save</a>
                 {% endif %}
             {% endif %}
             {% if user.id in [entry.created_by_id, entry.to_user_id] and not entry.replies %}
-                <a onclick="postDelete(event, 'delete', 'deleted')" data-id="{{ entry.id }}">delete</a>
+                <a class="action" onclick="postDelete(event, 'delete', 'deleted')" data-id="{{ entry.id }}">delete</a>
             {% endif %}
         {% endif %}
     </div>

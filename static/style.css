@@ -120,9 +120,13 @@ table td:nth-child(even):last-child { border-right: 0 none; }
 
 .reply { margin: 10px 0; overflow: hidden; }
 
+.reply .icon { height: 16px; float: right; padding: 7px; transform: scale(1, -1); width: 16px; }
+
+.reply .icon svg path { stroke: var(--gray); }
+
 .reply .placeholder { background: var(--whitesmoke); background: linear-gradient(90deg, var(--whitesmoke) 0%, var(--white) 100%); border-radius: var(--radius); color: var(--gray); padding: 5px 10px; }
 
-.reply label { background-color: var(--whitesmoke); border-bottom-right-radius: var(--radius); border-top-right-radius: var(--radius); float: right; padding: 7px 10px; padding-left: 5px; height: 16px; width: 16px; }
+.reply label { background-color: var(--whitesmoke); border-bottom-right-radius: var(--radius); border-top-right-radius: var(--radius); cursor: pointer; float: right; padding: 7px 10px; padding-left: 5px; height: 16px; width: 16px; }
 
 .reply input[type="text"] { border-bottom-right-radius: 0; border-top-right-radius: 0; float: left; width: calc(100% - 46px); }
 
@@ -158,9 +162,9 @@ table td:nth-child(even):last-child { border-right: 0 none; }
 
 .load a:hover { color: var(--silver); }
 
-.load .gone { color: var(--accent); }
+.load .accent { color: var(--accent); }
 
-.load .warn { color: var(--alert); }
+.load .alert { color: var(--alert); }
 
 .inline { opacity: 0.5; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
@@ -192,9 +196,9 @@ table td:nth-child(even):last-child { border-right: 0 none; }
 
 .small .done { color: var(--silver); }
 
-.small .gone { color: var(--accent); }
+.small .accent { color: var(--accent); }
 
-.small .warn { color: var(--alert); }
+.small .alert { color: var(--alert); }
 
 .author { color: var(--gray); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
@@ -202,21 +206,19 @@ table td:nth-child(even):last-child { border-right: 0 none; }
 
 .author a:hover { color: var(--silver); }
 
-.author .action::first-letter, .author .accent::first-letter, .author .warn::first-letter { text-transform: uppercase; }
+.author .action::first-letter, .author .accent::first-letter, .author .alert::first-letter { text-transform: uppercase; }
 
-.author .done, .author .handle, .author i { font-weight: bold; }
+.author .fullname, .author .username, .author i { font-weight: bold; }
 
-.author .action, .author .ago, .author .done { color: var(--gray); }
+.author .action, .author .username { color: var(--gray); }
 
 .author .accent { color: var(--accent); }
 
-.author .warn { color: var(--alert); }
+.author .alert { color: var(--alert); }
 
-.author .handle:hover { color: var(--gray); }
+.author .fullname:hover { color: var(--gray); }
 
 .author .right { color: var(--silver); float: right; }
-
-.author .caps { font-size: var(--tiny); text-transform: uppercase; }
 
 .status { color: var(--gray); font-size: var(--small); }
 
