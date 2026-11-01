@@ -1,4 +1,4 @@
-html { --sup: 8px; --caps: 11px; --mono: 12px; --small: 13px; --regular: 14px; --big: 16px; --indent: 30px; --radius: 6px; --d: 0.2s; --white: #fff; --whitesmoke: #f0f0f0; --redsmoke: #fff0f0; --gainsboro: #e0e0e0; --silver: #c0c0c0; --gray: #808080; --black: #000; --accent: #2eb8b8; --alert: #ff4500; -ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; }
+html { --sup: 8px; --tiny: 12px; --small: 13px; --regular: 14px; --big: 16px; --indent: 30px; --radius: 6px; --d: 0.2s; --white: #fff; --whitesmoke: #f0f0f0; --redsmoke: #fff0f0; --gainsboro: #e0e0e0; --silver: #c0c0c0; --gray: #808080; --black: #000; --accent: #2eb8b8; --alert: #ff4500; -ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; }
 
 ::-moz-placeholder { color: #1f1f1f; }
 
@@ -18,7 +18,7 @@ form, input, img, label { display: block; }
 
 body, label, input, select, textarea { font-family: "Route 159", sans-serif; font-size: var(--regular); line-height: 20px; }
 
-code { color: var(--accent); font-family: "Hack", monospace; font-size: var(--mono); }
+code { color: var(--accent); font-family: "Hack", monospace; font-size: var(--tiny); }
 
 label { color: var(--black); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
@@ -184,7 +184,7 @@ table td:nth-child(even):last-child { border-right: 0 none; }
 
 .small { font-size: var(--small); overflow: hidden; }
 
-.small.caps { font-size: var(--caps); text-transform: uppercase; }
+.small.caps { font-size: var(--tiny); text-transform: uppercase; }
 
 .small b { color: var(--silver); float: left; }
 
