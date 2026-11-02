@@ -46,7 +46,7 @@ table tbody:first-child th { border-top: 0 none; padding-top: 0; }
 
 table th { border-top: var(--whitesmoke) 1px solid; cursor: pointer; font-weight: bold; text-align: left; padding: 6px 0; }
 
-table td { border-top: var(--whitesmoke) 1px solid; padding: 6px 0; }
+table td { border-top: var(--whitesmoke) 1px solid; font-family: 'Hack', monospace; font-size: var(--tiny); padding: 6px 0; }
 
 table td:nth-child(odd) { text-align: center; width: 30px; }
 
