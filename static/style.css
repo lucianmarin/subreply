@@ -120,7 +120,7 @@ table td:nth-child(even):last-child { border-right: 0 none; }
 
 .reply { margin: 10px 0; overflow: hidden; }
 
-.reply .icon { height: 16px; float: right; padding: 7px; transform: scale(1, -1); width: 16px; }
+.reply .icon { height: 16px; float: right; padding: 7px; transform: scaleY(-1); width: 16px; }
 
 .reply .icon svg path { stroke: var(--gray); }
 
