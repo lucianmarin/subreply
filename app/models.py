@@ -3,7 +3,7 @@ from os import environ
 from django import setup
 from django.conf import settings
 from django.db import models
-from django.db.models import F
+from django.db.models import Count, OuterRef, Q, Subquery
 from django.utils.functional import cached_property
 
 from app.utils import utc_timestamp
@@ -131,13 +131,15 @@ class Post(models.Model):
         else:
             self.ancestors.clear()
 
-    def add_replies(self):
+    def set_replies(self):
         if self.parent_id:
-            self.ancestors.update(replies=F('replies') + 1)
-
-    def subtract_replies(self):
-        if self.parent_id:
-            self.ancestors.update(replies=F('replies') - 1)
+            Post.objects.filter(
+                Q(descendants=self.parent_id) | Q(id=self.parent_id)
+            ).update(
+                replies=Subquery(
+                    Post.objects.filter(id=OuterRef('id')).values(c=Count('descendants'))
+                )
+            )
 
 
 class Save(models.Model):

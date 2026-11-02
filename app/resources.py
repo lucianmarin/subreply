@@ -202,7 +202,7 @@ class ReplyResource:
             at_user_id=USQ(mentions),
         )
         re.set_ancestors()
-        re.add_replies()
+        re.set_replies()
         parent.replies += 1
         return re
 
