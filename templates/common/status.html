@@ -6,7 +6,7 @@
             {% endif %}
             {% if member.id == 1 or member.donated %}
                 {% if member.id == 1 %}
-                    {% set donated = (8 * 12 + 20 * 2) * (year() - 2014) %}
+                    {% set donated = costs %}
                 {% else %}
                     {% set donated = member.donated %}
                 {% endif %}

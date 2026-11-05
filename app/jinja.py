@@ -8,6 +8,7 @@ from jinja2 import Environment, FileSystemBytecodeCache, FileSystemLoader
 from app.filters import age, enumerize, hexcode, parser, timeago
 from app.utils import utc_timestamp
 from project.settings import DEBUG
+from project.vars import COSTS
 
 env = Environment(autoescape=True)
 
@@ -28,8 +29,8 @@ env.filters['quote'] = quote_plus
 env.filters['shortdate'] = lambda ts: timeago(utc_timestamp() - ts)
 env.filters['shorten'] = lambda txt, w: shorten(txt, w, placeholder="...")
 
-env.globals['year'] = lambda: datetime.now().year
 env.globals['brand'] = "Subreply"
+env.globals['costs'] = COSTS
 env.globals['v'] = 305
 
 

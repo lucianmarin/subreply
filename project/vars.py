@@ -1,3 +1,4 @@
+from datetime import date
 from json import load
 from pathlib import Path
 
@@ -10,7 +11,8 @@ with open(ROOT / 'static/countries.json') as file:
     COUNTRIES = load(file)
 
 MIN_AGE = 16
-MAX_AGE = 100
+MAX_AGE = 99
+COSTS = (8 * 12 + 20 * 2) * (date.today().year - 2014)
 
 TYPES = [
     "work", "education", "project", "license", "certification",
