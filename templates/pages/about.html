@@ -25,13 +25,13 @@
         <h4>Social network costs</h4>
         {% set costs = (8 * 12 + 20 * 2) * (year() - 2014) %}
         <ol>
-            <li>${{ costs }} in costs since 2014 &mdash; $8/m for hosting plus $20/y for two domains.</li>
-            <li>${{ donated | round | int }} donated in total by {{ donors }} people &mdash; ${{ top.donated | round | int }} donated by <a class="name" href="/{{ top }}">{{ top.full_name | emojize }}</a>.</li>
+            <li>${{ costs }} in costs since 2014. $8/m for hosting plus $20/y for two domains.</li>
+            <li>${{ donated | round | int }} donated in total by {{ donors }} people. ${{ top.donated | round | int }} donated by <a class="name" href="/{{ top }}">{{ top.full_name | emojize }}</a>.</li>
             <li>
                 {% if donated > costs %}
                     We have a surplus of ${{ (donated - costs) | round | int }} donated. Thank you!
                 {% else %}
-                    No surplus donated yet &mdash; the remaining ${{ (costs - donated) | round | int }} is covered by <a class="name" href="/{{ luc }}">{{ luc.full_name | emojize }}</a>.
+                    No surplus donated yet. The remaining ${{ (costs - donated) | round | int }} is covered by <a class="name" href="/{{ luc }}">{{ luc.full_name | emojize }}</a>.
                 {% endif %}
             </li>
         </ol>
@@ -55,7 +55,7 @@
                 <svg width="16" height="16" viewBox="0 0 24 24">
                     <path id="computer-laptop" d="M10.5 17.5h3M4.75 15l-1.302 1.632a.996.996 0 0 0 .779 1.618h15.546a.996.996 0 0 0 .778-1.618L19.25 15zM7 5.75A2.25 2.25 0 0 0 4.75 8v7h14.5V8A2.25 2.25 0 0 0 17 5.75z" />
                 </svg>
-                Also available on Windows, Linux and <a href="https://github.com/lucianmarin/macreply">macOS</a>.
+                Also available on Windows, Linux and natively on <a href="https://github.com/lucianmarin/macreply">macOS</a>.
             </li>
         </ul>
 
