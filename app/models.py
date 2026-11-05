@@ -86,7 +86,7 @@ class User(models.Model):
     def links(self):
         social = self.social.copy()
         if self.phone:
-            social['telephone'] = self.phone['code'] + self.phone['number']
+            social['phone'] = self.phone['code'] + self.phone['number']
         return social
 
     def set_seen(self):

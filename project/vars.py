@@ -26,10 +26,10 @@ LINKS = {
     'paypal': '<a href="https://paypal.me/{0}" rel="me">PayPal</a>',
     'pinboard': '<a href="https://pinboard.in/u:{0}/" rel="me">Pinboard</a>',
     'reddit': '<a href="https://reddit.com/u/{0}" rel="me">Reddit</a>',
+    'phone': '<a href="tel:{0}" rel="me">phone</a>',
     'soundcloud': '<a href="https://soundcloud.com/{0}" rel="me">SoundCloud</a>',
     'spotify': '<a href="https://open.spotify.com/user/{0}" rel="me">Spotify</a>',
     'telegram': '<a href="https://t.me/{0}" rel="me">Telegram</a>',
-    'telephone': '<a href="tel:{0}" rel="me">Telephone</a>',
     'twitter': '<a href="https://twitter.com/{0}" rel="me">Twitter</a>',
     'x': '<a href="https://x.com/{0}" rel="me">X</a>',
     'youtube': '<a href="https://youtube.com/@{0}" rel="me">YouTube</a>'
