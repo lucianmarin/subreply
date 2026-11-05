@@ -5,6 +5,7 @@ dnspython
 emoji
 falcon
 gunicorn
+ipython
 jinja2
 phonenumbers
 pip

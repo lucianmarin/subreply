@@ -22,6 +22,20 @@
             </p>
         </div>
 
+        <h4>Social network costs</h4>
+        {% set costs = (8 * 12 + 20 * 2) * (year() - 2014) %}
+        <ol>
+            <li>${{ costs }} in costs since 2014 &mdash; $8/m for hosting plus $20/y for two domains.</li>
+            <li>${{ donated | round | int }} donated in total by {{ donors }} people.</li>
+            <li>
+                {% if donated > costs %}
+                    We have a surplus of ${{ (donated - costs) | round | int }} donated. Thank you!
+                {% else %}
+                    No surplus donated yet &mdash; the remaining ${{ (costs - donated) | round | int }} is covered by <a class="name" href="/{{ luc }}">{{ luc.full_name | emojize }}</a>.
+                {% endif %}
+            </li>
+        </ol>
+
         <h4>Install as a web app</h4>
         <ul>
             <li>
@@ -51,7 +65,7 @@
             <li>Built with Python 3.12, Falcon and Django ORM.</li>
             <li>Powered by Gunicorn behind Nginx and PgBouncer in front of PostgreSQL.</li>
             <li>Icons by <a href="https://heroicons.com/">Heroicons</a> and <a href="https://sidekickicons.com/">Sidekickicons</a>, Route 159 typeface by <a href="https://dotcolon.net/fonts/route159">Sora Sagano</a>.</li>
-            <li><a href="https://paypal.com/donate/?hosted_button_id=586UTPPSHBWAN">Donate via PayPal</a> to keep Subreply independent, ad-free and running indefinitely.</li>
+            <li><a href="https://paypal.com/donate/?hosted_button_id=586UTPPSHBWAN">Donate via PayPal</a> to keep Subreply ad-free and running indefinitely.</li>
         </ol>
 
         <h4>Features and design constraints</h4>

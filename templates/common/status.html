@@ -4,8 +4,13 @@
             {% if member.links %}
                 Also on {{ member.links | enumerize | safe }}.
             {% endif %}
-            {% if member.donated %}
-                Donated ${{ member.donated }}.
+            {% if member.id == 1 or member.donated %}
+                {% if member.id == 1 %}
+                    {% set donated = (8 * 12 + 20 * 2) * (year() - 2014) %}
+                {% else %}
+                    {% set donated = member.donated %}
+                {% endif %}
+                Donated ${{ donated | round | int }}.
             {% endif %}
         </div>
     </div>

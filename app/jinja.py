@@ -28,6 +28,7 @@ env.filters['quote'] = quote_plus
 env.filters['shortdate'] = lambda ts: timeago(utc_timestamp() - ts)
 env.filters['shorten'] = lambda txt, w: shorten(txt, w, placeholder="...")
 
+env.globals['year'] = lambda: datetime.now().year
 env.globals['brand'] = "Subreply"
 env.globals['v'] = 305
 

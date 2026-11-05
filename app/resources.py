@@ -1,4 +1,4 @@
-from django.db.models import Max, Prefetch, Q, Subquery
+from django.db.models import Count, Max, Prefetch, Q, Subquery, Sum
 from emoji import demojize
 from falcon import HTTPFound, HTTPNotFound, before
 from strictyaml import as_document
@@ -48,9 +48,13 @@ class AboutResource:
         emo = User.objects.exclude(
             id__in=[1, 2]
         ).exclude(emoji="").order_by("?").first()
+        donations = User.objects.exclude(donated=0).aggregate(
+            donated=Sum('donated', default=.0),
+            donors=Count('id')
+        )
         resp.text = render(
             page='about', view='about', user=req.user,
-            luc=users[1], sub=users[2], emo=emo
+            luc=users[1], sub=users[2], emo=emo, **donations
         )
 
     @before(auth_user)
