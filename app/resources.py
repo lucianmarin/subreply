@@ -48,13 +48,14 @@ class AboutResource:
         emo = User.objects.exclude(
             id__in=[1, 2]
         ).exclude(emoji="").order_by("?").first()
+        top = User.objects.exclude(donated=0).order_by("-donated").first()
         donations = User.objects.exclude(donated=0).aggregate(
             donated=Sum('donated', default=.0),
             donors=Count('id')
         )
         resp.text = render(
             page='about', view='about', user=req.user,
-            luc=users[1], sub=users[2], emo=emo, **donations
+            luc=users[1], sub=users[2], emo=emo, top=top, **donations
         )
 
     @before(auth_user)
