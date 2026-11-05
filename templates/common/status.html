@@ -10,7 +10,7 @@
                 {% else %}
                     {% set donated = member.donated %}
                 {% endif %}
-                Donated ${{ donated | round | int }}.
+                Donated <a href="/about">${{ donated | round | int }}</a>.
             {% endif %}
         </div>
     </div>
