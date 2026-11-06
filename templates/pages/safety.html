@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block main %}
+    <div class="menu">
+        <a href="/about">About</a>
+        <a href="/api">API</a>
+        <a href="/directory">Directory</a>
+        <a href="/privacy">Privacy</a>
+        <a href="/safety" class="on">Safety</a>
+        <a href="/terms">Terms</a>
+    </div>
+
+    <div class="about">
+        <p>
+            Subreply is the only truly safe social network on the internet. By stripping away media uploads, file sharing, algorithmic amplification and dark patterns, Subreply eliminates entire categories of online harm at the architectural level before they can ever exist.
+        </p>
+
+        <h4>Safe by design</h4>
+        <p>
+            Unlike traditional social networks that struggle to moderate millions of uploaded photos and videos after the fact, Subreply is strictly text-only. Our deliberate constraints make Subreply uniquely immune to visual abuse and exploitation:
+        </p>
+        <ul class="list">
+            <li>
+                Text-only architecture &mdash; no images, videos, audio or file attachments can ever be uploaded, stored or transmitted on Subreply.
+            </li>
+            <li>
+                Strict character limits &mdash; posts and messages are limited to ASCII characters, standard emojis and a maximum of 640 characters.
+            </li>
+            <li>
+                Intentional linking &mdash; at most one external link, mention or hashtag is allowed per post, preventing spam and coordinated abuse.
+            </li>
+            <li>
+                No algorithmic rabbit holes &mdash; feeds are strictly reverse-chronological with zero viral loops, recommendations or engagement bait.
+            </li>
+            <li>
+                Age requirement &mdash; Subreply requires members to be at least 16 years old to register and participate.
+            </li>
+        </ul>
+
+        <h4>Zero tolerance for CSAE and CSAM</h4>
+        <p>
+            Subreply enforces a strict, zero-tolerance policy against Child Sexual Abuse and Exploitation (CSAE) and Child Sexual Abuse Material (CSAM). Because Subreply does not support image, video or file uploads of any kind, visual CSAM cannot be hosted or shared on our servers.
+        </p>
+        <p>
+            Furthermore, we strictly prohibit using Subreply or any third-party Subreply client to endanger, groom, sextort, traffic or otherwise exploit minors through text, external links or private messages. Any attempt to share links to CSAM, solicit minors or engage in predatory behavior results in immediate and permanent account destruction without prior warning.
+        </p>
+
+        <h4>Reporting and user feedback</h4>
+        <p>
+            Members can report safety concerns, abusive behavior or policy violations directly within the app or on the web without leaving Subreply:
+        </p>
+        <ul class="list">
+            <li>
+                Send a direct message in-app to <a href="/lucian/message">@lucian</a> or <a href="/sublevel/message">@sublevel</a> to report any account, post or link.
+            </li>
+            <li>
+                Delete unwanted replies to your own posts before responding to them, or unsend and clear private messages at any time.
+            </li>
+            <li>
+                Contact our designated Child Safety Point of Contact directly for urgent safety or legal inquiries via <a href="/lucian">@lucian</a>.
+            </li>
+        </ul>
+
+        <h4>Legal compliance and enforcement</h4>
+        <p>
+            Subreply complies with all applicable child safety laws and regulations. Upon obtaining actual knowledge of any CSAE activity or external links to CSAM, we immediately remove the offending content, permanently destroy the associated accounts and report confirmed violations to the <a href="https://report.cybertip.org/">National Center for Missing &amp; Exploited Children (NCMEC)</a> and relevant law enforcement authorities.
+        </p>
+    </div>
+{% endblock %}

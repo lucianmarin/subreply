@@ -71,6 +71,12 @@ class AboutResource:
         )
 
     @before(auth_user)
+    def on_get_safety(self, req, resp):
+        resp.text = render(
+            page='safety', view='about', user=req.user
+        )
+
+    @before(auth_user)
     def on_get_api(self, req, resp):
         resp.text = render(
             page='api', view='about', user=req.user

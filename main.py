@@ -65,6 +65,7 @@ app.add_route('/about', resources.AboutResource())
 app.add_route('/api', resources.AboutResource(), suffix="api")
 app.add_route('/directory', resources.AboutResource(), suffix="directory")
 app.add_route('/privacy', resources.AboutResource(), suffix="privacy")
+app.add_route('/safety', resources.AboutResource(), suffix="safety")
 app.add_route('/terms', resources.AboutResource(), suffix="terms")
 
 app.add_route('/robots.txt', resources.TxtResource(), suffix="bots")
