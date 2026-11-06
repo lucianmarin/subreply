@@ -31,7 +31,7 @@ env.filters['shorten'] = lambda txt, w: shorten(txt, w, placeholder="...")
 
 env.globals['brand'] = "Subreply"
 env.globals['costs'] = COSTS
-env.globals['v'] = 305
+env.globals['v'] = 306
 
 
 def render(page, **kwargs):

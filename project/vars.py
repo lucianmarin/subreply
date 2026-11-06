@@ -87,6 +87,7 @@ INVALID = set(RESERVED + [
     "reply",
     "request",
     "reset",
+    "safety",
     "save",
     "saved",
     "saves",
