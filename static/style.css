@@ -142,7 +142,7 @@ table td:nth-child(even):last-child { border-right: 0 none; }
 
 .avatar { float: left; display: block; margin-left: calc(0px - var(--indent)); text-align: center; width: var(--indent); }
 
-.sublist { margin-left: var(--indent); }
+.sublist .entry { padding-left: var(--indent); }
 
 .inlist { border-left: var(--whitesmoke) 2px solid; }
 

@@ -123,7 +123,7 @@ class TxtResource:
 
 
 class FeedResource:
-    placeholder = "Say something"
+    placeholder = "Start a thread"
 
     def fetch_entries(self, user):
         friends = Bond.objects.filter(created_by=user).values('to_user_id')
@@ -485,7 +485,7 @@ class PeopleResource:
 
 
 class DiscoverResource:
-    placeholder = "Search content"
+    placeholder = "Search topics"
 
     def build_query(self, terms):
         query = Q()
