@@ -19,7 +19,7 @@
         {% elif user %}
             <i>&bull;</i>
             {% if member.id == user.id %}
-                <a class="action" href="/options">options</a>
+                <a class="action" href="/options">profile</a>
             {% elif member.id in user.following_set %}
                 <a class="action" onclick="postFollow(event, 'unfollow')" data-username="{{ member }}">unfollow</a>
             {% else %}
