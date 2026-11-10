@@ -46,7 +46,13 @@
                 <span>{{ user.notif_messages | cap }}</span>
             {% endif %}
             {% if view == "message" %}
-                {% if entries %}
+                {% if blocked %}
+                    <svg id="message-square-exclamation-point" width="16" height="16" viewBox="0 0 24 24">
+                        <path d="M22 17a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 21.286V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2z"/>
+                        <path d="M12 15h.01"/>
+                        <path d="M12 7v4"/>
+                    </svg>
+                {% elif entries %}
                     <svg id="message-square-text" width="16" height="16" viewBox="0 0 24 24">
                         <path d="M22 17a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 21.286V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2z" />
                         <path d="M7 11h10" />
