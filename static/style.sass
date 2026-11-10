@@ -120,7 +120,7 @@ svg
     stroke-linecap: round
     stroke-linejoin: round
     stroke-width: 2
-    path
+    *
         fill: none
         stroke: var(--black)
 
@@ -220,12 +220,12 @@ table
         &.on
             background-color: var(--accent)
             color: var(--white)
-            svg path
+            svg *
                 stroke: var(--white)
             span
                 color: var(--white)
         &.red
-            svg path
+            svg *
                 stroke: var(--alert)
             span
                 color: var(--alert)
@@ -277,7 +277,7 @@ table
         padding: 7px
         transform: scaleY(-1)
         width: 16px
-        svg path
+        svg *
             stroke: var(--gray)
     .placeholder
         background: var(--whitesmoke)

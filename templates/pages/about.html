@@ -26,20 +26,25 @@
         <h4>Social network costs</h4>
         <ul>
             <li>
-                <svg width="16" height="16" viewBox="0 0 24 24">
-                    <path id="currency-dollar" d="M12 6v12m-3-2.818.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                <svg id="dollar-sign" width="16" height="16" viewBox="0 0 24 24">
+                    <path d="M12 3v18" />
+                    <path d="M17 5H9.5a1 1 0 000 7h5a1 1 0 010 7H6" />
                 </svg>
                 ${{ costs }} in costs since 2014. $8/m for hosting plus $20/y for two domains.
             </li>
             <li>
-                <svg width="16" height="16" viewBox="0 0 24 24">
-                    <path id="credit-card" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 19.5Z" />
+                <svg id="credit-card" width="16" height="16" viewBox="0 0 24 24">
+                    <rect width="20" height="14" x="2" y="5" rx="2" />
+                    <line x1="2" x2="22" y1="10" y2="10" />
+                    <path d="M6 14h2" />
                 </svg>
                 ${{ donated | round | int }} donated in total by {{ donors }} people.
                 ${{ top.donated | round | int }} donated by <a class="name" href="/{{ top }}">{{ top.full_name | emojize }}</a>.</li>
             <li>
-                <svg width="16" height="16" viewBox="0 0 24 24">
-                    <path id="banknotes" d="M2.25 18.75a60.07 60.07 0 0 1 15.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 0 1 3 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 0 0-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 0 1-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 0 0 3 15h-.75M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm3 0h.008v.008H18V10.5Zm-12 0h.008v.008H6V10.5Z" />
+                <svg id="banknote" width="16" height="16" viewBox="0 0 24 24">
+                    <rect width="20" height="12" x="2" y="6" rx="2" />
+                    <circle cx="12" cy="12" r="2" />
+                    <path d="M6 12h.01M18 12h.01" />
                 </svg>
                 {% if donated > costs %}
                     We have a surplus of ${{ (donated - costs) | round | int }} donated.
@@ -54,21 +59,23 @@
         <h4>Install as a web app</h4>
         <ul>
             <li>
-                <svg width="16" height="16" viewBox="0 0 24 24">
-                    <path id="play" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 010 1.971l-11.54 6.347a1.125 1.125 0 01-1.667-.985V5.653z" />
+                <svg id="play" width="16" height="16" viewBox="0 0 24 24">
+                    <path d="M5 5a2 2 0 0 1 3.008-1.728l11.997 6.998a2 2 0 0 1 .003 3.458l-12 7A2 2 0 0 1 5 19z" />
                 </svg>
                 Install on Android by <a href="https://support.google.com/chrome/answer/9658361">adding it to your home screen</a> from Chrome.
             </li>
             <li>
-                <svg width="16" height="16" viewBox="0 0 24 24">
-                    <path id="device-phone-mobile" d="M10.5 1.5H8.25A2.25 2.25 0 006 3.75v16.5a2.25 2.25 0 002.25 2.25h7.5A2.25 2.25 0 0018 20.25V3.75a2.25 2.25 0 00-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3m-3 18.75h3" />
+                <svg id="smartphone" width="16" height="16" viewBox="0 0 24 24">
+                    <rect width="14" height="20" x="5" y="2" rx="2" ry="2" />
+                    <path d="M12 18h.01" />
                 </svg>
                 Install on iPhone or iPad by <a href="https://support.apple.com/guide/iphone/bookmark-favorite-webpages-iph42ab2f3a7/ios">adding it to your home screen</a> from Safari.
             </li>
             <li>
-                <!-- icon from sidekickicons.com -->
-                <svg width="16" height="16" viewBox="0 0 24 24">
-                    <path id="computer-laptop" d="M10.5 17.5h3M4.75 15l-1.302 1.632a.996.996 0 0 0 .779 1.618h15.546a.996.996 0 0 0 .778-1.618L19.25 15zM7 5.75A2.25 2.25 0 0 0 4.75 8v7h14.5V8A2.25 2.25 0 0 0 17 5.75z" />
+                <!-- icon from lucide.dev -->
+                <svg id="laptop" width="16" height="16" viewBox="0 0 24 24">
+                    <path d="M18 5a2 2 0 0 1 2 2v8.526a2 2 0 0 0 .212.897l1.068 2.127a1 1 0 0 1-.9 1.45H3.62a1 1 0 0 1-.9-1.45l1.068-2.127A2 2 0 0 0 4 15.526V7a2 2 0 0 1 2-2z" />
+                    <path d="M20.054 15.987H3.946" />
                 </svg>
                 Also available on Windows, Linux and natively on <a href="https://github.com/lucianmarin/macreply">macOS</a>.
             </li>
@@ -79,7 +86,7 @@
             <li>Hosted on a high-frequency <a href="https://vultr.com/?ref=8946799-8H">Vultr VPS</a> running Ubuntu 24.04 LTS.</li>
             <li>Built with Python 3.12, Falcon and Django ORM.</li>
             <li>Powered by Gunicorn behind Nginx and PgBouncer in front of PostgreSQL.</li>
-            <li>Icons by <a href="https://heroicons.com/">Heroicons</a> and <a href="https://sidekickicons.com/">Sidekickicons</a>, Route 159 typeface by <a href="https://dotcolon.net/fonts/route159">Sora Sagano</a>.</li>
+            <li>Icons by <a href="https://lucide.dev/">Lucide</a>, Route 159 typeface by <a href="https://dotcolon.net/fonts/route159">Sora Sagano</a>.</li>
             <li><a href="https://paypal.com/donate/?hosted_button_id=586UTPPSHBWAN">Donate via PayPal</a> to keep Subreply ad-free and running indefinitely.</li>
         </ol>
 
