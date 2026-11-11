@@ -114,7 +114,7 @@ class FeedEndpoint(FeedResource):
     @before(auth_required)
     def on_get(self, req, resp):
         resp.content_type = MEDIA_JSON
-        entries, _, page = paginate(req, self.fetch_entries(req.user))
+        entries, _, page = paginate(req, self.fetch_entries(req.user), has_kids=True)
         resp.media = {
             "page": page,
             "entries": [build_entry(entry, req.user, has_parent=True, has_kids=True) for entry in entries]
@@ -171,7 +171,7 @@ class MemberEndpoint(MemberResource):
     @before(auth_user)
     def on_get_posts(self, req, resp, username):
         member = self.fetch_member(req, username)
-        entries, _, page = paginate(req, self.fetch_entries(member))
+        entries, _, page = paginate(req, self.fetch_entries(member), has_kids=True)
         resp.content_type = MEDIA_JSON
         resp.media = {
             "page": page,
@@ -209,7 +209,7 @@ class MentionsEndpoint(MentionsResource):
     @before(auth_user)
     @before(auth_required)
     def on_get(self, req, resp):
-        entries, _, page = paginate(req, self.fetch_entries(req.user))
+        entries, _, page = paginate(req, self.fetch_entries(req.user), has_kids=True)
         resp.content_type = MEDIA_JSON
         resp.media = {
             "page": page,
@@ -237,7 +237,7 @@ class SavedEndpoint(SavedResource):
     @before(auth_user)
     @before(auth_required)
     def on_get(self, req, resp):
-        entries, _, page = paginate(req, self.fetch_entries(req.user))
+        entries, _, page = paginate(req, self.fetch_entries(req.user), has_kids=True)
         resp.content_type = MEDIA_JSON
         resp.media = {
             "page": page,
@@ -261,7 +261,7 @@ class DiscoverEndpoint(DiscoverResource):
     @before(auth_user)
     def on_get(self, req, resp):
         q = demojize(req.params.get('q', '').strip())
-        entries, _, page = paginate(req, self.fetch_entries(q.split()))
+        entries, _, page = paginate(req, self.fetch_entries(q.split()), has_kids=True)
         resp.content_type = MEDIA_JSON
         resp.media = {
             "page": page,
@@ -272,7 +272,7 @@ class DiscoverEndpoint(DiscoverResource):
 class TrendingEndpoint(TrendingResource):
     @before(auth_user)
     def on_get(self, req, resp):
-        entries, _, page = paginate(req, self.fetch_entries())
+        entries, _, page = paginate(req, self.fetch_entries(), has_kids=True)
         resp.content_type = MEDIA_JSON
         resp.media = {
             "page": page,

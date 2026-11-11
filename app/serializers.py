@@ -45,7 +45,7 @@ def build_entry(entry, req_user, has_parent=False, has_kids=False):
     if has_parent:
         data['parent'] = build_entry(entry.parent, req_user) if entry.parent else None
     if has_kids:
-        data['kids'] = [build_entry(kid, req_user) for kid in entry.kids.all()]
+        data['kids'] = [build_entry(kid, req_user) for kid in entry.kids.all()] if entry.replies else []
     return data
 
 
