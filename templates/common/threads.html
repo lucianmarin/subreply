@@ -1,11 +1,13 @@
 {% include "common/entry.html" %}
 
-{% set kids = entry.kids.all() %}
+{% if entry.replies %}
+    {% set kids = entry.kids.all() %}
 
-{% if kids %}
-    <div class="sublist">
-        {% for entry in kids %}
-            {% include "common/entry.html" %}
-        {% endfor %}
-    </div>
+    {% if kids %}
+        <div class="sublist">
+            {% for entry in kids %}
+                {% include "common/entry.html" %}
+            {% endfor %}
+        </div>
+    {% endif %}
 {% endif %}

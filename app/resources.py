@@ -1,4 +1,6 @@
-from django.db.models import Count, Max, Prefetch, Q, Subquery, Sum
+from django.db.models import (
+    Count, Max, Prefetch, Q, Subquery, Sum, prefetch_related_objects
+)
 from emoji import demojize
 from falcon import HTTPFound, HTTPNotFound, before
 from strictyaml import as_document
@@ -22,7 +24,13 @@ USQ = lambda m: Subquery(User.objects.filter(username=m[0]).values('id')[:1]) if
 BASE = '/trending'
 
 
-def paginate(req, qs, limit=16):
+def prefetch_kids(entries):
+    entries = list(entries)
+    prefetch_related_objects([e for e in entries if e.replies], PFR)
+    return entries
+
+
+def paginate(req, qs, limit=16, has_kids=False):
     p = req.params.get('p', '1').strip()
     if p.isdecimal() and int(p) > 1:
         number = int(p)
@@ -30,7 +38,10 @@ def paginate(req, qs, limit=16):
         number = 1
     page = 'loader' if number > 1 else 'regular'
     index = (number - 1) * limit
-    return qs[index:index + limit], page, number
+    entries = qs[index:index + limit]
+    if has_kids:
+        entries = prefetch_kids(entries)
+    return entries, page, number
 
 
 class MainResource:
@@ -128,7 +139,7 @@ class FeedResource:
     def fetch_entries(self, user):
         friends = Bond.objects.filter(created_by=user).values('to_user_id')
         entries = Posts.filter(created_by__in=friends).order_by('-id')
-        return entries.select_related('parent__created_by').prefetch_related(PFR)
+        return entries.select_related('parent__created_by')
 
     def validate_entry(self, content, user):
         errors = {}
@@ -151,7 +162,7 @@ class FeedResource:
     @before(auth_user)
     @before(login_required)
     def on_get(self, req, resp):
-        entries, page, number = paginate(req, self.fetch_entries(req.user))
+        entries, page, number = paginate(req, self.fetch_entries(req.user), has_kids=True)
         resp.text = render(
             page=page, view='feed', number=number, content='',
             user=req.user, entries=entries, errors={},
@@ -167,7 +178,7 @@ class FeedResource:
             raise HTTPFound('/')
         errors = self.validate_entry(content, req.user)
         if errors:
-            entries = self.fetch_entries(req.user)[:16]
+            entries = prefetch_kids(self.fetch_entries(req.user)[:16])
             resp.text = render(
                 page='regular', view='feed', content=content, number=1,
                 user=req.user, entries=entries, errors=errors,
@@ -182,7 +193,7 @@ class ReplyResource:
     def fetch_entries(self, parent):
         if not parent.replies:
             return []
-        return Posts.filter(parent=parent).order_by('-id').prefetch_related(PFR)
+        return prefetch_kids(Posts.filter(parent=parent).order_by('-id'))
 
     def fetch_ancestors(self, parent):
         if not parent.parent_id:
@@ -331,12 +342,12 @@ class MemberResource:
 
     def fetch_entries(self, member):
         entries = Posts.filter(created_by=member).order_by('-id')
-        return entries.select_related('parent__created_by').prefetch_related(PFR)
+        return entries.select_related('parent__created_by')
 
     @before(auth_user)
     def on_get(self, req, resp, username):
         member = self.fetch_member(req, username)
-        entries, page, number = paginate(req, self.fetch_entries(member))
+        entries, page, number = paginate(req, self.fetch_entries(member), has_kids=True)
         resp.text = render(
             page=page, view='member', number=number, errors={},
             user=req.user, member=member, entries=entries
@@ -383,7 +394,7 @@ class FollowersResource:
 class MentionsResource:
     def fetch_entries(self, user):
         entries = Posts.filter(at_user=user).order_by('-id')
-        return entries.select_related('parent__created_by').prefetch_related(PFR)
+        return entries.select_related('parent__created_by')
 
     def clear_mentions(self, user):
         Post.objects.filter(
@@ -393,7 +404,7 @@ class MentionsResource:
     @before(auth_user)
     @before(login_required)
     def on_get(self, req, resp):
-        entries, page, number = paginate(req, self.fetch_entries(req.user))
+        entries, page, number = paginate(req, self.fetch_entries(req.user), has_kids=True)
         resp.text = render(
             page=page, view='mentions', number=number,
             user=req.user, entries=entries
@@ -427,12 +438,12 @@ class RepliesResource:
 class SavedResource:
     def fetch_entries(self, user):
         entries = Posts.filter(id__in=user.saves_ids).order_by('-id')
-        return entries.select_related('parent__created_by').prefetch_related(PFR)
+        return entries.select_related('parent__created_by')
 
     @before(auth_user)
     @before(login_required)
     def on_get(self, req, resp):
-        entries, page, number = paginate(req, self.fetch_entries(req.user))
+        entries, page, number = paginate(req, self.fetch_entries(req.user), has_kids=True)
         resp.text = render(
             page=page, view='saved', number=number,
             user=req.user, entries=entries
@@ -499,12 +510,12 @@ class DiscoverResource:
         else:
             last_ids = Post.objects.values('created_by_id').annotate(last_id=Max('id')).values('last_id')
             f = Q(id__in=last_ids)
-        return Posts.filter(f).order_by('-id').select_related('parent__created_by').prefetch_related(PFR)
+        return Posts.filter(f).order_by('-id').select_related('parent__created_by')
 
     @before(auth_user)
     def on_get(self, req, resp):
         q = demojize(req.params.get('q', '').strip())
-        entries, page, number = paginate(req, self.fetch_entries(q.split()))
+        entries, page, number = paginate(req, self.fetch_entries(q.split()), has_kids=True)
         resp.text = render(
             page=page, view='discover', number=number, q=q,
             user=req.user, entries=entries, errors={},
@@ -517,12 +528,11 @@ class TrendingResource:
 
     def fetch_entries(self):
         sample = Post.objects.filter(parent=None).exclude(replies=0).order_by('-id').values('id')[:self.limit]
-        entries = Posts.filter(id__in=sample).order_by('-replies', '-id')
-        return entries.prefetch_related(PFR)
+        return Posts.filter(id__in=sample).order_by('-replies', '-id')
 
     @before(auth_user)
     def on_get(self, req, resp):
-        entries, page, number = paginate(req, self.fetch_entries())
+        entries, page, number = paginate(req, self.fetch_entries(), has_kids=True)
         resp.text = render(
             page=page, view='trending', number=number,
             user=req.user, entries=entries
