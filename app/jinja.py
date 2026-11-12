@@ -17,7 +17,7 @@ env.bytecode_cache = FileSystemBytecodeCache()
 env.loader = FileSystemLoader('templates')
 
 env.filters['age'] = age
-env.filters['cap'] = lambda notif: "*" if notif > 9 else str(notif)
+env.filters['cap'] = lambda notif: "+" if notif > 9 else str(notif)
 env.filters['city'] = lambda loc: loc.split(",")[0] if "," in loc else loc
 env.filters['emojize'] = emojize
 env.filters['enumerize'] = enumerize
