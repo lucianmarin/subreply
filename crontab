@@ -3,6 +3,10 @@
 
 # user
 SHELL=/bin/bash
+LM_LOGS=lm/advanced/static/logs.html
+LM_SKIP=*.lucianmarin.com,lucianmarin.com,136.244.80.161
+SUB_LOGS=subreply/static/logs.html
+SUB_SKIP=subreply.com,136.244.80.161
 
 # backup postgresql
 15 0 * * 0 subdata/backup.sh
@@ -11,10 +15,7 @@ SHELL=/bin/bash
 0 * * * * cd news && venv/bin/python fetch.py
 
 # logs lm.com
-20 * * * * logparser logs/{lm,math,moss,news,note,void,zero}.log.gz --html lm/ad
-vanced/static/logs.html --skip *.lucianmarin.com,lucianmarin.com,136.244.80.161
---hide 1 --drop 90
+20 * * * * logparser logs/{lm,math,moss,news,note,void,zero}.log.gz --html $LM_LOGS --skip $LM_SKIP --hide 1 --drop 90
 
 # logs subreply.com
-30 * * * * logparser logs/sub.log.gz --html subreply/static/logs.html --skip sub
-reply.com,136.244.80.161 --hide 1
+30 * * * * logparser logs/sub.log.gz --html $SUB_LOGS --skip $SUB_SKIP --hide 1 --drop 90
