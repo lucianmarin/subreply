@@ -1,5 +1,5 @@
 # sudo
-0 0 1 */1 * certbot renew --renew-hook "systemctl reload nginx"
+# 0 0 1 */1 * certbot renew --renew-hook "systemctl reload nginx"
 
 # user
 SHELL=/bin/bash
@@ -8,14 +8,17 @@ LM_SKIP=*.lucianmarin.com,lucianmarin.com,136.244.80.161
 SUB_LOGS=subreply/static/logs.html
 SUB_SKIP=subreply.com,136.244.80.161
 
-# backup postgresql
-15 0 * * 0 subdata/backup.sh
-
 # fetch articles
 0 * * * * cd news && venv/bin/python fetch.py
 
+# backup postgresql
+1 0 * * 0 subdata/backup.sh
+
 # logs lm.com
-20 * * * * logparser logs/{lm,math,moss,news,note,void,zero}.log.gz --html $LM_LOGS --skip $LM_SKIP --hide 1 --drop 90
+2 * * * * logparser logs/{lm,math,moss,news,note,void,zero}.log.gz --html $LM_LOGS --skip $LM_SKIP --hide 1 --drop 90
 
 # logs subreply.com
-30 * * * * logparser logs/sub.log.gz --html $SUB_LOGS --skip $SUB_SKIP --hide 1 --drop 90
+3 * * * * logparser logs/sub.log.gz --html $SUB_LOGS --skip $SUB_SKIP --hide 1 --drop 90
+
+# deploy repos
+# 4 * * * * python3 deploy.py
