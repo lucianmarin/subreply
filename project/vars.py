@@ -54,7 +54,6 @@ INVALID = set(RESERVED + [
     "channels",
     "chat",
     "delete",
-    "details",
     "discover",
     "edit",
     "emoji",

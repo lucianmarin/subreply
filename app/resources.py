@@ -719,7 +719,7 @@ class AccountResource:
             raise HTTPFound(BASE)
 
 
-class DetailsResource:
+class SocialResource:
     social = ['github', 'instagram', 'linkedin', 'reddit', 'paypal', 'spotify', 'x']
     phone = ['code', 'number']
 
@@ -735,7 +735,7 @@ class DetailsResource:
         self.update(form, p, self.phone)
         return s, p
 
-    def validate_details(self, s, p, user):
+    def validate_handles(self, s, p, user):
         errors = {}
         for field, value in s.items():
             if value != user.social.get(field):
@@ -759,7 +759,7 @@ class DetailsResource:
     @before(login_required)
     def on_get(self, req, resp):
         resp.text = render(
-            page='details', view='details', user=req.user,
+            page='social', view='social', user=req.user,
             errors={}, form={}
         )
 
@@ -768,10 +768,10 @@ class DetailsResource:
     def on_post(self, req, resp):
         form = req.get_media()
         s, p = self.parse_form(form)
-        errors = self.validate_details(s, p, req.user)
+        errors = self.validate_handles(s, p, req.user)
         if errors:
             resp.text = render(
-                page='details', view='details', user=req.user,
+                page='social', view='social', user=req.user,
                 errors=errors, form=form
             )
         else:

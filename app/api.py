@@ -8,7 +8,7 @@ from app.forms import get_content
 from app.hooks import auth_required, auth_user
 from app.models import Bond, Chat, Post, Save, User
 from app.resources import (
-    DetailsResource, DiscoverResource, EditResource, FeedResource,
+    DiscoverResource, EditResource, FeedResource,
     FollowersResource, FollowingResource, LoginResource, MemberResource,
     MentionsResource, MessageResource, MessagesResource, PeopleResource,
     Posts, ProfileResource, RegisterResource, RepliesResource,
@@ -60,21 +60,6 @@ class ProfileEndpoint(ProfileResource):
             resp.media = {'errors': errors}
         else:
             self.update_user(req.user, f)
-            resp.media = {'user': build_user(req.user, req.user)}
-
-
-class DetailsEndpoint(DetailsResource):
-    @before(auth_user)
-    @before(auth_required)
-    def on_patch(self, req, resp):
-        resp.content_type = MEDIA_JSON
-        form = req.get_media()
-        s, p = self.parse_form(form)
-        errors = self.validate_details(s, p, req.user)
-        if errors:
-            resp.media = {'errors': errors}
-        else:
-            self.update_user(req.user, s, p)
             resp.media = {'user': build_user(req.user, req.user)}
 
 

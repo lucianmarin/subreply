@@ -31,7 +31,6 @@ app.add_route('/api/unfollow/{username}', api.UnfollowEndpoint())
 # patch
 app.add_route('/api/edit/{id:int}', api.EditEndpoint())
 app.add_route('/api/profile', api.ProfileEndpoint())
-app.add_route('/api/details', api.DetailsEndpoint())
 # get
 app.add_route('/api/feed', api.FeedEndpoint())
 app.add_route('/api/reply/{id:int}', api.ReplyEndpoint())
@@ -78,7 +77,7 @@ app.add_route('/recover', resources.RecoverResource())
 app.add_route('/recover/{token}', resources.RecoverResource(), suffix="link")
 
 app.add_route('/profile', resources.ProfileResource())
-app.add_route('/details', resources.DetailsResource())
+app.add_route('/social', resources.SocialResource())
 app.add_route('/account', resources.AccountResource())
 app.add_route('/account/change', resources.AccountResource(), suffix="change")
 app.add_route('/account/delete', resources.AccountResource(), suffix="delete")

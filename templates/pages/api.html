@@ -23,38 +23,37 @@
 
         <h4>GET Endpoints</h4>
         <ul>
-            <li><code>/api/feed</code></li>
-            <li><code>/api/following</code></li>
-            <li><code>/api/followers</code></li>
-            <li><code>/api/mentions</code></li>
-            <li><code>/api/replies</code></li>
-            <li><code>/api/saved</code></li>
+            <li><code>/api/feed</code> &mdash; returns feed entries</li>
+            <li><code>/api/following</code> &mdash; returns following list</li>
+            <li><code>/api/followers</code> &mdash; returns followers list</li>
+            <li><code>/api/mentions</code> &mdash; returns received mentions</li>
+            <li><code>/api/replies</code> &mdash; returns received replies</li>
+            <li><code>/api/saved</code> &mdash; returns saved entries</li>
             <li><code>/api/people</code> &mdash; optional <code>q</code> param to search people</li>
             <li><code>/api/discover</code> &mdash; optional <code>q</code> param to search content</li>
-            <li><code>/api/trending</code></li>
-            <li><code>/api/messages</code></li>
-            <li><code>/api/notifications</code></li>
-            <li><code>/api/reply/{id:int}</code></li>
-            <li><code>/api/{username}/message</code></li>
-            <li><code>/api/{username}/posts</code></li>
-            <li><code>/api/{username}</code></li>
+            <li><code>/api/trending</code> &mdash; returns trending entries</li>
+            <li><code>/api/messages</code> &mdash; returns last received messages</li>
+            <li><code>/api/notifications</code> &mdash; returns notification counts</li>
+            <li><code>/api/reply/{id:int}</code> &mdash; returns reply details, ancestors and kids</li>
+            <li><code>/api/{username}/message</code> &mdash; returns messages with member</li>
+            <li><code>/api/{username}/posts</code> &mdash; returns member posts</li>
+            <li><code>/api/{username}</code> &mdash; returns member details</li>
         </ul>
 
         <h4>POST Endpoints</h4>
         <ul>
-            <li><code>/api/login</code> &mdash; username*, password* params; returns token and user</li>
-            <li><code>/api/register</code> &mdash; username*, email*, password1*, password2*, first_name, last_name, emoji, birthday, location params; returns token and user</li>
-            <li><code>/api/thread</code> &mdash; content* param; returns thread details</li>
-            <li><code>/api/reply/{id:int}</code> &mdash; content* param; returns reply details</li>
-            <li><code>/api/{username}/send</code> &mdash; content* param; returns message details</li>
+            <li><code>/api/login</code> &mdash; fields: username*, password* params; returns token and user</li>
+            <li><code>/api/register</code> &mdash; fields: username*, email*, password1*, password2*, first_name, last_name, emoji, birthday, location params; returns token and user</li>
+            <li><code>/api/thread</code> &mdash; fields: content* param; returns thread details</li>
+            <li><code>/api/reply/{id:int}</code> &mdash; fields: content* param; returns reply details</li>
+            <li><code>/api/{username}/send</code> &mdash; fields: content* param; returns message details</li>
         </ul>
 
 
         <h4>PATCH Endpoints</h4>
         <ul>
-            <li><code>/api/edit/{id:int}</code> &mdash; content* param; returns reply details</li>
-            <li><code>/api/profile</code> &mdash; username*, email*, first_name, last_name, emoji, birthday, location, link, description params; returns user</li>
-            <li><code>/api/details</code> &mdash; github, instagram, linkedin, reddit, paypal, spotify, x, code, number params; returns user</li>
+            <li><code>/api/edit/{id:int}</code> &mdash; fields: content* param; returns reply details</li>
+            <li><code>/api/profile</code> &mdash; fields: username*, email*, first_name, last_name, emoji, birthday, location, link, description params; returns user details</li>
         </ul>
 
         <h4>POST Actions</h4>
