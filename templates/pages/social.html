@@ -32,7 +32,7 @@
                             <label for="id_network_{{ loop.index0 }}">Network<i>*</i></label>
                         {% endif %}
                         <select name="network" id="id_network_{{ loop.index0 }}">
-                            <option value=""></option>
+                            <option value="" disabled selected>Name</option>
                             {% for key, label in networks.items() %}
                                 <option value="{{ key }}"{% if key == row[0] %} selected{% endif %}>{{ label }}</option>
                             {% endfor %}
@@ -62,6 +62,7 @@
                             <label for="id_handle_{{ loop.index0 }}">Handle<i>*</i></label>
                         {% endif %}
                         <input type="text" name="handle" id="id_handle_{{ loop.index0 }}"
+                            placeholder="Username"
                             maxlength="15" value="{{ row[1] }}">
                     </div>
                     {% if loop.index0 in errors %}

@@ -32,7 +32,7 @@ env.filters['workplaces'] = workplaces
 
 env.globals['brand'] = "Subreply"
 env.globals['costs'] = COSTS
-env.globals['v'] = 309
+env.globals['v'] = 310
 
 
 def render(page, **kwargs):

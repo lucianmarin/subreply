@@ -456,6 +456,8 @@ table
     select
         float: left
         width: calc(100% - 30px)
+        &:has(option[value=""]:checked)
+            color: var(--gray)
     label
         font-size: var(--small)
     .one, .two, .left, .right, .three

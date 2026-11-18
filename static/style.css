@@ -240,6 +240,8 @@ table td:nth-child(even):last-child { border-right: 0 none; }
 
 .line select { float: left; width: calc(100% - 30px); }
 
+.line select:has(option[value=""]:checked) { color: var(--gray); }
+
 .line label { font-size: var(--small); }
 
 .line .one, .line .two, .line .left, .line .right, .line .three { float: left; }
