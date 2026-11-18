@@ -34,7 +34,9 @@
                         <select name="network" id="id_network_{{ loop.index0 }}">
                             <option value="" disabled selected>Name</option>
                             {% for key, label in networks.items() %}
-                                <option value="{{ key }}"{% if key == row[0] %} selected{% endif %}>{{ label }}</option>
+                                {% if key == row[0] or key not in filled %}
+                                    <option value="{{ key }}"{% if key == row[0] %} selected{% endif %}>{{ label }}</option>
+                                {% endif %}
                             {% endfor %}
                         </select>
                         <label for="id_network_{{ loop.index0 }}">

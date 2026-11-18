@@ -785,6 +785,9 @@ class SocialResource:
             key=lambda link: order.get(link[0], len(order))
         )
 
+    def get_filled(self, rows):
+        return {key for key, handle in rows if key and handle}
+
     @before(auth_user)
     @before(login_required)
     def on_get(self, req, resp):
@@ -792,7 +795,8 @@ class SocialResource:
         rows.append(['', ''])
         resp.text = render(
             page='social', view='social', user=req.user,
-            errors={}, rows=rows, form={}, networks=self.networks
+            errors={}, rows=rows, form={}, networks=self.networks,
+            filled=self.get_filled(rows)
         )
 
     @before(auth_user)
@@ -804,7 +808,8 @@ class SocialResource:
         if errors:
             resp.text = render(
                 page='social', view='social', user=req.user,
-                errors=errors, rows=rows, form=form, networks=self.networks
+                errors=errors, rows=rows, form=form, networks=self.networks,
+                filled=self.get_filled(rows)
             )
         else:
             self.update_user(req.user, links, phone)
