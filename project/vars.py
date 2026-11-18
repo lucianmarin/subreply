@@ -20,18 +20,22 @@ TYPES = [
 ]
 
 LINKS = {
+    'behance': '<a href="https://behance.net/{0}" rel="me">Behance</a>',
     'dribbble': '<a href="https://dribbble.com/{0}" rel="me">Dribbble</a>',
+    'figma': '<a href="https://figma.com/@{0}" rel="me">Figma</a>',
     'github': '<a href="https://github.com/{0}" rel="me">GitHub</a>',
     'instagram': '<a href="https://instagram.com/{0}" rel="me">Instagram</a>',
     'linkedin': '<a href="https://linkedin.com/in/{0}" rel="me">LinkedIn</a>',
     'patreon': '<a href="https://patreon.com/{0}" rel="me">Patreon</a>',
     'paypal': '<a href="https://paypal.me/{0}" rel="me">PayPal</a>',
-    'pinboard': '<a href="https://pinboard.in/u:{0}/" rel="me">Pinboard</a>',
-    'reddit': '<a href="https://reddit.com/u/{0}" rel="me">Reddit</a>',
     'phone': '<a href="tel:{0}" rel="me">Phone</a>',
+    'pinboard': '<a href="https://pinboard.in/u:{0}/" rel="me">Pinboard</a>',
+    'pinterest': '<a href="https://pinterest.com/{0}" rel="me">Pinterest</a>',
+    'reddit': '<a href="https://reddit.com/u/{0}" rel="me">Reddit</a>',
     'soundcloud': '<a href="https://soundcloud.com/{0}" rel="me">SoundCloud</a>',
     'spotify': '<a href="https://open.spotify.com/user/{0}" rel="me">Spotify</a>',
     'telegram': '<a href="https://t.me/{0}" rel="me">Telegram</a>',
+    'threads': '<a href="https://threads.com/@{0}" rel="me">Threads</a>',
     'twitter': '<a href="https://twitter.com/{0}" rel="me">Twitter</a>',
     'x': '<a href="https://x.com/{0}" rel="me">X</a>',
     'youtube': '<a href="https://youtube.com/@{0}" rel="me">YouTube</a>'
@@ -97,6 +101,7 @@ INVALID = set(RESERVED + [
     "terms",
     "threads",
     "trending",
+    "work",
     "xhr"
 ])
 

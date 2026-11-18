@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block main %}
+    <div class="menu">
+        <a href="/profile">Profile</a>
+        <a href="/social">Social</a>
+        <a href="/work" class="on">Work</a>
+        <a href="/account">Account</a>
+    </div>
+
+    <div class="request">
+        <form method="post" autocomplete="off">
+            {% for row in rows %}
+                <div class="line">
+                    <div class="left">
+                        <div class="left">
+                            {% if loop.first %}
+                                <label for="id_start_{{ loop.index0 }}">Start year<i>*</i></label>
+                            {% endif %}
+                            <input type="text" name="start" id="id_start_{{ loop.index0 }}"
+                                maxlength="4" placeholder="Number" value="{{ row[0] }}">
+                        </div>
+                        <div class="right">
+                            {% if loop.first %}
+                                <label for="id_end_{{ loop.index0 }}">End year</label>
+                            {% endif %}
+                            <input type="text" name="end" id="id_end_{{ loop.index0 }}"
+                                maxlength="4" placeholder="Present" value="{{ row[1] }}">
+                        </div>
+                    </div>
+                    <div class="right">
+                        {% if loop.first %}
+                            <label for="id_company_{{ loop.index0 }}">Company<i>*</i></label>
+                        {% endif %}
+                        <input type="text" name="company" id="id_company_{{ loop.index0 }}"
+                            maxlength="60" placeholder="Name" value="{{ row[2] }}">
+                    </div>
+                    {% if loop.index0 in errors %}
+                        <div class="error">{{ errors[loop.index0] }}</div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+            <div class="line">
+                <input type="submit" value="Update">
+            </div>
+        </form>
+    </div>
+{% endblock %}

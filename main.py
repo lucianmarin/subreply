@@ -78,6 +78,7 @@ app.add_route('/recover/{token}', resources.RecoverResource(), suffix="link")
 
 app.add_route('/profile', resources.ProfileResource())
 app.add_route('/social', resources.SocialResource())
+app.add_route('/work', resources.WorkResource())
 app.add_route('/account', resources.AccountResource())
 app.add_route('/account/change', resources.AccountResource(), suffix="change")
 app.add_route('/account/delete', resources.AccountResource(), suffix="delete")

@@ -16,6 +16,12 @@ def hexcode(emoji):
     return "-".join(codes)
 
 
+def _join(parts):
+    if len(parts) > 1:
+        return ", ".join(parts[:-1]) + " and " + parts[-1]
+    return "".join(parts)
+
+
 def enumerize(links):
     """Enumerate social links."""
     keys = sorted(links)  # eg. github
@@ -24,9 +30,27 @@ def enumerize(links):
         template = LINKS.get(key)
         if template:
             parts.append(template.format(links[key]))
-    if len(parts) > 1:
-        return ", ".join(parts[:-1]) + " and " + parts[-1]
-    return "".join(parts)
+    return _join(parts)
+
+
+def workplaces(work):
+    """Format work history."""
+    if not work:
+        return ""
+    items = sorted(work, key=lambda w: (w[0], w[1] if w[1] is not None else 9999), reverse=True)
+    current = [f"{w[2]} since {w[0]}" for w in items if w[1] is None]
+    past = [f"{w[2]}" for w in items if w[1] is not None]
+    start_year = min(w[0] for w in items if w[1] is not None)
+    end_year = max(w[1] for w in items if w[1] is not None)
+    years = map(lambda w: w[1] - w[0], [w for w in items if w[1] is not None])
+    sentences = []
+    if current:
+        sentences = [f"Works at {_join(current)}"]
+        if past:
+            sentences +=  [f"Previously at {_join(past)} for {sum(years)} years"]
+    elif past:
+        sentences = [f"Worked at {_join(past)} between {start_year} and {end_year} for {sum(years)} years"]
+    return ". ".join(sentences)
 
 
 def hostname(value):

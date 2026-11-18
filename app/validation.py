@@ -307,3 +307,29 @@ def valid_date(value, delimiter="-"):
                 return "Month is not between 01-12"
             elif year == str(CUR_YEAR) and int(month) > CUR_MONTH:
                 return "Date is in the future"
+
+
+def valid_work(start, end, company):
+    cur_year = date.today().year
+    min_year = cur_year - MAX_AGE
+    years = {str(y) for y in range(min_year, cur_year + 1)}
+    if not start and not end and not company:
+        return
+    elif not start:
+        return "Start year is needed"
+    elif not start.isdecimal():
+        return "Start year must be numeric"
+    elif start not in years:
+        return f"Start year is not between {min_year}-{cur_year}"
+    elif end and not end.isdecimal():
+        return "End year must be numeric"
+    elif end and end not in years:
+        return f"End year is not between {min_year}-{cur_year}"
+    elif end and int(end) < int(start):
+        return "End year is before start year"
+    elif not company:
+        return "Company name can't be blank"
+    elif len(company) > 60:
+        return "Company name can't be longer than 60 characters"
+    elif not company.isascii():
+        return "Company name should use ASCII characters"

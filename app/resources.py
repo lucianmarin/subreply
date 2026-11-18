@@ -14,7 +14,7 @@ from app.validation import (
     authentication, valid_birthday, valid_content, valid_description,
     valid_email, valid_emoji, valid_first_name, valid_full_name, valid_handle,
     valid_last_name, valid_link, valid_location, valid_password, valid_phone,
-    valid_reply, valid_thread, valid_username
+    valid_reply, valid_thread, valid_username, valid_work
 )
 from project.settings import FERNET, MAX_AGE
 
@@ -720,7 +720,10 @@ class AccountResource:
 
 
 class SocialResource:
-    social = ['github', 'instagram', 'linkedin', 'reddit', 'paypal', 'spotify', 'x']
+    social = [
+        'dribbble', 'github', 'instagram', 'linkedin', 'reddit',
+        'pinterest', 'spotify', 'threads', 'x'
+    ]
     phone = ['code', 'number']
 
     def update(self, form, d, fields):
@@ -777,6 +780,73 @@ class SocialResource:
         else:
             self.update_user(req.user, s, p)
             raise HTTPFound(f"/{req.user}")
+
+
+class WorkResource:
+    def get_list(self, form, field):
+        value = form.get(field, [])
+        if isinstance(value, str):
+            return [value]
+        return list(value) if isinstance(value, list) else []
+
+    def parse_form(self, form):
+        starts = self.get_list(form, 'start')
+        ends = self.get_list(form, 'end')
+        companies = self.get_list(form, 'company')
+        return [
+            [start.strip(), end.strip(), " ".join(company.split())]
+            for start, end, company in zip(starts, ends, companies)
+        ]
+
+    def validate_work(self, rows):
+        errors = {}
+        work = []
+        for i, (start, end, company) in enumerate(rows):
+            if not start and not end and not company:
+                continue
+            error = valid_work(start, end, company)
+            if error:
+                errors[i] = error
+            else:
+                work.append([int(start), int(end) if end else None, company])
+        return errors, work
+
+    def update_user(self, user, work):
+        work = sorted(work, key=lambda w: (w[0], w[1] if w[1] is not None else 9999), reverse=True)
+        if work != user.work:
+            user.work = work
+            user.save(update_fields=['work'])
+
+    @before(auth_user)
+    @before(login_required)
+    def on_get(self, req, resp):
+        items = sorted(req.user.work, key=lambda w: (w[0], w[1] if w[1] is not None else 9999), reverse=True)
+        rows = [
+            [str(w[0]), str(w[1]) if w[1] is not None else '', w[2]]
+            for w in items
+        ]
+        rows.append(['', '', ''])  # empty row for new entry
+        resp.text = render(
+            page='work', view='work', user=req.user,
+            errors={}, rows=rows
+        )
+
+    @before(auth_user)
+    @before(login_required)
+    def on_post(self, req, resp):
+        form = req.get_media()
+        rows = self.parse_form(form)
+        errors, work = self.validate_work(rows)
+        if errors:
+            if not rows or any(rows[-1]):
+                rows.append(['', '', ''])
+            resp.text = render(
+                page='work', view='work', user=req.user,
+                errors=errors, rows=rows
+            )
+        else:
+            self.update_user(req.user, work)
+            raise HTTPFound(f"/work")
 
 
 class ProfileResource:

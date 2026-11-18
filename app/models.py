@@ -38,6 +38,7 @@ class User(models.Model):
 
     phone = models.JSONField(default=dict)
     social = models.JSONField(default=dict)
+    work = models.JSONField(default=list)
 
     class Meta:
         unique_together = ['emoji', 'first_name', 'last_name']

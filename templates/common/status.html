@@ -1,3 +1,13 @@
+{% if member.work %}
+    <div class="entry">
+        <div class="status">
+            {% if member.work %}
+                {{ member.work | workplaces }}.
+            {% endif %}
+        </div>
+    </div>
+{% endif %}
+
 {% if member.links or member.donated %}
     <div class="entry">
         <div class="status">

@@ -5,7 +5,7 @@ from urllib.parse import quote_plus
 from emoji import emojize
 from jinja2 import Environment, FileSystemBytecodeCache, FileSystemLoader
 
-from app.filters import age, enumerize, hexcode, parser, timeago
+from app.filters import age, enumerize, hexcode, parser, timeago, workplaces
 from app.utils import utc_timestamp
 from project.settings import DEBUG
 from project.vars import COSTS
@@ -28,6 +28,7 @@ env.filters['parser'] = parser
 env.filters['quote'] = quote_plus
 env.filters['shortdate'] = lambda ts: timeago(utc_timestamp() - ts)
 env.filters['shorten'] = lambda txt, w: shorten(txt, w, placeholder="...")
+env.filters['workplaces'] = workplaces
 
 env.globals['brand'] = "Subreply"
 env.globals['costs'] = COSTS
