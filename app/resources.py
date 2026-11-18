@@ -783,6 +783,8 @@ class SocialResource:
 
 
 class WorkResource:
+    limit = 16
+
     def get_list(self, form, field):
         value = form.get(field, [])
         if isinstance(value, str):
@@ -812,7 +814,7 @@ class WorkResource:
         return errors, work
 
     def update_user(self, user, work):
-        work = sorted(work, key=lambda w: (w[0], w[1] if w[1] is not None else 9999), reverse=True)
+        work = sorted(work, key=lambda w: (w[0], w[1] if w[1] is not None else 9999), reverse=True)[:self.limit]
         if work != user.work:
             user.work = work
             user.save(update_fields=['work'])
@@ -825,7 +827,8 @@ class WorkResource:
             [str(w[0]), str(w[1]) if w[1] is not None else '', w[2]]
             for w in items
         ]
-        rows.append(['', '', ''])  # empty row for new entry
+        if len(rows) < self.limit:
+            rows.append(['', '', ''])
         resp.text = render(
             page='work', view='work', user=req.user,
             errors={}, rows=rows
@@ -835,10 +838,10 @@ class WorkResource:
     @before(login_required)
     def on_post(self, req, resp):
         form = req.get_media()
-        rows = self.parse_form(form)
+        rows = self.parse_form(form)[:self.limit]
         errors, work = self.validate_work(rows)
         if errors:
-            if not rows or any(rows[-1]):
+            if len(rows) < self.limit and (not rows or any(rows[-1])):
                 rows.append(['', '', ''])
             resp.text = render(
                 page='work', view='work', user=req.user,
