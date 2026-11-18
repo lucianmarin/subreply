@@ -12,7 +12,7 @@
     <div class="entry">
         <div class="status">
             {% if member.links %}
-                Also on {{ member.links | enumerize | safe }}.
+                Also on {{ member.links | networks | safe }}.
             {% endif %}
             {% if member.id == 1 or member.donated %}
                 {% if member.id == 1 %}

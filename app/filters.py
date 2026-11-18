@@ -22,15 +22,15 @@ def _join(parts):
     return "".join(parts)
 
 
-def enumerize(links):
+def networks(links):
     """Enumerate social links."""
     keys = sorted(links)  # eg. github
-    parts = []
+    sites = []
     for key in keys:
         template = LINKS.get(key)
         if template:
-            parts.append(template.format(links[key]))
-    return _join(parts)
+            sites.append(template.format(links[key]))
+    return _join(sites)
 
 
 def workplaces(work):
@@ -40,8 +40,6 @@ def workplaces(work):
     items = sorted(work, key=lambda w: (w[0], w[1] if w[1] is not None else 9999), reverse=True)
     current = [f"{w[2]} since {w[0]}" for w in items if w[1] is None]
     past = [f"{w[2]}" for w in items if w[1] is not None]
-    start_year = min(w[0] for w in items if w[1] is not None)
-    end_year = max(w[1] for w in items if w[1] is not None)
     years = map(lambda w: w[1] - w[0], [w for w in items if w[1] is not None])
     sentences = []
     if current:
@@ -49,6 +47,8 @@ def workplaces(work):
         if past:
             sentences +=  [f"Previously at {_join(past)} for {sum(years)} years"]
     elif past:
+        start_year = min(w[0] for w in items if w[1] is not None)
+        end_year = max(w[1] for w in items if w[1] is not None)
         sentences = [f"Worked at {_join(past)} between {start_year} and {end_year} for {sum(years)} years"]
     return ". ".join(sentences)
 
