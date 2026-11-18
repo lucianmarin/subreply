@@ -747,14 +747,12 @@ class SocialResource:
         }
         return rows, phone
 
-    def validate_links(self, rows, phone, user):
+    def validate_external(self, rows, phone, user):
         errors = {}
         links = {}
         for i, (key, handle) in enumerate(rows):
             if not key or not handle:
-                continue
-            elif not key:
-                errors[i] = "Network is needed"
+                continue  # blank network or handle removes the entry
             elif key not in self.networks:
                 errors[i] = "Network is invalid"
             elif key in links:
@@ -802,7 +800,7 @@ class SocialResource:
     def on_post(self, req, resp):
         form = req.get_media()
         rows, phone = self.parse_form(form)
-        errors, links = self.validate_links(rows, phone, req.user)
+        errors, links = self.validate_external(rows, phone, req.user)
         if errors:
             resp.text = render(
                 page='social', view='social', user=req.user,
