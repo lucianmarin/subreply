@@ -17,6 +17,7 @@ from app.validation import (
     valid_reply, valid_thread, valid_username, valid_work
 )
 from project.settings import FERNET, MAX_AGE
+from project.vars import NETWORKS
 
 Posts = Post.objects.select_related('created_by')
 PFR = Prefetch('kids', Posts.order_by('-id'))
@@ -720,66 +721,96 @@ class AccountResource:
 
 
 class SocialResource:
-    social = [
-        'dribbble', 'github', 'instagram', 'linkedin', 'reddit',
-        'pinterest', 'spotify', 'threads', 'x'
-    ]
     phone = ['code', 'number']
+    networks = {key: label for key, (label, _) in NETWORKS.items() if key != 'phone'}
 
-    def update(self, form, d, fields):
-        for field in fields:
-            value = form.get(field, '').strip()
-            if value:
-                d[field] = value.lower()
+    def get_list(self, form, field):
+        value = form.get(field, [])
+        if isinstance(value, str):
+            return [value]
+        return list(value) if isinstance(value, list) else []
+
+    def get_value(self, form, field):
+        values = self.get_list(form, field)
+        return values[0].strip() if values else ''
 
     def parse_form(self, form):
-        s, p = {}, {}
-        self.update(form, s, self.social)
-        self.update(form, p, self.phone)
-        return s, p
+        keys = self.get_list(form, 'network')
+        handles = self.get_list(form, 'handle')
+        rows = [
+            [key.strip().lower(), " ".join(handle.split()).lower()]
+            for key, handle in zip(keys, handles)
+        ]
+        phone = {
+            field: self.get_value(form, field)
+            for field in self.phone
+        }
+        return rows, phone
 
-    def validate_handles(self, s, p, user):
+    def validate_links(self, rows, phone, user):
         errors = {}
-        for field, value in s.items():
-            if value != user.social.get(field):
-                errors[field] = valid_handle(value)
-        if p != user.phone:
-            errors['phone'] = valid_phone(p.get('code', ''), p.get('number', ''))
-        return {k: v for k, v in errors.items() if v}
+        links = {}
+        for i, (key, handle) in enumerate(rows):
+            if not key or not handle:
+                continue
+            elif not key:
+                errors[i] = "Network is needed"
+            elif key not in self.networks:
+                errors[i] = "Network is invalid"
+            elif key in links:
+                errors[i] = "Network is already added"
+            elif error := valid_handle(handle):
+                errors[i] = error
+            else:
+                links[key] = handle
+        if phone != user.phone:
+            error = valid_phone(phone.get('code', ''), phone.get('number', ''))
+            if error:
+                errors['phone'] = error
+        return errors, links
 
-    def update_user(self, user, s, p):
+    def update_user(self, user, links, phone):
         fields = []
-        if p != user.phone:
-            user.phone = p
+        if phone != user.phone:
+            user.phone = phone
             fields.append('phone')
-        if s != user.social:
-            user.social = s
+        if links != user.social:
+            user.social = links
             fields.append('social')
         if fields:
             user.save(update_fields=fields)
 
+    def sort_links(self, links):
+        order = {key: i for i, key in enumerate(self.networks)}
+        return sorted(
+            links.items(),
+            key=lambda link: order.get(link[0], len(order))
+        )
+
     @before(auth_user)
     @before(login_required)
     def on_get(self, req, resp):
+        rows = [[key, value] for key, value in self.sort_links(req.user.social)]
+        rows.append(['', ''])
         resp.text = render(
             page='social', view='social', user=req.user,
-            errors={}, form={}
+            errors={}, rows=rows, form={}, networks=self.networks
         )
 
     @before(auth_user)
     @before(login_required)
     def on_post(self, req, resp):
         form = req.get_media()
-        s, p = self.parse_form(form)
-        errors = self.validate_handles(s, p, req.user)
+        rows, phone = self.parse_form(form)
+        errors, links = self.validate_links(rows, phone, req.user)
         if errors:
             resp.text = render(
                 page='social', view='social', user=req.user,
-                errors=errors, form=form
+                errors=errors, rows=rows, form=form, networks=self.networks
             )
         else:
-            self.update_user(req.user, s, p)
-            raise HTTPFound(f"/{req.user}")
+            self.update_user(req.user, links, phone)
+            raise HTTPFound('/social')
 
 
 class WorkResource:

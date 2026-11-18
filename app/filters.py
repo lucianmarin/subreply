@@ -4,7 +4,7 @@ from string import digits
 from tldextract import extract
 
 from app.utils import ALNUM_CHARS, USERNAME_CHARS, unwrap
-from project.vars import LINKS
+from project.vars import NETWORKS
 
 SUPERSCRIPTS = str.maketrans("0123456789", "⁰¹²³⁴⁵⁶⁷⁸⁹")
 
@@ -22,14 +22,16 @@ def _join(parts):
     return "".join(parts)
 
 
-def networks(links):
-    """Enumerate social links."""
-    keys = sorted(links)  # eg. github
+def networks(external):
+    """Enumerate external links."""
+    keys = sorted(external)  # eg. github
     sites = []
     for key in keys:
-        template = LINKS.get(key)
-        if template:
-            sites.append(template.format(links[key]))
+        if link := NETWORKS.get(key):
+            label, url = link
+            sites.append(
+                f'<a href="{url.format(external[key])}" rel="me">{label}</a>'
+            )
     return _join(sites)
 
 

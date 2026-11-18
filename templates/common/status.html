@@ -8,11 +8,11 @@
     </div>
 {% endif %}
 
-{% if member.links or member.donated %}
+{% if member.external or member.donated %}
     <div class="entry">
         <div class="status">
-            {% if member.links %}
-                Also on {{ member.links | networks | safe }}.
+            {% if member.external %}
+                Also on {{ member.external | networks | safe }}.
             {% endif %}
             {% if member.id == 1 or member.donated %}
                 {% if member.id == 1 %}

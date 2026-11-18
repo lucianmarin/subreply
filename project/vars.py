@@ -19,26 +19,25 @@ TYPES = [
     "course", "publication", "award", "cause", "volunteer"
 ]
 
-LINKS = {
-    'behance': '<a href="https://behance.net/{0}" rel="me">Behance</a>',
-    'dribbble': '<a href="https://dribbble.com/{0}" rel="me">Dribbble</a>',
-    'figma': '<a href="https://figma.com/@{0}" rel="me">Figma</a>',
-    'github': '<a href="https://github.com/{0}" rel="me">GitHub</a>',
-    'instagram': '<a href="https://instagram.com/{0}" rel="me">Instagram</a>',
-    'linkedin': '<a href="https://linkedin.com/in/{0}" rel="me">LinkedIn</a>',
-    'patreon': '<a href="https://patreon.com/{0}" rel="me">Patreon</a>',
-    'paypal': '<a href="https://paypal.me/{0}" rel="me">PayPal</a>',
-    'phone': '<a href="tel:{0}" rel="me">Phone</a>',
-    'pinboard': '<a href="https://pinboard.in/u:{0}/" rel="me">Pinboard</a>',
-    'pinterest': '<a href="https://pinterest.com/{0}" rel="me">Pinterest</a>',
-    'reddit': '<a href="https://reddit.com/u/{0}" rel="me">Reddit</a>',
-    'soundcloud': '<a href="https://soundcloud.com/{0}" rel="me">SoundCloud</a>',
-    'spotify': '<a href="https://open.spotify.com/user/{0}" rel="me">Spotify</a>',
-    'telegram': '<a href="https://t.me/{0}" rel="me">Telegram</a>',
-    'threads': '<a href="https://threads.com/@{0}" rel="me">Threads</a>',
-    'twitter': '<a href="https://twitter.com/{0}" rel="me">Twitter</a>',
-    'x': '<a href="https://x.com/{0}" rel="me">X</a>',
-    'youtube': '<a href="https://youtube.com/@{0}" rel="me">YouTube</a>'
+NETWORKS = {
+    'behance': ('Bēhance', 'https://behance.net/{0}'),
+    'dribbble': ('Dribbble', 'https://dribbble.com/{0}'),
+    'figma': ('Figma', 'https://figma.com/@{0}'),
+    'github': ('GitHub', 'https://github.com/{0}'),
+    'instagram': ('Instagram', 'https://instagram.com/{0}'),
+    'linkedin': ('LinkedIn', 'https://linkedin.com/in/{0}'),
+    'patreon': ('Patreon', 'https://patreon.com/{0}'),
+    'paypal': ('PayPal', 'https://paypal.me/{0}'),
+    'phone': ('Phone', 'tel:{0}'),
+    'pinboard': ('Pinboard', 'https://pinboard.in/u:{0}/'),
+    'pinterest': ('Pinterest', 'https://pinterest.com/{0}'),
+    'reddit': ('Reddit', 'https://reddit.com/u/{0}'),
+    'soundcloud': ('SoundCloud', 'https://soundcloud.com/{0}'),
+    'spotify': ('Spotify', 'https://open.spotify.com/user/{0}'),
+    'telegram': ('Telegram', 'https://t.me/{0}'),
+    'threads': ('Threads', 'https://threads.com/@{0}'),
+    'x': ('X', 'https://x.com/{0}'),
+    'youtube': ('YouTube', 'https://youtube.com/@{0}'),
 }
 
 RESERVED = [

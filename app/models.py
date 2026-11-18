@@ -84,11 +84,11 @@ class User(models.Model):
         return set(getattr(self, 'saves_ids', ()))
 
     @cached_property
-    def links(self):
-        social = self.social.copy()
+    def external(self):
+        external = self.social.copy()
         if self.phone:
-            social['phone'] = self.phone['code'] + self.phone['number']
-        return social
+            external['phone'] = self.phone['code'] + self.phone['number']
+        return external
 
     def set_seen(self):
         if utc_timestamp() - self.seen_at > 60:

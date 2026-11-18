@@ -130,8 +130,10 @@ function expand(element, limit = 640) {
     var padding = 10;
     element.style.height = "auto";
     element.style.height = element.scrollHeight - padding + "px";
-    if (limit) {
-        element.style.backgroundColor = element.value.length > limit ? "var(--redsmoke)" : "var(--whitesmoke)";
+    if (element.value.length > limit) {
+        element.style.backgroundColor = "var(--redsmoke)";
+    } else {
+        element.style.backgroundColor = "var(--whitesmoke)";
     }
 }
 

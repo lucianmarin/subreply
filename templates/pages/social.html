@@ -11,102 +11,64 @@
     <div class="request">
         <form method="post" autocomplete="off">
             <div class="line">
-                <div class="left">
-                    <label for="id_dribbble">Dribbble</label>
-                    <input type="text" name="dribbble" id="id_dribbble" maxlength="15"
-                        value="{% if form %}{{ form.dribbble }}{% else %}{{ user.social.dribbble }}{% endif %}">
+                <div class="one">
+                    <label for="id_code">Code</label>
+                    <input type="text" name="code" id="id_code" maxlength="4"
+                        placeholder="+1" value="{% if form %}{{ form.code }}{% else %}{{ user.phone.code }}{% endif %}">
                 </div>
-                <div class="right">
-                    <label for="id_github">GitHub</label>
-                    <input type="text" name="github" id="id_github" maxlength="15"
-                        value="{% if form %}{{ form.github }}{% else %}{{ user.social.github }}{% endif %}">
-                </div>
-                {% if 'dribbble' in errors %}
-                    <div class="error">{{ errors['dribbble'] }}</div>
-                {% endif %}
-                {% if 'github' in errors %}
-                    <div class="error">{{ errors['github'] }}</div>
-                {% endif %}
-            </div>
-            <div class="line">
-                <div class="left">
-                    <label for="id_instagram">Instagram</label>
-                    <input type="text" name="instagram" id="id_instagram" maxlength="15"
-                        value="{% if form %}{{ form.instagram }}{% else %}{{ user.social.instagram }}{% endif %}">
-                </div>
-                <div class="right">
-                    <label for="id_linkedin">LinkedIn</label>
-                    <input type="text" name="linkedin" id="id_linkedin" maxlength="15"
-                        value="{% if form %}{{ form.linkedin }}{% else %}{{ user.social.linkedin }}{% endif %}">
-                </div>
-                {% if 'instagram' in errors %}
-                    <div class="error">{{ errors['instagram'] }}</div>
-                {% endif %}
-                {% if 'linkedin' in errors %}
-                    <div class="error">{{ errors['linkedin'] }}</div>
-                {% endif %}
-            </div>
-            <div class="line">
-                <div class="left">
-                    <div class="one">
-                        <label for="id_code">Code</label>
-                        <input type="text" name="code" id="id_code" maxlength="4"
-                            placeholder="+1" value="{% if form %}{{ form.code }}{% else %}{{ user.phone.code }}{% endif %}">
-                    </div>
-                    <div class="two">
-                        <label for="id_number">Phone number</label>
-                        <input type="text" name="number" id="id_number" maxlength="15"
-                            value="{% if form %}{{ form.number }}{% else %}{{ user.phone.number }}{% endif %}">
-                    </div>
-                </div>
-                <div class="right">
-                    <label for="id_paypal">Pinterest</label>
-                    <input type="text" name="pinterest" id="id_pinterest" maxlength="60"
-                        value="{% if form %}{{ form.pinterest }}{% else %}{{ user.social.pinterest }}{% endif %}">
+                <div class="two">
+                    <label for="id_number">Phone number</label>
+                    <input type="text" name="number" id="id_number" maxlength="15"
+                        value="{% if form %}{{ form.number }}{% else %}{{ user.phone.number }}{% endif %}">
                 </div>
                 {% if 'phone' in errors %}
                     <div class="error">{{ errors['phone'] }}</div>
                 {% endif %}
-                {% if 'pinterest' in errors %}
-                    <div class="error">{{ errors['pinterest'] }}</div>
-                {% endif %}
             </div>
-            <div class="line">
-                <div class="left">
-                    <label for="id_reddit">Reddit</label>
-                    <input type="text" name="reddit" id="id_reddit" maxlength="15"
-                        value="{% if form %}{{ form.reddit }}{% else %}{{ user.social.reddit }}{% endif %}">
+            {% for row in rows %}
+                <div class="line">
+                    <div class="one">
+                        {% if loop.first %}
+                            <label for="id_network_{{ loop.index0 }}">Network<i>*</i></label>
+                        {% endif %}
+                        <select name="network" id="id_network_{{ loop.index0 }}">
+                            <option value=""></option>
+                            {% for key, label in networks.items() %}
+                                <option value="{{ key }}"{% if key == row[0] %} selected{% endif %}>{{ label }}</option>
+                            {% endfor %}
+                        </select>
+                        <label for="id_network_{{ loop.index0 }}">
+                            {% if row[0] %}
+                                <svg id="list-todo" width="16" height="16" viewBox="0 0 24 24">
+                                    <path d="M13 5h8"/>
+                                    <path d="M13 12h8"/>
+                                    <path d="M13 19h8"/>
+                                    <path d="m3 17 2 2 4-4"/>
+                                    <rect x="3" y="4" width="6" height="6" rx="1"/>
+                                </svg>
+                            {% else %}
+                                <svg id="list-chevrons-up-down" width="16" height="16" viewBox="0 0 24 24">
+                                    <path d="M3 5h8"/>
+                                    <path d="M3 12h8"/>
+                                    <path d="M3 19h8"/>
+                                    <path d="m15 8 3-3 3 3"/>
+                                    <path d="m15 16 3 3 3-3"/>
+                                </svg>
+                            {% endif %}
+                        </label>
+                    </div>
+                    <div class="two">
+                        {% if loop.first %}
+                            <label for="id_handle_{{ loop.index0 }}">Handle<i>*</i></label>
+                        {% endif %}
+                        <input type="text" name="handle" id="id_handle_{{ loop.index0 }}"
+                            maxlength="15" value="{{ row[1] }}">
+                    </div>
+                    {% if loop.index0 in errors %}
+                        <div class="error">{{ errors[loop.index0] }}</div>
+                    {% endif %}
                 </div>
-                <div class="right">
-                    <label for="id_spotify">Spotify</label>
-                    <input type="text" name="spotify" id="id_spotify" maxlength="15"
-                        value="{% if form %}{{ form.spotify }}{% else %}{{ user.social.spotify }}{% endif %}">
-                </div>
-                {% if 'reddit' in errors %}
-                    <div class="error">{{ errors['reddit'] }}</div>
-                {% endif %}
-                {% if 'spotify' in errors %}
-                    <div class="error">{{ errors['spotify'] }}</div>
-                {% endif %}
-            </div>
-            <div class="line">
-                <div class="left">
-                    <label for="id_threads">Threads</label>
-                    <input type="text" name="threads" id="id_threads" maxlength="15"
-                        value="{% if form %}{{ form.threads }}{% else %}{{ user.social.threads }}{% endif %}">
-                </div>
-                <div class="right">
-                    <label for="id_x">X</label>
-                    <input type="text" name="x" id="id_x" maxlength="15"
-                        value="{% if form %}{{ form.x }}{% else %}{{ user.social.x }}{% endif %}">
-                </div>
-                {% if 'threads' in errors %}
-                    <div class="error">{{ errors['threads'] }}</div>
-                {% endif %}
-                {% if 'x' in errors %}
-                    <div class="error">{{ errors['x'] }}</div>
-                {% endif %}
-            </div>
+            {% endfor %}
             <div class="line">
                 <input type="submit" value="Update">
             </div>

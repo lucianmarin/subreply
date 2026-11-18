@@ -36,7 +36,7 @@ input[type=submit] { background-color: var(--accent); color: var(--white); curso
 
 svg { stroke-linecap: round; stroke-linejoin: round; stroke-width: 2; }
 
-svg > * { fill: none; stroke: var(--black); }
+svg * { fill: none; stroke: var(--black); }
 
 table { border-spacing: 0px; font-size: var(--small); line-height: 15px; margin: 10px 0; width: 100%; }
 
@@ -92,11 +92,11 @@ table td:nth-child(even):last-child { border-right: 0 none; }
 
 .sidebar a.on { background-color: var(--accent); color: var(--white); }
 
-.sidebar a.on svg > * { stroke: var(--white); }
+.sidebar a.on svg * { stroke: var(--white); }
 
 .sidebar a.on span { color: var(--white); }
 
-.sidebar a.red svg > * { stroke: var(--alert); }
+.sidebar a.red svg * { stroke: var(--alert); }
 
 .sidebar a.red span { color: var(--alert); }
 
@@ -122,7 +122,7 @@ table td:nth-child(even):last-child { border-right: 0 none; }
 
 .reply .icon { height: 16px; float: right; padding: 7px; transform: scaleY(-1); width: 16px; }
 
-.reply .icon svg > * { stroke: var(--gray); }
+.reply .icon svg * { stroke: var(--gray); }
 
 .reply .placeholder { background: var(--whitesmoke); background: linear-gradient(90deg, var(--whitesmoke) 0%, var(--white) 100%); border-radius: var(--radius); color: var(--gray); padding: 5px 10px; }
 
@@ -236,6 +236,10 @@ table td:nth-child(even):last-child { border-right: 0 none; }
 
 .line span { color: var(--gray); font-size: var(--small); line-height: 30px; }
 
+.line svg { background-color: var(--whitesmoke); padding: 7px; float: left; }
+
+.line select { float: left; width: calc(100% - 30px); }
+
 .line label { font-size: var(--small); }
 
 .line .one, .line .two, .line .left, .line .right, .line .three { float: left; }
@@ -248,23 +252,23 @@ table td:nth-child(even):last-child { border-right: 0 none; }
 
 .line .left, .line .one { margin-right: 1px; }
 
-.line .left input, .line .one input { border-bottom-right-radius: 0; border-top-right-radius: 0; }
+.line .left input, .line .left select, .line .one input, .line .one select { border-bottom-right-radius: 0; border-top-right-radius: 0; }
 
 .line .right, .line .two { margin-left: 1px; }
 
-.line .right input, .line .two input { border-bottom-left-radius: 0; border-top-left-radius: 0; }
+.line .right input, .line .right select, .line .two input, .line .two select { border-bottom-left-radius: 0; border-top-left-radius: 0; }
 
 .line .three { width: calc(100% / 3 - 2px); }
 
-.line .three input { border-radius: 0; }
+.line .three input, .line .three select { border-radius: 0; }
 
 .line .three.first { margin-right: 2px; width: calc(100% / 3 - 1px); }
 
-.line .three.first input { border-bottom-left-radius: var(--radius); border-top-left-radius: var(--radius); }
+.line .three.first input, .line .three.first select { border-bottom-left-radius: var(--radius); border-top-left-radius: var(--radius); }
 
 .line .three.last { margin-left: 2px; width: calc(100% / 3 - 1px); }
 
-.line .three.last input { border-bottom-right-radius: var(--radius); border-top-right-radius: var(--radius); }
+.line .three.last input, .line .three.last select { border-bottom-right-radius: var(--radius); border-top-right-radius: var(--radius); }
 
 .error { clear: both; color: var(--alert); font-size: var(--small); }
 
