@@ -1,24 +1,17 @@
-{% if member.work %}
+{% if member.work or member.external or member.id == 1 or member.donations %}
     <div class="entry">
         <div class="status">
             {% if member.work %}
                 {{ member.work | workplaces }}.
             {% endif %}
-        </div>
-    </div>
-{% endif %}
-
-{% if member.external or member.donated %}
-    <div class="entry">
-        <div class="status">
             {% if member.external %}
                 Also on {{ member.external | networks | safe }}.
             {% endif %}
-            {% if member.id == 1 or member.donated %}
+            {% if member.id == 1 or member.donations %}
                 {% if member.id == 1 %}
                     {% set donated = costs %}
                 {% else %}
-                    {% set donated = member.donated %}
+                    {% set donated = member.donations %}
                 {% endif %}
                 Donated <a href="/about">${{ donated | round | int }}</a>.
             {% endif %}

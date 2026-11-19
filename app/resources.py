@@ -60,9 +60,9 @@ class AboutResource:
         emo = User.objects.exclude(
             id__in=[1, 2]
         ).exclude(emoji="").order_by("?").first()
-        top = User.objects.exclude(donated=0).order_by("-donated").first()
-        donations = User.objects.exclude(donated=0).aggregate(
-            donated=Sum('donated', default=.0),
+        top = User.objects.exclude(donations=0).order_by("-donations").first()
+        donations = User.objects.exclude(donations=0).aggregate(
+            donations=Sum('donations', default=.0),
             donors=Count('id')
         )
         resp.text = render(

@@ -38,20 +38,20 @@
                     <line x1="2" x2="22" y1="10" y2="10" />
                     <path d="M6 14h2" />
                 </svg>
-                ${{ donated | round | int }} donated in total by {{ donors }} people.
-                ${{ top.donated | round | int }} donated by <a class="name" href="/{{ top }}">{{ top.full_name | emojize }}</a>.</li>
+                ${{ donations | round | int }} donated in total by {{ donors }} people.
+                ${{ top.donations | round | int }} donated by <a class="name" href="/{{ top }}">{{ top.full_name | emojize }}</a>.</li>
             <li>
                 <svg id="banknote" width="16" height="16" viewBox="0 0 24 24">
                     <rect width="20" height="12" x="2" y="6" rx="2" />
                     <circle cx="12" cy="12" r="2" />
                     <path d="M6 12h.01M18 12h.01" />
                 </svg>
-                {% if donated > costs %}
-                    We have a surplus of ${{ (donated - costs) | round | int }} donated.
+                {% if donations > costs %}
+                    We have a surplus of ${{ (donations - costs) | round | int }} donated.
                     Thank you!
                 {% else %}
                     No surplus <a href="https://paypal.com/donate/?hosted_button_id=586UTPPSHBWAN">donated yet</a>.
-                    The remaining ${{ (costs - donated) | round | int }} is covered by <a class="name" href="/{{ luc }}">{{ luc.full_name | emojize }}</a>.
+                    The remaining ${{ (costs - donations) | round | int }} is covered by <a class="name" href="/{{ luc }}">{{ luc.full_name | emojize }}</a>.
                 {% endif %}
             </li>
         </ul>

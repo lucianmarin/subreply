@@ -16,7 +16,7 @@ def build_user(user, req_user, timestamp=None):
         "last_name": user.last_name,
         "created_at": user.created_at,
         "seen_at": user.seen_at,
-        "donated": COSTS if user.id == 1 else user.donated,
+        "donations": COSTS if user.id == 1 else user.donations,
         "timestamp": timeago(utc_timestamp() - (timestamp if timestamp is not None else user.seen_at)),
         "emoji": emojize(user.emoji),
         "birthday": user.birthday,
