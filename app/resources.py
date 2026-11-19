@@ -3,7 +3,6 @@ from django.db.models import (
 )
 from emoji import demojize
 from falcon import HTTPFound, HTTPNotFound, before
-from strictyaml import as_document
 
 from app.forms import get_content, get_emoji, get_location, get_metadata, get_name
 from app.hooks import auth_user, login_required
@@ -16,6 +15,7 @@ from app.validation import (
     valid_last_name, valid_link, valid_location, valid_password, valid_phone,
     valid_reply, valid_thread, valid_username, valid_work
 )
+from project.lmon import dumps as lmonade
 from project.settings import FERNET, MAX_AGE
 from project.vars import NETWORKS
 
@@ -696,10 +696,9 @@ class AccountResource:
                 if post.edited_at:
                     d['edited'] = post.edited_at
                 data.append(d)
-            data = data if data else ""
-            resp.content_type = "application/x-yaml"
-            resp.downloadable_as = f"subreply-{username}.yaml"
-            resp.text = as_document(data).as_yaml()
+            resp.content_type = "application/lmon"
+            resp.downloadable_as = f"subreply-{username}.lmon"
+            resp.text = lmonade(data)
 
     @before(auth_user)
     @before(login_required)

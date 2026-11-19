@@ -11,6 +11,5 @@ phonenumbers
 pip
 psycopg2-binary
 requests
-strictyaml
 tldextract
 unidecode
