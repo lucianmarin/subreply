@@ -1,7 +1,6 @@
 from datetime import date, datetime, timezone
 from string import digits
-
-from tldextract import extract
+from urllib.parse import urlparse
 
 from app.utils import ALNUM_CHARS, USERNAME_CHARS, unwrap
 from project.vars import NETWORKS
@@ -57,10 +56,8 @@ def workplaces(work):
 
 def hostname(value):
     """Get hostname from an url."""
-    subdomain, domain, suffix = extract(value)
-    if subdomain in ['', 'www']:
-        return f'{domain}.{suffix}'
-    return f'{subdomain}.{domain}.{suffix}'
+    host = urlparse(value if '://' in value else f'https://{value}').hostname or ''
+    return host.removeprefix('www.')
 
 
 def age(birthday, delimiter="-"):

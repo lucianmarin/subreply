@@ -1,28 +1,46 @@
-import concurrent.futures
+import http.client
 import os
 import statistics
 import threading
 import time
-import requests
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from urllib.parse import urlparse
 
 URL = os.getenv("STRESS_URL") or "http://localhost:8000/trending"
 NUM_REQUESTS = int(os.getenv("STRESS_REQUESTS") or 1024)
 CONCURRENT_THREADS = int(os.getenv("STRESS_THREADS") or 32)
 
+parsed = urlparse(URL)
+PATH = parsed.path + (f"?{parsed.query}" if parsed.query else "") or "/"
+CONN_CLS = http.client.HTTPSConnection if parsed.scheme == "https" else http.client.HTTPConnection
+KEEP_ALIVE = {"Connection": "keep-alive"}
+
 thread_local = threading.local()
 
-def get_session():
-    if not hasattr(thread_local, "session"):
-        thread_local.session = requests.Session()
-    return thread_local.session
 
-def fetch_url(url):
+def get_connection(reset=False):
+    if reset and hasattr(thread_local, "conn"):
+        thread_local.conn.close()
+        del thread_local.conn
+    if not hasattr(thread_local, "conn"):
+        thread_local.conn = CONN_CLS(parsed.hostname, parsed.port, timeout=10)
+    return thread_local.conn
+
+
+def fetch_url():
     start_time = time.time()
     try:
-        response = get_session().get(url, timeout=10)
-        response.raise_for_status()
-        status_code = response.status_code
-        result = "Success"
+        conn = get_connection()
+        try:
+            conn.request("GET", PATH, headers=KEEP_ALIVE)
+            response = conn.getresponse()
+        except http.client.HTTPException:
+            conn = get_connection(reset=True)
+            conn.request("GET", PATH, headers=KEEP_ALIVE)
+            response = conn.getresponse()
+        response.read()
+        status_code = response.status
+        result = "Success" if status_code == 200 else f"HTTP {status_code}"
     except Exception as e:
         status_code = 0
         result = f"Error: {e}"
@@ -40,10 +58,10 @@ def run_stress_test():
 
     start_total = time.time()
 
-    with concurrent.futures.ThreadPoolExecutor(max_workers=CONCURRENT_THREADS) as executor:
-        futures = [executor.submit(fetch_url, URL) for _ in range(NUM_REQUESTS)]
+    with ThreadPoolExecutor(max_workers=CONCURRENT_THREADS) as executor:
+        futures = [executor.submit(fetch_url) for _ in range(NUM_REQUESTS)]
 
-        for future in concurrent.futures.as_completed(futures):
+        for future in as_completed(futures):
             duration, status, result = future.result()
             if "Error" in result or status != 200:
                 errors += 1

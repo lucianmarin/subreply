@@ -10,6 +10,4 @@ jinja2
 phonenumbers
 pip
 psycopg2-binary
-requests
-tldextract
 unidecode

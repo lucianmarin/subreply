@@ -4,8 +4,8 @@ import json
 import sys
 import zipfile
 from collections import defaultdict
+from urllib.request import urlopen
 
-import requests
 from django.core.management.base import BaseCommand
 
 NAME = "simplemaps_worldcities_basicv1.77.zip"
@@ -17,9 +17,9 @@ class Command(BaseCommand):
 
     def get_csv(self):
         print(f"Downloading {NAME}")
-        r = requests.get(self.url, stream=True)
-        c = io.BytesIO(r.content)
-        with zipfile.ZipFile(c) as zip_file, zip_file.open('worldcities.csv') as file:
+        with urlopen(self.url) as r:
+            c = io.BytesIO(r.read())
+        with zipfile.ZipFile(c) as zf, zf.open('worldcities.csv') as file:
             self.csv_file = io.StringIO(file.read().decode())
 
     def fix_country(self, name):
